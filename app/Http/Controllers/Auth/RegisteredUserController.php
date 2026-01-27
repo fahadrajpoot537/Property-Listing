@@ -47,6 +47,12 @@ class RegisteredUserController extends Controller
 
         // Assign default role using Spatie Permission
         $user->assignRole('user');
+        
+        // Assign 'access dashboard' permission to allow access to admin dashboard
+        if (!\Spatie\Permission\Models\Permission::where('name', 'access dashboard')->exists()) {
+            \Spatie\Permission\Models\Permission::create(['name' => 'access dashboard']);
+        }
+        $user->givePermissionTo('access dashboard');
 
         // Logic to link with affiliate if referral code exists
         if ($referralCode) {
@@ -69,7 +75,7 @@ class RegisteredUserController extends Controller
 
         Auth::login($user);
 
-        return redirect(route('dashboard', absolute: false));
+        return redirect(route('admin.dashboard', absolute: false));
     }
 
     /**
