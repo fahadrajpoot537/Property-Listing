@@ -1,0 +1,150 @@
+/* Custom Styles for Blog and Service Pages */
+
+/* Blog Grid Cards */
+.blog-grid-card {
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    border-radius: 10px;
+    overflow: hidden;
+}
+
+.blog-grid-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 25px rgba(0,0,0,0.15);
+}
+
+.blog-image {
+    position: relative;
+}
+
+.date-badge {
+    font-size: 0.8rem;
+    font-weight: 600;
+}
+
+.blog-title a:hover {
+    color: #0d6efd !important;
+}
+
+/* Service Cards */
+.service-card {
+    transition: all 0.3s ease;
+    border-radius: 10px;
+    overflow: hidden;
+}
+
+.service-card:hover {
+    transform: translateY(-8px);
+    box-shadow: 0 15px 30px rgba(0,0,0,0.2) !important;
+}
+
+.service-overlay {
+    transition: opacity 0.3s ease;
+}
+
+.service-image:hover .service-overlay {
+    opacity: 1 !important;
+}
+
+.service-title {
+    font-weight: 700;
+    transition: color 0.3s ease;
+}
+
+.service-card:hover .service-title {
+    color: #0d6efd !important;
+}
+
+/* Blog Detail Page */
+.blog-detail-header {
+    background-attachment: fixed;
+}
+
+.blog-article {
+    line-height: 1.8;
+}
+
+.blog-article h2, .blog-article h3, .blog-article h4 {
+    margin-top: 1.5rem;
+    margin-bottom: 1rem;
+    color: #333;
+}
+
+.blog-article p {
+    margin-bottom: 1.2rem;
+    font-size: 1.1rem;
+}
+
+.blog-article img {
+    max-width: 100%;
+    height: auto;
+    border-radius: 8px;
+    margin: 1.5rem 0;
+}
+
+/* Author Box */
+.author-box {
+    border-left: 4px solid #0d6efd;
+}
+
+/* Widgets */
+.widget {
+    margin-bottom: 2rem;
+}
+
+.widget-title {
+    font-weight: 700;
+    color: #333;
+    position: relative;
+}
+
+.widget-title::after {
+    content: '';
+    position: absolute;
+    bottom: -8px;
+    left: 0;
+    width: 50px;
+    height: 3px;
+    background: #0d6efd;
+}
+
+.recent-post-item:last-child {
+    border-bottom: none !important;
+}
+
+/* Responsive Adjustments */
+@media (max-width: 768px) {
+    .blog-grid-card, .service-card {
+        margin-bottom: 2rem;
+    }
+    
+    .blog-detail-header {
+        padding: 60px 0 !important;
+    }
+    
+    .blog-article {
+        padding: 2rem 1.5rem !important;
+    }
+}
+
+/* Pagination */
+.pagination-wrapper .page-link {
+    border-radius: 8px;
+    margin: 0 2px;
+    border: 1px solid #dee2e6;
+}
+
+.pagination-wrapper .page-item.active .page-link {
+    background-color: #0d6efd;
+    border-color: #0d6efd;
+}
+
+/* Badges */
+.badge.bg-primary {
+    background-color: #0d6efd !important;
+}
+
+/* Buttons */
+.btn-outline-primary:hover {
+    background-color: #0d6efd;
+    border-color: #0d6efd;
+}
