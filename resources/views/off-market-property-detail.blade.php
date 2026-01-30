@@ -13,7 +13,8 @@
                         <nav aria-label="breadcrumb">
                             <ol class="breadcrumb">
                                 <li class="breadcrumb-item"><a href="{{ url('/') }}">Home</a></li>
-                                <li class="breadcrumb-item"><a href="{{ route('off-market-listings.index') }}">Confidential Deals</a></li>
+                                <li class="breadcrumb-item"><a href="{{ route('off-market-listings.index') }}">Confidential
+                                        Deals</a></li>
                                 <li class="breadcrumb-item active" aria-current="page">{{ $listing->property_title }}</li>
                             </ol>
                         </nav>
@@ -34,16 +35,19 @@
                         <div class="property-gallery mb-4">
                             @if($listing->gallery && count($listing->gallery) > 0)
                                 <div class="main-image mb-3">
-                                    <img src="{{ asset('storage/' . $listing->gallery[0]) }}" alt="{{ $listing->property_title }}" class="img-fluid rounded">
+                                    <img src="{{ asset('storage/' . $listing->gallery[0]) }}"
+                                        alt="{{ $listing->property_title }}" class="img-fluid rounded">
                                 </div>
                                 <div class="thumbnail-images">
                                     @foreach($listing->gallery as $index => $image)
-                                        <img src="{{ asset('storage/' . $image) }}" alt="{{ $listing->property_title }}" class="img-thumbnail mr-2 mb-2" style="width: 100px; height: 80px; object-fit: cover;">
+                                        <img src="{{ asset('storage/' . $image) }}" alt="{{ $listing->property_title }}"
+                                            class="img-thumbnail mr-2 mb-2" style="width: 100px; height: 80px; object-fit: cover;">
                                     @endforeach
                                 </div>
                             @elseif($listing->thumbnail)
                                 <div class="main-image">
-                                    <img src="{{ asset('storage/' . $listing->thumbnail) }}" alt="{{ $listing->property_title }}" class="img-fluid rounded">
+                                    <img src="{{ asset('storage/' . $listing->thumbnail) }}"
+                                        alt="{{ $listing->property_title }}" class="img-fluid rounded">
                                 </div>
                             @else
                                 <div class="no-image-placeholder text-center p-5 bg-light rounded">
@@ -59,7 +63,7 @@
                                 <div>
                                     <h1 class="property-title">{{ $listing->property_title }}</h1>
                                     <p class="property-address text-muted">
-                                        <i class="fas fa-map-marker-alt"></i> 
+                                        <i class="fas fa-map-marker-alt"></i>
                                         {{ $listing->address ?? 'Location disclosed to qualified buyers only' }}
                                     </p>
                                 </div>
@@ -132,11 +136,12 @@
                         <!-- Contact Agent -->
                         <div class="sidebar-widget mb-4 p-4" style="background: #f8f9fa; border-radius: 10px;">
                             <h4 class="mb-3">Contact Agent</h4>
-                            
+
                             <!-- WhatsApp and Email Buttons -->
                             <div class="mb-3">
-                                <a href="whatsapp://send?text=Hi, I am interested in {{ urlencode($listing->property_title) }}. Please provide more details.&phone={{ $listing->user->phone ?? '447700900000' }}" 
-                                    class="btn w-100 mb-2" target="_blank" style="background-color: #1CD494; border: none; color: white;">
+                                <a href="whatsapp://send?text=Hi, I am interested in {{ urlencode($listing->property_title) }}. Please provide more details.&phone={{ $listing->user->phone ?? '447700900000' }}"
+                                    class="btn w-100 mb-2" target="_blank"
+                                    style="background-color: #1CD494; border: none; color: white;">
                                     <i class="fab fa-whatsapp"></i> WhatsApp
                                 </a>
                                 <a href="mailto:{{ $listing->user->email ?? 'info@findauk.com' }}?subject=Interest in {{ urlencode($listing->property_title) }}"
@@ -144,7 +149,7 @@
                                     <i class="fas fa-envelope"></i> Email
                                 </a>
                             </div>
-                            
+
                             <h5 class="mb-3">Or Send Message</h5>
                             <form>
                                 <div class="form-group mb-3">
@@ -164,6 +169,10 @@
 
                 <div class="col-lg-4">
                     <div class="property-sidebar">
+                        @if($listing->purpose === 'Buy' || $listing->purpose === 'Sale')
+                            <x-mortgage-calculator>{{ $listing->price }}</x-mortgage-calculator>
+                        @endif
+
                         <!-- Property Status -->
                         <div class="card mb-4">
                             <div class="card-body text-center">
@@ -180,8 +189,10 @@
                             <div class="card-body">
                                 <ul class="list-unstyled">
                                     <li class="mb-2"><strong>Purpose:</strong> {{ $listing->purpose }}</li>
-                                    <li class="mb-2"><strong>Property Type:</strong> {{ $listing->propertyType?->title ?? 'N/A' }}</li>
-                                    <li class="mb-2"><strong>Category:</strong> {{ $listing->unitType?->title ?? 'N/A' }}</li>
+                                    <li class="mb-2"><strong>Property Type:</strong>
+                                        {{ $listing->propertyType?->title ?? 'N/A' }}</li>
+                                    <li class="mb-2"><strong>Category:</strong> {{ $listing->unitType?->title ?? 'N/A' }}
+                                    </li>
                                     @if($listing->ownershipStatus)
                                         <li class="mb-2"><strong>Ownership:</strong> {{ $listing->ownershipStatus->name }}</li>
                                     @endif
@@ -213,7 +224,8 @@
                                     </div>
                                     <div class="mb-3">
                                         <label for="message" class="form-label">Message</label>
-                                        <textarea class="form-control" id="message" rows="3" placeholder="I'm interested in this confidential deal..."></textarea>
+                                        <textarea class="form-control" id="message" rows="3"
+                                            placeholder="I'm interested in this confidential deal..."></textarea>
                                     </div>
                                     <button type="submit" class="btn btn-primary w-100">Send Inquiry</button>
                                 </form>
@@ -235,7 +247,8 @@
                                         <div class="property-card">
                                             <div class="property-image">
                                                 @if($similar->thumbnail)
-                                                    <img src="{{ asset('storage/' . $similar->thumbnail) }}" alt="{{ $similar->property_title }}">
+                                                    <img src="{{ asset('storage/' . $similar->thumbnail) }}"
+                                                        alt="{{ $similar->property_title }}">
                                                 @else
                                                     <div class="no-image-placeholder">
                                                         <i class="fas fa-lock"></i>
@@ -243,7 +256,8 @@
                                                     </div>
                                                 @endif
                                                 <div class="property-price">
-                                                    <span class="price-element" data-original-price="{{ $similar->price }}">£{{ number_format($similar->price) }}</span>
+                                                    <span class="price-element"
+                                                        data-original-price="{{ $similar->price }}">£{{ number_format($similar->price) }}</span>
                                                 </div>
                                             </div>
                                             <div class="property-content">
@@ -280,47 +294,47 @@
                 font-weight: 700;
                 margin-bottom: 10px;
             }
-            
+
             .property-price h2 {
                 margin: 0;
             }
-            
+
             .meta-item h5 {
                 margin: 0;
                 font-weight: 700;
             }
-            
+
             .description-content {
                 line-height: 1.6;
                 color: #555;
             }
-            
+
             .property-card {
                 background: white;
                 border-radius: 10px;
                 overflow: hidden;
-                box-shadow: 0 3px 10px rgba(0,0,0,0.1);
+                box-shadow: 0 3px 10px rgba(0, 0, 0, 0.1);
                 transition: all 0.3s ease;
                 border: 1px solid #eee;
             }
-            
+
             .property-card:hover {
                 transform: translateY(-3px);
-                box-shadow: 0 5px 15px rgba(0,0,0,0.15);
+                box-shadow: 0 5px 15px rgba(0, 0, 0, 0.15);
             }
-            
+
             .property-image {
                 position: relative;
                 height: 200px;
                 overflow: hidden;
             }
-            
+
             .property-image img {
                 width: 100%;
                 height: 100%;
                 object-fit: cover;
             }
-            
+
             .no-image-placeholder {
                 width: 100%;
                 height: 100%;
@@ -331,7 +345,7 @@
                 justify-content: center;
                 color: #6c757d;
             }
-            
+
             .property-price {
                 position: absolute;
                 top: 15px;
@@ -344,51 +358,51 @@
                 font-size: 14px;
                 box-shadow: 0 2px 10px rgba(2, 184, 242, 0.3);
             }
-            
+
             .property-content {
                 padding: 15px;
             }
-            
+
             .property-content h5 {
                 margin: 0 0 10px 0;
                 font-size: 16px;
                 font-weight: 600;
             }
-            
+
             .property-content h5 a {
                 color: #333;
                 text-decoration: none;
             }
-            
+
             .property-content h5 a:hover {
                 color: #02b8f2;
             }
-            
+
             .property-address {
                 color: #666;
                 margin: 0 0 10px 0;
                 font-size: 13px;
             }
-            
+
             .property-meta {
                 display: flex;
                 gap: 15px;
                 font-size: 12px;
                 color: #555;
             }
-            
+
             .property-meta span {
                 display: flex;
                 align-items: center;
                 gap: 5px;
             }
-            
+
             .card {
                 border: 1px solid #eee;
                 border-radius: 10px;
-                box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+                box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
             }
-            
+
             .card-header {
                 background: #f8f9fa;
                 border-bottom: 1px solid #eee;
@@ -400,12 +414,12 @@
     @push('scripts')
         <script src="{{ asset('js/currency-converter.js') }}"></script>
         <script>
-            $(document).ready(function() {
+            $(document).ready(function () {
                 // Initialize currency converter
                 initializeCurrencyConverter();
-                $('#inquiry-form').on('submit', function(e) {
+                $('#inquiry-form').on('submit', function (e) {
                     e.preventDefault();
-                    
+
                     const formData = {
                         name: $('#name').val(),
                         email: $('#email').val(),
@@ -414,14 +428,14 @@
                         property_id: {{ $listing->id }},
                         property_title: '{{ $listing->property_title }}'
                     };
-                    
+
                     // Show loading
                     const submitBtn = $(this).find('button[type="submit"]');
                     const originalText = submitBtn.text();
                     submitBtn.prop('disabled', true).text('Sending...');
-                    
+
                     // Simulate form submission (replace with actual AJAX call)
-                    setTimeout(function() {
+                    setTimeout(function () {
                         submitBtn.prop('disabled', false).text(originalText);
                         alert('Thank you for your inquiry. Our team will contact you shortly.');
                         $('#inquiry-form')[0].reset();

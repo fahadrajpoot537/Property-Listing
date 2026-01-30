@@ -159,18 +159,22 @@
     </div>
 
     <!-- Filters Section -->
-    <div id="filtersSection" class="hidden bg-white shadow-lg rounded-2xl border border-slate-100 p-6 mb-6 transition-all duration-300">
+    <div id="filtersSection"
+        class="hidden bg-white shadow-lg rounded-2xl border border-slate-100 p-6 mb-6 transition-all duration-300">
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
             <!-- Property Title Filter -->
             <div>
                 <label class="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">Property Title</label>
-                <input type="text" id="filterPropertyTitle" class="w-full rounded-lg border-slate-100 bg-slate-50/50 text-xs p-2 focus:ring-blue-100 focus:border-[#02b8f2] transition-all" placeholder="Search title...">
+                <input type="text" id="filterPropertyTitle"
+                    class="w-full rounded-lg border-slate-100 bg-slate-50/50 text-xs p-2 focus:ring-blue-100 focus:border-[#02b8f2] transition-all"
+                    placeholder="Search title...">
             </div>
 
             <!-- Property Type Filter -->
             <div>
                 <label class="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">Property Type</label>
-                <select id="filterPropertyType" class="w-full rounded-lg border-slate-100 bg-slate-50/50 text-xs p-2 focus:ring-blue-100 focus:border-[#02b8f2] transition-all">
+                <select id="filterPropertyType"
+                    class="w-full rounded-lg border-slate-100 bg-slate-50/50 text-xs p-2 focus:ring-blue-100 focus:border-[#02b8f2] transition-all">
                     <option value="">All Types</option>
                     @foreach($propertyTypes as $type)
                         <option value="{{ $type->id }}">{{ $type->title }}</option>
@@ -181,7 +185,8 @@
             <!-- Purpose Filter -->
             <div>
                 <label class="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">Purpose</label>
-                <select id="filterPurpose" class="w-full rounded-lg border-slate-100 bg-slate-50/50 text-xs p-2 focus:ring-blue-100 focus:border-[#02b8f2] transition-all">
+                <select id="filterPurpose"
+                    class="w-full rounded-lg border-slate-100 bg-slate-50/50 text-xs p-2 focus:ring-blue-100 focus:border-[#02b8f2] transition-all">
                     <option value="">All Purposes</option>
                     <option value="Buy">For Sale</option>
                     <option value="Rent">To Rent</option>
@@ -191,7 +196,8 @@
             <!-- Status Filter -->
             <div>
                 <label class="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">Status</label>
-                <select id="filterStatus" class="w-full rounded-lg border-slate-100 bg-slate-50/50 text-xs p-2 focus:ring-blue-100 focus:border-[#02b8f2] transition-all">
+                <select id="filterStatus"
+                    class="w-full rounded-lg border-slate-100 bg-slate-50/50 text-xs p-2 focus:ring-blue-100 focus:border-[#02b8f2] transition-all">
                     <option value="">All Statuses</option>
                     <option value="approved">Approved</option>
                     <option value="pending">Pending</option>
@@ -202,18 +208,23 @@
             <!-- Price Range Filter -->
             <div>
                 <label class="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">Min Price (£)</label>
-                <input type="number" id="filterMinPrice" class="w-full rounded-lg border-slate-100 bg-slate-50/50 text-xs p-2 focus:ring-blue-100 focus:border-[#02b8f2] transition-all" placeholder="0">
+                <input type="number" id="filterMinPrice"
+                    class="w-full rounded-lg border-slate-100 bg-slate-50/50 text-xs p-2 focus:ring-blue-100 focus:border-[#02b8f2] transition-all"
+                    placeholder="0">
             </div>
 
             <div>
                 <label class="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">Max Price (£)</label>
-                <input type="number" id="filterMaxPrice" class="w-full rounded-lg border-slate-100 bg-slate-50/50 text-xs p-2 focus:ring-blue-100 focus:border-[#02b8f2] transition-all" placeholder="1000000">
+                <input type="number" id="filterMaxPrice"
+                    class="w-full rounded-lg border-slate-100 bg-slate-50/50 text-xs p-2 focus:ring-blue-100 focus:border-[#02b8f2] transition-all"
+                    placeholder="1000000">
             </div>
 
             <!-- Bedrooms Filter -->
             <div>
                 <label class="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">Bedrooms</label>
-                <select id="filterBedrooms" class="w-full rounded-lg border-slate-100 bg-slate-50/50 text-xs p-2 focus:ring-blue-100 focus:border-[#02b8f2] transition-all">
+                <select id="filterBedrooms"
+                    class="w-full rounded-lg border-slate-100 bg-slate-50/50 text-xs p-2 focus:ring-blue-100 focus:border-[#02b8f2] transition-all">
                     <option value="">Any</option>
                     @for($i = 0; $i <= 10; $i++)
                         <option value="{{ $i }}">{{ $i }}+</option>
@@ -224,7 +235,8 @@
             <!-- Bathrooms Filter -->
             <div>
                 <label class="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">Bathrooms</label>
-                <select id="filterBathrooms" class="w-full rounded-lg border-slate-100 bg-slate-50/50 text-xs p-2 focus:ring-blue-100 focus:border-[#02b8f2] transition-all">
+                <select id="filterBathrooms"
+                    class="w-full rounded-lg border-slate-100 bg-slate-50/50 text-xs p-2 focus:ring-blue-100 focus:border-[#02b8f2] transition-all">
                     <option value="">Any</option>
                     @for($i = 0; $i <= 10; $i++)
                         <option value="{{ $i }}">{{ $i }}+</option>
@@ -235,8 +247,12 @@
 
         <!-- Filter Actions -->
         <div class="flex justify-end gap-3 mt-6 pt-4 border-t border-slate-100">
-            <button onclick="clearFilters()" class="px-4 py-2 text-slate-600 hover:text-slate-800 text-sm font-bold rounded-lg transition-all">Clear All</button>
-            <button onclick="applyFilters()" class="bg-[#02b8f2] hover:opacity-90 text-white px-6 py-2 rounded-lg text-sm font-bold transition-all active:scale-95">Apply Filters</button>
+            <button onclick="clearFilters()"
+                class="px-4 py-2 text-slate-600 hover:text-slate-800 text-sm font-bold rounded-lg transition-all">Clear
+                All</button>
+            <button onclick="applyFilters()"
+                class="bg-[#02b8f2] hover:opacity-90 text-white px-6 py-2 rounded-lg text-sm font-bold transition-all active:scale-95">Apply
+                Filters</button>
         </div>
     </div>
 
@@ -351,6 +367,26 @@
                                         placeholder="0.00" required>
                                     <span class="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 font-bold">£</span>
                                 </div>
+                                <div class="mt-2 flex items-center">
+                                    <input type="checkbox" id="has_discount"
+                                        class="rounded border-slate-300 text-[#02b8f2] focus:ring-0 mr-2"
+                                        onchange="toggleDiscountField()">
+                                    <label for="has_discount"
+                                        class="text-xs font-bold text-slate-500 uppercase tracking-wider">Add
+                                        Discount?</label>
+                                </div>
+                            </div>
+
+                            <div id="discount_field_container" class="hidden">
+                                <label class="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">Old
+                                    Price
+                                    (£)</label>
+                                <div class="relative">
+                                    <input type="number" step="0.01" name="old_price" id="old_price"
+                                        class="w-full rounded-lg border-slate-100 bg-slate-50/50 text-xs p-2 pl-8 focus:ring-blue-100 focus:border-[#02b8f2] transition-all"
+                                        placeholder="0.00">
+                                    <span class="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 font-bold">£</span>
+                                </div>
                             </div>
 
                             <!-- Conditional Fields -->
@@ -360,7 +396,8 @@
                                         <label
                                             class="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">Ownership
                                             Status</label>
-                                        <select name="ownership_status_id" id="ownership_status_id" class="select2 w-full text-xs">
+                                        <select name="ownership_status_id" id="ownership_status_id"
+                                            class="select2 w-full text-xs">
                                             <option value="">Select Ownership</option>
                                             @foreach($ownershipStatuses as $os)
                                                 <option value="{{ $os->id }}">{{ $os->title }}</option>
@@ -376,7 +413,8 @@
                                         <label
                                             class="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">Rent
                                             Frequency</label>
-                                        <select name="rent_frequency_id" id="rent_frequency_id" class="select2 w-full text-xs">
+                                        <select name="rent_frequency_id" id="rent_frequency_id"
+                                            class="select2 w-full text-xs">
                                             <option value="">Select Frequency</option>
                                             @foreach($rentFrequencies as $rf)
                                                 <option value="{{ $rf->id }}">{{ $rf->title }}</option>
@@ -496,8 +534,8 @@
                                 </label>
                                 <input type="file" name="video" id="video" accept="video/*"
                                     class="w-full text-xs text-indigo-200 file:mr-4 file:py-1.5 file:px-3 file:rounded-lg file:border-0 file:bg-white file:text-indigo-900 file:font-bold hover:file:bg-indigo-50 cursor-pointer"
-                                <p class="text-[10px] text-indigo-300 mt-3 font-bold uppercase tracking-wider">Accepted:
-                                    MP4, MOV • Max 20MB for best playback</p>
+                                    <p class="text-[10px] text-indigo-300 mt-3 font-bold uppercase tracking-wider">Accepted:
+                                MP4, MOV • Max 20MB for best playback</p>
                             </div>
                         </div>
                     </div>
@@ -540,7 +578,7 @@
                 table = $('#listingsTable').DataTable({
                     ajax: {
                         url: "{{ route('admin.listings.index') }}",
-                        data: function(d) {
+                        data: function (d) {
                             d.filters = {
                                 property_title: $('#filterPropertyTitle').val(),
                                 property_type_id: $('#filterPropertyType').val(),
@@ -558,42 +596,42 @@
                         { data: 'id', orderable: false, className: 'text-center', render: d => `<input type="checkbox" class="row-checkbox rounded-md border-slate-300 text-[#02b8f2] focus:ring-0" value="${d}">` },
                         {
                             data: 'property_title', render: (d, t, r) => `
-                                                                                                                                            <div class="flex items-center py-2">
-                                                                                                                                                <div class="relative group">
-                                                                                                                                                    ${r.thumbnail ? `<img src="/storage/${r.thumbnail}" class="w-12 h-12 rounded-xl object-cover border-2 border-white shadow-md">` : `<div class="w-12 h-12 bg-slate-100 rounded-xl flex items-center justify-center text-slate-400"><i class='bx bx-building-house text-2xl'></i></div>`}
-                                                                                                                                                </div>
-                                                                                                                                                <div class="ml-4">
-                                                                                                                                                    <a href="/admin/listings/${r.id}" class="font-extrabold text-slate-800 hover:text-[#02b8f2] transition-colors tracking-tight leading-tight block">${d}</a>
-                                                                                                                                                    <div class="text-[10px] font-bold text-slate-400 uppercase mt-1">#${r.property_reference_number}</div>
-                                                                                                                                                </div>
-                                                                                                                                            </div>`
+                                                                                                                                                                    <div class="flex items-center py-2">
+                                                                                                                                                                        <div class="relative group">
+                                                                                                                                                                            ${r.thumbnail ? `<img src="/storage/${r.thumbnail}" class="w-12 h-12 rounded-xl object-cover border-2 border-white shadow-md">` : `<div class="w-12 h-12 bg-slate-100 rounded-xl flex items-center justify-center text-slate-400"><i class='bx bx-building-house text-2xl'></i></div>`}
+                                                                                                                                                                        </div>
+                                                                                                                                                                        <div class="ml-4">
+                                                                                                                                                                            <a href="/admin/listings/${r.id}" class="font-extrabold text-slate-800 hover:text-[#02b8f2] transition-colors tracking-tight leading-tight block">${d}</a>
+                                                                                                                                                                            <div class="text-[10px] font-bold text-slate-400 uppercase mt-1">#${r.property_reference_number}</div>
+                                                                                                                                                                        </div>
+                                                                                                                                                                    </div>`
                         },
                         { data: 'user.name', render: d => `<span class="bg-indigo-50 text-indigo-700 px-3 py-1 rounded-lg text-[11px] font-black uppercase tracking-wide">${d}</span>` },
                         {
                             data: 'property_type.title', render: (d, t, r) => `
-                                                                                                                                            <div class="flex flex-col">
-                                                                                                                                                <span class="text-[10px] font-black text-slate-700 uppercase">${d}</span>
-                                                                                                                                                <span class="text-[10px] font-bold text-slate-400 uppercase tracking-tighter">${r.unit_type ? r.unit_type.title : 'General'}</span>
-                                                                                                                                            </div>`
+                                                                                                                                                                    <div class="flex flex-col">
+                                                                                                                                                                        <span class="text-[10px] font-black text-slate-700 uppercase">${d}</span>
+                                                                                                                                                                        <span class="text-[10px] font-bold text-slate-400 uppercase tracking-tighter">${r.unit_type ? r.unit_type.title : 'General'}</span>
+                                                                                                                                                                    </div>`
                         },
                         { data: 'price', render: d => `<span class="font-black text-slate-800">£${numberWithCommas(d)}</span>` },
                         {
                             data: 'status', render: (d, t, r) => {
                                 let color = d === 'approved' ? 'emerald' : (d === 'rejected' ? 'rose' : 'amber');
                                 return `
-                                                                                                                                                <select onchange="updateStatus(${r.id}, this.value)" class="bg-${color}-50 text-${color}-600 border border-${color}-100 rounded-lg px-2 py-1 text-[10px] font-black uppercase tracking-wider focus:ring-0 cursor-pointer">
-                                                                                                                                                    <option value="pending" ${d === 'pending' ? 'selected' : ''}>Pending</option>
-                                                                                                                                                    <option value="approved" ${d === 'approved' ? 'selected' : ''}>Approved</option>
-                                                                                                                                                    <option value="rejected" ${d === 'rejected' ? 'selected' : ''}>Rejected</option>
-                                                                                                                                                </select>`;
+                                                                                                                                                                        <select onchange="updateStatus(${r.id}, this.value)" class="bg-${color}-50 text-${color}-600 border border-${color}-100 rounded-lg px-2 py-1 text-[10px] font-black uppercase tracking-wider focus:ring-0 cursor-pointer">
+                                                                                                                                                                            <option value="pending" ${d === 'pending' ? 'selected' : ''}>Pending</option>
+                                                                                                                                                                            <option value="approved" ${d === 'approved' ? 'selected' : ''}>Approved</option>
+                                                                                                                                                                            <option value="rejected" ${d === 'rejected' ? 'selected' : ''}>Rejected</option>
+                                                                                                                                                                        </select>`;
                             }
                         },
                         {
                             data: 'id', render: d => `
-                                                                                                                                            <div class="flex gap-2">
-                                                                                                                                                <button onclick="editListing(${d})" class="w-8 h-8 rounded-lg bg-slate-50 text-slate-500 hover:bg-indigo-600 hover:text-white transition-all flex items-center justify-center"><i class='bx bxs-edit-alt text-lg'></i></button>
-                                                                                                                                                <button onclick="deleteListing(${d})" class="w-8 h-8 rounded-lg bg-slate-50 text-slate-500 hover:bg-rose-600 hover:text-white transition-all flex items-center justify-center"><i class='bx bxs-trash text-lg'></i></button>
-                                                                                                                                            </div>`
+                                                                                                                                                                    <div class="flex gap-2">
+                                                                                                                                                                        <button onclick="editListing(${d})" class="w-8 h-8 rounded-lg bg-slate-50 text-slate-500 hover:bg-indigo-600 hover:text-white transition-all flex items-center justify-center"><i class='bx bxs-edit-alt text-lg'></i></button>
+                                                                                                                                                                        <button onclick="deleteListing(${d})" class="w-8 h-8 rounded-lg bg-slate-50 text-slate-500 hover:bg-rose-600 hover:text-white transition-all flex items-center justify-center"><i class='bx bxs-trash text-lg'></i></button>
+                                                                                                                                                                    </div>`
                         }
                     ],
                     drawCallback: function () { toggleBulkBar(); }
@@ -610,7 +648,7 @@
                     formData.delete('description'); // remove original
                     formData.append('description', $('#description_hidden').val());
                     if (id) formData.append('_method', 'PUT');
-                    
+
                     // Debug: Log remove_gallery data
                     console.log('remove_gallery data:');
                     for (var pair of formData.entries()) {
@@ -698,15 +736,20 @@
                     });
                 }, 500);
             }
-            
+
             // Reinitialize autocomplete when modal is opened
             function openModal() {
                 $('#listingForm')[0].reset(); $('#listingId').val(''); $('#thumbPreview, #galleryPreview').addClass('hidden').html('');
                 $('.select2').val('').trigger('change');
                 if (editorInstance) editorInstance.setData('');
+
+                // Reset discount field
+                $('#has_discount').prop('checked', false);
+                toggleDiscountField();
+
                 currentStep = 1; showStep(1); $('#modalTitle').text('New Property Listing'); $('#listingModal').removeClass('hidden');
                 handleTypeChange();
-                
+
                 // Reinitialize autocomplete when modal opens
                 setTimeout(() => {
                     const input = document.getElementById("address");
@@ -723,7 +766,7 @@
                     }
                 }, 300);
             }
-            
+
             function editListing(id) {
                 $.get(`/admin/listings/${id}/edit`, function (d) {
                     $('#listingId').val(d.id); $('#property_title').val(d.property_title); $('#purpose').val(d.purpose).trigger('change');
@@ -743,7 +786,7 @@
                             galleryPreview.append(`<img src="/storage/${image}" class="w-16 h-12 object-cover rounded-xl border border-slate-100 shadow-sm">`);
                         });
                     }
-                    
+
                     // Set IDs for new dropdowns
                     $('#ownership_status_id').val(d.ownership_status_id).trigger('change');
                     $('#rent_frequency_id').val(d.rent_frequency_id).trigger('change');
@@ -752,7 +795,7 @@
 
                     $('#modalTitle').text('Modify Listing'); currentStep = 1; showStep(1); $('#listingModal').removeClass('hidden');
                     toggleBedBathFields(); // Call this instead of handleTypeChange to avoid clearing unit type
-                    
+
                     // Reinitialize autocomplete when editing
                     setTimeout(() => {
                         const input = document.getElementById("address");
@@ -770,8 +813,17 @@
                     }, 300);
                 });
             }
-            
+
             window.initAutocomplete = initAutocomplete;
+
+            function toggleDiscountField() {
+                if ($('#has_discount').is(':checked')) {
+                    $('#discount_field_container').removeClass('hidden');
+                } else {
+                    $('#discount_field_container').addClass('hidden');
+                    $('#old_price').val('');
+                }
+            }
 
             function changeStep(n) {
                 if (n > 0) {
@@ -804,18 +856,18 @@
             function showStep(n) {
                 // Hide all stages
                 $('#stage1, #stage2, #stage3').addClass('hidden');
-                
+
                 // Show current stage and apply appropriate layout
                 const $currentStage = $(`#stage${n}`);
                 $currentStage.removeClass('hidden');
-                
+
                 // Apply specific layout classes based on stage
                 if (n === 1) {
                     $currentStage.addClass('form-grid');
                 } else {
                     $currentStage.removeClass('form-grid');
                 }
-                
+
                 $('#currentStepText').text(n);
                 $('#stepLine').css('width', `${(n - 1) * 50}%`);
                 for (let i = 1; i <= 3; i++) {
@@ -859,32 +911,43 @@
                 $.get(`/admin/listings/${id}/edit`, function (d) {
                     $('#listingId').val(d.id); $('#property_title').val(d.property_title); $('#purpose').val(d.purpose).trigger('change');
                     $('#price').val(d.price); $('#area_size').val(d.area_size);
+
+                    // Handle discount (old_price)
+                    if (d.old_price && d.old_price > 0) {
+                        $('#has_discount').prop('checked', true);
+                        $('#old_price').val(d.old_price);
+                    } else {
+                        $('#has_discount').prop('checked', false);
+                        $('#old_price').val('');
+                    }
+                    toggleDiscountField();
+
                     $('#property_type_id').val(d.property_type_id).trigger('change');
                     toggleUnitTypes(d.unit_type_id);
                     $('#bedrooms').val(d.bedrooms).trigger('change'); $('#bathrooms').val(d.bathrooms).trigger('change');
                     if (editorInstance) editorInstance.setData(d.description || '');
                     $('#address').val(d.address); $('#latitude').val(d.latitude); $('#longitude').val(d.longitude);
                     $('input[type=checkbox]').prop('checked', false); if (d.features) d.features.forEach(f => $(`#feat_${f.id}`).prop('checked', true));
-                    if (d.thumbnail) { 
-                        $('#thumbPreview').removeClass('hidden').find('img').attr('src', '/storage/' + d.thumbnail); 
+                    if (d.thumbnail) {
+                        $('#thumbPreview').removeClass('hidden').find('img').attr('src', '/storage/' + d.thumbnail);
                     }
-                    
+
                     // Handle gallery preview for existing images
                     if (d.gallery && Array.isArray(d.gallery)) {
                         const galleryPreview = $('#galleryPreview').html('');
                         d.gallery.forEach((image, index) => {
                             galleryPreview.append(`
-                                <div class="relative group">
-                                    <img src="/storage/${image}" class="w-16 h-12 object-cover rounded-xl border border-slate-100 shadow-sm">
-                                    <button type="button" onclick="removeExistingImage(${index})" class="absolute -top-2 -right-2 w-6 h-6 bg-rose-500 text-white rounded-full flex items-center justify-center text-xs opacity-0 group-hover:opacity-100 transition-opacity hover:bg-rose-600">
-                                        <i class='bx bx-x'></i>
-                                    </button>
-                                    <input type="hidden" name="existing_gallery[]" value="${image}">
-                                </div>
-                            `);
+                                                        <div class="relative group">
+                                                            <img src="/storage/${image}" class="w-16 h-12 object-cover rounded-xl border border-slate-100 shadow-sm">
+                                                            <button type="button" onclick="removeExistingImage(${index})" class="absolute -top-2 -right-2 w-6 h-6 bg-rose-500 text-white rounded-full flex items-center justify-center text-xs opacity-0 group-hover:opacity-100 transition-opacity hover:bg-rose-600">
+                                                                <i class='bx bx-x'></i>
+                                                            </button>
+                                                            <input type="hidden" name="existing_gallery[]" value="${image}">
+                                                        </div>
+                                                    `);
                         });
                     }
-                    
+
                     // Set IDs for new dropdowns
                     $('#ownership_status_id').val(d.ownership_status_id).trigger('change');
                     $('#rent_frequency_id').val(d.rent_frequency_id).trigger('change');
@@ -909,7 +972,7 @@
                 // Filter toggle button
                 $('#filterToggle').on('click', function () {
                     $('#filtersSection').toggleClass('hidden');
-                    
+
                     // Add smooth animation for filters appearance
                     if (!$('#filtersSection').hasClass('hidden')) {
                         $('html, body').animate({
@@ -919,7 +982,7 @@
                 });
 
                 // Handle filter change to trigger search
-                $('#filtersSection input, #filtersSection select').on('keyup change', function() {
+                $('#filtersSection input, #filtersSection select').on('keyup change', function () {
                     table.ajax.reload();
                 });
             });
@@ -942,21 +1005,21 @@
                 $('#filterBedrooms').val('');
                 $('#filterBathrooms').val('');
                 table.ajax.reload();
-                
+
                 $('html, body').animate({
                     scrollTop: $('#listingsTable').offset().top - 80
                 }, 500);
             }
             function previewGallery(input, targetId) { const t = $(`#${targetId}`).html(''); if (input.files) Array.from(input.files).forEach(f => { const r = new FileReader(); r.onload = e => t.append(`<img src="${e.target.result}" class="w-16 h-12 object-cover rounded-xl border border-slate-100 shadow-sm">`); r.readAsDataURL(f); }); }
-            
+
             function removeExistingImage(index) {
                 // Remove the image container
                 $(`#galleryPreview .relative`).eq(index).remove();
-                
+
                 // Add the image path to the remove_gallery hidden input
                 const hiddenInput = $(`input[name="existing_gallery[]"]`).eq(index);
                 const imageValue = hiddenInput.val();
-                
+
                 // Create or update the remove_gallery input
                 let removeInput = $('input[name="remove_gallery[]"]');
                 if (removeInput.length === 0) {
@@ -964,7 +1027,7 @@
                 } else {
                     // Check if this image is already marked for removal
                     let existingValues = [];
-                    removeInput.each(function() {
+                    removeInput.each(function () {
                         existingValues.push($(this).val());
                     });
                     if (!existingValues.includes(imageValue)) {

@@ -5,7 +5,7 @@
 @section('content')
     <!--===== HERO AREA STARTS =======-->
     <div class="hero-inner-section-area-sidebar">
-        <img src="{{ asset('assets/img/all-images/hero/hero-img1.png') }}" alt="housebox" class="hero-img1">
+        <img src="{{ asset('assets/img/all-images/hero/hero-img1.png') }}" alt="Propertyfinda" class="hero-img1">
         <div class="container">
             <div class="row">
                 <div class="col-lg-12">
@@ -38,7 +38,8 @@
                                     <li class="nav-item" role="presentation">
                                         <button class="nav-link {{ request('view') == 'grid' ? 'active' : '' }}"
                                             id="grid-view-tab" data-bs-toggle="pill" data-bs-target="#pills-home"
-                                            type="button" role="tab" aria-controls="pills-home" aria-selected="{{ request('view') == 'grid' }}">
+                                            type="button" role="tab" aria-controls="pills-home"
+                                            aria-selected="{{ request('view') == 'grid' }}">
                                             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
                                                 <path
                                                     d="M22 12.999V20C22 20.5523 21.5523 21 21 21H13V12.999H22ZM11 12.999V21H3C2.44772 21 2 20.5523 2 20V12.999H11ZM11 3V10.999H2V4C2 3.44772 2.44772 3 3 3H11ZM21 3C21.5523 3 22 3.44772 22 4V10.999H13V3H21Z">
@@ -47,9 +48,11 @@
                                         </button>
                                     </li>
                                     <li class="nav-item" role="presentation">
-                                        <button class="nav-link {{ request('view') == 'list' || !request('view') ? 'active' : '' }}"
+                                        <button
+                                            class="nav-link {{ request('view') == 'list' || !request('view') ? 'active' : '' }}"
                                             id="list-view-tab" data-bs-toggle="pill" data-bs-target="#pills-profile"
-                                            type="button" role="tab" aria-controls="pills-profile" aria-selected="{{ request('view') == 'list' || !request('view') }}">
+                                            type="button" role="tab" aria-controls="pills-profile"
+                                            aria-selected="{{ request('view') == 'list' || !request('view') }}">
                                             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
                                                 <path
                                                     d="M8 4H21V6H8V4ZM3 3.5H6V6.5H3V3.5ZM3 10.5H6V13.5H3V10.5ZM3 17.5H6V20.5H3V17.5ZM8 11H21V13H8V11ZM8 18H21V20H8V18Z">
@@ -59,8 +62,10 @@
                                     </li>
                                     <li class="nav-item" role="presentation">
                                         <a href="{{ url('/map') }}" class="nav-link">
-                                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" width="24" height="24">
-                                                <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/>
+                                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"
+                                                width="24" height="24">
+                                                <path
+                                                    d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z" />
                                             </svg>
                                             <span class="ms-2">Map View</span>
                                         </a>
@@ -76,7 +81,7 @@
                                         </select>
                                     </div>
                                 </div>
-                               
+
                             </div>
                         </div>
                         <div class="space32 d-none d-lg-block"></div>
@@ -211,40 +216,44 @@
                                             </div>
                                         </div>
                                         <hr style="margin: 30px 0; border: 1px solid #ddd;">
-                                        
+
                                         <!-- AMENITIES SECTION - COMPLETELY REWRITTEN -->
-                                        <div style="background: white; padding: 20px; border: 2px solid #000; margin: 20px 0;">
-                                            <h3 style="color: #000 !important; font-size: 20px !important; margin-bottom: 20px !important; font-family: Arial, sans-serif !important;">
+                                        <div
+                                            style="background: white; padding: 20px; border: 2px solid #000; margin: 20px 0;">
+                                            <h3
+                                                style="color: #000 !important; font-size: 20px !important; margin-bottom: 20px !important; font-family: Arial, sans-serif !important;">
                                                 AMENITIES / FEATURES
                                             </h3>
-                                            
-    
-                                            
+
+
+
                                             <!-- FEATURES LIST -->
                                             @if(isset($features_all) && $features_all->count() > 0)
-                                                <div style="background: #d4edda; border: 2px solid #28a745; padding: 15px; margin-bottom: 20px;">
+                                                <div
+                                                    style="background: #d4edda; border: 2px solid #28a745; padding: 15px; margin-bottom: 20px;">
                                                     <p style="margin: 0; color: #000; font-size: 16px; font-weight: bold;">
                                                         ✓ FOUND {{ $features_all->count() }} FEATURES
                                                     </p>
                                                 </div>
-                                                
+
                                                 <div class="row">
-                                                @foreach($features_all as $index => $feature)
-                                                    <div class="col-lg-6 col-md-6 col-sm-6">
-                                                        <div class="amenity-item" style="padding: 10px; margin-bottom: 8px; border: 1px solid #eee; border-radius: 5px; background-color: #f9f9f9;">
-                                                            <label style="display: flex; align-items: center; margin: 0; cursor: pointer; font-family: Arial, sans-serif;">
-                                                                <input type="checkbox" 
-                                                                       name="feature_ids[]" 
-                                                                       value="{{ $feature->id }}" 
-                                                                       {{ in_array($feature->id, (array) request('feature_ids')) ? 'checked' : '' }}
-                                                                       style="width: 18px; height: 18px; margin-right: 8px; flex-shrink: 0;">
-                                                                <span style="color: #000 !important; font-size: 14px !important; flex-grow: 1;">
-                                                                    {{ $feature->title }}
-                                                                </span>
-                                                            </label>
+                                                    @foreach($features_all as $index => $feature)
+                                                        <div class="col-lg-6 col-md-6 col-sm-6">
+                                                            <div class="amenity-item"
+                                                                style="padding: 10px; margin-bottom: 8px; border: 1px solid #eee; border-radius: 5px; background-color: #f9f9f9;">
+                                                                <label
+                                                                    style="display: flex; align-items: center; margin: 0; cursor: pointer; font-family: Arial, sans-serif;">
+                                                                    <input type="checkbox" name="feature_ids[]"
+                                                                        value="{{ $feature->id }}" {{ in_array($feature->id, (array) request('feature_ids')) ? 'checked' : '' }}
+                                                                        style="width: 18px; height: 18px; margin-right: 8px; flex-shrink: 0;">
+                                                                    <span
+                                                                        style="color: #000 !important; font-size: 14px !important; flex-grow: 1;">
+                                                                        {{ $feature->title }}
+                                                                    </span>
+                                                                </label>
+                                                            </div>
                                                         </div>
-                                                    </div>
-                                                @endforeach
+                                                    @endforeach
                                                 </div>
                                             @else
                                                 <div style="background: #f8d7da; border: 2px solid #dc3545; padding: 15px;">
@@ -257,7 +266,7 @@
                                                 </div>
                                             @endif
                                         </div>
-                                        
+
                                         <hr style="margin: 30px 0; border: 1px solid #ddd;">
                                         <div class="space32"></div>
                                         <div class="col-lg-12">
@@ -287,7 +296,8 @@
                                                         alt="{{ $latest->property_title }}"
                                                         style="width: 100%; border-radius: 8px;">
                                                 @else
-                                                    <div class="no-image" style="width: 80px; height: 80px; background: #f0f0f0; display: flex; align-items: center; justify-content: center; color: #666; border-radius: 8px;">
+                                                    <div class="no-image"
+                                                        style="width: 80px; height: 80px; background: #f0f0f0; display: flex; align-items: center; justify-content: center; color: #666; border-radius: 8px;">
                                                         <i class="fas fa-lock"></i>
                                                     </div>
                                                 @endif
@@ -306,18 +316,20 @@
                                                     </ul>
                                                 </div>
                                                 <h5 class="m-0 text-primary">£{{ number_format($latest->price ?? 0) }}</h5>
-                                                
+
                                                 <!-- Latest Property Features/Amenities -->
                                                 <div class="mt-1">
                                                     @if($latest->features->count() > 0)
                                                         <div class="property-features d-flex flex-wrap gap-1">
                                                             @foreach($latest->features->take(2) as $feature)
-                                                                <span class="badge bg-light text-dark" style="font-size: 9px; padding: 3px 6px; border: 1px solid #ddd; border-radius: 12px;">
+                                                                <span class="badge bg-light text-dark"
+                                                                    style="font-size: 9px; padding: 3px 6px; border: 1px solid #ddd; border-radius: 12px;">
                                                                     {{ Str::limit($feature->title ?? $feature->name, 12) }}
                                                                 </span>
                                                             @endforeach
                                                             @if($latest->features->count() > 2)
-                                                                <span class="badge bg-light text-dark" style="font-size: 9px; padding: 3px 6px; border: 1px solid #ddd; border-radius: 12px;">
+                                                                <span class="badge bg-light text-dark"
+                                                                    style="font-size: 9px; padding: 3px 6px; border: 1px solid #ddd; border-radius: 12px;">
                                                                     +{{ $latest->features->count() - 2 }}
                                                                 </span>
                                                             @endif
@@ -327,12 +339,14 @@
 
                                                 <!-- WhatsApp and Email Buttons for Latest Properties -->
                                                 <div class="mt-2 d-flex gap-1">
-                                                    <a href="whatsapp://send?text=Hi, I am interested in {{ urlencode(Str::limit($latest->property_title, 50)) }}. Please provide more details.&phone={{ $latest->user?->phone ?? '447700900000' }}" 
-                                                        class="btn btn-sm" target="_blank" style="font-size: 9px; padding: 2px 5px; background-color: #1CD494; border: none; color: white; border-radius: 4px;">
+                                                    <a href="whatsapp://send?text=Hi, I am interested in {{ urlencode(Str::limit($latest->property_title, 50)) }}. Please provide more details.&phone={{ $latest->user?->phone ?? '447700900000' }}"
+                                                        class="btn btn-sm" target="_blank"
+                                                        style="font-size: 9px; padding: 2px 5px; background-color: #1CD494; border: none; color: white; border-radius: 4px;">
                                                         <i class="fab fa-whatsapp"></i> W
                                                     </a>
                                                     <a href="mailto:{{ $latest->user?->email ?? 'info@example.com' }}?subject=Interest in {{ urlencode(Str::limit($latest->property_title, 30)) }}"
-                                                        class="btn btn-info btn-sm" style="font-size: 9px; padding: 2px 5px; border-radius: 4px;">
+                                                        class="btn btn-info btn-sm"
+                                                        style="font-size: 9px; padding: 2px 5px; border-radius: 4px;">
                                                         <i class="fas fa-envelope"></i> E
                                                     </a>
                                                 </div>
@@ -355,7 +369,8 @@
                                                                 <img src="{{ asset('storage/' . $listing->thumbnail) }}"
                                                                     alt="{{ $listing->property_title }}">
                                                             @else
-                                                                <div class="no-image" style="height: 200px; background: #f0f0f0; display: flex; align-items: center; justify-content: center; color: #666;">
+                                                                <div class="no-image"
+                                                                    style="height: 200px; background: #f0f0f0; display: flex; align-items: center; justify-content: center; color: #666;">
                                                                     <i class="fas fa-lock fa-2x"></i>
                                                                     <span class="d-block mt-2">Confidential</span>
                                                                 </div>
@@ -371,19 +386,23 @@
                                                             <a
                                                                 href="{{ route('listing.show', $listing->id) }}">{{ Str::limit($listing->property_title, 40) }}</a>
                                                             <div class="space8"></div>
-                                                            <p><i class="fa-solid fa-location-dot"></i> {{ Str::limit($listing->address ?? 'Location disclosed to qualified buyers', 50) }}
+                                                            <p><i class="fa-solid fa-location-dot"></i>
+                                                                {{ Str::limit($listing->address ?? 'Location disclosed to qualified buyers', 50) }}
                                                             </p>
                                                             <div class="space12"></div>
                                                             <ul>
                                                                 <li><a href="#"><img
                                                                             src="{{ asset('assets/img/icons/bed1.svg') }}"
-                                                                            alt="housebox">{{ $listing->bedrooms ?? 0 }} bed</a></li>
+                                                                            alt="Propertyfinda">{{ $listing->bedrooms ?? 0 }}
+                                                                        bed</a></li>
                                                                 <li><a href="#"><img
                                                                             src="{{ asset('assets/img/icons/bath1.svg') }}"
-                                                                            alt="housebox">{{ $listing->bathrooms ?? 0 }} bath</a></li>
+                                                                            alt="Propertyfinda">{{ $listing->bathrooms ?? 0 }}
+                                                                        bath</a></li>
                                                                 <li><a href="#"><img
                                                                             src="{{ asset('assets/img/icons/sqare1.svg') }}"
-                                                                            alt="housebox">{{ $listing->area_size ?? 'N/A' }} sqft</a></li>
+                                                                            alt="Propertyfinda">{{ $listing->area_size ?? 'N/A' }}
+                                                                        sqft</a></li>
                                                             </ul>
                                                             <div
                                                                 class="btn-area d-flex justify-content-between align-items-center mt-2">
@@ -391,9 +410,9 @@
                                                                     class="nm-btn">£{{ number_format($listing->price ?? 0) }}@if($listing->purpose == 'Rent')<span>/{{ $listing->rentFrequency?->name ?? 'month' }}</span>@endif</a>
                                                                 <a href="javascript:void(0)" class="heart"><img
                                                                         src="{{ asset('assets/img/icons/heart1.svg') }}"
-                                                                        alt="housebox" class="heart1"> <img
+                                                                        alt="Propertyfinda" class="heart1"> <img
                                                                         src="{{ asset('assets/img/icons/heart2.svg') }}"
-                                                                        alt="housebox" class="heart2"></a>
+                                                                        alt="Propertyfinda" class="heart2"></a>
                                                             </div>
 
                                                             <!-- Property Features/Amenities -->
@@ -401,12 +420,14 @@
                                                                 @if($listing->features->count() > 0)
                                                                     <div class="property-features d-flex flex-wrap gap-1">
                                                                         @foreach($listing->features->take(3) as $feature)
-                                                                            <span class="badge bg-light text-dark" style="font-size: 11px; padding: 5px 10px; border: 1px solid #ddd; border-radius: 20px;">
+                                                                            <span class="badge bg-light text-dark"
+                                                                                style="font-size: 11px; padding: 5px 10px; border: 1px solid #ddd; border-radius: 20px;">
                                                                                 {{ $feature->title ?? $feature->name }}
                                                                             </span>
                                                                         @endforeach
                                                                         @if($listing->features->count() > 3)
-                                                                            <span class="badge bg-light text-dark" style="font-size: 11px; padding: 5px 10px; border: 1px solid #ddd; border-radius: 20px;">
+                                                                            <span class="badge bg-light text-dark"
+                                                                                style="font-size: 11px; padding: 5px 10px; border: 1px solid #ddd; border-radius: 20px;">
                                                                                 +{{ $listing->features->count() - 3 }} more
                                                                             </span>
                                                                         @endif
@@ -416,12 +437,14 @@
 
                                                             <!-- WhatsApp and Email Buttons -->
                                                             <div class="mt-2 d-flex gap-2">
-                                                                <a href="whatsapp://send?text=Hi, I am interested in {{ urlencode($listing->property_title) }}. Please provide more details.&phone={{ $listing->user?->phone ?? '447700900000' }}" 
-                                                                    class="btn btn-sm" target="_blank" style="font-size: 11px; padding: 4px 8px; background-color: #1CD494; border: none; color: white;">
+                                                                <a href="whatsapp://send?text=Hi, I am interested in {{ urlencode($listing->property_title) }}. Please provide more details.&phone={{ $listing->user?->phone ?? '447700900000' }}"
+                                                                    class="btn btn-sm" target="_blank"
+                                                                    style="font-size: 11px; padding: 4px 8px; background-color: #1CD494; border: none; color: white;">
                                                                     <i class="fab fa-whatsapp"></i> WhatsApp
                                                                 </a>
                                                                 <a href="mailto:{{ $listing->user?->email ?? 'info@example.com' }}?subject=Interest in {{ urlencode($listing->property_title) }}"
-                                                                    class="btn btn-info btn-sm" style="font-size: 11px; padding: 4px 8px;">
+                                                                    class="btn btn-info btn-sm"
+                                                                    style="font-size: 11px; padding: 4px 8px;">
                                                                     <i class="fas fa-envelope"></i> Email
                                                                 </a>
                                                             </div>
@@ -452,7 +475,8 @@
                                                                         <img src="{{ asset('storage/' . $listing->thumbnail) }}"
                                                                             alt="{{ $listing->property_title }}">
                                                                     @else
-                                                                        <div class="no-image" style="height: 250px; background: #f0f0f0; display: flex; align-items: center; justify-content: center; color: #666;">
+                                                                        <div class="no-image"
+                                                                            style="height: 250px; background: #f0f0f0; display: flex; align-items: center; justify-content: center; color: #666;">
                                                                             <i class="fas fa-lock fa-2x"></i>
                                                                             <span class="d-block mt-2">Confidential</span>
                                                                         </div>
@@ -476,20 +500,24 @@
                                                                             <path
                                                                                 d="M18.364 17.364L12 23.7279L5.63604 17.364C2.12132 13.8492 2.12132 8.15076 5.63604 4.63604C9.15076 1.12132 14.8492 1.12132 18.364 4.63604C21.8787 8.15076 21.8787 13.8492 18.364 17.364ZM12 15C14.2091 15 16 13.2091 16 11C16 8.79086 14.2091 7 12 7C9.79086 7 8 8.79086 8 11C8 13.2091 9.79086 15 12 15ZM12 13C10.8954 13 10 12.1046 10 11C10 9.89543 10.8954 9 12 9C13.1046 9 14 9.89543 14 11C14 12.1046 13.1046 13 12 13Z">
                                                                             </path>
-                                                                        </svg> {{ Str::limit($listing->address ?? 'Location disclosed to qualified buyers', 60) }}</p>
+                                                                        </svg>
+                                                                        {{ Str::limit($listing->address ?? 'Location disclosed to qualified buyers', 60) }}
+                                                                    </p>
                                                                     <div class="space12"></div>
                                                                     <ul>
                                                                         <li><a href="#"><img
                                                                                     src="{{ asset('assets/img/icons/bed1.svg') }}"
-                                                                                    alt="housebox">{{ $listing->bedrooms ?? 0 }} bed</a>
+                                                                                    alt="Propertyfinda">{{ $listing->bedrooms ?? 0 }}
+                                                                                bed</a>
                                                                         </li>
                                                                         <li><a href="#"><img
                                                                                     src="{{ asset('assets/img/icons/bath1.svg') }}"
-                                                                                    alt="housebox">{{ $listing->bathrooms ?? 0 }} bath</a>
+                                                                                    alt="Propertyfinda">{{ $listing->bathrooms ?? 0 }}
+                                                                                bath</a>
                                                                         </li>
                                                                         <li><a href="#"><img
                                                                                     src="{{ asset('assets/img/icons/sqare1.svg') }}"
-                                                                                    alt="housebox">{{ $listing->area_size ?? 'N/A' }}
+                                                                                    alt="Propertyfinda">{{ $listing->area_size ?? 'N/A' }}
                                                                                 sqft</a></li>
                                                                     </ul>
 
@@ -498,12 +526,14 @@
                                                                         @if($listing->features->count() > 0)
                                                                             <div class="property-features d-flex flex-wrap gap-1">
                                                                                 @foreach($listing->features->take(4) as $feature)
-                                                                                    <span class="badge bg-light text-dark" style="font-size: 11px; padding: 5px 10px; border: 1px solid #ddd; border-radius: 20px;">
+                                                                                    <span class="badge bg-light text-dark"
+                                                                                        style="font-size: 11px; padding: 5px 10px; border: 1px solid #ddd; border-radius: 20px;">
                                                                                         {{ $feature->title ?? $feature->name }}
                                                                                     </span>
                                                                                 @endforeach
                                                                                 @if($listing->features->count() > 4)
-                                                                                    <span class="badge bg-light text-dark" style="font-size: 11px; padding: 5px 10px; border: 1px solid #ddd; border-radius: 20px;">
+                                                                                    <span class="badge bg-light text-dark"
+                                                                                        style="font-size: 11px; padding: 5px 10px; border: 1px solid #ddd; border-radius: 20px;">
                                                                                         +{{ $listing->features->count() - 4 }} more
                                                                                     </span>
                                                                                 @endif
@@ -513,12 +543,14 @@
 
                                                                     <!-- WhatsApp and Email Buttons in List View -->
                                                                     <div class="mt-2 d-flex gap-2">
-                                                                        <a href="whatsapp://send?text=Hi, I am interested in {{ urlencode($listing->property_title) }}. Please provide more details.&phone={{ $listing->user?->phone ?? '447700900000' }}" 
-                                                                            class="btn btn-sm" target="_blank" style="font-size: 11px; padding: 4px 8px; background-color: #1CD494; border: none; color: white;">
+                                                                        <a href="whatsapp://send?text=Hi, I am interested in {{ urlencode($listing->property_title) }}. Please provide more details.&phone={{ $listing->user?->phone ?? '447700900000' }}"
+                                                                            class="btn btn-sm" target="_blank"
+                                                                            style="font-size: 11px; padding: 4px 8px; background-color: #1CD494; border: none; color: white;">
                                                                             <i class="fab fa-whatsapp"></i> WhatsApp
                                                                         </a>
                                                                         <a href="mailto:{{ $listing->user?->email ?? 'info@example.com' }}?subject=Interest in {{ urlencode($listing->property_title) }}"
-                                                                            class="btn btn-info btn-sm" style="font-size: 11px; padding: 4px 8px;">
+                                                                            class="btn btn-info btn-sm"
+                                                                            style="font-size: 11px; padding: 4px 8px;">
                                                                             <i class="fas fa-envelope"></i> Email
                                                                         </a>
                                                                     </div>
@@ -567,32 +599,32 @@
         </div>
     </div>
     <!--===== PROPERTIES AREA ENDS =======-->
-    
+
     <script>
-    // Reverse geocode coordinates to populate location field
-    @if(request('lat') && request('lng'))
-    document.addEventListener('DOMContentLoaded', function() {
-        const lat = {{ request('lat') }};
-        const lng = {{ request('lng') }};
-        const locationInput = document.getElementById('sidebar-location');
-        
-        if (lat && lng && locationInput && !locationInput.value) {
-            // Reverse geocode the coordinates
-            fetch(`https://maps.googleapis.com/maps/api/geocode/json?latlng=${lat},${lng}&key={{ config('services.google.maps_api_key') }}`)
-                .then(response => response.json())
-                .then(data => {
-                    if (data.results && data.results.length > 0) {
-                        const address = data.results[0].formatted_address;
-                        locationInput.value = address;
-                        console.log('Reverse geocoded address:', address);
-                    }
-                })
-                .catch(error => {
-                    console.error('Reverse geocoding failed:', error);
-                });
-        }
-    });
-    @endif
+        // Reverse geocode coordinates to populate location field
+        @if(request('lat') && request('lng'))
+            document.addEventListener('DOMContentLoaded', function () {
+                const lat = {{ request('lat') }};
+                const lng = {{ request('lng') }};
+                const locationInput = document.getElementById('sidebar-location');
+
+                if (lat && lng && locationInput && !locationInput.value) {
+                    // Reverse geocode the coordinates
+                    fetch(`https://maps.googleapis.com/maps/api/geocode/json?latlng=${lat},${lng}&key={{ config('services.google.maps_api_key') }}`)
+                        .then(response => response.json())
+                        .then(data => {
+                            if (data.results && data.results.length > 0) {
+                                const address = data.results[0].formatted_address;
+                                locationInput.value = address;
+                                console.log('Reverse geocoded address:', address);
+                            }
+                        })
+                        .catch(error => {
+                            console.error('Reverse geocoding failed:', error);
+                        });
+                }
+            });
+        @endif
     </script>
 
     @push('scripts')
@@ -621,7 +653,7 @@
                         if (place.geometry) {
                             $('#sidebar-lat').val(place.geometry.location.lat());
                             $('#sidebar-lng').val(place.geometry.location.lng());
-                            
+
                             // If no radius is selected, set a default (e.g., 10 miles)
                             if (!$('#sidebar-radius').val()) {
                                 $('#sidebar-radius').val('10');
@@ -630,7 +662,7 @@
                                     $('#sidebar-radius').niceSelect('update');
                                 }
                             }
-                            
+
                             console.log('Location selected:', place.formatted_address);
                             console.log('Coordinates:', place.geometry.location.lat(), place.geometry.location.lng());
                             console.log('Radius set to:', $('#sidebar-radius').val());
@@ -755,42 +787,43 @@
                 opacity: 0 !important;
             }
 
-            .checkbox-item input[type="checkbox"]:checked + .btn-checkbox {
+            .checkbox-item input[type="checkbox"]:checked+.btn-checkbox {
                 background-color: var(--ztc-bg-bg-3) !important;
                 border-color: var(--ztc-bg-bg-3) !important;
             }
 
-            .checkbox-item input[type="checkbox"]:checked + .btn-checkbox::after {
+            .checkbox-item input[type="checkbox"]:checked+.btn-checkbox::after {
                 content: '✓' !important;
                 color: white !important;
                 display: block !important;
                 text-align: center !important;
                 line-height: 14px !important;
             }
+
             /* Professional Card Design and Font Sizing */
             .property-boxarea {
                 border: 1px solid #e0e0e0;
                 border-radius: 12px;
                 overflow: hidden;
-                box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+                box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
                 transition: transform 0.3s ease, box-shadow 0.3s ease;
             }
-            
+
             .property-boxarea:hover {
                 transform: translateY(-5px);
-                box-shadow: 0 8px 24px rgba(0,0,0,0.12);
+                box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
             }
-            
+
             .property-boxarea .img1 img {
                 width: 100%;
                 height: 220px;
                 object-fit: cover;
             }
-            
+
             .property-boxarea .content-area {
                 padding: 16px;
             }
-            
+
             .property-boxarea .content-area a {
                 font-size: 16px !important;
                 font-weight: 600;
@@ -800,7 +833,7 @@
                 margin-bottom: 8px;
                 line-height: 1.4;
             }
-            
+
             .property-boxarea .content-area p {
                 font-size: 13px !important;
                 color: #7f8c8d;
@@ -808,33 +841,33 @@
                 display: flex;
                 align-items: center;
             }
-            
+
             .property-boxarea ul {
                 display: flex;
                 justify-content: space-between;
                 padding: 0;
                 margin: 12px 0;
             }
-            
+
             .property-boxarea ul li {
                 list-style: none;
                 font-size: 12px !important;
                 color: #34495e;
             }
-            
+
             .property-boxarea ul li a {
                 color: #34495e;
                 text-decoration: none;
                 display: flex;
                 align-items: center;
             }
-            
+
             .property-boxarea ul li img {
                 width: 14px;
                 height: 14px;
                 margin-right: 4px;
             }
-            
+
             .property-boxarea .nm-btn {
                 font-size: 14px !important;
                 font-weight: 700;
@@ -844,7 +877,7 @@
                 border-radius: 20px;
                 text-decoration: none;
             }
-            
+
             .property-boxarea .heart {
                 width: 36px;
                 height: 36px;
@@ -855,18 +888,18 @@
                 justify-content: center;
                 text-decoration: none;
             }
-            
+
             .property-boxarea .heart img {
                 width: 18px;
                 height: 18px;
             }
-            
+
             .btn-area {
                 display: flex;
                 justify-content: space-between;
                 align-items: center;
             }
-            
+
             /* Latest Properties Styling */
             .property-latest h3 {
                 font-size: 16px !important;
@@ -876,22 +909,22 @@
                 border-bottom: 2px solid #3498db;
                 padding-bottom: 8px;
             }
-            
+
             .latest-proprty {
                 background: #ffffff;
                 border: 1px solid #e0e0e0;
                 border-radius: 10px;
                 padding: 12px;
                 margin-bottom: 12px;
-                box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+                box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
                 transition: transform 0.2s ease, box-shadow 0.2s ease;
             }
-            
+
             .latest-proprty:hover {
                 transform: translateY(-2px);
-                box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+                box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
             }
-            
+
             .latest-proprty a {
                 font-size: 13px !important;
                 font-weight: 600;
@@ -901,12 +934,12 @@
                 margin-bottom: 8px;
                 line-height: 1.3;
             }
-            
+
             .latest-proprty ul {
                 padding: 0;
                 margin: 8px 0;
             }
-            
+
             .latest-proprty ul li {
                 font-size: 10px !important;
                 list-style: none;
@@ -914,69 +947,69 @@
                 margin-right: 12px;
                 color: #7f8c8d;
             }
-            
+
             .latest-proprty ul li img {
                 width: 12px;
                 height: 12px;
                 margin-right: 3px;
             }
-            
+
             .latest-proprty h5 {
                 font-size: 13px !important;
                 font-weight: 700;
                 color: #27ae60;
                 margin: 8px 0 0 0;
             }
-            
+
             .latest-proprty .img1 img {
                 border-radius: 8px;
-                box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+                box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
             }
-            
+
             /* Feature badges */
             .property-features .badge {
                 font-size: 10px !important;
                 padding: 4px 8px !important;
                 border-radius: 12px !important;
             }
-            
+
             /* Contact buttons */
             .contact-buttons {
                 display: flex;
                 gap: 4px;
             }
-            
+
             .contact-buttons .btn {
                 font-size: 10px !important;
                 padding: 4px 8px !important;
                 border-radius: 6px !important;
             }
-            
+
             /* List view improvements */
             .property-boxarea2 {
                 border: 1px solid #e0e0e0;
                 border-radius: 12px;
                 overflow: hidden;
-                box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+                box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
             }
-            
+
             .property-boxarea2 .content-area a {
                 font-size: 18px !important;
                 font-weight: 600;
             }
-            
+
             .property-boxarea2 p {
                 font-size: 14px !important;
             }
-            
+
             .property-boxarea2 ul li {
                 font-size: 13px !important;
             }
-            
+
             .property-boxarea2 .nm-btn {
                 font-size: 16px !important;
             }
-            
+
             /* Amenity item styling */
             .amenity-item {
                 padding: 8px !important;
@@ -985,7 +1018,7 @@
                 border-radius: 8px !important;
                 background-color: #f9f9f9 !important;
             }
-            
+
             .amenity-item label {
                 display: flex !important;
                 align-items: center !important;
@@ -994,14 +1027,14 @@
                 font-family: Arial, sans-serif !important;
                 font-size: 13px !important;
             }
-            
+
             .amenity-item input[type="checkbox"] {
                 width: 16px !important;
                 height: 16px !important;
                 margin-right: 6px !important;
                 flex-shrink: 0 !important;
             }
-            
+
             .amenity-item span {
                 color: #000 !important;
                 font-size: 13px !important;
@@ -1017,7 +1050,7 @@
                 script.defer = true;
                 document.head.appendChild(script);
             }
-            
+
             function initializeAutocomplete() {
                 // Initialize Google Places Autocomplete
                 const locationInput = document.getElementById('sidebar-location');
@@ -1034,7 +1067,7 @@
                         if (place.geometry) {
                             $('#sidebar-lat').val(place.geometry.location.lat());
                             $('#sidebar-lng').val(place.geometry.location.lng());
-                            
+
                             // If no radius is selected, set a default (e.g., 10 miles)
                             if (!$('#sidebar-radius').val()) {
                                 $('#sidebar-radius').val('10');
@@ -1043,7 +1076,7 @@
                                     $('#sidebar-radius').niceSelect('update');
                                 }
                             }
-                            
+
                             console.log('Location selected:', place.formatted_address);
                             console.log('Coordinates:', place.geometry.location.lat(), place.geometry.location.lng());
                             console.log('Radius set to:', $('#sidebar-radius').val());
@@ -1051,17 +1084,17 @@
                     });
                 }
             }
-            
+
             $(document).ready(function () {
                 // Initialize Google Maps API
                 loadGoogleMapsAPI();
-                
+
                 // Set default radius if coordinates are present but no radius is selected
                 var lat = $('#sidebar-lat').val();
                 var lng = $('#sidebar-lng').val();
                 var radius = $('#sidebar-radius').val();
                 var locationField = $('#sidebar-location');
-                
+
                 if ((lat && lng) && !radius) {
                     $('#sidebar-radius').val('10');
                     if ($.fn.niceSelect) {
@@ -1069,15 +1102,15 @@
                     }
                     console.log('Default radius set to 10 miles for coordinates:', lat, lng);
                 }
-                
+
                 // Populate location field based on coordinates if coordinates are present but location field is empty
                 if ((lat && lng) && !locationField.val()) {
                     // Check if Google Maps API is available
                     if (typeof google !== 'undefined' && google.maps && google.maps.Geocoder) {
                         var geocoder = new google.maps.Geocoder();
                         var latLng = new google.maps.LatLng(parseFloat(lat), parseFloat(lng));
-                        
-                        geocoder.geocode({'location': latLng}, function(results, status) {
+
+                        geocoder.geocode({ 'location': latLng }, function (results, status) {
                             if (status === 'OK' && results[0]) {
                                 // Extract a concise address from the result
                                 var address = results[0].formatted_address;
@@ -1092,7 +1125,7 @@
                         console.log('Google Maps API not loaded yet for reverse geocoding');
                     }
                 }
-                
+
                 // Re-initialize nice-select
                 if ($.fn.niceSelect) {
                     $('select.nice-select').niceSelect();

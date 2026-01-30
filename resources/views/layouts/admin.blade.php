@@ -9,11 +9,8 @@
     <title>{{ config('app.name', 'Laravel') }} - Admin</title>
 
     <!-- Fonts -->
-    <style>
-        body {
-            font-family: Helvetica, Arial, sans-serif !important;
-        }
-    </style>
+    <!-- Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
 
     <!-- DataTables CSS -->
@@ -42,15 +39,37 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
         :root {
-            --brand-blue: #02b8f2;
-            --brand-orange: rgb(255, 147, 30);
-            --brand-black: #000000;
-            --brand-white: #ffffff;
+            /* Propertyfinda Theme Colors */
+            --brand-primary: #1CD494;
+            /* Teal Green */
+            --brand-secondary: #073B3A;
+            /* Dark Green */
+            --brand-accent: #FCC608;
+            /* Yellow/Gold */
+            --brand-dark: #2E2E2E;
+            /* Dark Grey */
+
+            --brand-blue: var(--brand-primary);
+            /* Map to primary for existing classes */
+            --brand-orange: var(--brand-accent);
+            /* Map to accent for existing classes */
         }
 
         body {
-            font-family: 'Plus Jakarta Sans', sans-serif;
-            background-color: #fcfcfc;
+            font-family: 'Inter', sans-serif !important;
+            background-color: #f8f9fa;
+        }
+
+        /* Override Selection Color */
+        ::selection {
+            background: var(--brand-primary);
+            color: #fff;
+        }
+
+        /* Sidebar Styling */
+        aside {
+            background-color: #fff;
+            border-right: 1px solid rgba(0, 0, 0, 0.05);
         }
 
         /* Sidebar Scrollbar Hide */
@@ -65,22 +84,111 @@
             scrollbar-width: none;
         }
 
+        .active-link {
+            background: linear-gradient(135deg, var(--brand-primary) 0%, #15a875 100%) !important;
+            color: white !important;
+            box-shadow: 0 4px 15px rgba(28, 212, 148, 0.3) !important;
+        }
+
+        /* Hover effects for sidebar links */
+        nav a:hover:not(.active-link) {
+            color: var(--brand-primary);
+            background-color: rgba(28, 212, 148, 0.05);
+        }
+
+        /* Glass Header */
         .glass-header {
-            background-color: rgba(255, 255, 255, 0.85);
-            backdrop-filter: blur(15px);
+            background-color: rgba(255, 255, 255, 0.9);
+            backdrop-filter: blur(10px);
             border-bottom: 1px solid rgba(0, 0, 0, 0.05);
             position: sticky;
             top: 0;
             z-index: 30;
         }
 
+        /* Buttons */
+        .btn-brand {
+            background-color: var(--brand-primary);
+            color: white;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .btn-brand:hover {
+            background-color: #15a875;
+            /* Darker shade of teal */
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(28, 212, 148, 0.3);
+        }
+
+        .btn-accent {
+            background-color: var(--brand-dark);
+            color: white;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .btn-accent:hover {
+            background-color: black;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        /* Card Styling to look more premium */
+        main .bg-white {
+            border-radius: 1rem;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.02), 0 2px 4px -1px rgba(0, 0, 0, 0.02);
+            border: 1px solid rgba(0, 0, 0, 0.03);
+        }
+
+        /* Table enhancements */
+        table.dataTable {
+            border-collapse: separate;
+            border-spacing: 0;
+        }
+
+        table.dataTable thead th {
+            background-color: #f8fafc;
+            color: #475569;
+            font-weight: 600;
+            text-transform: uppercase;
+            font-size: 0.75rem;
+            letter-spacing: 0.05em;
+            border-bottom: 1px solid #e2e8f0 !important;
+            padding: 1rem !important;
+        }
+
+        table.dataTable tbody td {
+            padding: 1rem !important;
+            border-bottom: 1px solid #f1f5f9;
+        }
+
+        table.dataTable tbody tr:hover {
+            background-color: #f0fdf9 !important;
+            /* Very light teal bg on hover */
+        }
+
+        /* DataTables Customization */
+        .dataTables_wrapper .dataTables_length select {
+            border-radius: 0.5rem;
+            border-color: #e2e8f0;
+            padding: 0.5rem 2rem 0.5rem 1rem;
+        }
+
+        .dataTables_wrapper .dataTables_filter input {
+            border-radius: 2rem;
+            border-color: #e2e8f0;
+            padding: 0.5rem 1.5rem;
+            margin-left: 0.75rem;
+            background: white;
+            box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+        }
+
         /* Google Maps Autocomplete Suggestion Box */
         .pac-container {
-            border-radius: 1.25rem !important;
+            border-radius: 1rem !important;
             border: none !important;
             margin-top: 8px !important;
-            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.12) !important;
-            font-family: 'Plus Jakarta Sans', sans-serif !important;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1) !important;
+            font-family: 'Inter', sans-serif !important;
             padding: 10px !important;
             background: white !important;
             z-index: 9999 !important;
@@ -92,33 +200,48 @@
             color: #444 !important;
             border-top: 1px solid #f8f8f8 !important;
             cursor: pointer !important;
-            transition: all 0.3s ease !important;
+            transition: all 0.2s ease !important;
             display: flex !important;
             align-items: center !important;
         }
 
-        .pac-item:first-child {
-            border-top: none !important;
+        .pac-item:hover {
+            background: #f0fdf9 !important;
+            color: var(--brand-primary) !important;
+            border-radius: 0.5rem !important;
         }
 
-        .pac-item:hover {
-            background: #f0faff !important;
-            color: var(--brand-blue) !important;
-            border-radius: 0.75rem !important;
+        .pac-matched {
+            color: var(--brand-primary) !important;
         }
 
         .pac-icon {
             display: none !important;
         }
 
-        .pac-item-query {
-            font-size: 15px !important;
-            font-weight: 600 !important;
-            color: #111 !important;
+        /* Badge Colors mapping */
+        .text-\[\#02b8f2\] {
+            color: var(--brand-primary) !important;
         }
 
-        .pac-matched {
-            color: var(--brand-blue) !important;
+        .hover\:text-\[\#02b8f2\]:hover {
+            color: var(--brand-primary) !important;
+        }
+
+        .bg-blue-50\/50 {
+            background-color: rgba(28, 212, 148, 0.08) !important;
+        }
+
+        .text-\[\#ff931e\] {
+            color: var(--brand-dark) !important;
+        }
+
+        .hover\:text-\[\#ff931e\]:hover {
+            color: var(--brand-dark) !important;
+        }
+
+        .bg-orange-50\/50 {
+            background-color: rgba(46, 46, 46, 0.05) !important;
         }
 
         /* General Premium Curves */
@@ -128,55 +251,6 @@
 
         .shadow-premium {
             box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
-        }
-
-        /* Active Sidebar Link Color */
-        .active-link {
-            background: #ff931e !important;
-            color: white !important;
-            box-shadow: 0 8px 15px rgba(2, 184, 242, 0.3) !important;
-        }
-
-        /* DataTables Customization */
-        .dataTables_wrapper .dataTables_length select {
-            border-radius: 0.75rem;
-            border-color: #f1f1f1;
-            padding: 0.5rem 2.5rem 0.5rem 1rem;
-        }
-
-        .dataTables_wrapper .dataTables_filter input {
-            border-radius: 2rem;
-            border-color: #f1f1f1;
-            padding: 0.6rem 1.5rem;
-            margin-left: 0.75rem;
-            background: #f9f9f9;
-        }
-
-        table.dataTable.no-footer {
-            border-bottom: 1px solid #f1f1f1;
-        }
-
-        .btn-brand {
-            background-color: var(--brand-blue);
-            color: white;
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-        }
-
-        .btn-brand:hover {
-            background-color: #019ad1;
-            transform: translateY(-2px);
-            box-shadow: 0 10px 20px rgba(2, 184, 242, 0.2);
-        }
-
-        .btn-accent {
-            background-color: var(--brand-orange);
-            color: white;
-        }
-
-        .btn-accent:hover {
-            background-color: rgb(255, 130, 10);
-            transform: translateY(-2px);
-            box-shadow: 0 10px 20px rgba(255, 147, 30, 0.2);
         }
     </style>
 </head>
@@ -234,7 +308,7 @@
 
                 <!-- Asset Setup -->
                 <div class="mb-2"
-                    x-data="{ open: {{ request()->routeIs('admin.property-types.*', 'admin.unit-types.*', 'admin.features.*') ? 'true' : 'false' }} }">
+                    x-data="{ open: {{ request()->routeIs('admin.property-types.*', 'admin.unit-types.*', 'admin.features.*', 'admin.property-locations.*', 'admin.mortgage-settings.*') ? 'true' : 'false' }} }">
                     <button @click="open = !open"
                         class="w-full flex items-center justify-between px-4 py-3 rounded-2xl text-slate-400 hover:text-black hover:bg-slate-50 transition-all duration-300">
                         <div class="flex items-center">
@@ -248,6 +322,10 @@
                         <a href="{{ route('admin.property-types.index') }}"
                             class="flex items-center px-4 py-2.5 rounded-xl text-[11px] font-bold text-slate-500 hover:text-[#ff931e] transition-all {{ request()->routeIs('admin.property-types.*') ? 'text-[#ff931e] bg-orange-50/50' : '' }}">
                             Property Categories
+                        </a>
+                        <a href="{{ route('admin.mortgage-settings.index') }}"
+                            class="flex items-center px-4 py-2.5 rounded-xl text-[11px] font-bold text-slate-500 hover:text-[#ff931e] transition-all {{ request()->routeIs('admin.mortgage-settings.*') ? 'text-[#ff931e] bg-orange-50/50' : '' }}">
+                            Mortgage Setup
                         </a>
                         <a href="{{ route('admin.unit-types.index') }}"
                             class="flex items-center px-4 py-2.5 rounded-xl text-[11px] font-bold text-slate-500 hover:text-[#ff931e] transition-all {{ request()->routeIs('admin.unit-types.*') ? 'text-[#ff931e] bg-orange-50/50' : '' }}">
@@ -268,6 +346,10 @@
                         <a href="{{ route('admin.features.index') }}"
                             class="flex items-center px-4 py-2.5 rounded-xl text-[11px] font-bold text-slate-500 hover:text-[#ff931e] transition-all {{ request()->routeIs('admin.features.*') ? 'text-[#ff931e] bg-orange-50/50' : '' }}">
                             Amenity Tags
+                        </a>
+                        <a href="{{ route('admin.property-locations.index') }}"
+                            class="flex items-center px-4 py-2.5 rounded-xl text-[11px] font-bold text-slate-500 hover:text-[#ff931e] transition-all {{ request()->routeIs('admin.property-locations.*') ? 'text-[#ff931e] bg-orange-50/50' : '' }}">
+                            Property Locations
                         </a>
                     </div>
                 </div>
@@ -351,7 +433,7 @@
                     </h2>
                 </div>
                 <div class="flex items-center gap-4">
-                    <a href="{{ route('dashboard') }}"
+                    <a href="{{ route(name: 'home') }}"
                         class="text-sm font-medium text-slate-600 hover:text-indigo-600 transition-colors flex items-center gap-1">
                         <i class='bx bx-link-external'></i> View Site
                     </a>

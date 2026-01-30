@@ -12,7 +12,42 @@ Route::get('/', function () {
     // Get purpose from query parameter or default to 'Buy' (For Sale) since the 'For Sale' tab is active by default
     $purpose = request('purpose', 'Buy');
     $listings = \App\Models\Listing::with('features', 'user')->where('status', 'approved')->where('purpose', $purpose)->latest()->take(6)->get();
-    return view('home', compact('features', 'listings'));
+
+    // Fetch property locations with approved listing count
+    $propertyLocations = \App\Models\PropertyLocation::all()->map(function ($location) {
+        $count = 0;
+        if ($location->latitude && $location->longitude) {
+            // Use 10 mile radius as "near" default
+            $lat = $location->latitude;
+            $lng = $location->longitude;
+            $radius = 10;
+
+            $count = \App\Models\Listing::where('status', 'approved')
+                ->whereRaw("( 3959 * acos( cos( radians(?) ) * cos( radians( latitude ) ) * cos( radians( longitude ) - radians(?) ) + sin( radians(?) ) * sin( radians( latitude ) ) ) ) < ?", [$lat, $lng, $lat, $radius])
+                ->count();
+        } else {
+            // Fallback to strict address match if lat/lng missing? Or just 0.
+            // Given user request "us lat or lang me jo jo SELECT * FROM `listings` ... aa rahi hen", 
+            // relying on lat/lng is main requirement.
+            // If name matches address?
+            $count = \App\Models\Listing::where('status', 'approved')
+                ->where('address', 'like', '%' . $location->address . '%')
+                ->count();
+        }
+        $location->listing_count = $count;
+        return $location;
+    });
+
+    $featuredSellListings = \App\Models\Listing::with('features', 'user')
+        ->whereIn('status', ['approved', 'pending'])
+        ->where('purpose', 'Buy')
+        ->whereNotNull('old_price')
+        ->where('old_price', '>', 0)
+        ->latest()
+        ->take(6)
+        ->get();
+
+    return view('home', compact('features', 'listings', 'propertyLocations', 'featuredSellListings'));
 })->name('home');
 
 Route::get('/off-market-listings', [\App\Http\Controllers\OffMarketListingController::class, 'index'])->name('off-market-listings.index');
@@ -41,7 +76,7 @@ Route::get('/referral', [\App\Http\Controllers\Auth\RegisteredUserController::cl
 
 
 Route::get('/dashboard', function () {
-    return view('dashboard');
+    return view('admin/dashboard');
 })->middleware(['auth', 'verified'])->name('dashboard');
 
 Route::middleware('auth')->group(function () {
@@ -59,6 +94,7 @@ Route::middleware('auth')->group(function () {
         Route::resource('ownership-statuses', \App\Http\Controllers\Admin\AdminOwnershipStatusController::class);
         Route::resource('rent-frequencies', \App\Http\Controllers\Admin\AdminRentFrequencyController::class);
         Route::resource('cheques', \App\Http\Controllers\Admin\AdminChequeController::class);
+        Route::resource('property-locations', \App\Http\Controllers\Admin\AdminPropertyLocationController::class);
         Route::resource('listings', \App\Http\Controllers\Admin\AdminListingController::class);
         Route::post('listings/bulk-action', [\App\Http\Controllers\Admin\AdminListingController::class, 'bulkAction'])->name('listings.bulk-action');
         Route::post('listings/{listing}/status', [\App\Http\Controllers\Admin\AdminListingController::class, 'updateStatus'])->name('listings.update-status');
@@ -66,7 +102,8 @@ Route::middleware('auth')->group(function () {
         Route::post('off-market-listings/bulk-action', [\App\Http\Controllers\Admin\AdminOffMarketListingController::class, 'bulkAction'])->name('off-market-listings.bulk-action');
         Route::post('off-market-listings/{listing}/status', [\App\Http\Controllers\Admin\AdminOffMarketListingController::class, 'updateStatus'])->name('off-market-listings.update-status');
         Route::resource('affiliates', \App\Http\Controllers\Admin\AdminAffiliateController::class);
-        
+        Route::resource('mortgage-settings', \App\Http\Controllers\Admin\MortgageSettingController::class)->only(['index', 'update']);
+
         // Blog, Service, and Contact routes
         Route::resource('blogs', BlogController::class);
         Route::resource('services', ServiceController::class);

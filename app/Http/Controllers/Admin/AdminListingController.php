@@ -18,44 +18,44 @@ class AdminListingController extends Controller
     {
         if ($request->ajax()) {
             $query = \App\Models\Listing::with(['user', 'propertyType', 'unitType', 'features']);
-            
+
             // Apply filters if provided
             if ($request->has('filters')) {
                 $filters = $request->get('filters');
-                
+
                 if (!empty($filters['property_title'])) {
                     $query->where('property_title', 'like', '%' . $filters['property_title'] . '%');
                 }
-                
+
                 if (!empty($filters['property_type_id'])) {
                     $query->where('property_type_id', $filters['property_type_id']);
                 }
-                
+
                 if (!empty($filters['purpose'])) {
                     $query->where('purpose', $filters['purpose']);
                 }
-                
+
                 if (!empty($filters['status'])) {
                     $query->where('status', $filters['status']);
                 }
-                
+
                 if (!empty($filters['min_price'])) {
                     $query->where('price', '>=', $filters['min_price']);
                 }
-                
+
                 if (!empty($filters['max_price'])) {
                     $query->where('price', '<=', $filters['max_price']);
                 }
-                
+
                 if (!empty($filters['bedrooms'])) {
                     $query->where('bedrooms', '>=', $filters['bedrooms']);
                 }
-                
+
                 if (!empty($filters['bathrooms'])) {
                     $query->where('bathrooms', '>=', $filters['bathrooms']);
                 }
             }
-            
+
             $listings = $query->latest()->get();
             return response()->json(['data' => $listings]);
         }
@@ -81,6 +81,7 @@ class AdminListingController extends Controller
             'description' => 'required|string',
             'purpose' => 'required|in:Rent,Buy',
             'price' => 'required|numeric',
+            'old_price' => 'nullable|numeric',
             'area_size' => 'required|string',
             'bedrooms' => 'required|integer|min:0|max:100',
             'bathrooms' => 'required|integer|min:0|max:100',
@@ -149,6 +150,7 @@ class AdminListingController extends Controller
             'description' => 'required|string',
             'purpose' => 'required|in:Rent,Buy',
             'price' => 'required|numeric',
+            'old_price' => 'nullable|numeric',
             'area_size' => 'required|string',
             'bedrooms' => 'required|integer|min:0|max:100',
             'bathrooms' => 'required|integer|min:0|max:100',
@@ -177,13 +179,13 @@ class AdminListingController extends Controller
 
         // Handle gallery updates - replace existing images with new ones
         $galleryPaths = [];
-        
+
         // Debug: Log remove_gallery data
         if ($request->has('remove_gallery')) {
             Log::info('remove_gallery data: ', $request->remove_gallery);
             Log::info('Original gallery paths: ', $listing->gallery ?? []);
         }
-        
+
         // If new images are uploaded, replace all existing images
         if ($request->hasFile('gallery')) {
             foreach ($request->file('gallery') as $file) {
@@ -193,14 +195,14 @@ class AdminListingController extends Controller
         } else {
             // If no new images are uploaded, keep existing images (minus removed ones)
             $galleryPaths = $listing->gallery ?? [];
-            
+
             // Remove images marked for deletion
             if ($request->has('remove_gallery')) {
                 $galleryPaths = array_diff($galleryPaths, $request->remove_gallery);
                 Log::info('Gallery paths after removal: ', $galleryPaths);
             }
         }
-        
+
         $validated['gallery'] = array_values($galleryPaths);
 
         $listing->update($validated);
