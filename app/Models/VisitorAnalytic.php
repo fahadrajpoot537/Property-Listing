@@ -12,6 +12,7 @@ class VisitorAnalytic extends Model
     protected $fillable = [
         'ip_address',
         'user_id',
+        'affiliate_id',
         'url',
         'method',
         'user_agent',
@@ -25,5 +26,10 @@ class VisitorAnalytic extends Model
     public function user()
     {
         return $this->belongsTo(User::class);
+    }
+
+    public function affiliate()
+    {
+        return $this->belongsTo(Affiliate::class);
     }
 }

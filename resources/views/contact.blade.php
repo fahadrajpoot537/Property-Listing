@@ -1,145 +1,181 @@
-@extends('layouts.master')
+@extends('layouts.modern')
 
-@section('title', 'Contact Us')
+@section('title', 'Contact Us | PropertyFinda')
 
 @section('content')
-    <!--===== PAGE HERO AREA STARTS =======-->
-    <div class="common-hero-section-area sp1" style="background-color: #f4f5f7; position: relative;">
-        <div class="container">
-            <div class="row">
-                <div class="col-lg-8 mx-auto my-5">
-                    <div class="common-hero-content text-center">
-                        <h1 class="text-dark text-anime-style-3">Contact Us</h1>
-                        <div class="space16"></div>
-                        <ul class="page-list text-dark d-flex justify-content-center align-items-center"
-                            style="list-style: none; padding: 0;">
-                            <li class="px-1"><a href="{{ url('/') }}" class="text-dark"
-                                    style="text-decoration: none;">Home</a></li>
-                            <li class="px-1 text-dark">/</li>
-                            <li class="px-1" style="color: #1CD494;">Contact Us</li>
-                        </ul>
-                    </div>
-                </div>
+    <!-- Portal Hero Search Section (Reused Style) -->
+    <div class="relative bg-primary overflow-visible">
+        <div class="absolute inset-0 z-0">
+            <img src="{{ asset('assets/img/all-images/hero/1.jpg') }}"
+                class="w-full h-full object-cover opacity-40 mix-blend-overlay" alt="Background">
+            <div class="absolute inset-0 bg-primary/80 mix-blend-multiply"></div>
+        </div>
+
+        <div class="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 md:py-24">
+            <div class="text-center">
+                <h1 class="text-3xl md:text-6xl font-extrabold text-white mb-4 tracking-tight">Get in touch</h1>
+                <p class="text-xl text-gray-300 font-medium">We're here to help you find your happy place</p>
             </div>
         </div>
     </div>
-    <!--===== PAGE HERO AREA ENDS =======-->
 
-    <!--===== CONTACT AREA STARTS =======-->
-    <div class="contact-main-section-area" style="padding-top: 40px; padding-bottom: 80px;">
-        <div class="container">
-            <div class="row justify-content-center">
-                <div class="col-lg-5">
-                    <div class="contact-info-box-area">
-                        <div class="heading1">
-                            <h5>Contact Info</h5>
-                            <div class="space16"></div>
-                            <h2>Get In Touch With Us</h2>
-                            <div class="space16"></div>
-                            <p>We are here to help you. Reach out to us via any of the following channels.</p>
+    <!-- Contact Content Section -->
+    <section class="py-20 bg-gray-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="grid lg:grid-cols-3 gap-8 items-start">
+
+                <!-- Contact Info Cards (Home Category Style) -->
+                <div class="lg:col-span-1 space-y-6">
+                    <div
+                        class="flex flex-col items-center p-8 bg-white rounded-2xl shadow-sm border border-gray-100 hover:border-secondary hover:shadow-xl hover:shadow-secondary/5 transition-all group">
+                        <div
+                            class="w-16 h-16 bg-gray-50 rounded-2xl flex items-center justify-center text-primary group-hover:bg-secondary group-hover:text-white transition-colors mb-4">
+                            <i class="fa-solid fa-envelope text-2xl"></i>
                         </div>
-                        <div class="space32"></div>
-
-                        <div class="contact-info-list">
-                            <div class="single-info-box d-flex align-items-center mb-4">
-                                <div class="icon-box"
-                                    style="width: 50px; height: 50px; display: flex; align-items: center; justify-content: center; background: #eef2f6; border-radius: 50%; color: #000; margin-right: 20px;">
-                                    <i class="fa-solid fa-envelope fa-lg"></i>
-                                </div>
-                                <div class="content">
-                                    <p class="mb-1 text-muted">Email address</p>
-                                    <h6 class="m-0 font-weight-bold">findauk@gmail.com</h6>
-                                </div>
-                            </div>
-
-                            <div class="single-info-box d-flex align-items-center mb-4">
-                                <div class="icon-box"
-                                    style="width: 50px; height: 50px; display: flex; align-items: center; justify-content: center; background: #eef2f6; border-radius: 50%; color: #000; margin-right: 20px;">
-                                    <i class="fa-solid fa-phone fa-lg"></i>
-                                </div>
-                                <div class="content">
-                                    <p class="mb-1 text-muted">Phone Number</p>
-                                    <h6 class="m-0 font-weight-bold">(234) 345-4574</h6>
-                                </div>
-                            </div>
-
-                            <div class="single-info-box d-flex align-items-center">
-                                <div class="icon-box"
-                                    style="width: 50px; height: 50px; display: flex; align-items: center; justify-content: center; background: #eef2f6; border-radius: 50%; color: #000; margin-right: 20px;">
-                                    <i class="fa-solid fa-location-dot fa-lg"></i>
-                                </div>
-                                <div class="content">
-                                    <p class="mb-1 text-muted">Office Address</p>
-                                    <h6 class="m-0 font-weight-bold">123 Business Street, London, UK</h6>
-                                </div>
-                            </div>
-                        </div>
+                        <span class="text-xs font-bold text-gray-400 uppercase tracking-widest mb-1">Email us</span>
+                        <span class="font-bold text-gray-800 text-lg">info@propertyfinda.co.uk</span>
                     </div>
+
+                    <div
+                        class="flex flex-col items-center p-8 bg-white rounded-2xl shadow-sm border border-gray-100 hover:border-secondary hover:shadow-xl hover:shadow-secondary/5 transition-all group">
+                        <div
+                            class="w-16 h-16 bg-gray-50 rounded-2xl flex items-center justify-center text-primary group-hover:bg-secondary group-hover:text-white transition-colors mb-4">
+                            <i class="fa-solid fa-location-dot text-2xl"></i>
+                        </div>
+                        <span class="text-xs font-bold text-gray-400 uppercase tracking-widest mb-1">Visit us</span>
+                        <span class="font-bold text-gray-800 text-lg text-center">5-7 High Street, London, England, E13
+                            0AD</span>
+                    </div>
+                    <div id="map" style="
+                                        width:100%;
+                                        height:165px;
+                                        border-radius:15px;
+                                        box-shadow: 0 8px 25px rgba(128, 70, 241, 0.45);
+                                    ">
+                    </div>
+
                 </div>
 
-                <div class="col-lg-7">
-                    <div class="contact-form-box-area bg-white p-5 rounded shadow-sm border">
-                        <div class="heading1 mb-4">
-                            <h2>Send us a Message</h2>
-                        </div>
+                <!-- Contact Form (Search Box Inspired Style) -->
+                <div class="lg:col-span-2">
+                    <div class="bg-white rounded-2xl shadow-2xl p-8 md:p-12 border border-gray-100">
+                        <h2 class="text-2xl font-extrabold text-primary mb-8 tracking-tight">Send us a message</h2>
+
                         <form action="{{ route('contact.store') }}" method="POST">
                             @csrf
-                            <div class="row">
-                                <div class="col-lg-6">
-                                    <div class="input-area mb-3">
-                                        <label class="form-label font-weight-bold">Your Name</label>
-                                        <input type="text" name="name" class="form-control p-3 bg-light border-0"
-                                            placeholder="John Doe" required>
-                                    </div>
+                            <div class="grid md:grid-cols-2 gap-6 mb-6">
+                                <div class="space-y-2">
+                                    <label class="text-sm font-bold text-gray-700">Full Name</label>
+                                    <input type="text" name="name" required placeholder="Your name"
+                                        class="w-full px-5 py-3.5 bg-gray-50 border border-gray-200 rounded-xl focus:bg-white focus:ring-4 focus:ring-secondary/10 focus:border-secondary transition-all outline-none font-medium text-gray-900">
                                 </div>
-                                <div class="col-lg-6">
-                                    <div class="input-area mb-3">
-                                        <label class="form-label font-weight-bold">Phone Number</label>
-                                        <input type="tel" name="phone" class="form-control p-3 bg-light border-0"
-                                            placeholder="+1 (123) 456-7890">
-                                    </div>
-                                </div>
-                                <div class="col-lg-6">
-                                    <div class="input-area mb-3">
-                                        <label class="form-label font-weight-bold">Email Address</label>
-                                        <input type="email" name="email" class="form-control p-3 bg-light border-0"
-                                            placeholder="example@gmail.com" required>
-                                    </div>
-                                </div>
-                                <div class="col-lg-6">
-                                    <div class="input-area mb-3">
-                                        <label class="form-label font-weight-bold">Subject</label>
-                                        <input type="text" name="subject" class="form-control p-3 bg-light border-0"
-                                            placeholder="How can we help?">
-                                    </div>
-                                </div>
-                                <div class="col-lg-12">
-                                    <div class="input-area mb-3">
-                                        <label class="form-label font-weight-bold">Message</label>
-                                        <textarea name="message" rows="5" class="form-control p-3 bg-light border-0"
-                                            placeholder="Write your message here..." required></textarea>
-                                    </div>
-                                </div>
-                                <div class="col-lg-12">
-                                    <div class="space24"></div>
-                                    <button type="submit" class="theme-btn1 w-100">Send Message <span><i
-                                                class="fa-solid fa-paper-plane"></i></span></button>
+                                <div class="space-y-2">
+                                    <label class="text-sm font-bold text-gray-700">Email Address</label>
+                                    <input type="email" name="email" required placeholder="your@email.com"
+                                        class="w-full px-5 py-3.5 bg-gray-50 border border-gray-200 rounded-xl focus:bg-white focus:ring-4 focus:ring-secondary/10 focus:border-secondary transition-all outline-none font-medium text-gray-900">
                                 </div>
                             </div>
+
+                            <div class="grid md:grid-cols-2 gap-6 mb-6">
+                                <div class="space-y-2">
+                                    <label class="text-sm font-bold text-gray-700">Phone Number</label>
+                                    <input type="tel" name="phone" placeholder="+44"
+                                        class="w-full px-5 py-3.5 bg-gray-50 border border-gray-200 rounded-xl focus:bg-white focus:ring-4 focus:ring-secondary/10 focus:border-secondary transition-all outline-none font-medium text-gray-900">
+                                </div>
+                                <div class="space-y-2">
+                                    <label class="text-sm font-bold text-gray-700">Subject</label>
+                                    <input type="text" name="subject" required placeholder="How can we help?"
+                                        class="w-full px-5 py-3.5 bg-gray-50 border border-gray-200 rounded-xl focus:bg-white focus:ring-4 focus:ring-secondary/10 focus:border-secondary transition-all outline-none font-medium text-gray-900">
+                                </div>
+                            </div>
+
+                            <div class="space-y-2 mb-8">
+                                <label class="text-sm font-bold text-gray-700">Message</label>
+                                <textarea name="message" rows="5" required placeholder="Tell us more about your inquiry..."
+                                    class="w-full px-5 py-3.5 bg-gray-50 border border-gray-200 rounded-xl focus:bg-white focus:ring-4 focus:ring-secondary/10 focus:border-secondary transition-all outline-none font-medium text-gray-900 resize-none"></textarea>
+                            </div>
+
+                            <button type="submit"
+                                class="w-full md:w-auto px-12 py-4 bg-secondary hover:bg-secondary-dark text-white font-extrabold text-lg rounded-xl shadow-lg shadow-secondary/20 transition-all transform hover:-translate-y-0.5 flex items-center justify-center gap-2">
+                                Send Message <i class="fa-solid fa-paper-plane text-sm"></i>
+                            </button>
                         </form>
                     </div>
                 </div>
             </div>
         </div>
-    </div>
-    <!--===== CONTACT AREA ENDS =======-->
+    </section>
 
-    <!--===== MAP AREA STARTS =======-->
-    <div class="map-section-area">
-        <iframe
-            src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d158857.7281066703!2d-0.24168144921176335!3d51.5287718408761!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x47d8a00baf21de75%3A0x52963a5addd52a99!2sLondon%2C%20UK!5e0!3m2!1sen!2sbd!4v1687258066558!5m2!1sen!2sbd"
-            width="100%" height="450" style="border:0;" allowfullscreen="" loading="lazy"
-            referrerpolicy="no-referrer-when-downgrade"></iframe>
-    </div>
-    <!--===== MAP AREA ENDS =======-->
+    <!-- Map Section -->
+
+    <script>
+        function initMap() {
+            const location = { lat: 51.531156, lng: 0.017096 };
+
+            // Check if google is defined (it should be from the layout)
+            if (typeof google === 'undefined') {
+                console.error("Google Maps API not loaded");
+                return;
+            }
+
+            const map = new google.maps.Map(document.getElementById("map"), {
+                zoom: 16,
+                center: location,
+                styles: [
+                    {
+                        elementType: "geometry",
+                        stylers: [{ color: "#ffffff" }]
+                    },
+                    {
+                        elementType: "labels.text.fill",
+                        stylers: [{ color: "#000000" }]
+                    },
+                    {
+                        elementType: "labels.text.stroke",
+                        stylers: [{ color: "#ffffff" }]
+                    },
+                    {
+                        featureType: "road",
+                        elementType: "geometry",
+                        stylers: [{ color: "#474242ff" }]
+                    },
+                    {
+                        featureType: "road",
+                        elementType: "labels.text.fill",
+                        stylers: [{ color: "#000000" }]
+                    },
+                    {
+                        featureType: "poi",
+                        stylers: [{ visibility: "off" }]
+                    },
+                    {
+                        featureType: "transit",
+                        stylers: [{ visibility: "off" }]
+                    },
+                    {
+                        featureType: "water",
+                        elementType: "geometry",
+                        stylers: [{ color: "#ffffff" }]
+                    }
+                ]
+            });
+
+            new google.maps.Marker({
+                position: location,
+                map: map
+            });
+        }
+
+        // Wait for the Google Maps API key from the layout to load
+        window.addEventListener('load', function () {
+            // Helper to check if API is ready
+            const checkGoogle = setInterval(function () {
+                if (typeof google !== 'undefined' && typeof google.maps !== 'undefined') {
+                    clearInterval(checkGoogle);
+                    initMap();
+                }
+            }, 100);
+        });
+    </script>
+
 @endsection

@@ -30,6 +30,7 @@ class BlogController extends Controller
         ]);
 
         $data = $request->only(['title', 'content', 'author']);
+        $data['slug'] = \Illuminate\Support\Str::slug($request->title);
 
         if ($request->hasFile('image')) {
             $imagePath = $request->file('image')->store('blogs', 'public');
@@ -62,13 +63,14 @@ class BlogController extends Controller
         ]);
 
         $data = $request->only(['title', 'content', 'author']);
+        $data['slug'] = \Illuminate\Support\Str::slug($request->title);
 
         if ($request->hasFile('image')) {
             // Delete old image
             if ($blog->image) {
                 Storage::disk('public')->delete($blog->image);
             }
-            
+
             $imagePath = $request->file('image')->store('blogs', 'public');
             $data['image'] = $imagePath;
         }
@@ -83,15 +85,31 @@ class BlogController extends Controller
         if ($blog->image) {
             Storage::disk('public')->delete($blog->image);
         }
-        
+
         $blog->delete();
 
         return redirect()->route('admin.blogs.index')->with('success', 'Blog deleted successfully.');
     }
 
-    public function list()
+    public function list(Request $request)
     {
-        $blogs = Blog::orderBy('created_at', 'desc')->paginate(9);
+        $query = Blog::query();
+
+        if ($request->has('search') && $request->search != '') {
+            $search = $request->search;
+            $query->where(function ($q) use ($search) {
+                $q->where('title', 'like', "%{$search}%")
+                    ->orWhere('content', 'like', "%{$search}%")
+                    ->orWhere('author', 'like', "%{$search}%");
+            });
+        }
+
+        $blogs = $query->orderBy('created_at', 'desc')->paginate(9);
+
+        if ($request->ajax()) {
+            return view('partials.blog_list', compact('blogs'))->render();
+        }
+
         return view('blog-grid', compact('blogs'));
     }
 }

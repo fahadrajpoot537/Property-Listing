@@ -20,24 +20,28 @@ class OffMarketListingController extends Controller
         if ($request->filled('lat') && $request->filled('lng')) {
             $lat = $request->lat;
             $lng = $request->lng;
-            
-            // Use provided radius or default to 2 miles if not specified (more precise for postal codes)
-            $radius = $request->filled('radius') && $request->radius != '' ? $request->radius : 2;
-            
-            $query->whereRaw("( 3959 * acos( cos( radians(?) ) * cos( radians( latitude ) ) * cos( radians( longitude ) - radians(?) ) + sin( radians(?) ) * sin( radians( latitude ) ) ) ) < ?", [$lat, $lng, $lat, $radius]);
+
+            // Use provided radius or default to 2 miles if not specified
+            $radius = $request->filled('radius') && $request->radius != '' ? (float) $request->radius : 2;
+
+            // Ensure a minimum small radius to capture properties at the exact location
+            if ($radius <= 0)
+                $radius = 0.1;
+
+            $query->whereRaw("( 3959 * acos( cos( radians(?) ) * cos( radians( latitude ) ) * cos( radians( longitude ) - radians(?) ) + sin( radians(?) ) * sin( radians( latitude ) ) ) ) <= ?", [$lat, $lng, $lat, $radius]);
         } elseif ($request->filled('location') && $request->filled('radius') && $request->radius != '') {
             // If location name and radius are provided but no coordinates, try to geocode the location
             $location = $request->location;
             $radius = $request->radius;
-            
+
             // Attempt to geocode the location to get coordinates for radius search
             $coordinates = $this->geocodeAddress($location);
-            
+
             if ($coordinates) {
                 $lat = $coordinates['lat'];
                 $lng = $coordinates['lng'];
-                
-                $query->whereRaw("( 3959 * acos( cos( radians(?) ) * cos( radians( latitude ) ) * cos( radians( longitude ) - radians(?) ) + sin( radians(?) ) * sin( radians( latitude ) ) ) ) < ?", [$lat, $lng, $lat, $radius]);
+
+                $query->whereRaw("( 3959 * acos( cos( radians(?) ) * cos( radians( latitude ) ) * cos( radians( longitude ) - radians(?) ) + sin( radians(?) ) * sin( radians( latitude ) ) ) ) <= ?", [$lat, $lng, $lat, (float) $radius]);
             } else {
                 // Fallback to basic location search if geocoding fails
                 $query->where('address', 'like', '%' . $location . '%');
@@ -131,40 +135,48 @@ class OffMarketListingController extends Controller
             ->get();
 
         // Check if there are search parameters to determine which view to return
-        $hasSearchParams = $request->filled('location') || 
-                          $request->filled('purpose') || 
-                          $request->filled('property_type_id') || 
-                          $request->filled('unit_type_id') || 
-                          $request->filled('min_price') || 
-                          $request->filled('max_price') || 
-                          $request->filled('min_size') || 
-                          $request->filled('max_size') || 
-                          $request->filled('min_bedrooms') || 
-                          $request->filled('min_bathrooms') || 
-                          $request->filled('ownership_status_id') || 
-                          $request->filled('rent_frequency_id') || 
-                          $request->filled('cheque_id') || 
-                          $request->filled('features') || 
-                          $request->filled('radius');
+        $hasSearchParams = $request->filled('location') ||
+            $request->filled('purpose') ||
+            $request->filled('property_type_id') ||
+            $request->filled('unit_type_id') ||
+            $request->filled('min_price') ||
+            $request->filled('max_price') ||
+            $request->filled('min_size') ||
+            $request->filled('max_size') ||
+            $request->filled('min_bedrooms') ||
+            $request->filled('min_bathrooms') ||
+            $request->filled('ownership_status_id') ||
+            $request->filled('rent_frequency_id') ||
+            $request->filled('cheque_id') ||
+            $request->filled('features') ||
+            $request->filled('radius');
+
+        $user_favorite_off_market_ids = [];
+        if (auth()->check()) {
+            $user_favorite_off_market_ids = \App\Models\Favorite::where('user_id', auth()->id())
+                ->pluck('off_market_listing_id')
+                ->filter()
+                ->toArray();
+        }
 
         if ($hasSearchParams) {
             // Return the property-halfmap-grid view when search parameters are present
-            return view('property-halfmap-grid', compact('listings', 'propertyTypes', 'features_all', 'latest_listings'));
+            return view('property-halfmap-grid', compact('listings', 'propertyTypes', 'features_all', 'latest_listings', 'user_favorite_off_market_ids'));
         }
 
         // Return the default off-market-listings view when no search parameters
-        return view('off-market-listings', compact('listings', 'propertyTypes', 'features', 'latest_listings'))->with('offMarketListings', $listings);
+        return view('off-market-listings', compact('listings', 'propertyTypes', 'features', 'latest_listings', 'user_favorite_off_market_ids'))->with('offMarketListings', $listings);
     }
 
     public function show($id)
     {
         $listing = \App\Models\OffMarketListing::with([
-            'user', 
-            'features', 
-            'propertyType', 
-            'unitType', 
-            'ownershipStatus', 
-            'rentFrequency', 
+            'user',
+            'features',
+            'propertyType',
+            'unitType',
+            'ownershipStatus',
+            'rentFrequency',
             'cheque'
         ])->where('status', 'approved')->findOrFail($id);
 
@@ -176,21 +188,29 @@ class OffMarketListingController extends Controller
             ->take(3)
             ->get();
 
-        return view('off-market-property-detail', compact('listing', 'similarProperties'));
+        $user_favorite_off_market_ids = [];
+        if (auth()->check()) {
+            $user_favorite_off_market_ids = \App\Models\Favorite::where('user_id', auth()->id())
+                ->pluck('off_market_listing_id')
+                ->filter()
+                ->toArray();
+        }
+
+        return view('off-market-property-detail', compact('listing', 'similarProperties', 'user_favorite_off_market_ids'));
     }
-    
+
     private function geocodeAddress($address)
     {
         $apiKey = config('services.google.maps_api_key');
-        
+
         if (!$apiKey) {
             return null;
         }
-        
+
         $url = "https://maps.googleapis.com/maps/api/geocode/json?address=" . urlencode($address) . "&key=" . $apiKey;
-        
+
         $response = json_decode(file_get_contents($url), true);
-        
+
         if ($response['status'] == 'OK' && isset($response['results'][0]['geometry']['location'])) {
             $location = $response['results'][0]['geometry']['location'];
             return [
@@ -198,7 +218,7 @@ class OffMarketListingController extends Controller
                 'lng' => $location['lng']
             ];
         }
-        
+
         return null;
     }
 }

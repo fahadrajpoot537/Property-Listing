@@ -138,6 +138,7 @@
                     <option value="approved">Approve</option>
                     <option value="pending">Set Pending</option>
                     <option value="rejected">Reject</option>
+                    <option value="draft">Move to Drafts</option>
                     <option value="delete">Delete</option>
                 </select>
                 <button onclick="applyBulkAction()"
@@ -152,7 +153,7 @@
             </button>
 
             <button onclick="openModal()"
-                class="bg-[#02b8f2] hover:opacity-90 text-white font-black py-3 px-8 rounded-2xl shadow-xl shadow-blue-100/50 transition-all flex items-center gap-3 active:scale-95 uppercase tracking-wider text-sm">
+                class="bg-[#8046F1] hover:bg-[#6D28D9] text-white font-black py-3 px-8 rounded-2xl shadow-xl shadow-purple-100/50 transition-all flex items-center gap-3 active:scale-95 uppercase tracking-wider text-sm">
                 <i class='bx bxs-building-house text-xl'></i> Add Property
             </button>
         </div>
@@ -306,7 +307,7 @@
                         <div
                             class="absolute top-1/2 left-0 w-full h-1.5 bg-slate-100 -translate-y-1/2 rounded-full overflow-hidden">
                             <div id="stepLine"
-                                class="w-0 h-full bg-[#02b8f2] transition-all duration-1000 cubic-bezier(0.4, 0, 0.2, 1)">
+                                class="w-0 h-full bg-[#8046F1] transition-all duration-1000 cubic-bezier(0.4, 0, 0.2, 1)">
                             </div>
                         </div>
                         @for($i = 1; $i <= 3; $i++)
@@ -547,11 +548,14 @@
                         <div class="flex-1 flex justify-end gap-3">
                             <button type="button" onclick="closeModal()"
                                 class="px-6 py-3.5 text-slate-400 text-xs font-black uppercase tracking-widest hover:text-rose-500 transition-all">Cancel</button>
+                            <button type="button" id="draftBtn" onclick="saveAsDraft()"
+                                class="px-12 py-3.5 rounded-2xl bg-amber-500 text-white text-xs font-black uppercase tracking-widest shadow-xl shadow-amber-100/30 active:scale-95 transition-all">Save
+                                Draft</button>
                             <button type="button" id="nextBtn" onclick="changeStep(1)"
-                                class="px-12 py-3.5 rounded-2xl bg-[#02b8f2] text-white text-xs font-black uppercase tracking-widest shadow-xl shadow-blue-100/30 active:scale-95 transition-all">Next
+                                class="px-12 py-3.5 rounded-2xl bg-[#8046F1] text-white text-xs font-black uppercase tracking-widest shadow-xl shadow-purple-100/30 active:scale-95 transition-all">Next
                                 Stage</button>
                             <button type="submit" id="submitBtn"
-                                class="hidden px-12 py-3.5 rounded-2xl bg-[#ff931e] text-white text-xs font-black uppercase tracking-widest shadow-xl shadow-orange-100 active:scale-95 transition-all">Publish
+                                class="hidden px-12 py-3.5 rounded-2xl bg-[#131B31] text-white text-xs font-black uppercase tracking-widest shadow-xl shadow-slate-900/10 active:scale-95 transition-all">Publish
                                 Property</button>
                         </div>
                     </div>
@@ -596,42 +600,43 @@
                         { data: 'id', orderable: false, className: 'text-center', render: d => `<input type="checkbox" class="row-checkbox rounded-md border-slate-300 text-[#02b8f2] focus:ring-0" value="${d}">` },
                         {
                             data: 'property_title', render: (d, t, r) => `
-                                                                                                                                                                    <div class="flex items-center py-2">
-                                                                                                                                                                        <div class="relative group">
-                                                                                                                                                                            ${r.thumbnail ? `<img src="/storage/${r.thumbnail}" class="w-12 h-12 rounded-xl object-cover border-2 border-white shadow-md">` : `<div class="w-12 h-12 bg-slate-100 rounded-xl flex items-center justify-center text-slate-400"><i class='bx bx-building-house text-2xl'></i></div>`}
-                                                                                                                                                                        </div>
-                                                                                                                                                                        <div class="ml-4">
-                                                                                                                                                                            <a href="/admin/listings/${r.id}" class="font-extrabold text-slate-800 hover:text-[#02b8f2] transition-colors tracking-tight leading-tight block">${d}</a>
-                                                                                                                                                                            <div class="text-[10px] font-bold text-slate-400 uppercase mt-1">#${r.property_reference_number}</div>
-                                                                                                                                                                        </div>
-                                                                                                                                                                    </div>`
+                                                                                                                                                                                            <div class="flex items-center py-2">
+                                                                                                                                                                                                <div class="relative group">
+                                                                                                                                                                                                    ${r.thumbnail ? `<img src="/storage/${r.thumbnail}" class="w-12 h-12 rounded-xl object-cover border-2 border-white shadow-md">` : `<div class="w-12 h-12 bg-slate-100 rounded-xl flex items-center justify-center text-slate-400"><i class='bx bx-building-house text-2xl'></i></div>`}
+                                                                                                                                                                                                </div>
+                                                                                                                                                                                                <div class="ml-4">
+                                                                                                                                                                                                    <a href="/admin/listings/${r.id}" class="font-extrabold text-slate-800 hover:text-[#02b8f2] transition-colors tracking-tight leading-tight block">${d}</a>
+                                                                                                                                                                                                    <div class="text-[10px] font-bold text-slate-400 uppercase mt-1">#${r.property_reference_number}</div>
+                                                                                                                                                                                                </div>
+                                                                                                                                                                                            </div>`
                         },
                         { data: 'user.name', render: d => `<span class="bg-indigo-50 text-indigo-700 px-3 py-1 rounded-lg text-[11px] font-black uppercase tracking-wide">${d}</span>` },
                         {
                             data: 'property_type.title', render: (d, t, r) => `
-                                                                                                                                                                    <div class="flex flex-col">
-                                                                                                                                                                        <span class="text-[10px] font-black text-slate-700 uppercase">${d}</span>
-                                                                                                                                                                        <span class="text-[10px] font-bold text-slate-400 uppercase tracking-tighter">${r.unit_type ? r.unit_type.title : 'General'}</span>
-                                                                                                                                                                    </div>`
+                                                                                                                                                                                            <div class="flex flex-col">
+                                                                                                                                                                                                <span class="text-[10px] font-black text-slate-700 uppercase">${d}</span>
+                                                                                                                                                                                                <span class="text-[10px] font-bold text-slate-400 uppercase tracking-tighter">${r.unit_type ? r.unit_type.title : 'General'}</span>
+                                                                                                                                                                                            </div>`
                         },
                         { data: 'price', render: d => `<span class="font-black text-slate-800">£${numberWithCommas(d)}</span>` },
                         {
                             data: 'status', render: (d, t, r) => {
                                 let color = d === 'approved' ? 'emerald' : (d === 'rejected' ? 'rose' : 'amber');
                                 return `
-                                                                                                                                                                        <select onchange="updateStatus(${r.id}, this.value)" class="bg-${color}-50 text-${color}-600 border border-${color}-100 rounded-lg px-2 py-1 text-[10px] font-black uppercase tracking-wider focus:ring-0 cursor-pointer">
-                                                                                                                                                                            <option value="pending" ${d === 'pending' ? 'selected' : ''}>Pending</option>
-                                                                                                                                                                            <option value="approved" ${d === 'approved' ? 'selected' : ''}>Approved</option>
-                                                                                                                                                                            <option value="rejected" ${d === 'rejected' ? 'selected' : ''}>Rejected</option>
-                                                                                                                                                                        </select>`;
+                                                                                                                                                                                                 <select onchange="updateStatus(${r.id}, this.value)" class="bg-${color}-50 text-${color}-600 border border-${color}-100 rounded-lg px-2 py-1 text-[10px] font-black uppercase tracking-wider focus:ring-0 cursor-pointer">
+                                                                                                                                                                                                    <option value="pending" ${d === 'pending' ? 'selected' : ''}>Pending</option>
+                                                                                                                                                                                                    <option value="approved" ${d === 'approved' ? 'selected' : ''}>Approved</option>
+                                                                                                                                                                                                    <option value="rejected" ${d === 'rejected' ? 'selected' : ''}>Rejected</option>
+                                                                                                                                                                                                    <option value="draft" ${d === 'draft' ? 'selected' : ''}>Draft</option>
+                                                                                                                                                                                                </select>`;
                             }
                         },
                         {
                             data: 'id', render: d => `
-                                                                                                                                                                    <div class="flex gap-2">
-                                                                                                                                                                        <button onclick="editListing(${d})" class="w-8 h-8 rounded-lg bg-slate-50 text-slate-500 hover:bg-indigo-600 hover:text-white transition-all flex items-center justify-center"><i class='bx bxs-edit-alt text-lg'></i></button>
-                                                                                                                                                                        <button onclick="deleteListing(${d})" class="w-8 h-8 rounded-lg bg-slate-50 text-slate-500 hover:bg-rose-600 hover:text-white transition-all flex items-center justify-center"><i class='bx bxs-trash text-lg'></i></button>
-                                                                                                                                                                    </div>`
+                                                                                                                                                                                            <div class="flex gap-2">
+                                                                                                                                                                                                <button onclick="editListing(${d})" class="w-8 h-8 rounded-lg bg-slate-50 text-slate-500 hover:bg-indigo-600 hover:text-white transition-all flex items-center justify-center"><i class='bx bxs-edit-alt text-lg'></i></button>
+                                                                                                                                                                                                <button onclick="deleteListing(${d})" class="w-8 h-8 rounded-lg bg-slate-50 text-slate-500 hover:bg-rose-600 hover:text-white transition-all flex items-center justify-center"><i class='bx bxs-trash text-lg'></i></button>
+                                                                                                                                                                                            </div>`
                         }
                     ],
                     drawCallback: function () { toggleBulkBar(); }
@@ -669,6 +674,28 @@
                         }
                     });
                 });
+
+            function saveAsDraft() {
+                if (editorInstance) { $('#description_hidden').val(editorInstance.getData()); }
+                var id = $('#listingId').val();
+                var formData = new FormData($('#listingForm')[0]);
+                formData.delete('description');
+                formData.append('description', $('#description_hidden').val());
+                formData.append('is_draft', "1");
+                if (id) formData.append('_method', 'PUT');
+
+                Swal.fire({ title: 'Saving Draft...', didOpen: () => Swal.showLoading() });
+                $.ajax({
+                    url: id ? `/admin/listings/${id}` : "{{ route('admin.listings.store') }}",
+                    type: 'POST', data: formData, processData: false, contentType: false,
+                    success: (res) => { closeModal(); if(table) table.ajax.reload(); Swal.fire('Saved!', 'Listing saved as draft.', 'success'); },
+                    error: (xhr) => {
+                        let msg = 'Technical error occurred.';
+                        if (xhr.responseJSON && xhr.responseJSON.errors) msg = Object.values(xhr.responseJSON.errors).flat().join('<br>');
+                        Swal.fire({ icon: 'error', title: 'Action Failed', html: msg });
+                    }
+                });
+            }
             });
 
             function initSelect2() { $('.select2').select2({ dropdownParent: $('#listingModal'), width: '100%' }); }
@@ -872,8 +899,8 @@
                 $('#stepLine').css('width', `${(n - 1) * 50}%`);
                 for (let i = 1; i <= 3; i++) {
                     const c = $(`#stepCircle${i}`);
-                    if (i <= n) { c.html(`<i class='bx bx-check'></i>`).addClass('bg-[#02b8f2] border-[#02b8f2] text-white shadow-lg shadow-blue-100').removeClass('border-slate-100 text-slate-400'); }
-                    else { c.text(i).removeClass('bg-[#02b8f2] border-[#02b8f2] text-white shadow-lg shadow-blue-100').addClass('bg-white border-slate-100 text-slate-400'); }
+                    if (i <= n) { c.html(`<i class='bx bx-check'></i>`).addClass('bg-[#8046F1] border-[#8046F1] text-white shadow-lg shadow-purple-100').removeClass('border-slate-100 text-slate-400'); }
+                    else { c.text(i).removeClass('bg-[#8046F1] border-[#8046F1] text-white shadow-lg shadow-purple-100').addClass('bg-white border-slate-100 text-slate-400'); }
                 }
                 if (n < 3) $(`#stepCircle${n}`).text(n);
                 $('#prevBtn').toggleClass('hidden', n === 1);
@@ -937,14 +964,14 @@
                         const galleryPreview = $('#galleryPreview').html('');
                         d.gallery.forEach((image, index) => {
                             galleryPreview.append(`
-                                                        <div class="relative group">
-                                                            <img src="/storage/${image}" class="w-16 h-12 object-cover rounded-xl border border-slate-100 shadow-sm">
-                                                            <button type="button" onclick="removeExistingImage(${index})" class="absolute -top-2 -right-2 w-6 h-6 bg-rose-500 text-white rounded-full flex items-center justify-center text-xs opacity-0 group-hover:opacity-100 transition-opacity hover:bg-rose-600">
-                                                                <i class='bx bx-x'></i>
-                                                            </button>
-                                                            <input type="hidden" name="existing_gallery[]" value="${image}">
-                                                        </div>
-                                                    `);
+                                                                                <div class="relative group">
+                                                                                    <img src="/storage/${image}" class="w-16 h-12 object-cover rounded-xl border border-slate-100 shadow-sm">
+                                                                                    <button type="button" onclick="removeExistingImage(${index})" class="absolute -top-2 -right-2 w-6 h-6 bg-rose-500 text-white rounded-full flex items-center justify-center text-xs opacity-0 group-hover:opacity-100 transition-opacity hover:bg-rose-600">
+                                                                                        <i class='bx bx-x'></i>
+                                                                                    </button>
+                                                                                    <input type="hidden" name="existing_gallery[]" value="${image}">
+                                                                                </div>
+                                                                            `);
                         });
                     }
 

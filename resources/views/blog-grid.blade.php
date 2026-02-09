@@ -1,105 +1,134 @@
-@extends('layouts.master')
+@extends('layouts.modern')
 
-@section('title', 'Blogs - FindaUk')
+@section('title', 'Latest News & Insights | PropertyFinda')
 
 @section('content')
-    <!--===== PAGE HERO AREA STARTS =======-->
-    <!--===== PAGE HERO AREA STARTS =======-->
-    <div class="common-hero-section-area sp1" style="background-color: #f4f5f7; position: relative;">
-        <div class="container">
-            <div class="row">
-                <div class="col-lg-8 mx-auto my-5">
-                    <div class="common-hero-content text-center">
-                        <h1 class="text-dark text-anime-style-3">Our Latest Blogs</h1>
-                        <div class="space16"></div>
-                        <ul class="page-list text-dark d-flex justify-content-center align-items-center"
-                            style="list-style: none; padding: 0;">
-                            <li class="px-1"><a href="{{ url('/') }}" class="text-dark"
-                                    style="text-decoration: none;">Home</a></li>
-                            <li class="px-1 text-dark">/</li>
-                            <li class="px-1" style="color: #1CD494;">Blogs</li>
-                        </ul>
-                    </div>
-                </div>
-            </div>
+    <!-- Header Section -->
+    <div class="relative bg-slate-900 py-20 md:py-28 overflow-hidden">
+        <div class="absolute inset-0 z-0">
+            <div class="absolute inset-0 bg-primary/90 opacity-95"></div>
+        </div>
+
+        <div class="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+            <span
+                class="inline-block py-1 px-3 rounded-full bg-secondary/10 text-secondary text-xs font-bold tracking-widest uppercase mb-4 border border-secondary/20">
+                PropertyFinda Blog
+            </span>
+            <h1 class="text-4xl md:text-5xl font-bold text-white tracking-tight mb-4">
+                Latest News & Insights
+            </h1>
+            <p class="text-lg text-slate-300 max-w-2xl mx-auto leading-relaxed">
+                Expert analysis, market trends, and guides to help you make informed property decisions.
+            </p>
         </div>
     </div>
-    <!--===== PAGE HERO AREA ENDS =======-->
 
-    <!--===== BLOG GRID AREA STARTS =======-->
-    <div class="blog-grid-section-area" style="padding-top: 40px; padding-bottom: 80px;">
-        <div class="container">
-            <div class="row">
-                @forelse($blogs as $blog)
-                    <div class="col-lg-4 col-md-6 mb-4" data-aos="fade-up" data-aos-duration="1000">
-                        <div class="blog-boxarea"
-                            style="background: #fff; border-radius: 10px; overflow: hidden; box-shadow: 0px 4px 10px rgba(0,0,0,0.05); transition: all 0.3s ease;">
-                            <div class="img1 image-anime position-relative" style="height: 250px; overflow: hidden;">
-                                @if($blog->image)
-                                    <img src="{{ asset('storage/' . $blog->image) }}" class="img-fluid w-100 h-100"
-                                        alt="{{ $blog->title }}" style="object-fit: cover;">
-                                @else
-                                    <img src="{{ asset('theme/assets/images/blog/default.jpg') }}" class="img-fluid w-100 h-100"
-                                        alt="{{ $blog->title }}" style="object-fit: cover;">
-                                @endif
-                                <div class="date-badge"
-                                    style="position: absolute; top: 20px; right: 20px; background: #ff931e; color: #fff; padding: 5px 15px; border-radius: 5px; font-weight: 600; font-size: 14px;">
-                                    {{ $blog->created_at->format('M d, Y') }}
-                                </div>
-                            </div>
-                            <div class="content-area p-4">
-                                <div class="meta-tags mb-3 d-flex align-items-center text-muted" style="font-size: 14px;">
-                                    <span class="mr-3"><i class="fa-regular fa-user mr-1 text-primary"></i>
-                                        {{ $blog->author ?? 'Admin' }}</span>
-                                </div>
-                                <h4 class="mb-3">
-                                    <a href="{{ route('blog.show', $blog) }}"
-                                        style="color: #1a1a1a; text-decoration: none; font-weight: 700; transition: color 0.3s;">{{ $blog->title }}</a>
-                                </h4>
-                                <p class="mb-4 text-muted">{{ Str::limit(strip_tags($blog->content), 100) }}</p>
-                                <div class="btn-area">
-                                    <a href="{{ route('blog.show', $blog) }}" class="read-more-btn"
-                                        style="color: #ff931e; font-weight: 600; text-decoration: none; display: inline-flex; align-items: center;">
-                                        Read More <i class="fa-solid fa-arrow-right ml-2" style="margin-left: 8px;"></i>
-                                    </a>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                @empty
-                    <div class="col-12">
-                        <div class="text-center py-5">
-                            <div class="mb-4">
-                                <i class="fas fa-blog fa-3x text-muted opacity-50"></i>
-                            </div>
-                            <h3 class="mb-3 text-muted">No Blogs Available</h3>
-                            <p class="text-muted">Stay tuned! We are crafting amazing content for you.</p>
-                        </div>
-                    </div>
-                @endforelse
+    <!-- Main Content -->
+    <section class="py-16 md:py-20 bg-slate-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+
+            <!-- Search & Filter Bar -->
+            <div
+                class="flex flex-col md:flex-row justify-between items-center bg-white p-4 rounded-xl shadow-sm border border-gray-100 mb-12 gap-4">
+                <div class="flex items-center gap-2 text-sm font-medium text-slate-500 pl-2">
+                    <a href="{{ route('home') }}" class="hover:text-primary transition-colors">Home</a>
+                    <i class="fa-solid fa-chevron-right text-[10px] text-gray-300"></i>
+                    <span class="text-primary">Blog</span>
+                </div>
+
+                <div class="relative w-full md:w-80">
+                    <input type="text" id="blog-search-input" placeholder="Search articles..."
+                        class="w-full pl-10 pr-10 py-2.5 bg-slate-50 border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary text-sm transition-all">
+                    <i
+                        class="fa-solid fa-magnifying-glass absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400 text-sm"></i>
+                </div>
             </div>
 
-            @if($blogs->hasPages())
-                <div class="row">
-                    <div class="col-12">
-                        <div class="pagination-wrapper d-flex justify-content-center mt-5">
-                            {{ $blogs->links() }}
-                        </div>
-                    </div>
-                </div>
-            @endif
+            <!-- Blog Grid Container -->
+            <div id="blog-grid-container">
+                @include('partials.blog_list')
+            </div>
+
         </div>
-    </div>
-    <!--===== BLOG GRID AREA ENDS =======-->
+    </section>
 
-    <style>
-        .blog-boxarea:hover {
-            transform: translateY(-5px);
-            box-shadow: 0px 10px 20px rgba(0, 0, 0, 0.1) !important;
-        }
+    <!-- Simple Newsletter -->
+    <section class="py-20 bg-white border-t border-slate-100">
+        <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+            <h2 class="text-3xl font-bold text-slate-800 mb-4">Subscribe to our newsletter</h2>
+            <p class="text-slate-500 mb-8 max-w-xl mx-auto">Get the latest property market updates and exclusive insights
+                delivered straight to your inbox.</p>
 
-        .blog-boxarea:hover h4 a {
-            color: #ff931e !important;
-        }
-    </style>
+            <form class="flex flex-col sm:flex-row gap-3 max-w-lg mx-auto">
+                <input type="email" placeholder="Enter your email address"
+                    class="flex-1 px-5 py-3 bg-slate-50 border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary text-sm">
+                <button
+                    class="px-8 py-3 bg-primary text-white font-semibold rounded-lg hover:bg-slate-800 transition-colors shadow-lg shadow-primary/20"
+                    style="background-color: #8046F1;">
+                    Subscribe
+                </button>
+            </form>
+        </div>
+    </section>
 @endsection
+
+@push('scripts')
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const searchInput = document.getElementById('blog-search-input');
+            const gridContainer = document.getElementById('blog-grid-container');
+            let currentController = null;
+            let debounceTimer;
+
+            searchInput.addEventListener('input', function (e) {
+                const query = e.target.value;
+
+                // Clear previous timer
+                clearTimeout(debounceTimer);
+
+                // Debounce
+                debounceTimer = setTimeout(() => {
+                    // Abort previous request if running
+                    if (currentController) currentController.abort();
+                    currentController = new AbortController();
+
+                    // Fetch
+                    const url = new URL("{{ route('blog.list') }}");
+                    if (query) url.searchParams.set('search', query);
+
+                    fetch(url, {
+                        headers: {
+                            'X-Requested-With': 'XMLHttpRequest'
+                        },
+                        signal: currentController.signal
+                    })
+                        .then(response => response.text())
+                        .then(html => {
+                            gridContainer.innerHTML = html;
+                        })
+                        .catch(err => {
+                            if (err.name !== 'AbortError') console.error(err);
+                        });
+
+                }, 300); // 300ms delay for "Live" feel
+            });
+
+            // Handle pagination clicks via AJAX
+            gridContainer.addEventListener('click', function (e) {
+                const link = e.target.closest('.pagination a');
+                if (link) {
+                    e.preventDefault();
+
+                    fetch(link.href, {
+                        headers: { 'X-Requested-With': 'XMLHttpRequest' }
+                    })
+                        .then(response => response.text())
+                        .then(html => {
+                            gridContainer.innerHTML = html;
+                            window.scrollTo({ top: gridContainer.offsetTop - 100, behavior: 'smooth' });
+                        });
+                }
+            });
+        });
+    </script>
+@endpush

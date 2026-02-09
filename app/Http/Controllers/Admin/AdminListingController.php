@@ -19,6 +19,24 @@ class AdminListingController extends Controller
         if ($request->ajax()) {
             $query = \App\Models\Listing::with(['user', 'propertyType', 'unitType', 'features']);
 
+            // Role-based filtering
+            $user = auth()->user();
+            if (!$user->hasAnyRole(['admin', 'manager', 'listing director', 'Q/A'])) {
+                if ($user->hasRole('Agency') || ($user->hasRole('agent') && $user->agency_id)) {
+                    // Determine the Agency Owner ID
+                    $ownerId = $user->hasRole('Agency') ? $user->id : $user->agency_id;
+
+                    // Get all team member IDs
+                    $teamIds = \App\Models\User::where('agency_id', $ownerId)->pluck('id')->toArray();
+                    $poolIds = array_merge([$ownerId], $teamIds);
+
+                    $query->whereIn('user_id', $poolIds);
+                } else {
+                    // Independent Freelance, Landlords, or Agents without agency see only their own
+                    $query->where('user_id', $user->id);
+                }
+            }
+
             // Apply filters if provided
             if ($request->has('filters')) {
                 $filters = $request->get('filters');
@@ -56,6 +74,12 @@ class AdminListingController extends Controller
                 }
             }
 
+            if ($request->get('is_draft')) {
+                $query->where('status', 'draft');
+            } else {
+                $query->where('status', '!=', 'draft');
+            }
+
             $listings = $query->latest()->get();
             return response()->json(['data' => $listings]);
         }
@@ -67,6 +91,21 @@ class AdminListingController extends Controller
         $rentFrequencies = \App\Models\RentFrequency::all();
         $cheques = \App\Models\Cheque::all();
         return view('admin.listings.index', compact('users', 'propertyTypes', 'unitTypes', 'features', 'ownershipStatuses', 'rentFrequencies', 'cheques'));
+    }
+
+    public function drafts(Request $request)
+    {
+        if ($request->ajax()) {
+            return $this->index($request);
+        }
+        $users = \App\Models\User::all();
+        $propertyTypes = \App\Models\PropertyType::all();
+        $unitTypes = \App\Models\UnitType::all();
+        $features = \App\Models\Feature::all();
+        $ownershipStatuses = \App\Models\OwnershipStatus::all();
+        $rentFrequencies = \App\Models\RentFrequency::all();
+        $cheques = \App\Models\Cheque::all();
+        return view('admin.listings.drafts', compact('users', 'propertyTypes', 'unitTypes', 'features', 'ownershipStatuses', 'rentFrequencies', 'cheques'));
     }
 
     public function create()
@@ -122,6 +161,11 @@ class AdminListingController extends Controller
 
         $listing = \App\Models\Listing::create($validated);
 
+        if ($request->is_draft == "1") {
+            $listing->update(['status' => 'draft']);
+        }
+
+
         if (isset($validated['features'])) {
             $listing->features()->sync($validated['features']);
         }
@@ -160,7 +204,7 @@ class AdminListingController extends Controller
             'latitude' => 'nullable|numeric',
             'longitude' => 'nullable|numeric',
             'video' => 'nullable|file|mimetypes:video/mp4,video/quicktime|max:20480',
-            'status' => 'sometimes|in:pending,approved,rejected',
+            'status' => 'sometimes|in:pending,approved,rejected,draft',
             'features' => 'array',
             'thumbnail' => 'image|nullable|max:2048',
             'gallery.*' => 'image|mimes:jpeg,png,jpg,webp|max:2048',
@@ -207,6 +251,10 @@ class AdminListingController extends Controller
 
         $listing->update($validated);
 
+        if ($request->is_draft == "1") {
+            $listing->update(['status' => 'draft']);
+        }
+
         if (isset($validated['features'])) {
             $listing->features()->sync($validated['features']);
         }
@@ -248,6 +296,10 @@ class AdminListingController extends Controller
             case 'delete':
                 \App\Models\Listing::whereIn('id', $ids)->delete();
                 $msg = "Selected listings deleted successfully.";
+                break;
+            case 'draft':
+                \App\Models\Listing::whereIn('id', $ids)->update(['status' => 'draft']);
+                $msg = "Selected listings moved to drafts.";
                 break;
             default:
                 return response()->json(['success' => false, 'message' => 'Invalid action.'], 422);

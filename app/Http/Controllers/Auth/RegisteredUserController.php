@@ -32,7 +32,9 @@ class RegisteredUserController extends Controller
         $request->validate([
             'name' => ['required', 'string', 'max:255'],
             'email' => ['required', 'string', 'lowercase', 'email', 'max:255', 'unique:' . User::class],
+            'phone' => ['required', 'string', 'max:20'],
             'password' => ['required', 'confirmed', Rules\Password::defaults()],
+            'role' => ['required', 'string', 'in:agent,agency,landlord,buyer'],
         ]);
 
         // Check for referral code in session or request
@@ -41,13 +43,15 @@ class RegisteredUserController extends Controller
         $user = User::create([
             'name' => $request->name,
             'email' => $request->email,
+            'phone_number' => $request->phone,
             'password' => Hash::make($request->password),
             'slug' => \Illuminate\Support\Str::slug($request->name) . '-' . time(),
+            'status' => 'pending',
         ]);
 
-        // Assign default role using Spatie Permission
-        $user->assignRole('user');
-        
+        // Assign selected role using Spatie Permission
+        $user->assignRole($request->role);
+
         // Assign 'access dashboard' permission to allow access to admin dashboard
         if (!\Spatie\Permission\Models\Permission::where('name', 'access dashboard')->exists()) {
             \Spatie\Permission\Models\Permission::create(['name' => 'access dashboard']);
@@ -58,24 +62,14 @@ class RegisteredUserController extends Controller
         if ($referralCode) {
             $affiliate = \App\Models\Affiliate::where('referral_code', $referralCode)->first();
             if ($affiliate) {
-                // Here you would typically create a referral record or link the user.
-                // For now, let's just log it or update affiliate earnings as a mock incentive
-                // In a real app, you'd have a 'referrals' table.
-
-                // Example: Linking logic (assuming we add a referred_by column to users or a pivot table)
-                // $user->referred_by = $affiliate->user_id;
-                // $user->save();
-
-                // Mock incentive
-                // $affiliate->increment('total_earnings', 10.00); 
+                // Link with affiliate logic here if needed
             }
         }
 
         event(new Registered($user));
 
-        Auth::login($user);
-
-        return redirect(route('admin.dashboard', absolute: false));
+        // Note: We DO NOT log in the user here. Admin must approve first.
+        return redirect()->route('login')->with('success', 'Registration successful! Your account is pending admin approval.');
     }
 
     /**

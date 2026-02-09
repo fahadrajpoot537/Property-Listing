@@ -1,13 +1,14 @@
 @extends('layouts.admin')
 
-@section('header', 'Users Management')
+@section('header', auth()->user()->hasRole('Agency') ? 'Team Management' : 'Users Management')
 
 @section('content')
     <div class="flex justify-between items-center mb-6">
-        <h3 class="text-slate-600">User Management</h3>
+        <h3 class="text-slate-600">{{ auth()->user()->hasRole('Agency') ? 'My Team' : 'User Management' }}</h3>
         <button onclick="openModal()"
-            class="bg-indigo-600 hover:bg-indigo-700 text-white font-medium py-2 px-4 rounded-lg shadow-sm transition-colors flex items-center gap-2">
-            <i class='bx bx-plus'></i> Create New User
+            class="bg-[#8046F1] hover:bg-[#6D28D9] text-white font-black py-2.5 px-6 rounded-xl shadow-lg shadow-purple-100 transition-all flex items-center gap-2 active:scale-95 text-sm uppercase tracking-wider">
+            <i class='bx bx-plus-circle text-lg'></i>
+            {{ auth()->user()->hasRole('Agency') ? 'Add Team Member' : 'Create New User' }}
         </button>
     </div>
 
@@ -19,6 +20,7 @@
                     <th class="px-6 py-3">Name</th>
                     <th class="px-6 py-3">Email</th>
                     <th class="px-6 py-3">Role</th>
+                    <th class="px-6 py-3">Status</th>
                     <th class="px-6 py-3">Actions</th>
                 </tr>
             </thead>
@@ -57,16 +59,19 @@
                             <input type="text" name="phone_number" id="phone_number"
                                 class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm border p-2">
                         </div>
-                        <div class="mb-4">
+                        <div class="mb-4 @if(auth()->user()->hasRole('Agency')) hidden @endif">
                             <label for="role" class="block text-sm font-medium text-gray-700">Role</label>
                             <select name="role" id="role"
                                 class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm border p-2"
-                                required>
+                                @if(auth()->user()->hasRole('Agency')) disabled @endif>
                                 <option value="">Select Role</option>
                                 @foreach($roles as $role)
-                                    <option value="{{ $role->name }}">{{ ucfirst($role->name) }}</option>
+                                    <option value="{{ $role->name }}" @if(auth()->user()->hasRole('Agency') && $role->name === 'agent') selected @endif>{{ ucfirst($role->name) }}</option>
                                 @endforeach
                             </select>
+                            @if(auth()->user()->hasRole('Agency'))
+                                <input type="hidden" name="role" value="agent">
+                            @endif
                         </div>
                         <div class="mb-4">
                             <label for="password" class="block text-sm font-medium text-gray-700">Password <span
@@ -74,11 +79,12 @@
                             <input type="password" name="password" id="password"
                                 class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm border p-2">
                         </div>
-                        <div class="flex justify-end pt-4 border-t">
+                        <div class="flex justify-end pt-6 border-t border-slate-100 gap-3">
                             <button type="button" onclick="closeModal()"
-                                class="mr-2 inline-flex justify-center rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2">Cancel</button>
+                                class="px-6 py-2.5 text-sm font-bold text-slate-400 hover:text-rose-500 transition-all">Cancel</button>
                             <button type="submit"
-                                class="inline-flex justify-center rounded-md border border-transparent bg-indigo-600 px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2">Save</button>
+                                class="bg-[#8046F1] hover:bg-[#6D28D9] text-white font-black py-2.5 px-8 rounded-xl shadow-lg shadow-purple-100 transition-all active:scale-95 text-sm uppercase tracking-wider">Save
+                                User</button>
                         </div>
                     </form>
                 </div>
@@ -98,9 +104,9 @@
                         {
                             data: 'name', name: 'name', render: function (data, type, row) {
                                 return `<div class="flex items-center">
-                                            <div class="w-8 h-8 rounded-full bg-slate-200 flex items-center justify-center text-slate-600 font-bold mr-3">${data.charAt(0)}</div>
-                                            <div><div class="font-medium text-slate-800">${data}</div></div>
-                                        </div>`;
+                                                                    <div class="w-8 h-8 rounded-full bg-slate-200 flex items-center justify-center text-slate-600 font-bold mr-3">${data.charAt(0)}</div>
+                                                                    <div><div class="font-medium text-slate-800">${data}</div></div>
+                                                                </div>`;
                             }
                         },
                         { data: 'email', name: 'email' },
@@ -110,13 +116,30 @@
                             }
                         },
                         {
+                            data: 'status', name: 'status', render: function (data) {
+                                let color = 'bg-slate-100 text-slate-700';
+                                if (data === 'approved') color = 'bg-emerald-100 text-emerald-700';
+                                if (data === 'rejected') color = 'bg-rose-100 text-rose-700';
+                                if (data === 'pending') color = 'bg-amber-100 text-amber-700';
+                                return `<span class="${color} rounded-full px-3 py-1 text-xs font-semibold uppercase">${data || 'pending'}</span>`;
+                            }
+                        },
+                        {
                             data: 'id', name: 'actions', orderable: false, searchable: false, render: function (data, type, row) {
+                                let approvalBtn = '';
+                                if (row.status === 'pending' || row.status === 'rejected') {
+                                    approvalBtn = `<button onclick="updateUserStatus(${data}, 'approved')" class="w-8 h-8 rounded-full bg-slate-100 flex items-center justify-center text-emerald-600 hover:bg-emerald-100 transition-colors" title="Approve"><i class='bx bx-check'></i></button>`;
+                                } else if (row.status === 'approved') {
+                                    approvalBtn = `<button onclick="updateUserStatus(${data}, 'rejected')" class="w-8 h-8 rounded-full bg-slate-100 flex items-center justify-center text-rose-600 hover:bg-rose-100 transition-colors" title="Reject"><i class='bx bx-x'></i></button>`;
+                                }
+
                                 return `
-                                    <div class="flex gap-2">
-                                        <button onclick="editUser(${data})" class="w-8 h-8 rounded-full bg-slate-100 flex items-center justify-center text-slate-600 hover:bg-indigo-100 hover:text-indigo-600 transition-colors"><i class='bx bxs-edit'></i></button>
-                                        <button onclick="deleteUser(${data})" class="w-8 h-8 rounded-full bg-slate-100 flex items-center justify-center text-slate-600 hover:bg-rose-100 hover:text-rose-600 transition-colors"><i class='bx bxs-trash'></i></button>
-                                    </div>
-                                `;
+                                                            <div class="flex gap-2">
+                                                                ${approvalBtn}
+                                                                <button onclick="editUser(${data})" class="w-8 h-8 rounded-full bg-slate-100 flex items-center justify-center text-slate-600 hover:bg-indigo-100 hover:text-indigo-600 transition-colors" title="Edit"><i class='bx bxs-edit'></i></button>
+                                                                <button onclick="deleteUser(${data})" class="w-8 h-8 rounded-full bg-slate-100 flex items-center justify-center text-slate-600 hover:bg-rose-100 hover:text-rose-600 transition-colors" title="Delete"><i class='bx bxs-trash'></i></button>
+                                                            </div>
+                                                        `;
                             }
                         }
                     ]
@@ -186,6 +209,34 @@
                     $('#modalTitle').text('Edit User');
                     $('#passwordHint').text('(Leave blank to keep current)');
                     $('#userModal').removeClass('hidden');
+                });
+            }
+
+            function updateUserStatus(id, status) {
+                $.ajax({
+                    url: `/admin/users-status/${id}`,
+                    type: 'POST',
+                    data: {
+                        _token: '{{ csrf_token() }}',
+                        status: status
+                    },
+                    success: function (response) {
+                        $('#usersTable').DataTable().ajax.reload();
+                        Swal.fire({
+                            icon: 'success',
+                            title: 'Updated!',
+                            text: response.message,
+                            timer: 1500,
+                            showConfirmButton: false
+                        });
+                    },
+                    error: function (xhr) {
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Error!',
+                            text: 'Something went wrong while updating status.'
+                        });
+                    }
                 });
             }
 

@@ -39,67 +39,43 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
         :root {
-            /* Propertyfinda Theme Colors */
-            --brand-primary: #1CD494;
-            /* Teal Green */
-            --brand-secondary: #073B3A;
-            /* Dark Green */
+            /* Propertyfinda Theme Colors (Matched to User Side) */
+            --brand-primary: #131B31;
+            /* Deep Navy */
+            --brand-secondary: #8046F1;
+            /* Purple */
             --brand-accent: #FCC608;
             /* Yellow/Gold */
-            --brand-dark: #2E2E2E;
-            /* Dark Grey */
-
-            --brand-blue: var(--brand-primary);
-            /* Map to primary for existing classes */
-            --brand-orange: var(--brand-accent);
-            /* Map to accent for existing classes */
+            --brand-light: #F8FAFC;
         }
 
         body {
             font-family: 'Inter', sans-serif !important;
-            background-color: #f8f9fa;
+            background-color: #f1f5f9;
         }
 
-        /* Override Selection Color */
-        ::selection {
-            background: var(--brand-primary);
-            color: #fff;
-        }
-
-        /* Sidebar Styling */
+        /* Sidebar Styling (Dark Theme) */
         aside {
-            background-color: #fff;
-            border-right: 1px solid rgba(0, 0, 0, 0.05);
-        }
-
-        /* Sidebar Scrollbar Hide */
-        aside::-webkit-scrollbar,
-        nav::-webkit-scrollbar {
-            display: none;
-        }
-
-        aside,
-        nav {
-            -ms-overflow-style: none;
-            scrollbar-width: none;
+            background-color: var(--brand-primary);
+            border-right: none;
         }
 
         .active-link {
-            background: linear-gradient(135deg, var(--brand-primary) 0%, #15a875 100%) !important;
+            background: rgba(128, 70, 241, 0.15) !important;
             color: white !important;
-            box-shadow: 0 4px 15px rgba(28, 212, 148, 0.3) !important;
+            border-left: 4px solid var(--brand-secondary);
         }
 
         /* Hover effects for sidebar links */
         nav a:hover:not(.active-link) {
-            color: var(--brand-primary);
-            background-color: rgba(28, 212, 148, 0.05);
+            color: white;
+            background-color: rgba(255, 255, 255, 0.05);
         }
 
         /* Glass Header */
         .glass-header {
-            background-color: rgba(255, 255, 255, 0.9);
-            backdrop-filter: blur(10px);
+            background-color: rgba(255, 255, 255, 0.8);
+            backdrop-filter: blur(12px);
             border-bottom: 1px solid rgba(0, 0, 0, 0.05);
             position: sticky;
             top: 0;
@@ -108,35 +84,23 @@
 
         /* Buttons */
         .btn-brand {
-            background-color: var(--brand-primary);
+            background-color: var(--brand-secondary);
             color: white;
             transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
         }
 
         .btn-brand:hover {
-            background-color: #15a875;
-            /* Darker shade of teal */
+            background-color: #6D28D9;
+            /* Darker Purple */
             transform: translateY(-2px);
-            box-shadow: 0 5px 15px rgba(28, 212, 148, 0.3);
+            box-shadow: 0 5px 15px rgba(128, 70, 241, 0.3);
         }
 
-        .btn-accent {
-            background-color: var(--brand-dark);
-            color: white;
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-        }
-
-        .btn-accent:hover {
-            background-color: black;
-            transform: translateY(-2px);
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
-        }
-
-        /* Card Styling to look more premium */
+        /* Card Styling */
         main .bg-white {
-            border-radius: 1rem;
-            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.02), 0 2px 4px -1px rgba(0, 0, 0, 0.02);
-            border: 1px solid rgba(0, 0, 0, 0.03);
+            border-radius: 1.25rem;
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.05);
+            border: 1px solid rgba(0, 0, 0, 0.04);
         }
 
         /* Table enhancements */
@@ -162,8 +126,7 @@
         }
 
         table.dataTable tbody tr:hover {
-            background-color: #f0fdf9 !important;
-            /* Very light teal bg on hover */
+            background-color: rgba(128, 70, 241, 0.03) !important;
         }
 
         /* DataTables Customization */
@@ -219,38 +182,23 @@
             display: none !important;
         }
 
-        /* Badge Colors mapping */
-        .text-\[\#02b8f2\] {
-            color: var(--brand-primary) !important;
-        }
-
-        .hover\:text-\[\#02b8f2\]:hover {
-            color: var(--brand-primary) !important;
-        }
-
-        .bg-blue-50\/50 {
-            background-color: rgba(28, 212, 148, 0.08) !important;
-        }
-
-        .text-\[\#ff931e\] {
-            color: var(--brand-dark) !important;
-        }
-
-        .hover\:text-\[\#ff931e\]:hover {
-            color: var(--brand-dark) !important;
-        }
-
-        .bg-orange-50\/50 {
-            background-color: rgba(46, 46, 46, 0.05) !important;
-        }
-
         /* General Premium Curves */
         .rounded-premium {
             border-radius: 1.5rem;
         }
 
         .shadow-premium {
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+        }
+
+        /* Nav Icon Colors */
+        .nav-icon {
+            color: rgba(255, 255, 255, 0.5);
+            transition: color 0.3s;
+        }
+
+        .active-link .nav-icon {
+            color: var(--brand-secondary);
         }
     </style>
 </head>
@@ -259,96 +207,107 @@
     <div class="min-h-screen flex">
         <!-- Sidebar -->
         <aside
-            class="w-64 bg-white text-black flex-shrink-0 flex flex-col h-screen sticky top-0 transition-all duration-300 z-20 border-r border-slate-100">
-            <div class="h-20 flex items-center px-6 border-b border-slate-50">
+            class="w-64 bg-[#131B31] text-white flex-shrink-0 flex flex-col h-screen sticky top-0 transition-all duration-300 z-20">
+            <div class="h-20 flex items-center px-6 border-b border-white/5">
                 <a href="{{ route('admin.dashboard') }}" class="flex items-center justify-center w-full">
-                    <img src="{{ asset('logo.png') }}" class="h-12 w-auto object-contain" alt="Finda-UK Logo">
+                    <div class="flex items-center gap-2">
+                        <img src="{{ asset('logoor.png') }}" alt="FindaAdmin" class="h-8 w-auto">
+                    </div>
                 </a>
             </div>
 
-            <nav class="flex-1 overflow-y-auto py-6 space-y-2 px-4">
+            <nav class="flex-1 overflow-y-auto py-6 space-y-1 px-3">
                 <!-- Core Panel -->
-                <div class="mb-4">
-                    <p class="px-2 text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] mb-3">Core Engine
+                <div class="mb-6">
+                    <p class="px-4 text-[10px] font-black text-white/30 uppercase tracking-[0.2em] mb-3">Core Engine
                     </p>
                     <a href="{{ route('admin.dashboard') }}"
-                        class="flex items-center px-4 py-3 rounded-2xl text-slate-600 font-bold hover:bg-slate-50 transition-all duration-300 {{ request()->routeIs('admin.dashboard') ? 'active-link !text-white' : '' }}">
-                        <i class='bx bxs-dashboard mr-3 text-xl'></i>
-                        <span class="text-xs uppercase tracking-widest">Overview</span>
+                        class="flex items-center px-4 py-3 rounded-xl text-white/70 font-bold hover:bg-white/5 transition-all duration-300 {{ request()->routeIs('admin.dashboard') ? 'active-link' : '' }}">
+                        <i class='bx bxs-dashboard mr-3 text-xl nav-icon'></i>
+                        <span class="text-[11px] uppercase tracking-widest">Overview</span>
                     </a>
                 </div>
 
-                <!-- Access Management -->
-                <div class="mb-2"
-                    x-data="{ open: {{ request()->routeIs('admin.users.*', 'admin.roles.*', 'admin.affiliates.*') ? 'true' : 'false' }} }">
-                    <button @click="open = !open"
-                        class="w-full flex items-center justify-between px-4 py-3 rounded-2xl text-slate-400 hover:text-black hover:bg-slate-50 transition-all duration-300">
-                        <div class="flex items-center">
-                            <i class='bx bxs-user-badge mr-3 text-xl'></i>
-                            <span class="text-[10px] font-black uppercase tracking-[0.15em]">Access Control</span>
+                @if(auth()->user()->hasAnyRole(['admin', 'manager', 'listing director', 'Q/A', 'Agency']))
+                    <!-- Access Management -->
+                    <div class="mb-2"
+                        x-data="{ open: {{ request()->routeIs('admin.users.*', 'admin.roles.*', 'admin.affiliates.*') ? 'true' : 'false' }} }">
+                        <button @click="open = !open"
+                            class="w-full flex items-center justify-between px-4 py-3 rounded-xl text-white/50 hover:text-white hover:bg-white/5 transition-all duration-300">
+                            <div class="flex items-center">
+                                <i class='bx bxs-user-badge mr-3 text-xl nav-icon'></i>
+                                <span class="text-[10px] font-black uppercase tracking-[0.15em]">Access Control</span>
+                            </div>
+                            <i class='bx bx-chevron-down transition-transform duration-300 text-white/30'
+                                :class="open ? 'rotate-180' : ''"></i>
+                        </button>
+                        <div x-show="open" x-collapse x-cloak class="mt-1 space-y-1 ml-4 border-l border-white/10 pl-2">
+                            @if(auth()->user()->hasAnyRole(['admin', 'manager', 'listing director', 'Q/A']))
+                                <a href="{{ route('admin.users.index') }}"
+                                    class="flex items-center px-4 py-2.5 rounded-xl text-[11px] font-bold text-white/40 hover:text-white transition-all {{ request()->routeIs('admin.users.*') ? 'text-white bg-white/5' : '' }}">
+                                    System Users
+                                </a>
+                                <a href="{{ route('admin.roles.index') }}"
+                                    class="flex items-center px-4 py-2.5 rounded-xl text-[11px] font-bold text-white/40 hover:text-white transition-all {{ request()->routeIs('admin.roles.*') ? 'text-white bg-white/5' : '' }}">
+                                    Permissions & Roles
+                                </a>
+                            @elseif(auth()->user()->hasRole('Agency'))
+                                <a href="{{ route('admin.users.index') }}"
+                                    class="flex items-center px-4 py-2.5 rounded-xl text-[11px] font-bold text-white/40 hover:text-white transition-all {{ request()->routeIs('admin.users.*') ? 'text-white bg-white/5' : '' }}">
+                                    Team Management
+                                </a>
+                            @endif
+                            <a href="{{ route('admin.affiliates.index') }}"
+                                class="flex items-center px-4 py-2.5 rounded-xl text-[11px] font-bold text-white/40 hover:text-white transition-all {{ request()->routeIs('admin.affiliates.*') ? 'text-white bg-white/5' : '' }}">
+                                Partner Network
+                            </a>
                         </div>
-                        <i class='bx bx-chevron-down transition-transform duration-300'
-                            :class="open ? 'rotate-180' : ''"></i>
-                    </button>
-                    <div x-show="open" x-collapse x-cloak class="mt-1 space-y-1 ml-4 border-l-2 border-slate-50 pl-2">
-                        <a href="{{ route('admin.users.index') }}"
-                            class="flex items-center px-4 py-2.5 rounded-xl text-[11px] font-bold text-slate-500 hover:text-[#02b8f2] transition-all {{ request()->routeIs('admin.users.*') ? 'text-[#02b8f2] bg-blue-50/50' : '' }}">
-                            System Users
-                        </a>
-                        <a href="{{ route('admin.roles.index') }}"
-                            class="flex items-center px-4 py-2.5 rounded-xl text-[11px] font-bold text-slate-500 hover:text-[#02b8f2] transition-all {{ request()->routeIs('admin.roles.*') ? 'text-[#02b8f2] bg-blue-50/50' : '' }}">
-                            Permissions & Roles
-                        </a>
-                        <a href="{{ route('admin.affiliates.index') }}"
-                            class="flex items-center px-4 py-2.5 rounded-xl text-[11px] font-bold text-slate-500 hover:text-[#02b8f2] transition-all {{ request()->routeIs('admin.affiliates.*') ? 'text-[#02b8f2] bg-blue-50/50' : '' }}">
-                            Affiliates Node
-                        </a>
                     </div>
-                </div>
+                @endif
 
                 <!-- Asset Setup -->
                 <div class="mb-2"
-                    x-data="{ open: {{ request()->routeIs('admin.property-types.*', 'admin.unit-types.*', 'admin.features.*', 'admin.property-locations.*', 'admin.mortgage-settings.*') ? 'true' : 'false' }} }">
+                    x-data="{ open: {{ request()->routeIs('admin.property-types.*', 'admin.unit-types.*', 'admin.features.*', 'admin.property-locations.*', 'admin.mortgage-settings.*', 'admin.ownership-statuses.*', 'admin.rent-frequencies.*', 'admin.cheques.*') ? 'true' : 'false' }} }">
                     <button @click="open = !open"
-                        class="w-full flex items-center justify-between px-4 py-3 rounded-2xl text-slate-400 hover:text-black hover:bg-slate-50 transition-all duration-300">
+                        class="w-full flex items-center justify-between px-4 py-3 rounded-xl text-white/50 hover:text-white hover:bg-white/5 transition-all duration-300">
                         <div class="flex items-center">
-                            <i class='bx bxs-cog mr-3 text-xl'></i>
+                            <i class='bx bxs-cog mr-3 text-xl nav-icon'></i>
                             <span class="text-[10px] font-black uppercase tracking-[0.15em]">Asset Setup</span>
                         </div>
-                        <i class='bx bx-chevron-down transition-transform duration-300'
+                        <i class='bx bx-chevron-down transition-transform duration-300 text-white/30'
                             :class="open ? 'rotate-180' : ''"></i>
                     </button>
-                    <div x-show="open" x-collapse x-cloak class="mt-1 space-y-1 ml-4 border-l-2 border-slate-50 pl-2">
+                    <div x-show="open" x-collapse x-cloak class="mt-1 space-y-1 ml-4 border-l border-white/10 pl-2">
                         <a href="{{ route('admin.property-types.index') }}"
-                            class="flex items-center px-4 py-2.5 rounded-xl text-[11px] font-bold text-slate-500 hover:text-[#ff931e] transition-all {{ request()->routeIs('admin.property-types.*') ? 'text-[#ff931e] bg-orange-50/50' : '' }}">
+                            class="flex items-center px-4 py-2.5 rounded-xl text-[11px] font-bold text-white/40 hover:text-white transition-all {{ request()->routeIs('admin.property-types.*') ? 'text-white bg-white/5' : '' }}">
                             Property Categories
                         </a>
                         <a href="{{ route('admin.mortgage-settings.index') }}"
-                            class="flex items-center px-4 py-2.5 rounded-xl text-[11px] font-bold text-slate-500 hover:text-[#ff931e] transition-all {{ request()->routeIs('admin.mortgage-settings.*') ? 'text-[#ff931e] bg-orange-50/50' : '' }}">
+                            class="flex items-center px-4 py-2.5 rounded-xl text-[11px] font-bold text-white/40 hover:text-white transition-all {{ request()->routeIs('admin.mortgage-settings.*') ? 'text-white bg-white/5' : '' }}">
                             Mortgage Setup
                         </a>
                         <a href="{{ route('admin.unit-types.index') }}"
-                            class="flex items-center px-4 py-2.5 rounded-xl text-[11px] font-bold text-slate-500 hover:text-[#ff931e] transition-all {{ request()->routeIs('admin.unit-types.*') ? 'text-[#ff931e] bg-orange-50/50' : '' }}">
+                            class="flex items-center px-4 py-2.5 rounded-xl text-[11px] font-bold text-white/40 hover:text-white transition-all {{ request()->routeIs('admin.unit-types.*') ? 'text-white bg-white/5' : '' }}">
                             Unit Definitions
                         </a>
                         <a href="{{ route('admin.ownership-statuses.index') }}"
-                            class="flex items-center px-4 py-2.5 rounded-xl text-[11px] font-bold text-slate-500 hover:text-[#ff931e] transition-all {{ request()->routeIs('admin.ownership-statuses.*') ? 'text-[#ff931e] bg-orange-50/50' : '' }}">
+                            class="flex items-center px-4 py-2.5 rounded-xl text-[11px] font-bold text-white/40 hover:text-white transition-all {{ request()->routeIs('admin.ownership-statuses.*') ? 'text-white bg-white/5' : '' }}">
                             Ownership Status
                         </a>
                         <a href="{{ route('admin.rent-frequencies.index') }}"
-                            class="flex items-center px-4 py-2.5 rounded-xl text-[11px] font-bold text-slate-500 hover:text-[#ff931e] transition-all {{ request()->routeIs('admin.rent-frequencies.*') ? 'text-[#ff931e] bg-orange-50/50' : '' }}">
+                            class="flex items-center px-4 py-2.5 rounded-xl text-[11px] font-bold text-white/40 hover:text-white transition-all {{ request()->routeIs('admin.rent-frequencies.*') ? 'text-white bg-white/5' : '' }}">
                             Rent Frequencies
                         </a>
                         <a href="{{ route('admin.cheques.index') }}"
-                            class="flex items-center px-4 py-2.5 rounded-xl text-[11px] font-bold text-slate-500 hover:text-[#ff931e] transition-all {{ request()->routeIs('admin.cheques.*') ? 'text-[#ff931e] bg-orange-50/50' : '' }}">
+                            class="flex items-center px-4 py-2.5 rounded-xl text-[11px] font-bold text-white/40 hover:text-white transition-all {{ request()->routeIs('admin.cheques.*') ? 'text-white bg-white/5' : '' }}">
                             Cheque Definitions
                         </a>
                         <a href="{{ route('admin.features.index') }}"
-                            class="flex items-center px-4 py-2.5 rounded-xl text-[11px] font-bold text-slate-500 hover:text-[#ff931e] transition-all {{ request()->routeIs('admin.features.*') ? 'text-[#ff931e] bg-orange-50/50' : '' }}">
+                            class="flex items-center px-4 py-2.5 rounded-xl text-[11px] font-bold text-white/40 hover:text-white transition-all {{ request()->routeIs('admin.features.*') ? 'text-white bg-white/5' : '' }}">
                             Amenity Tags
                         </a>
                         <a href="{{ route('admin.property-locations.index') }}"
-                            class="flex items-center px-4 py-2.5 rounded-xl text-[11px] font-bold text-slate-500 hover:text-[#ff931e] transition-all {{ request()->routeIs('admin.property-locations.*') ? 'text-[#ff931e] bg-orange-50/50' : '' }}">
+                            class="flex items-center px-4 py-2.5 rounded-xl text-[11px] font-bold text-white/40 hover:text-white transition-all {{ request()->routeIs('admin.property-locations.*') ? 'text-white bg-white/5' : '' }}">
                             Property Locations
                         </a>
                     </div>
@@ -358,22 +317,46 @@
                 <div class="mb-2"
                     x-data="{ open: {{ request()->routeIs('admin.listings.*', 'admin.off-market-listings.*') ? 'true' : 'false' }} }">
                     <button @click="open = !open"
-                        class="w-full flex items-center justify-between px-4 py-3 rounded-2xl text-slate-400 hover:text-black hover:bg-slate-50 transition-all duration-300">
+                        class="w-full flex items-center justify-between px-4 py-3 rounded-xl text-white/50 hover:text-white hover:bg-white/5 transition-all duration-300">
                         <div class="flex items-center">
-                            <i class='bx bxs-zap mr-3 text-xl'></i>
+                            <i class='bx bxs-zap mr-3 text-xl nav-icon'></i>
                             <span class="text-[10px] font-black uppercase tracking-[0.15em]">Operations</span>
                         </div>
-                        <i class='bx bx-chevron-down transition-transform duration-300'
+                        <i class='bx bx-chevron-down transition-transform duration-300 text-white/30'
                             :class="open ? 'rotate-180' : ''"></i>
                     </button>
-                    <div x-show="open" x-collapse x-cloak class="mt-1 space-y-1 ml-4 border-l-2 border-slate-50 pl-2">
+                    <div x-show="open" x-collapse x-cloak class="mt-1 space-y-1 ml-4 border-l border-white/10 pl-2">
                         <a href="{{ route('admin.listings.index') }}"
-                            class="flex items-center px-4 py-2.5 rounded-xl text-[11px] font-bold text-slate-500 hover:text-[#02b8f2] transition-all {{ request()->routeIs('admin.listings.*') ? 'text-[#02b8f2] bg-blue-50/50' : '' }}">
+                            class="flex items-center px-4 py-2.5 rounded-xl text-[11px] font-bold text-white/40 hover:text-white transition-all {{ (request()->routeIs('admin.listings.*') && !request()->routeIs('admin.listings.drafts')) ? 'text-white bg-white/5' : '' }}">
                             Public Asset Pool
                         </a>
                         <a href="{{ route('admin.off-market-listings.index') }}"
-                            class="flex items-center px-4 py-2.5 rounded-xl text-[11px] font-bold text-slate-500 hover:text-[#ff931e] transition-all {{ request()->routeIs('admin.off-market-listings.*') ? 'text-[#ff931e] bg-orange-50/50' : '' }}">
+                            class="flex items-center px-4 py-2.5 rounded-xl text-[11px] font-bold text-white/40 hover:text-white transition-all {{ (request()->routeIs('admin.off-market-listings.*') && !request()->routeIs('admin.off-market-listings.drafts')) ? 'text-white bg-white/5' : '' }}">
                             Confidential Deals
+                        </a>
+                    </div>
+                </div>
+
+                <!-- Drafts Management -->
+                <div class="mb-2"
+                    x-data="{ open: {{ request()->routeIs('admin.listings.drafts', 'admin.off-market-listings.drafts') ? 'true' : 'false' }} }">
+                    <button @click="open = !open"
+                        class="w-full flex items-center justify-between px-4 py-3 rounded-xl text-white/50 hover:text-white hover:bg-white/5 transition-all duration-300">
+                        <div class="flex items-center">
+                            <i class='bx bxs-edit-alt mr-3 text-xl nav-icon'></i>
+                            <span class="text-[10px] font-black uppercase tracking-[0.15em]">Drafts</span>
+                        </div>
+                        <i class='bx bx-chevron-down transition-transform duration-300 text-white/30'
+                            :class="open ? 'rotate-180' : ''"></i>
+                    </button>
+                    <div x-show="open" x-collapse x-cloak class="mt-1 space-y-1 ml-4 border-l border-white/10 pl-2">
+                        <a href="{{ route('admin.listings.drafts') }}"
+                            class="flex items-center px-4 py-2.5 rounded-xl text-[11px] font-bold text-white/40 hover:text-white transition-all {{ request()->routeIs('admin.listings.drafts') ? 'text-white bg-white/5' : '' }}">
+                            Draft Listings
+                        </a>
+                        <a href="{{ route('admin.off-market-listings.drafts') }}"
+                            class="flex items-center px-4 py-2.5 rounded-xl text-[11px] font-bold text-white/40 hover:text-white transition-all {{ request()->routeIs('admin.off-market-listings.drafts') ? 'text-white bg-white/5' : '' }}">
+                            Draft Off-Market
                         </a>
                     </div>
                 </div>
@@ -382,43 +365,62 @@
                 <div class="mb-2"
                     x-data="{ open: {{ request()->routeIs('admin.blogs.*', 'admin.services.*', 'admin.contact.*') ? 'true' : 'false' }} }">
                     <button @click="open = !open"
-                        class="w-full flex items-center justify-between px-4 py-3 rounded-2xl text-slate-400 hover:text-black hover:bg-slate-50 transition-all duration-300">
+                        class="w-full flex items-center justify-between px-4 py-3 rounded-xl text-white/50 hover:text-white hover:bg-white/5 transition-all duration-300">
                         <div class="flex items-center">
-                            <i class='bx bxs-book-content mr-3 text-xl'></i>
-                            <span class="text-[10px] font-black uppercase tracking-[0.15em]">Content</span>
+                            <i class='bx bxs-book-content mr-3 text-xl nav-icon'></i>
+                            <span class="text-[10px] font-black uppercase tracking-[0.15em]">Content Hub</span>
                         </div>
-                        <i class='bx bx-chevron-down transition-transform duration-300'
+                        <i class='bx bx-chevron-down transition-transform duration-300 text-white/30'
                             :class="open ? 'rotate-180' : ''"></i>
                     </button>
-                    <div x-show="open" x-collapse x-cloak class="mt-1 space-y-1 ml-4 border-l-2 border-slate-50 pl-2">
+                    <div x-show="open" x-collapse x-cloak class="mt-1 space-y-1 ml-4 border-l border-white/10 pl-2">
                         <a href="{{ route('admin.blogs.index') }}"
-                            class="flex items-center px-4 py-2.5 rounded-xl text-[11px] font-bold text-slate-500 hover:text-[#02b8f2] transition-all {{ request()->routeIs('admin.blogs.*') ? 'text-[#02b8f2] bg-blue-50/50' : '' }}">
+                            class="flex items-center px-4 py-2.5 rounded-xl text-[11px] font-bold text-white/40 hover:text-white transition-all {{ request()->routeIs('admin.blogs.*') ? 'text-white bg-white/5' : '' }}">
                             Blog Articles
                         </a>
                         <a href="{{ route('admin.services.index') }}"
-                            class="flex items-center px-4 py-2.5 rounded-xl text-[11px] font-bold text-slate-500 hover:text-[#ff931e] transition-all {{ request()->routeIs('admin.services.*') ? 'text-[#ff931e] bg-orange-50/50' : '' }}">
+                            class="flex items-center px-4 py-2.5 rounded-xl text-[11px] font-bold text-white/40 hover:text-white transition-all {{ request()->routeIs('admin.services.*') ? 'text-white bg-white/5' : '' }}">
                             Service Catalog
                         </a>
                         <a href="{{ route('admin.contact.index') }}"
-                            class="flex items-center px-4 py-2.5 rounded-xl text-[11px] font-bold text-slate-500 hover:text-[#02b8f2] transition-all {{ request()->routeIs('admin.contact.*') ? 'text-[#02b8f2] bg-blue-50/50' : '' }}">
+                            class="flex items-center px-4 py-2.5 rounded-xl text-[11px] font-bold text-white/40 hover:text-white transition-all {{ request()->routeIs('admin.contact.*') ? 'text-white bg-white/5' : '' }}">
                             Contact Messages
                         </a>
                     </div>
                 </div>
+
+                @if(!auth()->user()->hasAnyRole(['admin', 'manager', 'listing director', 'Q/A']))
+                    <!-- Partner System -->
+                    <div class="mb-4">
+                        <p class="px-2 text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] mb-3">Growth &
+                            Rewards</p>
+                        <a href="{{ route('affiliate.dashboard') }}"
+                            class="flex items-center px-4 py-3 rounded-2xl text-slate-600 font-bold hover:bg-slate-50 transition-all duration-300 {{ request()->routeIs('affiliate.*') ? 'active-link !text-white' : '' }}">
+                            <i class='bx bxs-award mr-3 text-xl'></i>
+                            <span class="text-xs uppercase tracking-widest">Partner Program</span>
+                        </a>
+                    </div>
+                @endif
             </nav>
 
-            <div class="p-4 border-t border-slate-100">
+            <div class="p-4 border-t border-white/5 bg-black/20">
                 <div class="flex items-center gap-3">
                     <div
-                        class="w-10 h-10 rounded-xl bg-black/10 border border-black/20 flex items-center justify-center text-sm font-black text-black">
+                        class="w-9 h-9 rounded-lg bg-[#8046F1] flex items-center justify-center text-xs font-black text-white shadow-lg shadow-purple-500/20">
                         {{ substr(Auth::user()->name, 0, 1) }}
                     </div>
                     <div class="flex-1 min-w-0">
-                        <p class="text-xs font-black text-black truncate">{{ Auth::user()->name }}</p>
-                        <p class="text-[10px] text-black/50 font-bold uppercase truncate">
+                        <p class="text-[11px] font-black text-white truncate">{{ Auth::user()->name }}</p>
+                        <p class="text-[9px] text-white/40 font-bold uppercase truncate">
                             {{ Auth::user()->roles->first()->name ?? 'Admin' }}
                         </p>
                     </div>
+                    <form method="POST" action="{{ route('logout') }}">
+                        @csrf
+                        <button type="submit" class="text-white/30 hover:text-rose-500 transition-colors">
+                            <i class='bx bx-log-out-circle text-lg'></i>
+                        </button>
+                    </form>
                 </div>
             </div>
         </aside>

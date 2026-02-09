@@ -52,6 +52,19 @@ class LoginRequest extends FormRequest
             ]);
         }
 
+        $user = Auth::user();
+        if ($user->status !== 'approved') {
+            Auth::logout();
+
+            $message = $user->status === 'pending'
+                ? 'Your account is pending admin approval.'
+                : 'Your account has been rejected. Please contact support.';
+
+            throw ValidationException::withMessages([
+                'login' => $message,
+            ]);
+        }
+
         RateLimiter::clear($this->throttleKey());
     }
 

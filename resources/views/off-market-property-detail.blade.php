@@ -1,447 +1,549 @@
-@extends('layouts.master')
+@extends('layouts.modern')
+
+@push('styles')
+    <!-- Swiper CSS -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css" />
+    <style>
+        :root {
+            --primary-navy: #131B31;
+            --secondary-purple: #8046F1;
+            --accent-teal: #00DEB6;
+            --bg-soft: #F9FAFB;
+            --border-color: #E5E7EB;
+            --text-main: #1F2937;
+            --text-light: #6B7280;
+        }
+
+        body {
+            background-color: var(--bg-soft);
+            color: var(--text-main);
+        }
+
+        .premium-card-v2 {
+            background: white;
+            border-radius: 1.5rem;
+            border: 1px solid var(--border-color);
+            padding: 2rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+        }
+
+        /* Gallery Container */
+        .gallery-container {
+            border-radius: 1.5rem;
+            overflow: hidden;
+            margin-bottom: 2.5rem;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+        }
+
+        @media (min-width: 1024px) {
+            .gallery-grid-v2 {
+                display: grid;
+                grid-template-columns: 2fr 1fr;
+                grid-template-rows: 250px 250px;
+                gap: 12px;
+                height: 512px;
+            }
+            .mobile-only-gallery { display: none !important; }
+        }
+
+        @media (max-width: 1023px) {
+            .gallery-grid-v2 { display: none !important; }
+            .mobile-only-gallery {
+                display: block !important;
+                height: 400px;
+            }
+        }
+
+        .gallery-item img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.3s ease;
+        }
+
+        .gallery-item:hover img { transform: scale(1.05); }
+
+        .gallery-main {
+            grid-row: span 2;
+            position: relative;
+        }
+
+        .gallery-overlay-btn {
+            position: absolute;
+            bottom: 20px;
+            right: 20px;
+            background: white;
+            padding: 10px 20px;
+            border-radius: 10px;
+            font-weight: 700;
+            font-size: 14px;
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+            cursor: pointer;
+            z-index: 10;
+        }
+
+        /* Lightbox Modal Stylings */
+        #galleryLightbox {
+            display: none;
+            position: fixed;
+            inset: 0;
+            z-index: 9999;
+            background: rgba(0, 0, 0, 0.98);
+            backdrop-filter: blur(15px);
+        }
+
+        .lightbox-close {
+            position: absolute;
+            top: 25px;
+            right: 25px;
+            color: white;
+            font-size: 2.5rem;
+            cursor: pointer;
+            z-index: 100;
+            transition: all 0.2s;
+            opacity: 0.8;
+            line-height: 1;
+        }
+
+        .lightbox-close:hover {
+            opacity: 1;
+            transform: scale(1.1);
+        }
+
+        .lightbox-swiper {
+            width: 100%;
+            height: 100%;
+            padding: 40px 0;
+        }
+
+        .lightbox-slide {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            height: 100%;
+        }
+
+        .lightbox-slide img {
+            max-width: 100%;
+            max-height: 90vh;
+            width: auto;
+            height: auto;
+            object-fit: contain;
+            border-radius: 8px;
+            box-shadow: 0 20px 50px rgba(0,0,0,0.5);
+        }
+
+        .stat-badge-v2 {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 16px 24px;
+            background: white;
+            border: 1px solid var(--border-color);
+            border-radius: 1.25rem;
+            font-weight: 600;
+            transition: all 0.2s;
+        }
+
+        .stat-badge-v2:hover {
+            border-color: var(--secondary-purple);
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.05);
+        }
+
+        .stat-badge-v2 i {
+            color: var(--secondary-purple);
+            font-size: 1.5rem;
+        }
+
+        .sidebar-v2 {
+            position: sticky;
+            top: 120px;
+        }
+
+        .agent-box-v2 {
+            background: var(--primary-navy);
+            color: white;
+            border-radius: 2rem;
+            padding: 2.5rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+        }
+
+        .amenity-item-v2 {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 14px 20px;
+            background: #F9FAFB;
+            border-radius: 1rem;
+            font-weight: 600;
+            border: 1px solid transparent;
+            transition: all 0.2s;
+        }
+
+        .amenity-item-v2:hover {
+            border-color: var(--secondary-purple);
+            background: white;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+        }
+
+        .confidential-badge {
+            background: #fee2e2;
+            color: #ef4444;
+            padding: 4px 12px;
+            border-radius: 6px;
+            font-weight: 800;
+            font-size: 10px;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+    </style>
+@endpush
 
 @section('title', $listing->property_title . ' - Confidential Deal')
 
 @section('content')
-    <!--===== BREADCRUMB AREA STARTS =======-->
-    <div class="breadcrumb-section-area breadcrumb-bg1">
-        <div class="container">
-            <div class="row">
-                <div class="col-lg-12">
-                    <div class="breadcrumb-content">
-                        <h2>Confidential Deal Details</h2>
-                        <nav aria-label="breadcrumb">
-                            <ol class="breadcrumb">
-                                <li class="breadcrumb-item"><a href="{{ url('/') }}">Home</a></li>
-                                <li class="breadcrumb-item"><a href="{{ route('off-market-listings.index') }}">Confidential
-                                        Deals</a></li>
-                                <li class="breadcrumb-item active" aria-current="page">{{ $listing->property_title }}</li>
-                            </ol>
-                        </nav>
+    <div class="pt-48 pb-12 bg-[#F9FAFB]">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+
+            <!-- Breadcrumb & Header -->
+            <div class="flex flex-col md:flex-row justify-between items-start mb-12 gap-6">
+                <div class="w-full md:w-auto">
+                    <div class="flex items-center gap-3 mb-6">
+                        <span class="confidential-badge">
+                            <i class="fa-solid fa-lock"></i> Confidential Deal
+                        </span>
+                        <span class="inline-flex items-center px-4 py-1.5 rounded-full text-xs font-black uppercase tracking-widest bg-secondary/10 text-secondary border border-secondary/20">
+                            {{ $listing->purpose }}
+                        </span>
                     </div>
+                    <h1 class="text-4xl md:text-6xl font-black text-primary tracking-tight leading-tight mb-4">
+                        {{ $listing->property_title }}
+                    </h1>
+                    <p class="text-gray-500 font-bold flex items-center gap-2 text-xl mt-2">
+                        <i class="fa-solid fa-map-marker-alt text-secondary"></i>
+                        {{ $listing->address ?? 'Location disclosed to qualified buyers only' }}
+                    </p>
+                </div>
+                <div class="text-left md:text-right bg-white p-6 rounded-2xl shadow-sm border border-gray-100 min-w-[200px] flex md:flex-col justify-between items-center md:items-end gap-4">
+                    <div class="flex flex-col items-start md:items-end">
+                        <div class="text-gray-400 text-xs font-black uppercase tracking-[0.2em] mb-1">Confidential Price</div>
+                        <div class="text-4xl font-black text-secondary">£{{ number_format($listing->price) }}</div>
+                    </div>
+                    <button onclick="toggleFavorite(null, {{ $listing->id }}, this)" 
+                            class="w-14 h-14 rounded-2xl bg-gray-50 flex items-center justify-center transition-all hover:scale-110 {{ in_array($listing->id, $user_favorite_off_market_ids ?? []) ? 'text-red-500' : 'text-gray-300' }}">
+                        <i class="{{ in_array($listing->id, $user_favorite_off_market_ids ?? []) ? 'fa-solid' : 'fa-regular' }} fa-heart text-2xl"></i>
+                    </button>
                 </div>
             </div>
-        </div>
-    </div>
-    <!--===== BREADCRUMB AREA ENDS =======-->
 
-    <!--===== PROPERTY DETAILS AREA STARTS =======-->
-    <div class="property-details-section-area sp1">
-        <div class="container">
-            <div class="row">
-                <div class="col-lg-8">
-                    <div class="property-details-left-content">
-                        <!-- Property Gallery -->
-                        <div class="property-gallery mb-4">
-                            @if($listing->gallery && count($listing->gallery) > 0)
-                                <div class="main-image mb-3">
-                                    <img src="{{ asset('storage/' . $listing->gallery[0]) }}"
-                                        alt="{{ $listing->property_title }}" class="img-fluid rounded">
-                                </div>
-                                <div class="thumbnail-images">
-                                    @foreach($listing->gallery as $index => $image)
-                                        <img src="{{ asset('storage/' . $image) }}" alt="{{ $listing->property_title }}"
-                                            class="img-thumbnail mr-2 mb-2" style="width: 100px; height: 80px; object-fit: cover;">
-                                    @endforeach
-                                </div>
-                            @elseif($listing->thumbnail)
-                                <div class="main-image">
-                                    <img src="{{ asset('storage/' . $listing->thumbnail) }}"
-                                        alt="{{ $listing->property_title }}" class="img-fluid rounded">
-                                </div>
-                            @else
-                                <div class="no-image-placeholder text-center p-5 bg-light rounded">
-                                    <i class="fas fa-home fa-4x text-muted mb-3"></i>
-                                    <p class="text-muted">No images available for this confidential deal</p>
+            <!-- Gallery Container -->
+            @php 
+                $gallery = is_array($listing->gallery) ? $listing->gallery : json_decode($listing->gallery, true) ?? []; 
+            @endphp
+            <div class="gallery-container">
+                @if(count($gallery) > 0 || $listing->thumbnail)
+                    <!-- Desktop Grid -->
+                    <div class="gallery-grid-v2">
+                        <div class="gallery-main gallery-item cursor-pointer" onclick="openLightbox(0)">
+                            <img src="{{ $listing->thumbnail ? asset('storage/' . $listing->thumbnail) : (isset($gallery[0]) ? asset('storage/' . $gallery[0]) : asset('assets/img/all-images/hero/1.jpg')) }}" alt="Main">
+                        </div>
+                        <div class="gallery-item cursor-pointer" onclick="openLightbox(1)">
+                            <img src="{{ isset($gallery[0]) ? asset('storage/' . $gallery[0]) : asset('assets/img/all-images/hero/1.jpg') }}" alt="G1">
+                        </div>
+                        <div class="gallery-item relative cursor-pointer" onclick="openLightbox(2)">
+                            <img src="{{ isset($gallery[1]) ? asset('storage/' . $gallery[1]) : asset('assets/img/all-images/hero/1.jpg') }}" alt="G2">
+                            @if(count($gallery) > 2)
+                                <div class="gallery-overlay-btn" onclick="openLightbox(0); event.stopPropagation();">
+                                    <i class="fa-solid fa-camera mr-2"></i> Show all photos
                                 </div>
                             @endif
                         </div>
+                    </div>
 
-                        <!-- Property Header -->
-                        <div class="property-header mb-4">
-                            <div class="d-flex justify-content-between align-items-start">
-                                <div>
-                                    <h1 class="property-title">{{ $listing->property_title }}</h1>
-                                    <p class="property-address text-muted">
-                                        <i class="fas fa-map-marker-alt"></i>
-                                        {{ $listing->address ?? 'Location disclosed to qualified buyers only' }}
-                                    </p>
-                                </div>
-                                <div class="property-price">
-                                    <h2 class="text-primary">£{{ number_format($listing->price) }}</h2>
-                                    @if($listing->purpose == 'Rent')
-                                        <p class="text-muted">Per {{ $listing->rentFrequency?->name ?? 'month' }}</p>
-                                    @endif
-                                </div>
+                    <!-- Mobile Slider -->
+                    <div class="mobile-only-gallery">
+                        <div class="swiper property-mobile-slider h-full">
+                            <div class="swiper-wrapper">
+                                <div class="swiper-slide"><img src="{{ $listing->thumbnail ? asset('storage/' . $listing->thumbnail) : (isset($gallery[0]) ? asset('storage/' . $gallery[0]) : asset('assets/img/all-images/hero/1.jpg')) }}" class="w-full h-full object-cover"></div>
+                                @foreach($gallery as $img)
+                                    <div class="swiper-slide"><img src="{{ asset('storage/' . $img) }}" class="w-full h-full object-cover"></div>
+                                @endforeach
                             </div>
-                        </div>
-
-                        <!-- Property Meta -->
-                        <div class="property-meta mb-4">
-                            <div class="row">
-                                <div class="col-md-3 col-6 mb-3">
-                                    <div class="meta-item text-center">
-                                        <i class="fas fa-bed fa-2x text-primary mb-2"></i>
-                                        <h5>{{ $listing->bedrooms }}</h5>
-                                        <p class="text-muted mb-0">Bedrooms</p>
-                                    </div>
-                                </div>
-                                <div class="col-md-3 col-6 mb-3">
-                                    <div class="meta-item text-center">
-                                        <i class="fas fa-bath fa-2x text-primary mb-2"></i>
-                                        <h5>{{ $listing->bathrooms }}</h5>
-                                        <p class="text-muted mb-0">Bathrooms</p>
-                                    </div>
-                                </div>
-                                <div class="col-md-3 col-6 mb-3">
-                                    <div class="meta-item text-center">
-                                        <i class="fas fa-home fa-2x text-primary mb-2"></i>
-                                        <h5>{{ $listing->propertyType?->title ?? 'Property' }}</h5>
-                                        <p class="text-muted mb-0">Type</p>
-                                    </div>
-                                </div>
-                                <div class="col-md-3 col-6 mb-3">
-                                    <div class="meta-item text-center">
-                                        <i class="fas fa-ruler-combined fa-2x text-primary mb-2"></i>
-                                        <h5>{{ $listing->area_size }}</h5>
-                                        <p class="text-muted mb-0">Area</p>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- Property Description -->
-                        <div class="property-description mb-4">
-                            <h3>Description</h3>
-                            <div class="description-content">
-                                {!! $listing->description !!}
-                            </div>
-                        </div>
-
-                        <!-- Features -->
-                        @if($listing->features->count() > 0)
-                            <div class="property-features mb-4">
-                                <h3>Features & Amenities</h3>
-                                <div class="row">
-                                    @foreach($listing->features as $feature)
-                                        <div class="col-md-4 col-sm-6 mb-2">
-                                            <i class="fas fa-check-circle text-success mr-2"></i>
-                                            {{ $feature->name }}
-                                        </div>
-                                    @endforeach
-                                </div>
-                            </div>
-                        @endif
-
-                        <!-- Contact Agent -->
-                        <div class="sidebar-widget mb-4 p-4" style="background: #f8f9fa; border-radius: 10px;">
-                            <h4 class="mb-3">Contact Agent</h4>
-
-                            <!-- WhatsApp and Email Buttons -->
-                            <div class="mb-3">
-                                <a href="whatsapp://send?text=Hi, I am interested in {{ urlencode($listing->property_title) }}. Please provide more details.&phone={{ $listing->user->phone ?? '447700900000' }}"
-                                    class="btn w-100 mb-2" target="_blank"
-                                    style="background-color: #1CD494; border: none; color: white;">
-                                    <i class="fab fa-whatsapp"></i> WhatsApp
-                                </a>
-                                <a href="mailto:{{ $listing->user->email ?? 'info@findauk.com' }}?subject=Interest in {{ urlencode($listing->property_title) }}"
-                                    class="btn btn-info w-100" style="margin-bottom: 15px;">
-                                    <i class="fas fa-envelope"></i> Email
-                                </a>
-                            </div>
-
-                            <h5 class="mb-3">Or Send Message</h5>
-                            <form>
-                                <div class="form-group mb-3">
-                                    <input type="text" class="form-control" placeholder="Your Name" required>
-                                </div>
-                                <div class="form-group mb-3">
-                                    <input type="email" class="form-control" placeholder="Your Email" required>
-                                </div>
-                                <div class="form-group mb-3">
-                                    <textarea class="form-control" rows="4" placeholder="Your Message" required></textarea>
-                                </div>
-                                <button type="submit" class="btn btn-primary w-100">Send Message</button>
-                            </form>
+                            <div class="swiper-pagination"></div>
                         </div>
                     </div>
-                </div>
-
-                <div class="col-lg-4">
-                    <div class="property-sidebar">
-                        @if($listing->purpose === 'Buy' || $listing->purpose === 'Sale')
-                            <x-mortgage-calculator>{{ $listing->price }}</x-mortgage-calculator>
-                        @endif
-
-                        <!-- Property Status -->
-                        <div class="card mb-4">
-                            <div class="card-body text-center">
-                                <h4 class="text-success"><i class="fas fa-lock"></i> Confidential Deal</h4>
-                                <p class="text-muted">This property is exclusively available to qualified buyers</p>
-                            </div>
-                        </div>
-
-                        <!-- Property Info -->
-                        <div class="card mb-4">
-                            <div class="card-header">
-                                <h5>Property Information</h5>
-                            </div>
-                            <div class="card-body">
-                                <ul class="list-unstyled">
-                                    <li class="mb-2"><strong>Purpose:</strong> {{ $listing->purpose }}</li>
-                                    <li class="mb-2"><strong>Property Type:</strong>
-                                        {{ $listing->propertyType?->title ?? 'N/A' }}</li>
-                                    <li class="mb-2"><strong>Category:</strong> {{ $listing->unitType?->title ?? 'N/A' }}
-                                    </li>
-                                    @if($listing->ownershipStatus)
-                                        <li class="mb-2"><strong>Ownership:</strong> {{ $listing->ownershipStatus->name }}</li>
-                                    @endif
-                                    @if($listing->cheque)
-                                        <li class="mb-2"><strong>Cheque:</strong> {{ $listing->cheque->name }}</li>
-                                    @endif
-                                </ul>
-                            </div>
-                        </div>
-
-                        <!-- Contact Form -->
-                        <div class="card">
-                            <div class="card-header">
-                                <h5>Request More Information</h5>
-                            </div>
-                            <div class="card-body">
-                                <form id="inquiry-form">
-                                    <div class="mb-3">
-                                        <label for="name" class="form-label">Full Name</label>
-                                        <input type="text" class="form-control" id="name" required>
-                                    </div>
-                                    <div class="mb-3">
-                                        <label for="email" class="form-label">Email</label>
-                                        <input type="email" class="form-control" id="email" required>
-                                    </div>
-                                    <div class="mb-3">
-                                        <label for="phone" class="form-label">Phone</label>
-                                        <input type="tel" class="form-control" id="phone" required>
-                                    </div>
-                                    <div class="mb-3">
-                                        <label for="message" class="form-label">Message</label>
-                                        <textarea class="form-control" id="message" rows="3"
-                                            placeholder="I'm interested in this confidential deal..."></textarea>
-                                    </div>
-                                    <button type="submit" class="btn btn-primary w-100">Send Inquiry</button>
-                                </form>
-                            </div>
-                        </div>
+                @else
+                    <div class="h-64 bg-gray-100 flex flex-col items-center justify-center rounded-3xl">
+                        <i class="fa-solid fa-lock text-4xl text-gray-300 mb-4"></i>
+                        <p class="text-gray-400 font-bold uppercase tracking-widest text-xs">Visuals Confidential</p>
                     </div>
-                </div>
+                @endif
             </div>
 
-            <!-- Similar Properties -->
-            @if($similarProperties->count() > 0)
-                <div class="row mt-5">
-                    <div class="col-lg-12">
-                        <div class="similar-properties">
-                            <h3>Similar Confidential Deals</h3>
-                            <div class="row">
-                                @foreach($similarProperties as $similar)
-                                    <div class="col-lg-4 col-md-6 mb-4">
-                                        <div class="property-card">
-                                            <div class="property-image">
-                                                @if($similar->thumbnail)
-                                                    <img src="{{ asset('storage/' . $similar->thumbnail) }}"
-                                                        alt="{{ $similar->property_title }}">
-                                                @else
-                                                    <div class="no-image-placeholder">
-                                                        <i class="fas fa-lock"></i>
-                                                        <span>Confidential</span>
-                                                    </div>
-                                                @endif
-                                                <div class="property-price">
-                                                    <span class="price-element"
-                                                        data-original-price="{{ $similar->price }}">£{{ number_format($similar->price) }}</span>
-                                                </div>
-                                            </div>
-                                            <div class="property-content">
-                                                <h5>
-                                                    <a href="{{ route('off-market-listing.show', $similar->id) }}">
-                                                        {{ Str::limit($similar->property_title, 40) }}
-                                                    </a>
-                                                </h5>
-                                                <p class="property-address">
-                                                    <i class="fas fa-map-marker-alt"></i>
-                                                    {{ Str::limit($similar->address ?? 'Location confidential', 50) }}
-                                                </p>
-                                                <div class="property-meta">
-                                                    <span><i class="fas fa-bed"></i> {{ $similar->bedrooms }} bed</span>
-                                                    <span><i class="fas fa-bath"></i> {{ $similar->bathrooms }} bath</span>
-                                                </div>
-                                            </div>
-                                        </div>
+            <div class="flex flex-col lg:flex-row gap-8">
+                <!-- Left Content Area -->
+                <div class="w-full lg:w-2/3">
+
+                    <!-- Quick Stats -->
+                    <div class="grid grid-cols-2 md:grid-cols-3 gap-4 mb-8">
+                        <div class="stat-badge-v2">
+                            <i class="fa-solid fa-bed"></i>
+                            <div>
+                                <span class="block text-xl font-bold">{{ $listing->bedrooms }}</span>
+                                <span class="text-xs text-gray-400 uppercase font-bold">Bedrooms</span>
+                            </div>
+                        </div>
+                        <div class="stat-badge-v2">
+                            <i class="fa-solid fa-bath"></i>
+                            <div>
+                                <span class="block text-xl font-bold">{{ $listing->bathrooms }}</span>
+                                <span class="text-xs text-gray-400 uppercase font-bold">Bathrooms</span>
+                            </div>
+                        </div>
+                        <div class="stat-badge-v2">
+                            <i class="fa-solid fa-vector-square"></i>
+                            <div>
+                                <span class="block text-xl font-bold">{{ $listing->area_size ?? 'N/A' }}</span>
+                                <span class="text-xs text-gray-400 uppercase font-bold">Area Size</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Description -->
+                    <div class="premium-card-v2">
+                        <h2 class="text-2xl font-extrabold text-primary mb-6">Confidential Overview</h2>
+                        <div class="prose max-w-none text-gray-600 leading-relaxed font-medium">
+                            {!! $listing->description !!}
+                        </div>
+                    </div>
+
+                    <!-- Details Table -->
+                    <div class="premium-card-v2">
+                        <h2 class="text-2xl font-extrabold text-primary mb-8 flex items-center gap-3">
+                            <span class="w-2 h-8 bg-secondary rounded-full"></span>
+                            Key Details
+                        </h2>
+                        
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                            <div class="flex items-center gap-4 p-4 rounded-2xl bg-gray-50 border border-gray-100">
+                                <div class="w-12 h-12 rounded-xl bg-white shadow-sm flex items-center justify-center text-secondary">
+                                    <i class="fa-solid fa-hashtag"></i>
+                                </div>
+                                <div class="flex flex-col">
+                                    <span class="text-[10px] font-black uppercase tracking-widest text-gray-400">Reference</span>
+                                    <span class="text-sm font-bold text-primary">{{ $listing->property_reference_number ?? 'CONF-'.$listing->id }}</span>
+                                </div>
+                            </div>
+                            <div class="flex items-center gap-4 p-4 rounded-2xl bg-gray-50 border border-gray-100">
+                                <div class="w-12 h-12 rounded-xl bg-white shadow-sm flex items-center justify-center text-secondary">
+                                    <i class="fa-solid fa-house-chimney"></i>
+                                </div>
+                                <div class="flex flex-col">
+                                    <span class="text-[10px] font-black uppercase tracking-widest text-gray-400">Type</span>
+                                    <span class="text-sm font-bold text-primary">{{ $listing->propertyType->title ?? 'Apartment' }}</span>
+                                </div>
+                            </div>
+                            <div class="flex items-center gap-4 p-4 rounded-2xl bg-gray-50 border border-gray-100">
+                                <div class="w-12 h-12 rounded-xl bg-white shadow-sm flex items-center justify-center text-secondary">
+                                    <i class="fa-solid fa-bullseye"></i>
+                                </div>
+                                <div class="flex flex-col">
+                                    <span class="text-[10px] font-black uppercase tracking-widest text-gray-400">Purpose</span>
+                                    <span class="text-sm font-bold text-primary">{{ $listing->purpose }}</span>
+                                </div>
+                            </div>
+                            <div class="flex items-center gap-4 p-4 rounded-2xl bg-gray-50 border border-gray-100">
+                                <div class="w-12 h-12 rounded-xl bg-white shadow-sm flex items-center justify-center text-green-500">
+                                    <i class="fa-solid fa-lock"></i>
+                                </div>
+                                <div class="flex flex-col">
+                                    <span class="text-[10px] font-black uppercase tracking-widest text-gray-400">Market Status</span>
+                                    <span class="text-sm font-bold text-green-600">Off-Market Exclusive</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Features -->
+                    @if($listing->features->count() > 0)
+                        <div class="premium-card-v2">
+                            <h2 class="text-2xl font-extrabold text-primary mb-6">Amenities & Features</h2>
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                @foreach($listing->features as $feature)
+                                    <div class="amenity-item-v2">
+                                        <i class="fa-solid fa-check-double text-secondary"></i>
+                                        <span>{{ $feature->title ?? $feature->name }}</span>
                                     </div>
                                 @endforeach
                             </div>
                         </div>
+                    @endif
+                </div>
+
+                <!-- Sidebar -->
+                <div class="w-full lg:w-1/3">
+                    <div class="sidebar-v2">
+                        <div class="agent-box-v2 shadow-2xl">
+                            <h3 class="text-xl font-extrabold mb-6">Interested in this Deal?</h3>
+                            <p class="text-white/70 text-sm mb-8 leading-relaxed">This property is part of our off-market portfolio. Contact us for the full prospectus and NDA.</p>
+                            
+                            <div class="space-y-4">
+                                <a href="https://wa.me/{{ $listing->user->phone ?? '447000000000' }}?text=Interested%20in%20Confidential%20Deal%20{{ $listing->id }}"
+                                    class="py-4 bg-[#25D366] text-white font-black rounded-xl flex items-center justify-center gap-3 text-sm tracking-wider uppercase shadow-xl">
+                                    <i class="fab fa-whatsapp text-lg"></i> WhatsApp Agent
+                                </a>
+                                <a href="mailto:{{ $listing->user->email ?? 'info@findauk.com' }}"
+                                    class="py-4 bg-white text-primary font-black rounded-xl flex items-center justify-center gap-3 text-sm tracking-wider uppercase shadow-md text-center">
+                                    <i class="fa-solid fa-envelope text-lg"></i> Send Email
+                                </a>
+                            </div>
+
+                            <hr class="my-8 border-white/10">
+
+                            <form class="space-y-4" id="confidential-inquiry">
+                                <input type="text" placeholder="Full Name" class="w-full bg-white/10 border border-white/10 rounded-xl p-4 text-sm text-white focus:ring-secondary outline-none">
+                                <input type="email" placeholder="Email Address" class="w-full bg-white/10 border border-white/10 rounded-xl p-4 text-sm text-white focus:ring-secondary outline-none">
+                                <textarea rows="3" placeholder="Explain your interest..." class="w-full bg-white/10 border border-white/10 rounded-xl p-4 text-sm text-white focus:ring-secondary outline-none"></textarea>
+                                <button type="submit" class="w-full py-4 bg-secondary text-white font-black rounded-xl hover:bg-white hover:text-primary transition-all uppercase tracking-[0.2em] text-[10px] shadow-lg">Request Prospectus</button>
+                            </form>
+                        </div>
+
+                        <!-- Similar Off Market Properties -->
+                        @if($similarProperties->count() > 0)
+                            <div class="bg-white rounded-3xl p-6 border border-gray-100 shadow-sm">
+                                <h3 class="text-xl font-black text-primary mb-6">More Off-Market</h3>
+                                <div class="space-y-6">
+                                    @foreach($similarProperties as $s)
+                                        <a href="{{ route('off-market-listing.show', $s->id) }}" class="flex gap-4 group">
+                                            <div class="w-20 h-20 rounded-2xl overflow-hidden flex-shrink-0 bg-gray-50 border border-gray-100">
+                                                <img src="{{ $s->thumbnail ? asset('storage/' . $s->thumbnail) : asset('assets/img/all-images/hero/1.jpg') }}" class="w-full h-full object-cover group-hover:scale-110 transition-transform">
+                                            </div>
+                                            <div class="flex flex-col justify-center">
+                                                <h4 class="text-sm font-bold text-gray-800 line-clamp-1 group-hover:text-secondary">{{ $s->property_title }}</h4>
+                                                <div class="text-secondary font-black">£{{ number_format($s->price) }}</div>
+                                            </div>
+                                        </a>
+                                    @endforeach
+                                </div>
+                            </div>
+                        @endif
                     </div>
                 </div>
-            @endif
+            </div>
         </div>
     </div>
-    <!--===== PROPERTY DETAILS AREA ENDS =======-->
 
-    @push('styles')
-        <style>
-            .property-title {
-                color: #333;
-                font-weight: 700;
-                margin-bottom: 10px;
-            }
-
-            .property-price h2 {
-                margin: 0;
-            }
-
-            .meta-item h5 {
-                margin: 0;
-                font-weight: 700;
-            }
-
-            .description-content {
-                line-height: 1.6;
-                color: #555;
-            }
-
-            .property-card {
-                background: white;
-                border-radius: 10px;
-                overflow: hidden;
-                box-shadow: 0 3px 10px rgba(0, 0, 0, 0.1);
-                transition: all 0.3s ease;
-                border: 1px solid #eee;
-            }
-
-            .property-card:hover {
-                transform: translateY(-3px);
-                box-shadow: 0 5px 15px rgba(0, 0, 0, 0.15);
-            }
-
-            .property-image {
-                position: relative;
-                height: 200px;
-                overflow: hidden;
-            }
-
-            .property-image img {
-                width: 100%;
-                height: 100%;
-                object-fit: cover;
-            }
-
-            .no-image-placeholder {
-                width: 100%;
-                height: 100%;
-                background: #f8f9fa;
-                display: flex;
-                flex-direction: column;
-                align-items: center;
-                justify-content: center;
-                color: #6c757d;
-            }
-
-            .property-price {
-                position: absolute;
-                top: 15px;
-                right: 15px;
-                background: #02b8f2;
-                color: white;
-                padding: 8px 15px;
-                border-radius: 20px;
-                font-weight: bold;
-                font-size: 14px;
-                box-shadow: 0 2px 10px rgba(2, 184, 242, 0.3);
-            }
-
-            .property-content {
-                padding: 15px;
-            }
-
-            .property-content h5 {
-                margin: 0 0 10px 0;
-                font-size: 16px;
-                font-weight: 600;
-            }
-
-            .property-content h5 a {
-                color: #333;
-                text-decoration: none;
-            }
-
-            .property-content h5 a:hover {
-                color: #02b8f2;
-            }
-
-            .property-address {
-                color: #666;
-                margin: 0 0 10px 0;
-                font-size: 13px;
-            }
-
-            .property-meta {
-                display: flex;
-                gap: 15px;
-                font-size: 12px;
-                color: #555;
-            }
-
-            .property-meta span {
-                display: flex;
-                align-items: center;
-                gap: 5px;
-            }
-
-            .card {
-                border: 1px solid #eee;
-                border-radius: 10px;
-                box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
-            }
-
-            .card-header {
-                background: #f8f9fa;
-                border-bottom: 1px solid #eee;
-                font-weight: 600;
-            }
-        </style>
-    @endpush
-
-    @push('scripts')
-        <script src="{{ asset('js/currency-converter.js') }}"></script>
-        <script>
-            $(document).ready(function () {
-                // Initialize currency converter
-                initializeCurrencyConverter();
-                $('#inquiry-form').on('submit', function (e) {
-                    e.preventDefault();
-
-                    const formData = {
-                        name: $('#name').val(),
-                        email: $('#email').val(),
-                        phone: $('#phone').val(),
-                        message: $('#message').val(),
-                        property_id: {{ $listing->id }},
-                        property_title: '{{ $listing->property_title }}'
-                    };
-
-                    // Show loading
-                    const submitBtn = $(this).find('button[type="submit"]');
-                    const originalText = submitBtn.text();
-                    submitBtn.prop('disabled', true).text('Sending...');
-
-                    // Simulate form submission (replace with actual AJAX call)
-                    setTimeout(function () {
-                        submitBtn.prop('disabled', false).text(originalText);
-                        alert('Thank you for your inquiry. Our team will contact you shortly.');
-                        $('#inquiry-form')[0].reset();
-                    }, 1500);
-                });
-            });
-        </script>
-    @endpush
+    <!-- Gallery Lightbox Modal -->
+    <div id="galleryLightbox">
+        <span class="lightbox-close" onclick="closeLightbox()">&times;</span>
+        <div class="swiper lightbox-swiper">
+            <div class="swiper-wrapper">
+                <div class="swiper-slide lightbox-slide">
+                    <img src="{{ $listing->thumbnail ? asset('storage/' . $listing->thumbnail) : (isset($gallery[0]) ? asset('storage/' . $gallery[0]) : asset('assets/img/all-images/hero/1.jpg')) }}" alt="Main">
+                </div>
+                @foreach($gallery as $img)
+                    <div class="swiper-slide lightbox-slide">
+                        <img src="{{ asset('storage/' . $img) }}" alt="Gallery Image">
+                    </div>
+                @endforeach
+            </div>
+            <div class="swiper-button-next"></div>
+            <div class="swiper-button-prev"></div>
+            <div class="swiper-pagination !text-white !bottom-10"></div>
+        </div>
+    </div>
 @endsection
+
+@push('scripts')
+    <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
+    <script>
+        let lightboxSwiper;
+
+        document.addEventListener('DOMContentLoaded', function () {
+            // Mobile Slider
+            if (document.querySelector('.property-mobile-slider')) {
+                new Swiper(".property-mobile-slider", {
+                    loop: true,
+                    pagination: { el: ".swiper-pagination", clickable: true },
+                    autoplay: { delay: 4000 }
+                });
+            }
+
+            // Lightbox Swiper
+            lightboxSwiper = new Swiper(".lightbox-swiper", {
+                loop: true,
+                spaceBetween: 50,
+                navigation: {
+                    nextEl: ".swiper-button-next",
+                    prevEl: ".swiper-button-prev",
+                },
+                pagination: {
+                    el: ".swiper-pagination",
+                    type: "fraction",
+                }
+            });
+        });
+
+        function openLightbox(index) {
+            const modal = document.getElementById('galleryLightbox');
+            if(!modal) return;
+            modal.style.display = 'block';
+            document.body.style.overflow = 'hidden';
+            if (lightboxSwiper) {
+                lightboxSwiper.update();
+                lightboxSwiper.slideToLoop(index, 0);
+            }
+        }
+
+        function closeLightbox() {
+            document.getElementById('galleryLightbox').style.display = 'none';
+            document.body.style.overflow = 'auto';
+        }
+
+        document.addEventListener('keydown', function (e) {
+            if (e.key === "Escape") closeLightbox();
+        });
+
+        // Form Submission
+        document.getElementById('confidential-inquiry')?.addEventListener('submit', function(e) {
+            e.preventDefault();
+            alert('Your request for the prospectus has been sent. Our team will verify your credentials and contact you.');
+            this.reset();
+        });
+
+        function toggleFavorite(listingId, offMarketId, btn) {
+            @if(!auth()->check())
+                window.location.href = "{{ route('login') }}";
+                return;
+            @endif
+
+            const data = {
+                _token: '{{ csrf_token() }}'
+            };
+            if (listingId) data.listing_id = listingId;
+            if (offMarketId) data.off_market_listing_id = offMarketId;
+
+            const icon = $(btn).find('i');
+
+            $.ajax({
+                url: '{{ route('favorites.toggle') }}',
+                type: 'POST',
+                data: data,
+                success: function(res) {
+                    if (res.status === 'added') {
+                        $(btn).removeClass('text-gray-300').addClass('text-red-500');
+                        icon.removeClass('fa-regular').addClass('fa-solid');
+                    } else {
+                        $(btn).removeClass('text-red-500').addClass('text-gray-300');
+                        icon.removeClass('fa-solid').addClass('fa-regular');
+                    }
+                }
+            });
+        }
+    </script>
+@endpush

@@ -16,7 +16,10 @@ class AdminAffiliateController extends Controller
     public function index(Request $request)
     {
         if ($request->ajax()) {
-            $affiliates = \App\Models\Affiliate::with('user')->latest()->get();
+            $affiliates = \App\Models\Affiliate::with('user')
+                ->withCount('visitorAnalytics')
+                ->latest()
+                ->get();
             return response()->json(['data' => $affiliates]);
         }
         $users = \App\Models\User::doesntHave('affiliate')->get(); // For the create modal dropdown
@@ -75,7 +78,17 @@ class AdminAffiliateController extends Controller
             'status' => $validated['status'],
         ]);
 
-        return response()->json(['success' => true, 'message' => 'Affiliate status updated.']);
+        return response()->json(['success' => true, 'message' => 'Partner status updated.']);
+    }
+
+    public function visitors(string $id)
+    {
+        $affiliate = \App\Models\Affiliate::with('user')->withCount('visitorAnalytics')->findOrFail($id);
+        $visitors = \App\Models\VisitorAnalytic::where('affiliate_id', $id)
+            ->latest()
+            ->paginate(50);
+
+        return view('admin.affiliates.visitors', compact('affiliate', 'visitors'));
     }
 
     public function destroy(string $id)
@@ -83,6 +96,6 @@ class AdminAffiliateController extends Controller
         $affiliate = \App\Models\Affiliate::findOrFail($id);
         $affiliate->delete();
 
-        return response()->json(['success' => true, 'message' => 'Affiliate deleted successfully.']);
+        return response()->json(['success' => true, 'message' => 'Partner deleted successfully.']);
     }
 }

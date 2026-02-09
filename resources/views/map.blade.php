@@ -1,841 +1,840 @@
-@extends('layouts.master')
+@extends('layouts.modern')
 
-@section('title', 'Interactive Property Map')
-
-@push('styles')
-<meta name="csrf-token" content="{{ csrf_token() }}">
-@endpush
+@section('title', 'Map Search | Find properties by drawing')
 
 @section('content')
-<div class="container-fluid px-0">
-    <div class="row g-0">
-        <!-- Sidebar for filters -->
-        <div class="col-lg-3 col-md-4 col-sm-12 p-3 bg-white border-end" style="height: 100vh; overflow-y: auto; margin-top: 5%;">
-            <div class="d-flex justify-content-between align-items-center mb-4">
-                <h5 class="mb-0 fw-bold">Filters</h5>
-                <button type="button" class="btn btn-outline-secondary btn-sm" id="toggle-sidebar">
-                    <i class="fas fa-chevron-left"></i>
-                </button>
-            </div>
-            
-            <form id="filter-form" class="mb-4">
-                <div class="mb-3">
-                    <label class="form-label small text-muted">Price Range (£)</label>
-                    <div class="row g-2">
-                        <div class="col-6">
-                            <input type="number" class="form-control form-control-sm" id="price-min" placeholder="Min">
-                        </div>
-                        <div class="col-6">
-                            <input type="number" class="form-control form-control-sm" id="price-max" placeholder="Max">
+    <div class="map-search-wrapper">
+        <!-- Top Filter Bar -->
+        <div class="map-filter-container">
+            <div class="container-fluid px-4">
+                <div class="filter-row">
+                    <!-- Location Input -->
+                    <div class="filter-group ml-0 location-group">
+                        <div class="search-input-group">
+                            <i class="fa-solid fa-magnifying-glass search-icon"></i>
+                            <input type="text" id="location-input" class="form-control"
+                                placeholder="Search location e.g. 'London'">
                         </div>
                     </div>
-                </div>
-                            
-                <div class="row g-2 mb-3">
-                    <div class="col-6">
-                        <label class="form-label small text-muted">Property Type</label>
-                        <select class="form-control form-control-sm" id="property-type">
-                            
-                            <option value="">All Types</option>
-                            @foreach($propertyTypes ?? [] as $type)
-                                <option value="{{ $type->id }}">{{ $type->name }}</option>
-                            @endforeach
+
+                    <!-- Type Filters -->
+                    <div class="filter-group options-group">
+                        <div class="btn-group" role="group">
+                            <input type="radio" class="btn-check" name="purpose" id="p-buy" value="Buy" checked>
+                            <label class="btn btn-filter-toggle" for="p-buy">For Sale</label>
+
+                            <input type="radio" class="btn-check" name="purpose" id="p-rent" value="Rent">
+                            <label class="btn btn-filter-toggle" for="p-rent">To Rent</label>
+                        </div>
+
+                        <select class="form-select filter-select" id="price-filter">
+                            <option value="">Min Price</option>
+                            <option value="100000">£100,000</option>
+                            <option value="200000">£200,000</option>
+                            <option value="300000">£300,000</option>
+                            <option value="400000">£400,000</option>
+                            <option value="500000">£500,000</option>
+                        </select>
+
+                        <select class="form-select filter-select" id="beds-filter">
+                            <option value="">Bedrooms</option>
+                            <option value="1">1+ Beds</option>
+                            <option value="2">2+ Beds</option>
+                            <option value="3">3+ Beds</option>
+                            <option value="4">4+ Beds</option>
                         </select>
                     </div>
-                                
-                    <div class="col-6">
-                        <label class="form-label small text-muted">Bedrooms</label>
-                        <select class="form-control form-control-sm" id="bedrooms">
-                            <option value="">Any</option>
-                            <option value="1">1+</option>
-                            <option value="2">2+</option>
-                            <option value="3">3+</option>
-                            <option value="4">4+</option>
-                        </select>
-                    </div>
-                </div>
-                            
-                <div class="mb-3">
-                    <label class="form-label small text-muted">Purpose</label>
-                    <select class="form-control form-control-sm" id="purpose">
-                        <option value="">All</option>
-                        <option value="sale">For Sale</option>
-                        <option value="rent">For Rent</option>
-                    </select>
-                </div>
-                            
-                <div class="d-grid gap-2 mb-3">
-                    <button type="button" class="btn btn-primary btn-sm py-2" id="search-btn">
-                        <i class="fas fa-search me-1"></i> Search
-                    </button>
-                                
-                    <button type="button" class="btn btn-outline-success btn-sm py-2" id="enable-draw">
-                        <i class="fas fa-draw-polygon me-1"></i> Draw Area
-                    </button>
-                                
-                    <div class="btn-group d-grid gap-2" role="group">
-                        <button type="button" class="btn btn-outline-info btn-sm" id="draw-polygon" style="display:none;">
-                            <i class="fas fa-shapes me-1"></i> Polygon
+
+                    <!-- Draw Action -->
+                    <div class="filter-group ml-auto actions-group">
+                        <button type="button" id="draw-btn" class="btn btn-draw shadow-sm">
+                            <i class="fa-solid fa-pencil"></i> Draw Search
                         </button>
-                        <button type="button" class="btn btn-outline-info btn-sm" id="draw-rectangle" style="display:none;">
-                            <i class="fas fa-vector-square me-1"></i> Rectangle
+                        <button type="button" id="clear-draw" class="btn btn-light border d-none p-2 rounded">
+                            Clear
                         </button>
-                        <button type="button" class="btn btn-outline-info btn-sm" id="draw-circle" style="display:none;">
-                            <i class="fas fa-circle me-1"></i> Circle
-                        </button>
-                    </div>
-                                
-                    <button type="button" class="btn btn-outline-secondary btn-sm py-2" id="clear-draw">
-                        <i class="fas fa-eraser me-1"></i> Clear
-                    </button>
-                </div>
-            </form>
-            
-            <div class="border-top pt-3">
-                <div class="d-flex justify-content-between align-items-center mb-3">
-                    <h6 class="mb-0 fw-bold text-dark"><i class="fas fa-home me-2 text-success"></i>Properties</h6>
-                    <span class="badge bg-primary rounded-pill px-3 py-2" id="property-count">0</span>
-                </div>
-                <div id="property-list" class="rounded-2 p-2" style="max-height: calc(100vh - 400px); overflow-y: auto; background-color: #f8f9fa;">
-                    <div class="text-center py-4">
-                        <i class="fas fa-hand-pointer text-muted mb-2" style="font-size: 2rem;"></i>
-                        <p class="text-muted mb-0 small">Draw an area to see properties</p>
-                    </div>
-                </div>
-                
-                <!-- Property Detail Modal -->
-                <div class="modal fade" id="propertyModal" tabindex="-1" aria-labelledby="propertyModalLabel" aria-hidden="true">
-                    <div class="modal-dialog modal-lg">
-                        <div class="modal-content">
-                            <div class="modal-header">
-                                <h5 class="modal-title" id="propertyModalLabel">Property Details</h5>
-                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                            </div>
-                            <div class="modal-body" id="propertyModalBody">
-                                <div class="text-center py-4">
-                                    <div class="spinner-border" role="status">
-                                        <span class="visually-hidden">Loading...</span>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="modal-footer">
-                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                                <a href="#" class="btn btn-primary" id="viewDetailsBtn" target="_blank">View Full Details</a>
-                            </div>
-                        </div>
+                        <a href="{{ route('listings.index') }}" class="btn btn-outline-secondary btn-list-view">
+                            <i class="fa-solid fa-list"></i> List
+                        </a>
                     </div>
                 </div>
             </div>
         </div>
-        
-        <!-- Map container -->
-        <div class="col-lg-9 col-md-8 col-sm-12">
-            <div id="map" style="height: 100vh; width: 100%; background-color: #ffffff;">
-                <div class="d-flex justify-content-center align-items-center h-100">
-                    <div class="text-center">
-                        <i class="fas fa-map-marked-alt text-muted" style="font-size: 3rem;"></i>
-                        <p class="mt-3 text-muted">Draw an area to see {{ $listingType ?? 'regular' }} properties</p>
+
+        <!-- Map Container -->
+        <div class="map-canvas-container">
+            <div id="map-canvas"></div>
+
+            <!-- Start Message -->
+            <div id="map-start-message" class="map-message-overlay">
+                <div class="message-card">
+                    <div class="icon-circle mb-3">
+                        <i class="fa-solid fa-map-location-dot"></i>
                     </div>
+                    <h3>Start your search</h3>
+                    <p class="mb-4">Enter a location above or use the <strong>Draw Search</strong> tool to find properties.
+                    </p>
+                    <button type="button" class="btn btn-primary btn-lg w-100" onclick="enableDrawingMode()">
+                        <i class="fa-solid fa-pencil"></i> Start Drawing
+                    </button>
+                </div>
+            </div>
+
+            <!-- Loading State -->
+            <div id="map-loading" class="map-loading-pill d-none">
+                <div class="spinner-border spinner-border-sm text-primary" role="status"></div>
+                <span>Updating map...</span>
+            </div>
+
+            <!-- Draw Helper Toast -->
+            <div id="draw-toast" class="draw-helper-toast d-none">
+                <div class="toast-content">
+                    <div class="icon-box">
+                        <i class="fa-solid fa-pencil"></i>
+                    </div>
+                    <div>
+                        <strong>Draw a shape</strong>
+                        <div class="small text-muted">Click points on map to outline area</div>
+                    </div>
+                    <button type="button" class="btn-close ms-auto" id="close-toast-btn"></button>
                 </div>
             </div>
         </div>
     </div>
-</div>
-
-<!-- Hidden input for bounds -->
-<input type="hidden" id="bounds-input" value="">
 @endsection
 
-@push('scripts')
-<script>
-    // Global variables
-    let map;
-    let markers = [];
-    let drawingManager;
-    let currentBounds = null;
-    let propertyClusterer;
-    let debounceTimer = null;
-
-    // Initialize the map
-    function initMap() {
-        console.log('Initializing map...');
-            
-        // Check if google.maps is available
-        if (typeof google === 'undefined' || !google.maps) {
-            console.error('Google Maps not loaded properly');
-            return;
+@push('styles')
+    <style>
+        /* Global Overrides */
+        body {
+            overflow: hidden;
         }
-            
-        // Set default location to London, UK
-        const defaultLocation = { lat: 51.5074, lng: -0.1278 };
-    
-        // Create the map with white background and administrative boundaries
-        map = new google.maps.Map(document.getElementById('map'), {
-            center: defaultLocation,
-            zoom: 10,
-            mapTypeId: 'roadmap',
-            zoomControl: true,
-            zoomControlOptions: {
-                position: google.maps.ControlPosition.RIGHT_CENTER
-            },
-            streetViewControl: false,
-            fullscreenControl: false,
-            mapTypeControl: false,
-            styles: [
-                {
-                    "featureType": "administrative",
-                    "elementType": "labels",
-                    "stylers": [{"visibility": "on"}]
-                },
-                {
-                    "featureType": "administrative.locality",
-                    "elementType": "labels.text.fill",
-                    "stylers": [{"color": "#1a1a1a"}]
-                },
-                {
-                    "featureType": "administrative.neighborhood",
-                    "elementType": "labels.text.fill",
-                    "stylers": [{"color": "#333333"}]
-                },
-                {
-                    "featureType": "landscape",
-                    "elementType": "geometry",
-                    "stylers": [{"color": "#f5f5f5"}]
-                },
-                {
-                    "featureType": "poi",
-                    "elementType": "geometry",
-                    "stylers": [{"color": "#eeeeee"}]
-                },
-                {
-                    "featureType": "road",
-                    "elementType": "geometry",
-                    "stylers": [{"color": "#ffffff"}]
-                },
-                {
-                    "featureType": "road.highway",
-                    "elementType": "geometry",
-                    "stylers": [{"color": "#dadada"}]
-                },
-                {
-                    "featureType": "water",
-                    "elementType": "geometry",
-                    "stylers": [{"color": "#c9c9c9"}]
-                }
-            ]
-        });
-    
-        console.log('Map created successfully');
-            
-        // Don't load properties by default - wait for drawing
-        console.log('Map initialized. Properties will load after drawing.');
-        
-        // Show area names by enabling administrative boundaries
-        // Remove problematic GeoJSON loading that causes CORS errors
-    
-        // Only load properties when drawing is completed
-        // Idle event listener removed to prevent automatic loading
-    }
 
-    // Load properties based on current map bounds
-    function loadProperties() {
-        const bounds = map.getBounds();
-        if (!bounds) return;
+        .hero-inner-section-area-sidebar,
+        footer {
+            display: none !important;
+        }
 
-        // Format bounds for API request
-        const boundsData = {
-            southwest: {
-                lat: bounds.getSouthWest().lat(),
-                lng: bounds.getSouthWest().lng()
-            },
-            northeast: {
-                lat: bounds.getNorthEast().lat(),
-                lng: bounds.getNorthEast().lng()
+        .map-search-wrapper {
+            display: flex;
+            flex-direction: column;
+            height: calc(100vh - 80px);
+            position: relative;
+            background: #f4f5f7;
+        }
+
+        /* Filter Bar */
+        .map-filter-container {
+            position: relative;
+            background: #ffffff;
+            border-bottom: 1px solid #e0e0e0;
+            padding: 18px 0;
+            z-index: 50;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+        }
+
+        .filter-row {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            flex-wrap: wrap;
+        }
+
+        .filter-group {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .ml-auto {
+            margin-left: auto;
+        }
+
+        /* Inputs */
+        .search-input-group {
+            position: relative;
+            width: 320px;
+        }
+
+        .search-input-group input {
+            padding-left: 40px;
+            border-radius: 6px;
+            border: 1px solid #e2e8f0;
+            height: 44px;
+            font-size: 15px;
+            background: #f8fafc;
+            transition: all 0.2s;
+        }
+
+        .search-input-group input:focus {
+            background: #fff;
+            border-color: #008da6;
+            box-shadow: 0 0 0 3px rgba(0, 141, 166, 0.1);
+        }
+
+        .search-icon {
+            position: absolute;
+            left: 14px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #64748b;
+            font-size: 16px;
+        }
+
+        .btn-filter-toggle {
+            padding: 8px 18px;
+            font-size: 14px;
+            font-weight: 500;
+            border: 1px solid #e2e8f0;
+            background: white;
+            color: #475569;
+            height: 44px;
+            display: inline-flex;
+            align-items: center;
+        }
+
+        .btn-check:checked+.btn-filter-toggle {
+            background-color: #0f172a;
+            /* Slate 900 */
+            color: white;
+            border-color: #0f172a;
+        }
+
+        .filter-select {
+            height: 44px;
+            font-size: 14px;
+            min-width: 120px;
+            border-color: #e2e8f0;
+            cursor: pointer;
+            border-radius: 6px;
+            color: #475569;
+        }
+
+        /* Buttons */
+        .btn-draw {
+            border: 1px solid #008da6;
+            color: #008da6;
+            background: white;
+            font-weight: 600;
+            font-size: 14px;
+            height: 44px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 0 20px;
+            border-radius: 6px;
+            transition: all 0.2s;
+        }
+
+        .btn-draw:hover,
+        .btn-draw.active {
+            background: #008da6;
+            color: white;
+            transform: translateY(-1px);
+            box-shadow: 0 4px 6px rgba(0, 141, 166, 0.2);
+        }
+
+        .btn-list-view {
+            height: 44px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 14px;
+            padding: 0 16px;
+            border-radius: 6px;
+        }
+
+        /* Map */
+        .map-canvas-container {
+            flex: 1;
+            position: relative;
+            background: #e5e3df;
+            /* Google Maps bg color */
+        }
+
+        #map-canvas {
+            width: 100%;
+            height: 100%;
+        }
+
+        /* Overlays */
+        .map-message-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(255, 255, 255, 0.85);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 10;
+            backdrop-filter: blur(5px);
+        }
+
+        .message-card {
+            background: white;
+            padding: 40px;
+            border-radius: 12px;
+            text-align: center;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.08);
+            max-width: 420px;
+            border: 1px solid rgba(0, 0, 0, 0.05);
+            pointer-events: auto;
+        }
+
+        .icon-circle {
+            width: 70px;
+            height: 70px;
+            background: #f0f9ff;
+            color: #008da6;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 28px;
+            margin: 0 auto;
+        }
+
+        .message-card h3 {
+            font-weight: 700;
+            color: #1e293b;
+            margin-bottom: 10px;
+        }
+
+        .message-card p {
+            color: #64748b;
+            font-size: 15px;
+        }
+
+        /* Loading Pill */
+        .map-loading-pill {
+            position: absolute;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(15, 23, 42, 0.9);
+            padding: 10px 20px;
+            border-radius: 30px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 13px;
+            font-weight: 600;
+            color: white;
+            z-index: 1000;
+            pointer-events: none;
+            backdrop-filter: blur(4px);
+        }
+
+        .map-loading-pill .spinner-border {
+            width: 1rem;
+            height: 1rem;
+            border-width: 2px;
+            border-color: white;
+            border-right-color: transparent;
+        }
+
+        /* Draw Helper */
+        .draw-helper-toast {
+            position: absolute;
+            bottom: 40px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: white;
+            padding: 15px 20px;
+            border-radius: 10px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+            z-index: 2000;
+            animation: slideUp 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+            border: 1px solid rgba(0, 0, 0, 0.05);
+            min-width: 300px;
+        }
+
+        .toast-content {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .icon-box {
+            width: 36px;
+            height: 36px;
+            background: #e0f2fe;
+            color: #008da6;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 16px;
+        }
+
+        @keyframes slideUp {
+            from {
+                transform: translate(-50%, 100%);
+                opacity: 0;
             }
-        };
 
-        // Get current filters
-        const filters = {
-            price_min: document.getElementById('price-min').value || null,
-            price_max: document.getElementById('price-max').value || null,
-            property_type: document.getElementById('property-type').value || null,
-            bedrooms: document.getElementById('bedrooms').value || null,
-            purpose: document.getElementById('purpose').value || null
-        };
-
-        // Determine listing type based on current URL
-        const isOffMarket = window.location.pathname.includes('off-market');
-        
-        // Make API request
-        fetch('/map/api/properties', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
-            },
-            body: JSON.stringify({
-                bounds: boundsData,
-                zoom_level: map.getZoom(),
-                listing_type: isOffMarket ? 'off_market' : 'regular',
-                ...filters
-            })
-        })
-        .then(response => response.json())
-        .then(data => {
-            updateMapWithProperties(data.properties);
-            updatePropertyCount(data.total);
-            updatePropertyList(data.properties);
-        })
-        .catch(error => {
-            console.error('Error loading properties:', error);
-        });
-    }
-
-    // Update map with properties
-    function updateMapWithProperties(properties) {
-        // Clear existing markers
-        clearMarkers();
-
-        // Create new markers
-        properties.forEach(property => {
-            addPropertyMarker(property);
-        });
-    }
-
-    // Add a property marker to the map
-    function addPropertyMarker(property) {
-        if (!map) return;
-
-        // Create an invisible marker at the property location
-        const marker = new google.maps.Marker({
-            position: { lat: parseFloat(property.lat), lng: parseFloat(property.lng) },
-            map: map,
-            icon: {
-                path: google.maps.SymbolPath.CIRCLE,
-                scale: 0, // Make it invisible
-                fillColor: "transparent",
-                fillOpacity: 0,
-                strokeColor: "transparent",
-                strokeWeight: 0
-            },
-            optimized: false
-        });
-        
-        // Create an info window that displays the price in a centered dialog box
-        const priceInfoWindow = new google.maps.InfoWindow({
-            content: `<div style="background-color: #007bff; color: white; padding: 6px 12px; border-radius: 16px; font-weight: bold; font-size: 14px; text-align: center; border: 2px solid white; box-shadow: 0 2px 6px rgba(0,0,0,0.3); min-width: 80px; display: flex; align-items: center; justify-content: center; height: 30px;">£${property.price.toLocaleString()}</div>`,
-            disableAutoPan: true,
-            pixelOffset: new google.maps.Size(0, -35) // Position above the marker
-        });
-        
-        // Show the price info window immediately
-        setTimeout(() => {
-            priceInfoWindow.open(map, marker);
-        }, 100);
-        
-
-
-        // Create an info window with property details
-        const infoWindow = new google.maps.InfoWindow({
-            content: `
-                <div style="min-width: 250px;">
-                    <div style="font-weight: bold; font-size: 16px; color: #007bff;">£${property.price.toLocaleString()}</div>
-                    <div style="font-weight: bold; margin-top: 5px;">${property.title}</div>
-                    <div style="color: #666; font-size: 12px; margin-top: 3px;">${property.address}</div>
-                    ${property.image ? `<img src="${property.image.startsWith('http') || property.image.startsWith('/') ? property.image : '/storage/gallery/' + property.image}" style="width: 100%; height: 120px; object-fit: cover; margin: 5px 0; border-radius: 4px;" />` : ''}
-                    <div style="margin-top: 8px; display: flex; gap: 10px;">
-                        <span style="font-size: 12px;"><i class="fa fa-bed"></i> ${property.bedrooms || 0} beds</span>
-                        <span style="font-size: 12px;"><i class="fa fa-bath"></i> ${property.bathrooms || 0} baths</span>
-                        <span style="font-size: 12px;"><i class="fa fa-ruler-combined"></i> ${property.area_size || 0} sqft</span>
-                    </div>
-                    <div style="margin-top: 8px;">
-                        <a href="/property/${property.id}" class="btn btn-sm btn-primary" style="text-decoration: none; color: white; padding: 4px 8px; font-size: 12px;">View Details</a>
-                    </div>
-                </div>
-            `
-        });
-
-        // Add click listener to open property details
-        marker.addListener('click', function() {
-            // Close the price info window and open the property modal
-            priceInfoWindow.close();
-            openPropertyModal(property.id);
-        });
-
-        // Store marker reference
-        markers.push(marker);
-    }
-
-    // Clear all markers from the map
-    function clearMarkers() {
-        for (let i = 0; i < markers.length; i++) {
-            markers[i].setMap(null);
-        }
-        markers = [];
-    }
-
-    // Update property count display
-    function updatePropertyCount(count) {
-        document.getElementById('property-count').textContent = count;
-    }
-
-    // Update property list in sidebar
-    function updatePropertyList(properties) {
-        const propertyList = document.getElementById('property-list');
-        propertyList.innerHTML = '';
-
-        if (properties.length === 0) {
-            propertyList.innerHTML = `
-                <div class="text-center py-4">
-                    <i class="fas fa-home text-muted mb-2" style="font-size: 2rem;"></i>
-                    <p class="text-muted mb-0 small">No properties found in this area</p>
-                </div>`;
-            return;
+            to {
+                transform: translate(-50%, 0);
+                opacity: 1;
+            }
         }
 
-        properties.forEach(property => {
-            const propertyElement = document.createElement('div');            
-            propertyElement.className = 'border rounded p-3 mb-2 bg-light';
-            propertyElement.style.cursor = 'pointer';
-            propertyElement.style.transition = 'transform 0.2s';
-            
-            propertyElement.innerHTML = `
-                <div class="d-flex justify-content-between align-items-start">
-                    <div>
-                        <div style="font-weight: bold; color: #007bff; font-size: 1.1em;">£${property.price.toLocaleString()}</div>
-                        <div style="font-size: 14px; font-weight: 500; margin: 5px 0;">${property.title}</div>
-                        <div class="d-flex flex-wrap gap-2 mb-2">
-                            <small class="badge bg-primary bg-opacity-10 text-primary">
-                                <i class="fas fa-bed"></i> ${property.bedrooms || 0} bed
-                            </small>
-                            <small class="badge bg-success bg-opacity-10 text-success">
-                                <i class="fas fa-bath"></i> ${property.bathrooms || 0} bath
-                            </small>
-                            <small class="badge bg-info bg-opacity-10 text-info">
-                                <i class="fas fa-ruler-combined"></i> ${property.area_size || 0} sqft
-                            </small>
-                        </div>
-                        <small class="text-muted">${property.address}</small>
-                    </div>
-                    <div>
-                        <i class="fas fa-arrow-right text-muted"></i>
-                    </div>
-                </div>
-            `;
-            
-            propertyElement.addEventListener('click', function() {
-                // Pan to property location
-                map.panTo({ lat: parseFloat(property.lat), lng: parseFloat(property.lng) });
-                map.setZoom(15);
-                
-                // Open modal with property details
-                openPropertyModal(property.id);
+        /* Custom Markers (Speech Bubble Style) */
+        .price-marker-label {
+            background: #0f172a;
+            /* Slate 900 */
+            color: #fff;
+            padding: 8px 12px;
+            border-radius: 8px;
+            font-size: 13px;
+            font-weight: 700;
+            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.3);
+            cursor: pointer;
+            position: absolute;
+            transform: translate(-50%, -100%);
+            /* Center bottom anchor */
+            white-space: nowrap;
+            font-family: 'Inter', sans-serif;
+            transition: transform 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            margin-top: -10px;
+            /* Lift up slightly */
+        }
+
+        /* Tail */
+        .price-marker-label::after {
+            content: '';
+            position: absolute;
+            bottom: -6px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 0;
+            height: 0;
+            border-left: 6px solid transparent;
+            border-right: 6px solid transparent;
+            border-top: 6px solid #0f172a;
+        }
+
+        .price-marker-label:hover {
+            background: #008da6;
+            transform: translate(-50%, -115%) scale(1.1);
+            /* Pop up effect */
+            z-index: 9999 !important;
+        }
+
+        .price-marker-label:hover::after {
+            border-top-color: #008da6;
+        }
+
+        /* Responsive */
+        @media (max-width: 991px) {
+            .filter-row {
+                gap: 10px;
+            }
+
+            .search-input-group {
+                width: 100%;
+                max-width: 240px;
+            }
+
+            .filter-select {
+                flex: 1;
+                min-width: 0;
+            }
+
+            .btn-draw {
+                padding: 0 10px;
+                font-size: 13px;
+            }
+        }
+    </style>
+@endpush
+
+@push('scripts')
+    <script>
+        let map;
+        let drawingManager;
+        let activePolygon = null;
+        let markers = [];
+        let isDrawingMode = false;
+        let debounceTimer;
+
+        // Helper to safely manipulate elements with brute-force inline styles
+        function toggleEl(id, show) {
+            const el = document.getElementById(id);
+            if (!el) return;
+            if (show) {
+                el.classList.remove('d-none');
+                el.style.display = '';
+            } else {
+                el.classList.add('d-none');
+                el.style.display = 'none'; // Force hide to prevent CSS conflicts
+            }
+        }
+
+        // Wait for Google Maps
+        document.addEventListener('DOMContentLoaded', function () {
+            const check = setInterval(function () {
+                if (typeof google !== 'undefined' && google.maps && google.maps.drawing) {
+                    clearInterval(check);
+                    initPropertyMap();
+                }
+            }, 200);
+        });
+
+        function initPropertyMap() {
+            console.log("Initializing Map...");
+            const london = { lat: 51.5074, lng: -0.1278 };
+
+            map = new google.maps.Map(document.getElementById('map-canvas'), {
+                center: london,
+                zoom: 11,
+                mapTypeId: 'roadmap',
+                disableDefaultUI: true, // Clean look
+                zoomControl: true,
+                zoomControlOptions: { position: google.maps.ControlPosition.RIGHT_BOTTOM },
+                gestureHandling: 'greedy', // Better for full screen
+                minZoom: 5,
+                maxZoom: 20,
+                styles: [
+                    {
+                        "featureType": "poi",
+                        "elementType": "labels",
+                        "stylers": [{ "visibility": "off" }]
+                    }
+                ]
             });
-            
-            propertyList.appendChild(propertyElement);
-        });
-    }
 
-    // Enable drawing functionality
-    function enableDrawing() {
-        console.log('enableDrawing function called');
-        
-        if (!map) {
-            alert('Map not initialized yet');
-            return;
-        }
+            // Setup Drawing Manager
+            drawingManager = new google.maps.drawing.DrawingManager({
+                drawingMode: null,
+                drawingControl: false,
+                polygonOptions: {
+                    fillColor: '#008da6',
+                    fillOpacity: 0.15,
+                    strokeWeight: 2,
+                    strokeColor: '#008da6',
+                    clickable: false,
+                    editable: false,
+                    zIndex: 1
+                }
+            });
+            drawingManager.setMap(map);
 
-        // Disable any existing drawing manager
-        if (drawingManager) {
-            drawingManager.setMap(null);
-        }
-        
-        console.log('Creating new drawing manager');
+            // Drawing Complete Listener
+            google.maps.event.addListener(drawingManager, 'overlaycomplete', function (event) {
+                if (event.type === 'polygon') {
+                    if (activePolygon) activePolygon.setMap(null);
+                    activePolygon = event.overlay;
 
-        // Create new drawing manager
-        drawingManager = new google.maps.drawing.DrawingManager({
-            drawingMode: null, // Start with no active drawing mode
-            drawingControl: false, // Disable the default drawing controls
-            polygonOptions: {
-                fillColor: '#0000ff',
-                fillOpacity: 0.0,  // No fill (transparent)
-                strokeWeight: 2,
-                strokeColor: '#0000ff',  // Blue outline only
-                clickable: false,
-                editable: true,
-                draggable: true
-            },
-            rectangleOptions: {
-                fillColor: '#0000ff',
-                fillOpacity: 0.0,  // No fill (transparent)
-                strokeWeight: 2,
-                strokeColor: '#0000ff',  // Blue outline only
-                clickable: false,
-                editable: true,
-                draggable: true
-            },
-            circleOptions: {
-                fillColor: '#0000ff',
-                fillOpacity: 0.0,  // No fill (transparent)
-                strokeWeight: 2,
-                strokeColor: '#0000ff',  // Blue outline only
-                clickable: false,
-                editable: true,
-                draggable: true
-            },
-        });
+                    disableDrawingMode();
+                    toggleEl('clear-draw', true);
+                    toggleEl('map-start-message', false); // Hide start message
 
-        drawingManager.setMap(map);
-        
-        console.log('Drawing manager set to map');
-        console.log('Available drawing modes:', drawingManager.drawingControlOptions?.drawingModes);
+                    searchInPolygon(activePolygon);
+                }
+            });
 
-        // Listen for overlay complete event
-        google.maps.event.addListener(drawingManager, 'overlaycomplete', function(event) {
-            const newShape = event.overlay;
-            newShape.type = event.type;
+            // Setup Autocomplete
+            const input = document.getElementById('location-input');
+            if (input) {
+                const autocomplete = new google.maps.places.Autocomplete(input, {
+                    componentRestrictions: { country: 'uk' }
+                });
+                autocomplete.bindTo('bounds', map);
+                autocomplete.addListener('place_changed', function () {
+                    const place = autocomplete.getPlace();
+                    if (!place.geometry) return;
 
-            // Get bounds of the drawn shape
-            let bounds;
-            if (event.type === google.maps.drawing.OverlayType.RECTANGLE) {
-                bounds = newShape.getBounds();
-            } else if (event.type === google.maps.drawing.OverlayType.CIRCLE) {
-                // For circle, we'll calculate a bounding box
-                const center = newShape.getCenter();
-                const radius = newShape.getRadius();
-                const northEast = new google.maps.LatLng(
-                    center.lat() + (radius / 1000) * 0.008983,
-                    center.lng() + (radius / 1000) * 0.010024
-                );
-                const southWest = new google.maps.LatLng(
-                    center.lat() - (radius / 1000) * 0.008983,
-                    center.lng() - (radius / 1000) * 0.010024
-                );
-                bounds = new google.maps.LatLngBounds(southWest, northEast);
-            } else if (event.type === google.maps.drawing.OverlayType.POLYGON) {
-                // For polygon, get the bounds of the polygon
-                bounds = new google.maps.LatLngBounds();
-                newShape.getPath().forEach(function(latlng) {
-                    bounds.extend(latlng);
+                    toggleEl('map-start-message', false); // Hide start message on search
+
+                    // Clear any drawn polygon on text search
+                    if (activePolygon) {
+                        activePolygon.setMap(null);
+                        activePolygon = null;
+                        toggleEl('clear-draw', false);
+                    }
+
+                    if (place.geometry.viewport) map.fitBounds(place.geometry.viewport);
+                    else {
+                        map.setCenter(place.geometry.location);
+                        map.setZoom(14);
+                    }
+                    searchInViewport();
                 });
             }
 
-            // Store bounds and trigger search
-            if (bounds) {
-                currentBounds = {
-                    north: bounds.getNorthEast().lat(),
-                    south: bounds.getSouthWest().lat(),
-                    east: bounds.getNorthEast().lng(),
-                    west: bounds.getSouthWest().lng()
+            // Listener for idle (drag end, zoom end) -> Search in Viewport
+            map.addListener('idle', function () {
+                // Only trigger if start message is HIDDEN (active session)
+                const msg = document.getElementById('map-start-message');
+                // Check computed style to be sure
+                const isHidden = msg && (msg.classList.contains('d-none') || msg.style.display === 'none');
+
+                if (!isHidden) return;
+
+                // And NOT in drawing mode, and NO active polygon (viewport search)
+                if (!isDrawingMode && !activePolygon) {
+                    searchInViewport();
+                }
+            });
+
+            // NO initial search.
+        }
+
+        // --- Drawing UI ---
+
+        window.enableDrawingMode = function () {
+            console.log("Enabling Drawing Mode");
+            if (!map) { alert('Map not loaded yet.'); return; }
+
+            isDrawingMode = true;
+            const btn = document.getElementById('draw-btn');
+            if (btn) {
+                btn.classList.add('active');
+                btn.innerHTML = '<i class="fa-solid fa-xmark"></i> Cancel';
+            }
+
+            toggleEl('draw-toast', true);
+            toggleEl('map-start-message', false); // HIDE MESSAGE SO MAP IS CLICKABLE
+
+            // Lock Map Movement
+            map.setOptions({
+                draggable: false,
+                clickableIcons: false,
+                disableDoubleClickZoom: true,
+            });
+            map.getDiv().style.cursor = 'crosshair';
+
+            // Start Tool
+            drawingManager.setDrawingMode('polygon');
+        };
+
+        window.disableDrawingMode = function () {
+            console.log("Disabling Drawing Mode");
+            if (!map) return;
+
+            isDrawingMode = false;
+            const btn = document.getElementById('draw-btn');
+            if (btn) {
+                btn.classList.remove('active');
+                btn.innerHTML = '<i class="fa-solid fa-pencil"></i> Draw Search';
+            }
+
+            toggleEl('draw-toast', false);
+
+            // Show start message again if nothing was done
+            if (!activePolygon && markers.length === 0) {
+                toggleEl('map-start-message', true);
+            }
+
+            // Unlock Map
+            map.setOptions({
+                draggable: true,
+                clickableIcons: true,
+                disableDoubleClickZoom: false,
+            });
+            map.getDiv().style.cursor = '';
+
+            // Stop Tool
+            drawingManager.setDrawingMode(null);
+        };
+
+        const drawBtn = document.getElementById('draw-btn');
+        if (drawBtn) {
+            drawBtn.addEventListener('click', function () {
+                if (isDrawingMode) disableDrawingMode();
+                else enableDrawingMode();
+            });
+        }
+
+        const closeToast = document.getElementById('close-toast-btn');
+        if (closeToast) {
+            closeToast.addEventListener('click', function () {
+                disableDrawingMode();
+            });
+        }
+
+        const clearBtn = document.getElementById('clear-draw');
+        if (clearBtn) {
+            clearBtn.addEventListener('click', function () {
+                if (activePolygon) {
+                    activePolygon.setMap(null);
+                    activePolygon = null;
+                }
+                this.classList.add('d-none');
+                this.style.display = 'none';
+
+                // Clear markers and show start message
+                clearMarkers();
+                toggleEl('map-start-message', true);
+            });
+        }
+
+        // --- Search Logic ---
+
+        function getPayload() {
+            // Safe get value
+            const getVal = (id) => { const el = document.getElementById(id); return el ? el.value : ''; };
+            const purposeEl = document.querySelector('input[name="purpose"]:checked');
+
+            return {
+                purpose: purposeEl ? purposeEl.value : 'Buy',
+                min_price: getVal('price-filter'),
+                bedrooms: getVal('beds-filter'),
+                property_type: null,
+                _token: '{{ csrf_token() }}'
+            };
+        }
+
+        function searchInPolygon(polygon) {
+            if (debounceTimer) clearTimeout(debounceTimer);
+            debounceTimer = setTimeout(() => {
+                const bounds = new google.maps.LatLngBounds();
+                polygon.getPath().forEach(p => bounds.extend(p));
+
+                const payload = getPayload();
+                // Match Backend keys: southwest/northeast
+                const ne = bounds.getNorthEast();
+                const sw = bounds.getSouthWest();
+                payload.bounds = {
+                    northeast: { lat: ne.lat(), lng: ne.lng() },
+                    southwest: { lat: sw.lat(), lng: sw.lng() }
                 };
 
-                // Update hidden form field with bounds
-                document.getElementById('bounds-input').value = JSON.stringify(currentBounds);
-
-                // Fetch properties within drawn area
-                fetchPropertiesByBounds(currentBounds);
-            }
-        });
-    }
-
-    // Fetch properties within specific bounds
-    function fetchPropertiesByBounds(bounds) {
-        // Get current filters
-        const filters = {
-            price_min: document.getElementById('price-min').value || null,
-            price_max: document.getElementById('price-max').value || null,
-            property_type: document.getElementById('property-type').value || null,
-            bedrooms: document.getElementById('bedrooms').value || null,
-            purpose: document.getElementById('purpose').value || null
-        };
-
-        // Determine listing type based on current URL
-        const isOffMarket = window.location.pathname.includes('off-market');
-        
-        // Make API request
-        fetch('/map/api/properties', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
-            },
-            body: JSON.stringify({
-                bounds: {
-                    southwest: { lat: bounds.south, lng: bounds.west },
-                    northeast: { lat: bounds.north, lng: bounds.east }
-                },
-                zoom_level: map.getZoom(),
-                listing_type: isOffMarket ? 'off_market' : 'regular',
-                ...filters
-            })
-        })
-        .then(response => response.json())
-        .then(data => {
-            updateMapWithProperties(data.properties);
-            updatePropertyCount(data.total);
-            updatePropertyList(data.properties);
-        })
-        .catch(error => {
-            console.error('Error loading properties:', error);
-        });
-    }
-
-    // Clear drawings and reset
-    function clearDrawings() {
-        if (drawingManager) {
-            drawingManager.setMap(null);
-            drawingManager = null;
+                fetchProperties(payload, true, polygon);
+            }, 200);
         }
 
-        // Reset drawing buttons
-        document.getElementById('draw-polygon').style.display = 'none';
-        document.getElementById('draw-rectangle').style.display = 'none';
-        document.getElementById('draw-circle').style.display = 'none';
-        document.getElementById('enable-draw').style.display = 'inline-block';
+        function searchInViewport() {
+            if (!map) return;
+            if (debounceTimer) clearTimeout(debounceTimer);
+            debounceTimer = setTimeout(() => {
+                const bounds = map.getBounds();
+                if (!bounds) return;
 
-        // Clear bounds input and reset map
-        document.getElementById('bounds-input').value = '';
-        
-        // Clear markers
-        clearMarkers();
-        
-        // Reset property count
-        updatePropertyCount(0);
-        
-        // Reset property list
-        document.getElementById('property-list').innerHTML = `
-            <div class="text-center py-4">
-                <i class="fas fa-hand-pointer text-muted mb-2" style="font-size: 2rem;"></i>
-                <p class="text-muted mb-0 small">Draw an area to see properties</p>
-            </div>
-        `;
-        
-        // Close any open modal
-        const modalElement = document.getElementById('propertyModal');
-        if (modalElement) {
-            const modalInstance = bootstrap.Modal.getInstance(modalElement);
-            if (modalInstance) {
-                modalInstance.hide();
-            }
+                const payload = getPayload();
+                const ne = bounds.getNorthEast();
+                const sw = bounds.getSouthWest();
+                payload.bounds = {
+                    northeast: { lat: ne.lat(), lng: ne.lng() },
+                    southwest: { lat: sw.lat(), lng: sw.lng() }
+                };
+
+                fetchProperties(payload, false);
+            }, 500);
         }
-        
-        // Trigger full page reload
-        setTimeout(() => {
-            window.location.reload();
-        }, 300); // Small delay to allow UI updates before reload
-    }
 
-    // Event listeners for UI elements
-    document.addEventListener('DOMContentLoaded', function() {
-        // Initialize map
-        initMap();
+        // Filter Listeners
+        document.querySelectorAll('.filter-select, input[name="purpose"]').forEach(el => {
+            el.addEventListener('change', () => {
+                // Only update if search isn't waiting at start
+                const msg = document.getElementById('map-start-message');
+                // Check computed style to be sure (handling inline styles)
+                const isHidden = msg && (msg.classList.contains('d-none') || msg.style.display === 'none');
 
-        // Search button event - only works after drawing
-        document.getElementById('search-btn').addEventListener('click', function(e) {
-            e.preventDefault();
-            const boundsInput = document.getElementById('bounds-input').value;
-            if (boundsInput) {
-                const bounds = JSON.parse(boundsInput);
-                fetchPropertiesByBounds(bounds);
-            } else {
-                alert('Please draw an area first');
-            }
-        });
-
-        // Enable draw button event
-        document.getElementById('enable-draw').addEventListener('click', function() {
-            console.log('Draw button clicked');
-            enableDrawing();
-            
-            // Show individual drawing buttons
-            document.getElementById('draw-polygon').style.display = 'inline-block';
-            document.getElementById('draw-rectangle').style.display = 'inline-block';
-            document.getElementById('draw-circle').style.display = 'inline-block';
-            this.style.display = 'none';
-        });
-        
-        // Individual drawing mode buttons
-        document.getElementById('draw-polygon').addEventListener('click', function() {
-            console.log('Polygon button clicked');
-            if (drawingManager) {
-                drawingManager.setDrawingMode(google.maps.drawing.OverlayType.POLYGON);
-            }
-        });
-        
-        document.getElementById('draw-rectangle').addEventListener('click', function() {
-            console.log('Rectangle button clicked');
-            if (drawingManager) {
-                drawingManager.setDrawingMode(google.maps.drawing.OverlayType.RECTANGLE);
-            }
-        });
-        
-        document.getElementById('draw-circle').addEventListener('click', function() {
-            console.log('Circle button clicked');
-            if (drawingManager) {
-                drawingManager.setDrawingMode(google.maps.drawing.OverlayType.CIRCLE);
-            }
-        });
-
-        // Clear draw button event
-        document.getElementById('clear-draw').addEventListener('click', function(e) {
-            e.preventDefault();
-            clearDrawings();
-        });
-
-        // Toggle sidebar event
-        document.getElementById('toggle-sidebar').addEventListener('click', function() {
-            const sidebar = document.querySelector('.col-lg-3');
-            if (sidebar.style.display === 'none' || sidebar.style.display === '') {
-                sidebar.style.display = 'block';
-                this.innerHTML = '<i class="fas fa-chevron-left"></i>';
-            } else {
-                sidebar.style.display = 'none';
-                this.innerHTML = '<i class="fas fa-chevron-right"></i>';
-            }
-        });
-
-        // Filter change events - only work after drawing
-        document.querySelectorAll('#filter-form input, #filter-form select').forEach(element => {
-            element.addEventListener('change', function() {
-                const boundsInput = document.getElementById('bounds-input').value;
-                if (boundsInput) {
-                    const bounds = JSON.parse(boundsInput);
-                    fetchPropertiesByBounds(bounds);
+                if (isHidden) {
+                    if (activePolygon) searchInPolygon(activePolygon);
+                    else searchInViewport();
                 }
             });
         });
-    });
-</script>
 
-<!-- Load Google Maps API with Drawing Library -->
-<script>
-    let mapScriptLoaded = false;
-    
-    function initializeMapAfterAPI() {
-        if (typeof google !== 'undefined' && google.maps && google.maps.drawing) {
-            initMap();
-        } else {
-            setTimeout(initializeMapAfterAPI, 100);
-        }
-    }
-    
-    function loadGoogleMapsAPI() {
-        if (mapScriptLoaded) return;
-        
-        console.log('Loading Google Maps API...');
-        
-        const script = document.createElement('script');
-        script.src = 'https://maps.googleapis.com/maps/api/js?key={{ config('services.google.maps_api_key') }}&libraries=geometry,drawing&callback=googleMapsInitialized';
-        script.async = true;
-        script.defer = true;
-        script.onerror = function() {
-            console.error('Failed to load Google Maps API');
-        };
-        document.head.appendChild(script);
-        mapScriptLoaded = true;
-    }
-    
-    function googleMapsInitialized() {
-        console.log('Google Maps API initialized');
-        // Google Maps API is loaded, now initialize the map
-        initializeMapAfterAPI();
-    }
-    
-    // Load the API after DOM is ready
-    document.addEventListener('DOMContentLoaded', loadGoogleMapsAPI);
-    
-    // Open property detail modal
-    function openPropertyModal(propertyId) {
-        const modal = new bootstrap.Modal(document.getElementById('propertyModal'));
-        const modalBody = document.getElementById('propertyModalBody');
-        const viewDetailsBtn = document.getElementById('viewDetailsBtn');
-        
-        // Show loading state
-        modalBody.innerHTML = `
-            <div class="text-center py-4">
-                <div class="spinner-border" role="status">
-                    <span class="visually-hidden">Loading...</span>
-                </div>
-            </div>`;
-        
-        // Determine listing type based on current URL and set appropriate link
-        const isOffMarket = window.location.pathname.includes('off-market');
-        viewDetailsBtn.href = isOffMarket ? `/off-market-property/` + propertyId : `/property/` + propertyId;
-        
-        // Determine API endpoint based on current URL
-        const apiEndpoint = isOffMarket ? `/api/off-market-listings/` : `/api/listings/`;
-        
-        // Fetch property details
-        fetch(apiEndpoint + propertyId)
-            .then(response => response.json())
-            .then(property => {
-                let images = [];
-                if (property.gallery) {
-                    try {
-                        // Check if gallery is already an array or a JSON string
-                        if (Array.isArray(property.gallery)) {
-                            images = property.gallery;
-                        } else if (typeof property.gallery === 'string') {
-                            images = JSON.parse(property.gallery);
-                        } else {
-                            images = [];
-                        }
-                    } catch (e) {
-                        console.error('Error parsing gallery:', e);
-                        images = [];
+        // API Call
+        function fetchProperties(payload, isPolygon, polygonObj = null) {
+            toggleEl('map-loading', true);
+
+            fetch("{{ route('map.getProperties') }}", {
+                method: "POST",
+                headers: { "Content-Type": "application/json", "X-CSRF-TOKEN": '{{ csrf_token() }}' },
+                body: JSON.stringify(payload)
+            })
+                .then(res => {
+                    if (!res.ok) throw new Error('Network error');
+                    return res.json();
+                })
+                .then(data => {
+                    clearMarkers();
+                    let properties = data.properties || [];
+
+                    // Client-side polygon filter
+                    if (isPolygon && polygonObj) {
+                        properties = properties.filter(prop => {
+                            const latLng = new google.maps.LatLng(prop.lat, prop.lng);
+                            return google.maps.geometry.poly.containsLocation(latLng, polygonObj);
+                        });
                     }
+
+                    properties.forEach(createMarker);
+                })
+                .catch(err => console.error("Search Error:", err))
+                .finally(() => {
+                    toggleEl('map-loading', false);
+                });
+        }
+
+        // --- Markers ---
+
+        // Using CustomOverlay
+        class PriceMarker extends google.maps.OverlayView {
+            constructor(position, property) {
+                super();
+                this.position = position;
+                this.property = property;
+                this.div = null;
+                this.setMap(map);
+            }
+
+            onAdd() {
+                this.div = document.createElement('div');
+                this.div.className = 'price-marker-label';
+                this.div.innerHTML = '£' + formatPrice(this.property.price);
+
+                this.div.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    e.stopPropagation(); // Stop map click
+                    window.open('/property/' + this.property.id, '_blank');
+                });
+
+                const panes = this.getPanes();
+                panes.overlayMouseTarget.appendChild(this.div);
+            }
+
+            draw() {
+                const overlayProjection = this.getProjection();
+                const point = overlayProjection.fromLatLngToDivPixel(this.position);
+                if (this.div) {
+                    this.div.style.left = point.x + 'px';
+                    this.div.style.top = point.y + 'px';
                 }
-                const firstImage = images.length > 0 ? images[0] : '/assets/images/no-image.jpg';
-                
-                modalBody.innerHTML = `
-                    <div class="row">
-                        <div class="col-md-6">
-                            <img src="${firstImage}" class="img-fluid rounded" alt="Property Image" style="height: 250px; object-fit: cover;">
-                        </div>
-                        <div class="col-md-6">
-                            <h4 class="mb-3">£${parseFloat(property.price).toLocaleString()}</h4>
-                            <h5>${property.property_title}</h5>
-                            <p class="text-muted mb-3">${property.address}</p>
-                            
-                            <div class="row mb-3">
-                                <div class="col-6">
-                                    <strong>Type:</strong> ${property.property_type_name || 'N/A'}
-                                </div>
-                                <div class="col-6">
-                                    <strong>Bedrooms:</strong> ${property.bedrooms || 'N/A'}
-                                </div>
-                            </div>
-                            
-                            <div class="row mb-3">
-                                <div class="col-6">
-                                    <strong>Bathrooms:</strong> ${property.bathrooms || 'N/A'}
-                                </div>
-                                <div class="col-6">
-                                    <strong>Area:</strong> ${property.area_size || 'N/A'} sqft
-                                </div>
-                            </div>
-                            
-                            <div class="mb-3">
-                                <strong>Purpose:</strong> ${property.purpose || 'N/A'}
-                            </div>
-                            
-                            <div class="mb-3">
-                                <strong>Description:</strong>
-                                <p>${property.description || 'No description available.'}</p>
-                            </div>
-                        </div>
-                    </div>
-                `;
-            })
-            .catch(error => {
-                console.error('Error loading property details:', error);
-                modalBody.innerHTML = `
-                    <div class="alert alert-danger" role="alert">
-                        Error loading property details. Please try again.
-                    </div>`;
-            });
-        
-        modal.show();
-    }
-</script>
+            }
+
+            onRemove() {
+                if (this.div) {
+                    this.div.parentNode.removeChild(this.div);
+                    this.div = null;
+                }
+            }
+        }
+
+        function createMarker(prop) {
+            const latLng = { lat: Number(prop.lat), lng: Number(prop.lng) };
+            const m = new PriceMarker(latLng, prop);
+            markers.push(m);
+        }
+
+        function clearMarkers() {
+            markers.forEach(m => m.setMap(null));
+            markers = [];
+        }
+
+        function formatPrice(price) {
+            if (price >= 1000000) return (price / 1000000).toFixed(1) + 'm';
+            if (price >= 1000) return Math.round(price / 1000) + 'k';
+            return price;
+        }
+
+    </script>
 @endpush

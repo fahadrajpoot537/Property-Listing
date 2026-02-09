@@ -7,13 +7,34 @@ use Illuminate\Http\Request;
 
 class AdminUserController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
     public function index(Request $request)
     {
+        $user = auth()->user();
+
+        // Security: Only Admin, Manager, Listing Director, Q/A, and Agency can access the user list
+        // Other roles (e.g., Agent, Freelance) are denied access.
+        if (!$user->hasAnyRole(['admin', 'manager', 'listing director', 'Q/A', 'Agency'])) {
+            abort(403, 'Unauthorized access.');
+        }
+
         if ($request->ajax()) {
-            $users = \App\Models\User::with('roles')->latest()->get();
+            $query = \App\Models\User::with('roles');
+
+            // Admin, Manager, Listing Director, Q/A see all users
+            if ($user->hasAnyRole(['admin', 'manager', 'listing director', 'Q/A'])) {
+                // No additional filtering needed for these roles
+            }
+            // Agency users only see their team members (users linked to their agency_id)
+            elseif ($user->hasRole('Agency')) {
+                $query->where('agency_id', $user->id);
+            }
+            // For any other role that might somehow bypass the initial 403 (shouldn't happen),
+            // or if a new role is added that shouldn't see users, return an empty set.
+            else {
+                $query->where('id', 0); // Return no users
+            }
+
+            $users = $query->latest()->get();
             return response()->json(['data' => $users]);
         }
         $roles = \Spatie\Permission\Models\Role::all();
@@ -36,15 +57,26 @@ class AdminUserController extends Controller
             'phone_number' => 'nullable|string',
         ]);
 
+        $userCreator = auth()->user();
+        $agencyId = null;
+        $role = $validated['role'];
+
+        if ($userCreator->hasRole('Agency')) {
+            $agencyId = $userCreator->id;
+            $role = 'agent'; // Strictly enforce agent role for agency team members
+        }
+
         $user = \App\Models\User::create([
             'name' => $validated['name'],
             'email' => $validated['email'],
             'password' => \Illuminate\Support\Facades\Hash::make($validated['password']),
             'phone_number' => $validated['phone_number'],
             'slug' => \Illuminate\Support\Str::slug($validated['name']) . '-' . time(),
+            'agency_id' => $agencyId,
+            'status' => 'approved', // Auto-approve team members added by Agencies
         ]);
 
-        $user->assignRole($validated['role']);
+        $user->assignRole($role);
 
         return response()->json(['success' => true, 'message' => 'User created successfully.', 'data' => $user]);
     }
@@ -96,5 +128,20 @@ class AdminUserController extends Controller
         $user->delete();
 
         return response()->json(['success' => true, 'message' => 'User deleted successfully.']);
+    }
+
+    public function toggleStatus(Request $request, string $id)
+    {
+        $user = \App\Models\User::findOrFail($id);
+        $validated = $request->validate([
+            'status' => 'required|string|in:approved,rejected,pending',
+        ]);
+
+        $user->update(['status' => $validated['status']]);
+
+        return response()->json([
+            'success' => true,
+            'message' => 'User status updated to ' . $validated['status'] . ' successfully.'
+        ]);
     }
 }

@@ -9,17 +9,42 @@ class AdminDashboardController extends Controller
 {
     public function index()
     {
+        $user = auth()->user();
+        $isAdmin = $user->hasAnyRole(['admin', 'manager', 'listing director', 'Q/A']);
+        $isAgency = $user->hasRole('Agency');
+
+        // Base Queries
+        $userQuery = \App\Models\User::query();
+        $listingQuery = \App\Models\Listing::query();
+        $offMarketQuery = \App\Models\OffMarketListing::query();
+
+        if (!$isAdmin) {
+            if ($isAgency || ($user->hasRole('agent') && $user->agency_id)) {
+                $ownerId = $isAgency ? $user->id : $user->agency_id;
+                $teamIds = \App\Models\User::where('agency_id', $ownerId)->pluck('id')->toArray();
+                $userIds = array_merge([$ownerId], $teamIds);
+
+                $userQuery->whereIn('id', $userIds);
+                $listingQuery->whereIn('user_id', $userIds);
+                $offMarketQuery->whereIn('user_id', $userIds);
+            } else {
+                $userQuery->where('id', $user->id);
+                $listingQuery->where('user_id', $user->id);
+                $offMarketQuery->where('user_id', $user->id);
+            }
+        }
+
         $data = [
-            'usersCount' => \App\Models\User::count(),
-            'listingsCount' => \App\Models\Listing::count(),
-            'offMarketListingsCount' => \App\Models\OffMarketListing::count(),
+            'usersCount' => $isAdmin ? $userQuery->count() : 0,
+            'listingsCount' => $listingQuery->count(),
+            'offMarketListingsCount' => $offMarketQuery->count(),
             'propertyTypesCount' => \App\Models\PropertyType::count(),
             'unitTypesCount' => \App\Models\UnitType::count(),
             'featuresCount' => \App\Models\Feature::count(),
-            'totalVisitors' => \App\Models\VisitorAnalytic::count(),
+            'totalVisitors' => \App\Models\VisitorAnalytic::count(), // Visitors might still be global or we could filter by listing owner?
             'uniqueVisitors' => \App\Models\VisitorAnalytic::distinct('ip_address')->count('ip_address'),
-            'recentListings' => \App\Models\Listing::latest()->take(5)->get(),
-            'recentUsers' => \App\Models\User::latest()->take(5)->get(),
+            'recentListings' => (clone $listingQuery)->latest()->take(5)->get(),
+            'recentUsers' => $isAdmin ? (clone $userQuery)->latest()->take(5)->get() : collect(),
         ];
         return view('admin.dashboard', compact('data'));
     }

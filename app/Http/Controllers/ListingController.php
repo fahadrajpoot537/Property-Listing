@@ -14,7 +14,7 @@ class ListingController extends Controller
     {
         // Debug: Log all request parameters
         Log::info('Search Request:', $request->all());
-        
+
         // Additional debug info
         if ($request->filled('lat') && $request->filled('lng')) {
             Log::info('Coordinates received: lat=' . $request->lat . ', lng=' . $request->lng);
@@ -38,41 +38,37 @@ class ListingController extends Controller
         if ($request->filled('lat') && $request->filled('lng')) {
             $lat = $request->lat;
             $lng = $request->lng;
-            
-            // Use provided radius or default to 2 miles if not specified (more precise for postal codes)
-            $radius = $request->filled('radius') && $request->radius != '' ? $request->radius : 2;
-            
+
+            // Use provided radius or default to 2 miles if not specified
+            $radius = $request->filled('radius') && $request->radius != '' ? (float) $request->radius : 2;
+
+            // Ensure a minimum small radius to capture properties at the exact location
+            if ($radius <= 0)
+                $radius = 0.1;
+
             Log::info('COORDINATES DEBUG: Lat=' . $lat . ', Lng=' . $lng . ', Radius=' . $radius);
-            
-            // Log some test calculations to verify the radius logic
-            $testQuery = "SELECT id, title, latitude, longitude, 
-                         ( 3959 * acos( cos( radians(?) ) * cos( radians( latitude ) ) * cos( radians( longitude ) - radians(?) ) + sin( radians(?) ) * sin( radians( latitude ) ) ) ) as distance 
-                         FROM listings 
-                         WHERE status = 'approved' 
-                         HAVING distance < ? 
-                         ORDER BY distance 
-                         LIMIT 5";
-            
-            Log::info('SQL Query for debugging: ' . $testQuery);
-            Log::info('Query parameters: ' . json_encode([$lat, $lng, $lat, $radius]));
-            
-            $query->whereRaw("( 3959 * acos( cos( radians(?) ) * cos( radians( latitude ) ) * cos( radians( longitude ) - radians(?) ) + sin( radians(?) ) * sin( radians( latitude ) ) ) ) < ?", [$lat, $lng, $lat, $radius]);
+
+            $query->whereRaw("( 3959 * acos( cos( radians(?) ) * cos( radians( latitude ) ) * cos( radians( longitude ) - radians(?) ) + sin( radians(?) ) * sin( radians( latitude ) ) ) ) <= ?", [$lat, $lng, $lat, $radius]);
             Log::info('Filtering by radius: ' . $radius . ' miles from lat: ' . $lat . ', lng: ' . $lng);
         } elseif ($request->filled('location') && $request->location != '') {
             $location = $request->location;
-            
+
             // If radius is provided, try geocoding for radius search
             if ($request->filled('radius') && $request->radius != '') {
-                $radius = $request->radius;
-                
+                $radius = (float) $request->radius;
+
+                // Ensure a minimum small radius
+                if ($radius <= 0)
+                    $radius = 0.1;
+
                 // Attempt to geocode the location to get coordinates for radius search
                 $coordinates = $this->geocodeAddress($location);
-                
+
                 if ($coordinates) {
                     $lat = $coordinates['lat'];
                     $lng = $coordinates['lng'];
-                    
-                    $query->whereRaw("( 3959 * acos( cos( radians(?) ) * cos( radians( latitude ) ) * cos( radians( longitude ) - radians(?) ) + sin( radians(?) ) * sin( radians( latitude ) ) ) ) < ?", [$lat, $lng, $lat, $radius]);
+
+                    $query->whereRaw("( 3959 * acos( cos( radians(?) ) * cos( radians( latitude ) ) * cos( radians( longitude ) - radians(?) ) + sin( radians(?) ) * sin( radians( latitude ) ) ) ) <= ?", [$lat, $lng, $lat, $radius]);
                     Log::info('Filtering by radius: ' . $radius . ' miles from geocoded lat: ' . $lat . ', lng: ' . $lng);
                 } else {
                     // Fallback to basic location search if geocoding fails
@@ -81,21 +77,38 @@ class ListingController extends Controller
                 }
             } else {
                 // No radius specified, do basic location search
-                $query->where('address', 'like', '%' . $location . '%');
-                Log::info('Filtering by location: ' . $location);
+                $searchParts = explode(',', $location);
+                $mainLocation = trim($searchParts[0]);
+                $query->where('address', 'like', '%' . $mainLocation . '%');
+                Log::info('Filtering by main location part: ' . $mainLocation);
             }
+        }
+
+        // Property Type
+        if ($request->filled('property_type_id')) {
+            $query->where('property_type_id', $request->property_type_id);
+            Log::info('Filtering by property_type_id: ' . $request->property_type_id);
+        } elseif ($request->filled('property_type')) {
+            $query->where('property_type_id', $request->property_type);
+            Log::info('Filtering by property_type (alias): ' . $request->property_type);
         }
 
         // Bathrooms
         if ($request->filled('bathrooms') && $request->bathrooms !== 'any' && $request->bathrooms != '') {
             $query->where('bathrooms', '>=', (int) $request->bathrooms);
             Log::info('Filtering by bathrooms: ' . $request->bathrooms);
+        } elseif ($request->filled('min_bathrooms') && $request->min_bathrooms != '') {
+            $query->where('bathrooms', '>=', (int) $request->min_bathrooms);
+            Log::info('Filtering by min_bathrooms: ' . $request->min_bathrooms);
         }
 
         // Bedrooms
         if ($request->filled('bedrooms') && $request->bedrooms !== 'any' && $request->bedrooms != '') {
             $query->where('bedrooms', '>=', (int) $request->bedrooms);
             Log::info('Filtering by bedrooms: ' . $request->bedrooms);
+        } elseif ($request->filled('min_bedrooms') && $request->min_bedrooms != '') {
+            $query->where('bedrooms', '>=', (int) $request->min_bedrooms);
+            Log::info('Filtering by min_bedrooms (alias): ' . $request->min_bedrooms);
         }
 
         // Price
@@ -118,16 +131,19 @@ class ListingController extends Controller
             Log::info('Filtering by max_size: ' . $request->max_size);
         }
 
-        // Property Type
-        if ($request->filled('property_type_id')) {
-            $query->where('property_type_id', $request->property_type_id);
-            Log::info('Filtering by property_type_id: ' . $request->property_type_id);
-        }
-
         // Unit Type
         if ($request->filled('unit_type_id')) {
             $query->where('unit_type_id', $request->unit_type_id);
             Log::info('Filtering by unit_type_id: ' . $request->unit_type_id);
+        }
+
+        // Discounted Properties Filter
+        if ($request->filled('discounted') && $request->discounted == '1') {
+            // Include anything with an old price that is different from current price
+            $query->whereNotNull('old_price')
+                ->where('old_price', '>', 0)
+                ->whereRaw('old_price != price');
+            Log::info('Filtering by discounted properties');
         }
 
         // Ownership Status
@@ -175,11 +191,19 @@ class ListingController extends Controller
 
         Log::info('Total listings found: ' . $listings->total());
 
-        if (view()->exists('property-halfmap-grid')) {
-            return view('property-halfmap-grid', compact('listings', 'features_all', 'latest_listings'));
+        $user_favorite_ids = [];
+        if (auth()->check()) {
+            $user_favorite_ids = \App\Models\Favorite::where('user_id', auth()->id())
+                ->pluck('listing_id')
+                ->filter()
+                ->toArray();
         }
 
-        return view('listings.index', compact('listings', 'features_all', 'latest_listings'));
+        if (view()->exists('property-halfmap-grid')) {
+            return view('property-halfmap-grid', compact('listings', 'features_all', 'latest_listings', 'user_favorite_ids'));
+        }
+
+        return view('listings.index', compact('listings', 'features_all', 'latest_listings', 'user_favorite_ids'));
     }
 
     public function show($id)
@@ -194,41 +218,49 @@ class ListingController extends Controller
             ->take(3)
             ->get();
 
-        return view('property-detail', compact('listing', 'similar_listings'));
+        $user_favorite_ids = [];
+        if (auth()->check()) {
+            $user_favorite_ids = \App\Models\Favorite::where('user_id', auth()->id())
+                ->pluck('listing_id')
+                ->filter()
+                ->toArray();
+        }
+
+        return view('property-detail', compact('listing', 'similar_listings', 'user_favorite_ids'));
     }
 
     public function getPropertyTypeListings(Request $request)
     {
         $type = $request->input('type');
         $purpose = $request->input('purpose', 'Buy');
-        
+
         $query = Listing::with('features', 'user')
             ->where('status', 'approved')
             ->where('purpose', $purpose);
-            
-        switch(strtolower($type)) {
+
+        switch (strtolower($type)) {
             case 'villas':
-                $query->whereHas('propertyType', function($q) {
+                $query->whereHas('propertyType', function ($q) {
                     $q->where('title', 'LIKE', '%villa%');
                 });
                 break;
             case 'apartments':
-                $query->whereHas('propertyType', function($q) {
+                $query->whereHas('propertyType', function ($q) {
                     $q->where('title', 'LIKE', '%apartment%');
                 });
                 break;
             case 'houses':
-                $query->whereHas('propertyType', function($q) {
+                $query->whereHas('propertyType', function ($q) {
                     $q->where('title', 'LIKE', '%house%');
                 });
                 break;
             case 'condos':
-                $query->whereHas('propertyType', function($q) {
+                $query->whereHas('propertyType', function ($q) {
                     $q->where('title', 'LIKE', '%condo%');
                 });
                 break;
             case 'retail':
-                $query->whereHas('propertyType', function($q) {
+                $query->whereHas('propertyType', function ($q) {
                     $q->where('title', 'LIKE', '%retail%');
                 });
                 break;
@@ -236,17 +268,17 @@ class ListingController extends Controller
                 // Default to all property types
                 break;
         }
-        
+
         $listings = $query->latest()->take(6)->get();
-        
+
         // Generate HTML for the listings
         $html = '';
         if ($listings->count() > 0) {
             foreach ($listings as $listing) {
-                $imageSrc = $listing->images && count($listing->images) > 0 
-                    ? Storage::url($listing->images[0]) 
+                $imageSrc = $listing->images && count($listing->images) > 0
+                    ? Storage::url($listing->images[0])
                     : asset('assets/img/all-images/properties/property-img2.png');
-                
+
                 $html .= '<div class="col-lg-4 col-md-6">';
                 $html .= '    <div class="property-boxarea">';
                 $html .= '        <div class="img1 image-anime">';
@@ -283,25 +315,25 @@ class ListingController extends Controller
             $purposeText = $purpose == 'Buy' ? 'for sale' : 'for rent';
             $html = '<div class="col-12"><p class="text-center">No ' . $purposeText . ' ' . $type . ' available at the moment.</p></div>';
         }
-        
+
         return response()->json(['html' => $html]);
     }
 
     public function getFeaturedListings(Request $request)
     {
         $purpose = $request->input('purpose', 'Buy'); // Default to 'Buy' if not specified
-        
+
         $listings = Listing::with('features', 'user')
             ->where('status', 'approved')
             ->where('purpose', $purpose)
             ->latest()
             ->take(6)
             ->get();
-        
+
         // Process listings to add images array
         $processedListings = $listings->map(function ($listing) {
             $images = [];
-            
+
             // Handle gallery field (could be JSON string or array)
             if ($listing->gallery) {
                 if (is_string($listing->gallery)) {
@@ -309,24 +341,24 @@ class ListingController extends Controller
                 } else {
                     $gallery = $listing->gallery;
                 }
-                
+
                 if (is_array($gallery) && !empty($gallery)) {
                     $images = $gallery;
                 }
             }
-            
+
             // Add thumbnail if available and not already in images
             if ($listing->thumbnail && !in_array($listing->thumbnail, $images)) {
                 array_unshift($images, $listing->thumbnail); // Add to beginning
             }
-            
+
             // Return listing with images array
             $listingArray = $listing->toArray();
             $listingArray['images'] = $images;
-            
+
             return $listingArray;
         });
-        
+
         return response()->json([
             'listings' => $processedListings,
             'purpose' => $purpose
@@ -346,25 +378,25 @@ class ListingController extends Controller
         if ($request->filled('lat') && $request->filled('lng')) {
             $lat = $request->lat;
             $lng = $request->lng;
-            
+
             // Use provided radius or default to 2 miles if not specified (more precise for postal codes)
             $radius = $request->filled('radius') && $request->radius != '' ? $request->radius : 2;
-            
+
             $query->whereRaw("( 3959 * acos( cos( radians(?) ) * cos( radians( latitude ) ) * cos( radians( longitude ) - radians(?) ) + sin( radians(?) ) * sin( radians( latitude ) ) ) ) < ?", [$lat, $lng, $lat, $radius]);
         } elseif ($request->filled('location') && $request->location != '') {
             $location = $request->location;
-            
+
             // If radius is provided, try geocoding for radius search
             if ($request->filled('radius') && $request->radius != '') {
                 $radius = $request->radius;
-                
+
                 // Attempt to geocode the location to get coordinates for radius search
                 $coordinates = $this->geocodeAddress($location);
-                
+
                 if ($coordinates) {
                     $lat = $coordinates['lat'];
                     $lng = $coordinates['lng'];
-                    
+
                     $query->whereRaw("( 3959 * acos( cos( radians(?) ) * cos( radians( latitude ) ) * cos( radians( longitude ) - radians(?) ) + sin( radians(?) ) * sin( radians( latitude ) ) ) ) < ?", [$lat, $lng, $lat, $radius]);
                 } else {
                     // Fallback to basic location search if geocoding fails
@@ -420,7 +452,7 @@ class ListingController extends Controller
             $bounds = json_decode($request->bounds, true);
             if ($bounds && isset($bounds['north'], $bounds['south'], $bounds['east'], $bounds['west'])) {
                 $query->whereBetween('latitude', [$bounds['south'], $bounds['north']])
-                      ->whereBetween('longitude', [$bounds['west'], $bounds['east']]);
+                    ->whereBetween('longitude', [$bounds['west'], $bounds['east']]);
             }
         }
 
@@ -433,31 +465,39 @@ class ListingController extends Controller
 
         $listings = $query->with('features', 'user')->paginate(20)->withQueryString();
         $features_all = Feature::all();
-        
+
         return view('property-map', compact('listings', 'features_all'));
     }
-    
-    private function geocodeAddress($address) {
+
+    private function geocodeAddress($address)
+    {
         $apiKey = config('services.google.maps_api_key');
-        
+
         if (!$apiKey) {
             \Illuminate\Support\Facades\Log::warning('Google Maps API key not configured for geocoding');
             return null;
         }
-        
+
         $url = "https://maps.googleapis.com/maps/api/geocode/json?address=" . urlencode($address) . "&key=" . $apiKey;
-        
+
         try {
-            $response = json_decode(file_get_contents($url), true);
-            
-            if ($response['status'] === 'OK' && isset($response['results'][0]['geometry']['location'])) {
+            $ch = curl_init();
+            curl_setopt($ch, CURLOPT_URL, $url);
+            curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+            curl_setopt($ch, CURLOPT_TIMEOUT, 10);
+            $output = curl_exec($ch);
+            curl_close($ch);
+
+            $response = json_decode($output, true);
+
+            if ($response && $response['status'] === 'OK' && isset($response['results'][0]['geometry']['location'])) {
                 $location = $response['results'][0]['geometry']['location'];
                 return [
                     'lat' => $location['lat'],
                     'lng' => $location['lng']
                 ];
             } else {
-                \Illuminate\Support\Facades\Log::warning('Geocoding failed for address: ' . $address . '. Status: ' . $response['status']);
+                \Illuminate\Support\Facades\Log::warning('Geocoding failed for address: ' . $address . '. Status: ' . ($response['status'] ?? 'Unknown'));
                 return null;
             }
         } catch (\Exception $e) {

@@ -16,14 +16,14 @@ class MapController extends Controller
         $initialProperties = collect([]);
         $propertyTypes = \App\Models\PropertyType::all();
         $listingType = $request->input('type', 'regular'); // 'regular' or 'off_market'
-        
+
         return view('map', compact('initialProperties', 'propertyTypes', 'listingType'));
     }
 
     public function getProperties(Request $request)
     {
         // Rate limiting check could be added here if needed
-        
+
         $bounds = $request->input('bounds');
         $zoomLevel = $request->input('zoom_level');
         $priceMin = $request->input('price_min');
@@ -31,6 +31,8 @@ class MapController extends Controller
         $propertyType = $request->input('property_type');
         $polygon = $request->input('polygon'); // Points for drawn polygon
         $listingType = $request->input('listing_type', 'regular'); // 'regular' or 'off_market'
+        $purpose = $request->input('purpose');
+        $bedrooms = $request->input('bedrooms');
 
         // Build cache key
         $cacheKey = 'map_properties_' . md5(serialize([
@@ -40,7 +42,9 @@ class MapController extends Controller
             'max' => $priceMax,
             'type' => $propertyType,
             'polygon' => $polygon,
-            'listing_type' => $listingType
+            'listing_type' => $listingType,
+            'purpose' => $purpose,
+            'bedrooms' => $bedrooms
         ]));
 
         // Check if cached
@@ -63,7 +67,7 @@ class MapController extends Controller
             $neLng = $bounds['northeast']['lng'];
 
             $query->whereBetween('latitude', [$swLat, $neLat])
-                  ->whereBetween('longitude', [$swLng, $neLng]);
+                ->whereBetween('longitude', [$swLng, $neLng]);
         }
 
         // Apply polygon filtering if provided
@@ -82,6 +86,18 @@ class MapController extends Controller
         if ($propertyType) {
             // Assuming property_type_id corresponds to property_type table
             $query->where('property_type_id', $propertyType);
+        }
+        if ($bedrooms) {
+            $query->where('bedrooms', '>=', $bedrooms);
+        }
+        if ($purpose) {
+            if (strtolower($purpose) == 'buy') {
+                $query->whereIn('purpose', ['Buy', 'buy', 'Sale', 'sale', 'for-sale']);
+            } elseif (strtolower($purpose) == 'rent') {
+                $query->whereIn('purpose', ['Rent', 'rent', 'for-rent', 'to-rent']);
+            } else {
+                $query->where('purpose', $purpose);
+            }
         }
 
         // Limit results for performance
@@ -111,9 +127,9 @@ class MapController extends Controller
                 'lat' => $property->latitude,
                 'lng' => $property->longitude,
                 'image' => $firstImage,
-                'description' => strlen($property->description) > 100 ? 
-                                substr($property->description, 0, 100) . '...' : 
-                                $property->description,
+                'description' => strlen($property->description) > 100 ?
+                    substr($property->description, 0, 100) . '...' :
+                    $property->description,
                 'purpose' => $property->purpose,
                 'bedrooms' => $property->bedrooms,
                 'bathrooms' => $property->bathrooms,
@@ -141,7 +157,7 @@ class MapController extends Controller
     {
         // This is a simplified approach. For production, you'd want to use
         // MySQL's ST_Contains function or implement a proper point-in-polygon algorithm
-        
+
         // For now, we'll just return the query as-is
         // A full implementation would involve more complex spatial calculations
         return $query;

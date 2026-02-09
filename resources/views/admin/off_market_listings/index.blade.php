@@ -129,6 +129,7 @@
                     <option value="approved">Approve</option>
                     <option value="pending">Set Pending</option>
                     <option value="rejected">Reject</option>
+                    <option value="draft">Move to Drafts</option>
                     <option value="delete">Delete</option>
                 </select>
                 <button onclick="applyBulkAction()"
@@ -143,25 +144,29 @@
             </button>
 
             <button onclick="openModal()"
-                class="bg-[#02b8f2] hover:opacity-90 text-white font-black py-3 px-8 rounded-2xl shadow-xl shadow-blue-100/50 transition-all flex items-center gap-3 active:scale-95 uppercase tracking-wider text-sm">
+                class="bg-[#8046F1] hover:bg-[#6D28D9] text-white font-black py-3 px-8 rounded-2xl shadow-xl shadow-purple-100/50 transition-all flex items-center gap-3 active:scale-95 uppercase tracking-wider text-sm">
                 <i class='bx bxs-zap text-xl text-yellow-300'></i> Add Distress Deal
             </button>
         </div>
     </div>
 
     <!-- Filters Section -->
-    <div id="filtersSection" class="hidden bg-white shadow-lg rounded-2xl border border-slate-100 p-6 mb-6 transition-all duration-300">
+    <div id="filtersSection"
+        class="hidden bg-white shadow-lg rounded-2xl border border-slate-100 p-6 mb-6 transition-all duration-300">
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
             <!-- Property Title Filter -->
             <div>
                 <label class="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">Deal Headline</label>
-                <input type="text" id="filterPropertyTitle" class="w-full rounded-lg border-slate-100 bg-slate-50/50 text-xs p-2 focus:ring-blue-100 focus:border-[#02b8f2] transition-all" placeholder="Search headline...">
+                <input type="text" id="filterPropertyTitle"
+                    class="w-full rounded-lg border-slate-100 bg-slate-50/50 text-xs p-2 focus:ring-blue-100 focus:border-[#02b8f2] transition-all"
+                    placeholder="Search headline...">
             </div>
 
             <!-- Property Type Filter -->
             <div>
                 <label class="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">Property Type</label>
-                <select id="filterPropertyType" class="w-full rounded-lg border-slate-100 bg-slate-50/50 text-xs p-2 focus:ring-blue-100 focus:border-[#02b8f2] transition-all">
+                <select id="filterPropertyType"
+                    class="w-full rounded-lg border-slate-100 bg-slate-50/50 text-xs p-2 focus:ring-blue-100 focus:border-[#02b8f2] transition-all">
                     <option value="">All Types</option>
                     @foreach($propertyTypes as $type)
                         <option value="{{ $type->id }}">{{ $type->title }}</option>
@@ -172,7 +177,8 @@
             <!-- Purpose Filter -->
             <div>
                 <label class="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">Purpose</label>
-                <select id="filterPurpose" class="w-full rounded-lg border-slate-100 bg-slate-50/50 text-xs p-2 focus:ring-blue-100 focus:border-[#02b8f2] transition-all">
+                <select id="filterPurpose"
+                    class="w-full rounded-lg border-slate-100 bg-slate-50/50 text-xs p-2 focus:ring-blue-100 focus:border-[#02b8f2] transition-all">
                     <option value="">All Purposes</option>
                     <option value="Buy">For Sale</option>
                     <option value="Rent">To Rent</option>
@@ -182,7 +188,8 @@
             <!-- Status Filter -->
             <div>
                 <label class="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">Status</label>
-                <select id="filterStatus" class="w-full rounded-lg border-slate-100 bg-slate-50/50 text-xs p-2 focus:ring-blue-100 focus:border-[#02b8f2] transition-all">
+                <select id="filterStatus"
+                    class="w-full rounded-lg border-slate-100 bg-slate-50/50 text-xs p-2 focus:ring-blue-100 focus:border-[#02b8f2] transition-all">
                     <option value="">All Statuses</option>
                     <option value="approved">Approved</option>
                     <option value="pending">Pending</option>
@@ -193,18 +200,23 @@
             <!-- Price Range Filter -->
             <div>
                 <label class="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">Min Price (£)</label>
-                <input type="number" id="filterMinPrice" class="w-full rounded-lg border-slate-100 bg-slate-50/50 text-xs p-2 focus:ring-blue-100 focus:border-[#02b8f2] transition-all" placeholder="0">
+                <input type="number" id="filterMinPrice"
+                    class="w-full rounded-lg border-slate-100 bg-slate-50/50 text-xs p-2 focus:ring-blue-100 focus:border-[#02b8f2] transition-all"
+                    placeholder="0">
             </div>
 
             <div>
                 <label class="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">Max Price (£)</label>
-                <input type="number" id="filterMaxPrice" class="w-full rounded-lg border-slate-100 bg-slate-50/50 text-xs p-2 focus:ring-blue-100 focus:border-[#02b8f2] transition-all" placeholder="1000000">
+                <input type="number" id="filterMaxPrice"
+                    class="w-full rounded-lg border-slate-100 bg-slate-50/50 text-xs p-2 focus:ring-blue-100 focus:border-[#02b8f2] transition-all"
+                    placeholder="1000000">
             </div>
 
             <!-- Bedrooms Filter -->
             <div>
                 <label class="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">Bedrooms</label>
-                <select id="filterBedrooms" class="w-full rounded-lg border-slate-100 bg-slate-50/50 text-xs p-2 focus:ring-blue-100 focus:border-[#02b8f2] transition-all">
+                <select id="filterBedrooms"
+                    class="w-full rounded-lg border-slate-100 bg-slate-50/50 text-xs p-2 focus:ring-blue-100 focus:border-[#02b8f2] transition-all">
                     <option value="">Any</option>
                     @for($i = 0; $i <= 10; $i++)
                         <option value="{{ $i }}">{{ $i }}+</option>
@@ -215,7 +227,8 @@
             <!-- Bathrooms Filter -->
             <div>
                 <label class="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">Bathrooms</label>
-                <select id="filterBathrooms" class="w-full rounded-lg border-slate-100 bg-slate-50/50 text-xs p-2 focus:ring-blue-100 focus:border-[#02b8f2] transition-all">
+                <select id="filterBathrooms"
+                    class="w-full rounded-lg border-slate-100 bg-slate-50/50 text-xs p-2 focus:ring-blue-100 focus:border-[#02b8f2] transition-all">
                     <option value="">Any</option>
                     @for($i = 0; $i <= 10; $i++)
                         <option value="{{ $i }}">{{ $i }}+</option>
@@ -226,8 +239,12 @@
 
         <!-- Filter Actions -->
         <div class="flex justify-end gap-3 mt-6 pt-4 border-t border-slate-100">
-            <button onclick="clearFilters()" class="px-4 py-2 text-slate-600 hover:text-slate-800 text-sm font-bold rounded-lg transition-all">Clear All</button>
-            <button onclick="applyFilters()" class="bg-[#02b8f2] hover:opacity-90 text-white px-6 py-2 rounded-lg text-sm font-bold transition-all active:scale-95">Apply Filters</button>
+            <button onclick="clearFilters()"
+                class="px-4 py-2 text-slate-600 hover:text-slate-800 text-sm font-bold rounded-lg transition-all">Clear
+                All</button>
+            <button onclick="applyFilters()"
+                class="bg-[#02b8f2] hover:opacity-90 text-white px-6 py-2 rounded-lg text-sm font-bold transition-all active:scale-95">Apply
+                Filters</button>
         </div>
     </div>
 
@@ -261,7 +278,7 @@
                     <div class="flex justify-between items-center mb-8">
                         <div class="flex items-center gap-4">
                             <div
-                                class="w-12 h-12 bg-orange-50 text-[#ff931e] rounded-2xl flex items-center justify-center text-2xl rotate-3 shadow-inner">
+                                class="w-12 h-12 bg-purple-50 text-[#8046F1] rounded-2xl flex items-center justify-center text-2xl rotate-3 shadow-inner">
                                 <i class='bx bxs-zap'></i>
                             </div>
                             <div>
@@ -281,7 +298,7 @@
                         <div
                             class="absolute top-1/2 left-0 w-full h-1.5 bg-slate-100 -translate-y-1/2 rounded-full overflow-hidden">
                             <div id="stepLine"
-                                class="w-0 h-full bg-[#02b8f2] transition-all duration-1000 cubic-bezier(0.4, 0, 0.2, 1)">
+                                class="w-0 h-full bg-[#8046F1] transition-all duration-1000 cubic-bezier(0.4, 0, 0.2, 1)">
                             </div>
                         </div>
                         @for($i = 1; $i <= 3; $i++)
@@ -306,7 +323,7 @@
                                 <label class="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">Deal
                                     Headline</label>
                                 <input type="text" name="property_title" id="property_title"
-                                    class="w-full rounded-xl border-slate-100 bg-slate-50/50 text-sm p-3 focus:ring-blue-100 focus:border-[#02b8f2] transition-all"
+                                    class="w-full rounded-xl border-slate-100 bg-slate-50/50 text-sm p-3 focus:ring-purple-100 focus:border-[#8046F1] transition-all"
                                     placeholder="Enter headline..." required>
                             </div>
                             <div class="full-width">
@@ -314,7 +331,7 @@
                                     Location (UK Only)</label>
                                 <div class="relative">
                                     <input type="text" name="address" id="address"
-                                        class="w-full rounded-xl border-slate-100 bg-slate-50/50 text-sm p-3 pl-11 focus:ring-blue-100 focus:border-[#02b8f2] transition-all"
+                                        class="w-full rounded-xl border-slate-100 bg-slate-50/50 text-sm p-3 pl-11 focus:ring-purple-100 focus:border-[#8046F1] transition-all"
                                         placeholder="Search address..." required>
                                     <i
                                         class='bx bxs-map-pin absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 text-xl'></i>
@@ -337,7 +354,7 @@
                                     Price (£)</label>
                                 <div class="relative">
                                     <input type="number" step="0.01" name="price" id="price"
-                                        class="w-full rounded-xl border-slate-100 bg-slate-50/50 text-sm p-3 pl-8 focus:ring-blue-100 focus:border-[#02b8f2] transition-all"
+                                        class="w-full rounded-xl border-slate-100 bg-slate-50/50 text-sm p-3 pl-8 focus:ring-purple-100 focus:border-[#8046F1] transition-all"
                                         placeholder="0.00" required>
                                     <span class="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 font-bold">£</span>
                                 </div>
@@ -416,11 +433,12 @@
                                 <label class="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">Area (Sq
                                     Ft)</label>
                                 <input type="text" name="area_size" id="area_size"
-                                    class="w-full rounded-xl border-slate-100 bg-slate-50/50 text-sm p-3 focus:ring-blue-100 focus:border-[#02b8f2] transition-all"
+                                    class="w-full rounded-xl border-slate-100 bg-slate-50/50 text-sm p-3 focus:ring-purple-100 focus:border-[#8046F1] transition-all"
                                     placeholder="e.g. 1500" required>
                             </div>
                             <div id="bedBathContainer">
-                                <label class="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">Bedrooms</label>
+                                <label
+                                    class="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">Bedrooms</label>
                                 <select name="bedrooms" id="bedrooms" class="select2 w-full" required>
                                     @for($i = 0; $i <= 100; $i++)
                                         <option value="{{ $i }}">{{ $i }} Bed{{$i > 1 ? 's' : ''}}</option>
@@ -428,7 +446,8 @@
                                 </select>
                             </div>
                             <div>
-                                <label class="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">Bathrooms</label>
+                                <label
+                                    class="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">Bathrooms</label>
                                 <select name="bathrooms" id="bathrooms" class="select2 w-full" required>
                                     @for($i = 0; $i <= 100; $i++)
                                         <option value="{{ $i }}">{{ $i }} Bath{{$i > 1 ? 's' : ''}}</option>
@@ -436,20 +455,22 @@
                                 </select>
                             </div>
                             <div class="full-width">
-                                <label class="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">Internal Notes / Description</label>
+                                <label class="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">Internal
+                                    Notes / Description</label>
                                 <textarea id="description_editor" class="w-full rounded-xl" rows="6"></textarea>
                                 <input type="hidden" name="description" id="description_hidden">
                             </div>
-                            
+
                             <!-- Stage 1 Buttons -->
                             <div class="full-width pt-6">
                                 <div class="flex justify-between items-center">
                                     <div></div> <!-- Empty div for spacing -->
                                     <div class="flex gap-3">
-                                        <button type="button" onclick="closeModal()"
-                                            class="px-6 py-3 text-slate-400 text-xs font-black uppercase tracking-widest hover:text-rose-500 transition-all">Cancel</button>
+                                        <button type="button" onclick="saveAsDraft()"
+                                            class="px-8 py-3 rounded-2xl bg-amber-500 text-white text-xs font-black uppercase tracking-widest shadow-xl shadow-amber-100/30 active:scale-95 transition-all">Save
+                                            Draft</button>
                                         <button type="button" id="nextBtn" onclick="changeStep(1)"
-                                            class="px-8 py-3 rounded-2xl bg-[#02b8f2] text-white text-xs font-black uppercase tracking-widest shadow-xl shadow-blue-100/30 active:scale-95 transition-all">Next
+                                            class="px-8 py-3 rounded-2xl bg-[#8046F1] text-white text-xs font-black uppercase tracking-widest shadow-xl shadow-purple-100/30 active:scale-95 transition-all">Next
                                             Stage</button>
                                     </div>
                                 </div>
@@ -458,26 +479,32 @@
 
                         <!-- Stage 2 -->
                         <div id="stage2" class="hidden">
-                            <label class="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-6">Deal Features & Specifics</label>
+                            <label class="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-6">Deal
+                                Features & Specifics</label>
                             <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3">
                                 @foreach($features as $feature)
-                                    <label class="group relative flex items-center p-3 bg-slate-50 rounded-xl border border-slate-100 hover:border-blue-100 hover:bg-white transition-all cursor-pointer">
-                                        <input id="feat_{{ $feature->id }}" name="features[]" value="{{ $feature->id }}" type="checkbox" class="h-4 w-4 text-[#02b8f2] rounded border-slate-300 focus:ring-0">
-                                        <span class="ml-2 text-[11px] font-bold text-slate-600 uppercase tracking-tighter">{{ $feature->title }}</span>
+                                    <label
+                                        class="group relative flex items-center p-3 bg-slate-50 rounded-xl border border-slate-100 hover:border-purple-100 hover:bg-white transition-all cursor-pointer">
+                                        <input id="feat_{{ $feature->id }}" name="features[]" value="{{ $feature->id }}"
+                                            type="checkbox"
+                                            class="h-4 w-4 text-[#8046F1] rounded border-slate-300 focus:ring-0">
+                                        <span
+                                            class="ml-2 text-[11px] font-bold text-slate-600 uppercase tracking-tighter">{{ $feature->title }}</span>
                                     </label>
                                 @endforeach
                             </div>
-                            
+
                             <!-- Stage 2 Buttons -->
                             <div class="full-width pt-8">
                                 <div class="flex justify-between items-center">
                                     <button type="button" id="prevBtn" onclick="changeStep(-1)"
                                         class="px-8 py-3 rounded-2xl border-2 border-slate-100 bg-white text-slate-700 text-xs font-black uppercase tracking-widest hover:bg-slate-50 transition-all">Previous</button>
                                     <div class="flex gap-3">
-                                        <button type="button" onclick="closeModal()"
-                                            class="px-6 py-3 text-slate-400 text-xs font-black uppercase tracking-widest hover:text-rose-500 transition-all">Cancel</button>
+                                        <button type="button" onclick="saveAsDraft()"
+                                            class="px-8 py-3 rounded-2xl bg-amber-500 text-white text-xs font-black uppercase tracking-widest shadow-xl shadow-amber-100/30 active:scale-95 transition-all">Save
+                                            Draft</button>
                                         <button type="button" id="nextBtn2" onclick="changeStep(1)"
-                                            class="px-8 py-3 rounded-2xl bg-[#02b8f2] text-white text-xs font-black uppercase tracking-widest shadow-xl shadow-blue-100/30 active:scale-95 transition-all">Next
+                                            class="px-8 py-3 rounded-2xl bg-[#8046F1] text-white text-xs font-black uppercase tracking-widest shadow-xl shadow-purple-100/30 active:scale-95 transition-all">Next
                                             Stage</button>
                                     </div>
                                 </div>
@@ -522,17 +549,18 @@
                                 <p class="text-[10px] text-slate-500 mt-3 font-bold uppercase tracking-wider">Accepted: MP4,
                                     MOV • Keep files under 20MB for best results</p>
                             </div>
-                            
+
                             <!-- Stage 3 Buttons -->
                             <div class="full-width pt-8">
                                 <div class="flex justify-between items-center">
                                     <button type="button" id="prevBtn2" onclick="changeStep(-1)"
                                         class="px-8 py-3 rounded-2xl border-2 border-slate-100 bg-white text-slate-700 text-xs font-black uppercase tracking-widest hover:bg-slate-50 transition-all">Previous</button>
                                     <div class="flex gap-3">
-                                        <button type="button" onclick="closeModal()"
-                                            class="px-6 py-3 text-slate-400 text-xs font-black uppercase tracking-widest hover:text-rose-500 transition-all">Cancel</button>
+                                        <button type="button" onclick="saveAsDraft()"
+                                            class="px-8 py-3 rounded-2xl bg-amber-500 text-white text-xs font-black uppercase tracking-widest shadow-xl shadow-amber-100/30 active:scale-95 transition-all">Save
+                                            Draft</button>
                                         <button type="submit" id="submitBtn"
-                                            class="px-8 py-3 rounded-2xl bg-[#ff931e] text-white text-xs font-black uppercase tracking-widest shadow-xl shadow-orange-100 active:scale-95 transition-all">Publish
+                                            class="px-8 py-3 rounded-2xl bg-[#131B31] text-white text-xs font-black uppercase tracking-widest shadow-xl shadow-slate-900/10 active:scale-95 transition-all">Publish
                                             Deal</button>
                                     </div>
                                 </div>
@@ -560,7 +588,7 @@
                 table = $('#offMarketTable').DataTable({
                     ajax: {
                         url: "{{ route('admin.off-market-listings.index') }}",
-                        data: function(d) {
+                        data: function (d) {
                             d.filters = {
                                 property_title: $('#filterPropertyTitle').val(),
                                 property_type_id: $('#filterPropertyType').val(),
@@ -578,40 +606,41 @@
                         { data: 'id', orderable: false, className: 'text-center', render: d => `<input type="checkbox" class="row-checkbox rounded-md border-slate-300 text-[#02b8f2] focus:ring-0" value="${d}">` },
                         {
                             data: 'property_title', render: (d, t, r) => `
-                                                                                                                    <div class="flex items-center py-2">
-                                                                                                                        ${r.thumbnail ? `<img src="/storage/${r.thumbnail}" class="w-12 h-12 rounded-xl object-cover border-2 border-white shadow-md">` : `<div class="w-12 h-12 bg-slate-100 rounded-xl flex items-center justify-center text-slate-400"><i class='bx bx-landscape text-2xl'></i></div>`}
-                                                                                                                        <div class="ml-4">
-                                                                                                            <a href="/admin/off-market-listings/${r.id}" class="font-extrabold text-slate-800 hover:text-[#02b8f2] transition-colors tracking-tight leading-tight block">${d}</a>
-                                                                                                            <div class="text-[10px] font-bold text-slate-400 uppercase mt-1">Ref: ${r.property_reference_number}</div>
-                                                                                                        </div>
-                                                                                                    </div>`
+                                                                                                                                                            <div class="flex items-center py-2">
+                                                                                                                                                                ${r.thumbnail ? `<img src="/storage/${r.thumbnail}" class="w-12 h-12 rounded-xl object-cover border-2 border-white shadow-md">` : `<div class="w-12 h-12 bg-slate-100 rounded-xl flex items-center justify-center text-slate-400"><i class='bx bx-landscape text-2xl'></i></div>`}
+                                                                                                                                                                <div class="ml-4">
+                                                                                                                                                    <a href="/admin/off-market-listings/${r.id}" class="font-extrabold text-slate-800 hover:text-[#02b8f2] transition-colors tracking-tight leading-tight block">${d}</a>
+                                                                                                                                                    <div class="text-[10px] font-bold text-slate-400 uppercase mt-1">Ref: ${r.property_reference_number}</div>
+                                                                                                                                                </div>
+                                                                                                                                            </div>`
                         },
                         { data: 'user.name', render: d => `<span class="bg-slate-100 text-slate-700 px-3 py-1 rounded-lg text-[10px] font-black uppercase">${d}</span>` },
                         {
                             data: 'property_type.title', render: (d, t, r) => `
-                                                                                                                    <div class="flex flex-col">
-                                                                                                                        <span class="text-[10px] font-black text-[#02b8f2] uppercase tracked-widest">${d}</span>
-                                                                                                                        <span class="text-[10px] font-bold text-slate-400 uppercase tracking-tighter">${r.unit_type ? r.unit_type.title : 'Deal'}</span>
-                                                                                                                    </div>`
+                                                                                                                                                            <div class="flex flex-col">
+                                                                                                                                                                <span class="text-[10px] font-black text-[#02b8f2] uppercase tracked-widest">${d}</span>
+                                                                                                                                                                <span class="text-[10px] font-bold text-slate-400 uppercase tracking-tighter">${r.unit_type ? r.unit_type.title : 'Deal'}</span>
+                                                                                                                                                            </div>`
                         },
                         { data: 'price', render: d => `<span class="font-black text-slate-800">£${numberWithCommas(d)}</span>` },
                         {
                             data: 'status', render: (d, t, r) => {
                                 let color = d === 'approved' ? 'emerald' : (d === 'rejected' ? 'rose' : 'amber');
                                 return `
-                                                                                                                        <select onchange="updateStatus(${r.id}, this.value)" class="bg-${color}-50 text-${color}-600 border border-${color}-100 rounded-lg px-2 py-1 text-[10px] font-black uppercase focus:ring-0 cursor-pointer">
-                                                                                                                            <option value="pending" ${d === 'pending' ? 'selected' : ''}>Pending</option>
-                                                                                                                            <option value="approved" ${d === 'approved' ? 'selected' : ''}>Approved</option>
-                                                                                                                            <option value="rejected" ${d === 'rejected' ? 'selected' : ''}>Rejected</option>
-                                                                                                                        </select>`;
+                                                                                                                                                                <select onchange="updateStatus(${r.id}, this.value)" class="bg-${color}-50 text-${color}-600 border border-${color}-100 rounded-lg px-2 py-1 text-[10px] font-black uppercase focus:ring-0 cursor-pointer">
+                                                                                                                                                                    <option value="pending" ${d === 'pending' ? 'selected' : ''}>Pending</option>
+                                                                                                                                                                    <option value="approved" ${d === 'approved' ? 'selected' : ''}>Approved</option>
+                                                                                                                                                                    <option value="rejected" ${d === 'rejected' ? 'selected' : ''}>Rejected</option>
+                                                                                                                                                                    <option value="draft" ${d === 'draft' ? 'selected' : ''}>Draft</option>
+                                                                                                                                                                </select>`;
                             }
                         },
                         {
                             data: 'id', render: d => `
-                                                                                                                    <div class="flex gap-2">
-                                                                                                                        <button onclick="editListing(${d})" class="w-8 h-8 rounded-lg bg-slate-50 text-slate-500 hover:bg-slate-900 hover:text-white transition-all flex items-center justify-center"><i class='bx bxs-edit-alt text-lg'></i></button>
-                                                                                                                        <button onclick="deleteListing(${d})" class="w-8 h-8 rounded-lg bg-slate-50 text-slate-500 hover:bg-rose-600 hover:text-white transition-all flex items-center justify-center"><i class='bx bxs-trash text-lg'></i></button>
-                                                                                                                    </div>`
+                                                                                                                                                            <div class="flex gap-2">
+                                                                                                                                                                <button onclick="editListing(${d})" class="w-8 h-8 rounded-lg bg-slate-50 text-slate-500 hover:bg-slate-900 hover:text-white transition-all flex items-center justify-center"><i class='bx bxs-edit-alt text-lg'></i></button>
+                                                                                                                                                                <button onclick="deleteListing(${d})" class="w-8 h-8 rounded-lg bg-slate-50 text-slate-500 hover:bg-rose-600 hover:text-white transition-all flex items-center justify-center"><i class='bx bxs-trash text-lg'></i></button>
+                                                                                                                                                            </div>`
                         }
                     ],
                     drawCallback: function () { toggleBulkBar(); }
@@ -631,7 +660,7 @@
                     formData.delete('description');
                     formData.append('description', $('#description_hidden').val());
                     if (id) formData.append('_method', 'PUT');
-                    
+
                     // Debug: Log remove_gallery data
                     console.log('remove_gallery data:');
                     for (var pair of formData.entries()) {
@@ -653,6 +682,28 @@
                     });
                 });
             });
+
+            function saveAsDraft() {
+                if (editorInstance) { $('#description_hidden').val(editorInstance.getData()); }
+                var id = $('#listingId').val();
+                var formData = new FormData($('#listingForm')[0]);
+                formData.delete('description');
+                formData.append('description', $('#description_hidden').val());
+                formData.append('is_draft', "1");
+                if (id) formData.append('_method', 'PUT');
+
+                Swal.fire({ title: 'Saving Draft...', didOpen: () => Swal.showLoading() });
+                $.ajax({
+                    url: id ? `/admin/off-market-listings/${id}` : "{{ route('admin.off-market-listings.store') }}",
+                    type: 'POST', data: formData, processData: false, contentType: false,
+                    success: (res) => { closeModal(); if (table) table.ajax.reload(); Swal.fire('Saved!', 'Deal saved as draft.', 'success'); },
+                    error: (xhr) => {
+                        let msg = 'Technical error occurred.';
+                        if (xhr.responseJSON && xhr.responseJSON.errors) msg = Object.values(xhr.responseJSON.errors).flat().join('<br>');
+                        Swal.fire({ icon: 'error', title: 'Action Failed', html: msg });
+                    }
+                });
+            }
 
             function initSelect2() { $('.select2').select2({ dropdownParent: $('#listingModal'), width: '100%' }); }
             function initCKEditor() {
@@ -753,28 +804,28 @@
             function showStep(n) {
                 // Hide all stages
                 $('#stage1, #stage2, #stage3').addClass('hidden');
-                
+
                 // Show current stage
                 const $currentStage = $(`#stage${n}`);
                 $currentStage.removeClass('hidden');
-                
+
                 // Apply specific layout classes based on stage
                 if (n === 1) {
                     $currentStage.addClass('form-grid');
                 } else {
                     $currentStage.removeClass('form-grid');
                 }
-                
+
                 $('#currentStepText').text(n);
                 $('#stepLine').css('width', `${(n - 1) * 50}%`);
-                
+
                 // Update step circles
                 for (let i = 1; i <= 3; i++) {
                     const c = $(`#stepCircle${i}`);
                     if (i <= n) {
-                        c.html(`<i class='bx bx-check'></i>`).addClass('bg-[#02b8f2] border-[#02b8f2] text-white shadow-lg shadow-blue-100').removeClass('border-slate-100 text-slate-400');
+                        c.html(`<i class='bx bx-check'></i>`).addClass('bg-[#8046F1] border-[#8046F1] text-white shadow-lg shadow-purple-100').removeClass('border-slate-100 text-slate-400');
                     } else {
-                        c.html(i).removeClass('bg-[#02b8f2] border-[#02b8f2] text-white shadow-lg shadow-blue-100').addClass('bg-white border-slate-100 text-slate-400');
+                        c.html(i).removeClass('bg-[#8046F1] border-[#8046F1] text-white shadow-lg shadow-purple-100').addClass('bg-white border-slate-100 text-slate-400');
                     }
                 }
             }
@@ -805,12 +856,12 @@
                 $('#listingForm')[0].reset(); $('#listingId').val(''); $('#thumbPreview, #galleryPreview').addClass('hidden').html('');
                 $('.select2').val('').trigger('change');
                 if (editorInstance) editorInstance.setData('');
-                currentStep = 1; 
-                showStep(1); 
-                $('#modalTitle').text('New Distress Deal'); 
+                currentStep = 1;
+                showStep(1);
+                $('#modalTitle').text('New Distress Deal');
                 $('#listingModal').removeClass('hidden');
                 handleTypeChange();
-                
+
                 // Reinitialize autocomplete when modal opens
                 setTimeout(() => {
                     const input = document.getElementById("address");
@@ -842,20 +893,20 @@
                     $('#status').val(d.status).trigger('change');
                     $('input[type=checkbox]').prop('checked', false); if (d.features) d.features.forEach(f => $(`#feat_${f.id}`).prop('checked', true));
                     if (d.thumbnail) { $('#thumbPreview').removeClass('hidden').find('img').attr('src', '/storage/' + d.thumbnail); }
-                    
+
                     // Handle gallery preview for existing images
                     if (d.gallery && Array.isArray(d.gallery)) {
                         const galleryPreview = $('#galleryPreview').html('');
                         d.gallery.forEach((image, index) => {
                             galleryPreview.append(`
-                                <div class="relative group">
-                                    <img src="/storage/${image}" class="w-16 h-12 object-cover rounded-xl border border-slate-100 shadow-sm">
-                                    <button type="button" onclick="removeExistingImage(${index})" class="absolute -top-2 -right-2 w-6 h-6 bg-rose-500 text-white rounded-full flex items-center justify-center text-xs opacity-0 group-hover:opacity-100 transition-opacity hover:bg-rose-600">
-                                        <i class='bx bx-x'></i>
-                                    </button>
-                                    <input type="hidden" name="existing_gallery[]" value="${image}">
-                                </div>
-                            `);
+                                                                        <div class="relative group">
+                                                                            <img src="/storage/${image}" class="w-16 h-12 object-cover rounded-xl border border-slate-100 shadow-sm">
+                                                                            <button type="button" onclick="removeExistingImage(${index})" class="absolute -top-2 -right-2 w-6 h-6 bg-rose-500 text-white rounded-full flex items-center justify-center text-xs opacity-0 group-hover:opacity-100 transition-opacity hover:bg-rose-600">
+                                                                                <i class='bx bx-x'></i>
+                                                                            </button>
+                                                                            <input type="hidden" name="existing_gallery[]" value="${image}">
+                                                                        </div>
+                                                                    `);
                         });
                     }
 
@@ -867,7 +918,7 @@
 
                     $('#modalTitle').text('Modify Deal'); currentStep = 1; showStep(1); $('#listingModal').removeClass('hidden');
                     toggleBedBathFields(); // Call this instead of handleTypeChange to avoid clearing unit type
-                    
+
                     // Reinitialize autocomplete when editing
                     setTimeout(() => {
                         const input = document.getElementById("address");
@@ -897,11 +948,11 @@
             function removeExistingImage(index) {
                 // Remove the image container
                 $(`#galleryPreview .relative`).eq(index).remove();
-                
+
                 // Add the image path to the remove_gallery hidden input
                 const hiddenInput = $(`input[name="existing_gallery[]"]`).eq(index);
                 const imageValue = hiddenInput.val();
-                
+
                 // Create or update the remove_gallery input
                 let removeInput = $('input[name="remove_gallery[]"]');
                 if (removeInput.length === 0) {
@@ -909,7 +960,7 @@
                 } else {
                     // Check if this image is already marked for removal
                     let existingValues = [];
-                    removeInput.each(function() {
+                    removeInput.each(function () {
                         existingValues.push($(this).val());
                     });
                     if (!existingValues.includes(imageValue)) {
@@ -917,13 +968,13 @@
                     }
                 }
             }
-            
+
             // Filter functions
             $(document).ready(function () {
                 // Filter toggle button
                 $('#filterToggle').on('click', function () {
                     $('#filtersSection').toggleClass('hidden');
-                    
+
                     // Add smooth animation for filters appearance
                     if (!$('#filtersSection').hasClass('hidden')) {
                         $('html, body').animate({
@@ -933,7 +984,7 @@
                 });
 
                 // Handle filter change to trigger search
-                $('#filtersSection input, #filtersSection select').on('keyup change', function() {
+                $('#filtersSection input, #filtersSection select').on('keyup change', function () {
                     table.ajax.reload();
                 });
             });
@@ -956,7 +1007,7 @@
                 $('#filterBedrooms').val('');
                 $('#filterBathrooms').val('');
                 table.ajax.reload();
-                
+
                 $('html, body').animate({
                     scrollTop: $('#offMarketTable').offset().top - 80
                 }, 500);

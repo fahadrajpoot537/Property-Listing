@@ -12,6 +12,9 @@ class Affiliate extends Model
     protected $fillable = [
         'user_id',
         'referral_code',
+        'whatsapp_number',
+        'promotion_method',
+        'website_url',
         'total_earnings',
         'is_verified',
         'otp',
@@ -28,5 +31,10 @@ class Affiliate extends Model
     public function user()
     {
         return $this->belongsTo(User::class);
+    }
+
+    public function visitorAnalytics()
+    {
+        return $this->hasMany(VisitorAnalytic::class);
     }
 }

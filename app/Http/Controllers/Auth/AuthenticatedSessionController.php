@@ -28,12 +28,20 @@ class AuthenticatedSessionController extends Controller
 
         $request->session()->regenerate();
 
+        $user = Auth::user();
+
+        // Check for Affiliate
+        if ($user->affiliate) {
+            return redirect()->intended(route('affiliate.dashboard'));
+        }
+
         // Check if user has access to admin dashboard
-        if (Auth::user()->hasPermissionTo('access dashboard')) {
+        if ($user->hasPermissionTo('access dashboard')) {
             return redirect()->intended(route('admin.dashboard', absolute: false));
         }
-        
-        return redirect()->intended(route('admin.dashboard', absolute: false));
+
+        // Default fallback
+        return redirect()->intended(route('home'));
     }
 
     /**

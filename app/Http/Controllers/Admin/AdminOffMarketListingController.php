@@ -18,44 +18,68 @@ class AdminOffMarketListingController extends Controller
     {
         if ($request->ajax()) {
             $query = \App\Models\OffMarketListing::with(['user', 'propertyType', 'unitType']);
-            
+
+            // Role-based filtering
+            $user = auth()->user();
+            if (!$user->hasAnyRole(['admin', 'manager', 'listing director', 'Q/A'])) {
+                if ($user->hasRole('Agency') || ($user->hasRole('agent') && $user->agency_id)) {
+                    // Determine the Agency Owner ID
+                    $ownerId = $user->hasRole('Agency') ? $user->id : $user->agency_id;
+
+                    // Get all team member IDs
+                    $teamIds = \App\Models\User::where('agency_id', $ownerId)->pluck('id')->toArray();
+                    $poolIds = array_merge([$ownerId], $teamIds);
+
+                    $query->whereIn('user_id', $poolIds);
+                } else {
+                    // Independent Freelance, Landlords, or Agents without agency see only their own
+                    $query->where('user_id', $user->id);
+                }
+            }
+
             // Apply filters if provided
             if ($request->has('filters')) {
                 $filters = $request->get('filters');
-                
+
                 if (!empty($filters['property_title'])) {
                     $query->where('property_title', 'like', '%' . $filters['property_title'] . '%');
                 }
-                
+
                 if (!empty($filters['property_type_id'])) {
                     $query->where('property_type_id', $filters['property_type_id']);
                 }
-                
+
                 if (!empty($filters['purpose'])) {
                     $query->where('purpose', $filters['purpose']);
                 }
-                
+
                 if (!empty($filters['status'])) {
                     $query->where('status', $filters['status']);
                 }
-                
+
                 if (!empty($filters['min_price'])) {
                     $query->where('price', '>=', $filters['min_price']);
                 }
-                
+
                 if (!empty($filters['max_price'])) {
                     $query->where('price', '<=', $filters['max_price']);
                 }
-                
+
                 if (!empty($filters['bedrooms'])) {
                     $query->where('bedrooms', '>=', $filters['bedrooms']);
                 }
-                
+
                 if (!empty($filters['bathrooms'])) {
                     $query->where('bathrooms', '>=', $filters['bathrooms']);
                 }
             }
-            
+
+            if ($request->get('is_draft')) {
+                $query->where('status', 'draft');
+            } else {
+                $query->where('status', '!=', 'draft');
+            }
+
             $listings = $query->latest()->get();
             return response()->json(['data' => $listings]);
         }
@@ -67,6 +91,21 @@ class AdminOffMarketListingController extends Controller
         $rentFrequencies = \App\Models\RentFrequency::all();
         $cheques = \App\Models\Cheque::all();
         return view('admin.off_market_listings.index', compact('users', 'propertyTypes', 'unitTypes', 'features', 'ownershipStatuses', 'rentFrequencies', 'cheques'));
+    }
+
+    public function drafts(Request $request)
+    {
+        if ($request->ajax()) {
+            return $this->index($request);
+        }
+        $users = \App\Models\User::all();
+        $propertyTypes = \App\Models\PropertyType::all();
+        $unitTypes = \App\Models\UnitType::all();
+        $features = \App\Models\Feature::all();
+        $ownershipStatuses = \App\Models\OwnershipStatus::all();
+        $rentFrequencies = \App\Models\RentFrequency::all();
+        $cheques = \App\Models\Cheque::all();
+        return view('admin.off_market_listings.drafts', compact('users', 'propertyTypes', 'unitTypes', 'features', 'ownershipStatuses', 'rentFrequencies', 'cheques'));
     }
 
     public function create()
@@ -121,6 +160,10 @@ class AdminOffMarketListingController extends Controller
 
         $listing = \App\Models\OffMarketListing::create($validated);
 
+        if ($request->is_draft == "1") {
+            $listing->update(['status' => 'draft']);
+        }
+
         if (isset($validated['features'])) {
             $listing->features()->sync($validated['features']);
         }
@@ -158,7 +201,7 @@ class AdminOffMarketListingController extends Controller
             'latitude' => 'nullable|numeric',
             'longitude' => 'nullable|numeric',
             'video' => 'nullable|file|mimetypes:video/mp4,video/quicktime|max:20480',
-            'status' => 'required|in:pending,approved,rejected',
+            'status' => 'required|in:pending,approved,rejected,draft',
             'features' => 'array',
             'thumbnail' => 'image|nullable|max:2048',
             'gallery.*' => 'image|mimes:jpeg,png,jpg,webp|max:2048',
@@ -177,13 +220,13 @@ class AdminOffMarketListingController extends Controller
 
         // Handle gallery updates - replace existing images with new ones
         $galleryPaths = [];
-        
+
         // Debug: Log remove_gallery data
         if ($request->has('remove_gallery')) {
             Log::info('remove_gallery data: ', $request->remove_gallery);
             Log::info('Original gallery paths: ', $listing->gallery ?? []);
         }
-        
+
         // If new images are uploaded, replace all existing images
         if ($request->hasFile('gallery')) {
             foreach ($request->file('gallery') as $file) {
@@ -193,17 +236,21 @@ class AdminOffMarketListingController extends Controller
         } else {
             // If no new images are uploaded, keep existing images (minus removed ones)
             $galleryPaths = $listing->gallery ?? [];
-            
+
             // Remove images marked for deletion
             if ($request->has('remove_gallery')) {
                 $galleryPaths = array_diff($galleryPaths, $request->remove_gallery);
                 Log::info('Gallery paths after removal: ', $galleryPaths);
             }
         }
-        
+
         $validated['gallery'] = array_values($galleryPaths);
 
         $listing->update($validated);
+
+        if ($request->is_draft == "1") {
+            $listing->update(['status' => 'draft']);
+        }
 
         if (isset($validated['features'])) {
             $listing->features()->sync($validated['features']);
@@ -246,6 +293,10 @@ class AdminOffMarketListingController extends Controller
             case 'delete':
                 \App\Models\OffMarketListing::whereIn('id', $ids)->delete();
                 $msg = "Selected deals deleted successfully.";
+                break;
+            case 'draft':
+                \App\Models\OffMarketListing::whereIn('id', $ids)->update(['status' => 'draft']);
+                $msg = "Selected deals moved to drafts.";
                 break;
             default:
                 return response()->json(['success' => false, 'message' => 'Invalid action.'], 422);

@@ -4,10 +4,10 @@
 
 @section('content')
     <div class="flex justify-between items-center mb-6">
-        <h3 class="text-slate-600">Affiliate Management</h3>
+        <h3 class="text-slate-600 font-black uppercase tracking-widest text-sm">Partner Network</h3>
         <button onclick="openModal()"
-            class="bg-indigo-600 hover:bg-indigo-700 text-white font-medium py-2 px-4 rounded-lg shadow-sm transition-colors flex items-center gap-2">
-            <i class='bx bx-plus'></i> Create New Affiliate
+            class="bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-2.5 px-6 rounded-xl shadow-lg shadow-indigo-200 transition-all flex items-center gap-2">
+            <i class='bx bx-plus-circle'></i> Onboard New Partner
         </button>
     </div>
 
@@ -15,11 +15,12 @@
         <table id="affiliatesTable" class="w-full text-sm text-left text-slate-500">
             <thead class="text-xs text-slate-700 uppercase bg-slate-50">
                 <tr>
-                    <th class="px-6 py-3">User</th>
-                    <th class="px-6 py-3">Referral Code</th>
-                    <th class="px-6 py-3">Earnings</th>
-                    <th class="px-6 py-3">Status</th>
-                    <th class="px-6 py-3">Actions</th>
+                    <th class="px-6 py-4 font-black">User / Identity</th>
+                    <th class="px-6 py-4 font-black">Referral Code</th>
+                    <th class="px-6 py-4 font-black">Unique Visitors</th>
+                    <th class="px-6 py-4 font-black">Bonus Payout</th>
+                    <th class="px-6 py-4 font-black">Status</th>
+                    <th class="px-6 py-4 font-black">Operations</th>
                 </tr>
             </thead>
             <tbody></tbody>
@@ -99,28 +100,35 @@
                         },
                         {
                             data: 'referral_code', name: 'referral_code', render: function (data) {
-                                return `<code class="bg-slate-100 px-2 py-1 rounded text-indigo-600 font-mono text-xs">${data}</code>`;
+                                return `<code class="bg-indigo-50 px-3 py-1 rounded-lg text-indigo-600 font-mono text-[10px] font-black tracking-wider border border-indigo-100">${data}</code>`;
                             }
                         },
                         {
-                            data: 'total_earnings', name: 'total_earnings', render: function (data) {
-                                return '£' + parseFloat(data).toFixed(2);
+                            data: 'visitor_analytics_count', name: 'visitor_analytics_count', render: function (data) {
+                                return `<div class="flex items-center gap-2 font-black text-slate-800"><span class="w-1.5 h-1.5 bg-blue-500 rounded-full"></span> ${data} Hits</div>`;
+                            }
+                        },
+                        {
+                            data: 'total_earnings', name: 'total_earnings', render: function (data, type, row) {
+                                let calculated = (row.visitor_analytics_count / 1000) * 50;
+                                return `<span class="font-black text-emerald-600">£${calculated.toFixed(2)}</span>`;
                             }
                         },
                         {
                             data: 'status', name: 'status', render: function (data) {
                                 let color = data === 'active' ? 'emerald' : (data === 'inactive' ? 'rose' : 'amber');
-                                return `<span class="bg-${color}-100 text-${color}-700 rounded-full px-3 py-1 text-xs font-semibold capitalize">${data}</span>`;
+                                return `<span class="bg-${color}-50 text-${color}-600 rounded-lg px-3 py-1 text-[10px] font-black uppercase tracking-widest border border-${color}-100">${data}</span>`;
                             }
                         },
                         {
                             data: 'id', name: 'actions', orderable: false, searchable: false, render: function (data, type, row) {
                                 return `
-                                    <div class="flex gap-2">
-                                        <button onclick="editAffiliate(${data})" class="w-8 h-8 rounded-full bg-slate-100 flex items-center justify-center text-slate-600 hover:bg-indigo-100 hover:text-indigo-600 transition-colors"><i class='bx bxs-edit'></i></button>
-                                        <button onclick="deleteAffiliate(${data})" class="w-8 h-8 rounded-full bg-slate-100 flex items-center justify-center text-slate-600 hover:bg-rose-100 hover:text-rose-600 transition-colors"><i class='bx bxs-trash'></i></button>
-                                    </div>
-                                `;
+                                            <div class="flex gap-2">
+                                                <a href="/admin/affiliates/${data}/visitors" class="w-10 h-10 rounded-xl bg-slate-50 flex items-center justify-center text-slate-400 hover:bg-blue-50 hover:text-blue-600 transition-all border border-transparent hover:border-blue-100" title="Analytics Tree"><i class='bx bx-search-alt text-xl'></i></a>
+                                                <button onclick="editAffiliate(${data})" class="w-10 h-10 rounded-xl bg-slate-50 flex items-center justify-center text-slate-400 hover:bg-indigo-50 hover:text-indigo-600 transition-all border border-transparent hover:border-indigo-100" title="Manage Status"><i class='bx bxs-edit-alt text-xl'></i></button>
+                                                <button onclick="deleteAffiliate(${data})" class="w-10 h-10 rounded-xl bg-slate-50 flex items-center justify-center text-slate-400 hover:bg-rose-50 hover:text-rose-600 transition-all border border-transparent hover:border-rose-100" title="Terminate"><i class='bx bxs-trash-alt text-xl'></i></button>
+                                            </div>
+                                        `;
                             }
                         }
                     ]

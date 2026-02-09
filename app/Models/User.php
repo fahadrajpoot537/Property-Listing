@@ -30,6 +30,7 @@ class User extends Authenticatable
         'company_details',
         'slug',
         'agency_id',
+        'status',
     ];
 
     /**

@@ -24,10 +24,23 @@ class VisitorTrackingMiddleware
             }
         }
 
+        // Affiliate Tracking Logic
+        $affiliateId = session('affiliate_id');
+
+        if ($request->has('ref')) {
+            $refCode = $request->query('ref');
+            $affiliate = \App\Models\Affiliate::where('referral_code', $refCode)->first();
+            if ($affiliate && $affiliate->status === 'active') {
+                $affiliateId = $affiliate->id;
+                session(['affiliate_id' => $affiliateId]);
+            }
+        }
+
         try {
             \App\Models\VisitorAnalytic::create([
                 'ip_address' => $request->ip(),
                 'user_id' => auth()->id(),
+                'affiliate_id' => $affiliateId,
                 'url' => $request->fullUrl(),
                 'method' => $request->method(),
                 'user_agent' => $userAgent,

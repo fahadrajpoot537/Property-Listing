@@ -11,11 +11,17 @@ class Blog extends Model
 
     protected $fillable = [
         'title',
+        'slug',
         'image',
         'content',
         'author',
         'published_at'
     ];
+
+    public function getRouteKeyName()
+    {
+        return 'slug';
+    }
 
     protected $casts = [
         'published_at' => 'datetime',
