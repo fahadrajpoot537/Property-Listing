@@ -195,10 +195,31 @@
                   <div class="filter-icon-wrapper"><i class="fa-solid fa-bed text-secondary"></i></div>
                   <select id="min-bedrooms-sale" class="select2-filter w-full" data-placeholder="Bedrooms">
                     <option value="">Any Beds</option>
-                    <option value="1">1+ Beds</option>
-                    <option value="2">2+ Beds</option>
-                    <option value="3">3+ Beds</option>
-                    <option value="4">4+ Beds</option>
+                    <option value="0">Studio</option>
+                    @for($i = 1; $i <= 9; $i++)
+                      <option value="{{ $i }}">{{ $i }} Bed{{ $i > 1 ? 's' : '' }}</option>
+                    @endfor
+                    <option value="10">10+ Beds</option>
+                  </select>
+                </div>
+                <!-- Additional Filters Row -->
+                <div class="relative col-span-2 md:col-span-1 md:col-start-1">
+                  <div class="filter-icon-wrapper"><i class="fa-solid fa-bath text-secondary"></i></div>
+                  <select id="min-bathrooms-sale" class="select2-filter w-full" data-placeholder="Bathrooms">
+                    <option value="">Any Baths</option>
+                    @for($i = 1; $i <= 9; $i++)
+                      <option value="{{ $i }}">{{ $i }} Bath{{ $i > 1 ? 's' : '' }}</option>
+                    @endfor
+                    <option value="10">10+ Baths</option>
+                  </select>
+                </div>
+                <div class="relative col-span-2 md:col-span-1">
+                  <div class="filter-icon-wrapper"><i class="fa-solid fa-file-contract text-secondary"></i></div>
+                  <select id="ownership-status-sale" class="select2-filter w-full" data-placeholder="Ownership">
+                    <option value="">Any Status</option>
+                    @foreach(\App\Models\OwnershipStatus::all() as $status)
+                      <option value="{{ $status->id }}">{{ $status->title }}</option>
+                    @endforeach
                   </select>
                 </div>
               </div>
@@ -268,9 +289,31 @@
                   <div class="filter-icon-wrapper"><i class="fa-solid fa-bed text-secondary"></i></div>
                   <select id="min-bedrooms-rent" class="select2-filter w-full" data-placeholder="Bedrooms">
                     <option value="">Any Beds</option>
-                    <option value="1">1+ Beds</option>
-                    <option value="2">2+ Beds</option>
-                    <option value="3">3+ Beds</option>
+                    <option value="0">Studio</option>
+                    @for($i = 1; $i <= 9; $i++)
+                      <option value="{{ $i }}">{{ $i }} Bed{{ $i > 1 ? 's' : '' }}</option>
+                    @endfor
+                    <option value="10">10+ Beds</option>
+                  </select>
+                </div>
+                <!-- Additional Filters Row -->
+                <div class="relative col-span-2 md:col-span-1 md:col-start-1">
+                  <div class="filter-icon-wrapper"><i class="fa-solid fa-bath text-secondary"></i></div>
+                  <select id="min-bathrooms-rent" class="select2-filter w-full" data-placeholder="Bathrooms">
+                    <option value="">Any Baths</option>
+                    @for($i = 1; $i <= 9; $i++)
+                      <option value="{{ $i }}">{{ $i }} Bath{{ $i > 1 ? 's' : '' }}</option>
+                    @endfor
+                    <option value="10">10+ Baths</option>
+                  </select>
+                </div>
+                <div class="relative col-span-2 md:col-span-1">
+                  <div class="filter-icon-wrapper"><i class="fa-solid fa-file-contract text-secondary"></i></div>
+                  <select id="ownership-status-rent" class="select2-filter w-full" data-placeholder="Ownership">
+                    <option value="">Any Status</option>
+                    @foreach(\App\Models\OwnershipStatus::all() as $status)
+                      <option value="{{ $status->id }}">{{ $status->title }}</option>
+                    @endforeach
                   </select>
                 </div>
               </div>
@@ -493,9 +536,11 @@
       if (tab === 'sale' && selectedLatSale && selectedLngSale) {
         params.append('lat', selectedLatSale);
         params.append('lng', selectedLngSale);
+        if (location) params.append('location', location); // Add location name too
       } else if (tab === 'rent' && selectedLatRent && selectedLngRent) {
         params.append('lat', selectedLatRent);
         params.append('lng', selectedLngRent);
+        if (location) params.append('location', location); // Add location name too
       } else if (location) {
         params.append('location', location);
       }

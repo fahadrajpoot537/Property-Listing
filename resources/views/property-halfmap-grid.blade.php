@@ -361,257 +361,282 @@
                             <div class="view-switcher flex items-center bg-gray-100p-1 rounded-lg">
                                 <button type="button" onclick="toggleView('grid')" id="grid-view-btn"
                                     class="w-10 h-10 flex items-center justify-center rounded-md transition-all duration-200 {{ request('view', 'list') == 'grid' ? 'bg-white shadow-sm text-primary' : 'text-gray-400 hover:text-gray-600' }}">
-                                        <i class="fa-solid fa-border-all text-base"></i>
-                                    </button>
-                                    <button type="button" onclick="toggleView('list')" id="list-view-btn"
-                                        class="w-10 h-10 flex items-center justify-center rounded-md transition-all duration-200 {{ request('view', 'list') == 'list' ? 'bg-white shadow-sm text-primary' : 'text-gray-400 hover:text-gray-600' }}">
-                                        <i class="fa-solid fa-list-ul text-base"></i>
-                                    </button>
-                                </div>
-                                </div>
-                            </div>
-
-                            <!-- Cards Display -->
-                            <div id="results-grid"
-                                class="grid {{ request('view', 'list') == 'list' ? 'grid-cols-1' : 'grid-cols-1 md:grid-cols-2' }} gap-6">
-                                @forelse($listings as $listing)
-                                    <div>
-                                        <div
-                                            class="property-card-results {{ request('view', 'list') == 'list' ? 'list-view-card' : '' }}">
-                                            <div class="img-container">
-                                                <a href="{{ route('listing.show', $listing->id) }}">
-                                                    <img src="{{ $listing->thumbnail ? asset('storage/' . $listing->thumbnail) : asset('assets/img/all-images/hero/1.jpg') }}"
-                                                        alt="Property">
-                                                </a>
-                                                <div class="price-badge flex flex-col items-end">
-                                                    @if($listing->old_price && $listing->old_price > 0 && $listing->old_price != $listing->price)
-                                                        <span class="text-[10px] text-gray-500 font-bold"
-                                                            style="text-decoration: line-through; margin-bottom: -4px;">£{{ number_format($listing->old_price) }}</span>
-                                                    @endif
-                                                    <span>£{{ number_format($listing->price) }}</span>
-                                                </div>
-                                                @php
-                                                    $isOffMarket = $listing instanceof \App\Models\OffMarketListing;
-                                                    $favIds = $isOffMarket ? ($user_favorite_off_market_ids ?? []) : ($user_favorite_ids ?? []);
-                                                    $isFavorited = in_array($listing->id, $favIds);
-                                                @endphp
-                                                <button
-                                                    onclick="toggleFavorite({{ $isOffMarket ? 'null' : $listing->id }}, {{ $isOffMarket ? $listing->id : 'null' }}, this)"
-                                                    class="absolute top-4 right-4 w-10 h-10 bg-white/90 backdrop-blur-sm rounded-full flex items-center justify-center {{ $isFavorited ? 'text-red-500' : 'text-gray-400' }} hover:text-red-500 transition-colors shadow-sm">
-                                                    <i class="{{ $isFavorited ? 'fa-solid' : 'fa-regular' }} fa-heart"></i>
-                                                </button>
-                                            </div>
-                                            <div class="card-content">
-                                                <div
-                                                    class="inline-block bg-purple-50 text-purple-700 text-[10px] font-bold px-2 py-0.5 rounded uppercase tracking-wider mb-2 w-fit">
-                                                    {{ $listing->purpose }}
-                                                </div>
-                                                <h3 class="property-title">
-                                                    <a href="{{ route('listing.show', $listing->id) }}"
-                                                        class="hover:text-secondary transition-colors">{{ $listing->property_title }}</a>
-                                                </h3>
-                                                <p class="property-addr">
-                                                    <i class="fa-solid fa-location-dot"></i> {{ Str::limit($listing->address, 50) }}
-                                                </p>
-
-                                                <div class="stats-row">
-                                                    <div class="stat-item"><i class="fa-solid fa-bed"></i> {{ $listing->bedrooms }}
-                                                    </div>
-                                                    <div class="stat-item"><i class="fa-solid fa-bath"></i> {{ $listing->bathrooms }}
-                                                    </div>
-                                                    <div class="stat-item"><i class="fa-solid fa-vector-square"></i>
-                                                        {{ $listing->area_size ?? 'N/A' }} sqft</div>
-                                                </div>
-
-                                                <div class="mt-4 flex gap-2">
-                                                    <a href="whatsapp://send?phone={{ $listing->user?->phone }}"
-                                                        class="flex-1 text-center py-2 px-3 bg-green-500 text-white rounded-lg text-xs font-bold hover:bg-green-600 transition-colors">
-                                                        <i class="fab fa-whatsapp"></i> Whatsapp
-                                                    </a>
-                                                    <a href="{{ route('listing.show', $listing->id) }}"
-                                                        class="flex-1 text-center py-2 px-3 border border-gray-200 text-gray-700 rounded-lg text-xs font-bold hover:bg-gray-50 transition-colors">
-                                                        Details
-                                                    </a>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                @empty
-                                    <div
-                                        class="col-span-full text-center py-20 bg-white rounded-3xl border border-dashed border-gray-200">
-                                        <div class="text-5xl text-gray-200 mb-6"><i class="fa-solid fa-house-circle-exclamation"></i>
-                                        </div>
-                                        <h2 class="text-xl font-bold text-gray-500">No properties found.</h2>
-                                        <p class="text-gray-400 mt-2">Try adjusting your filters.</p>
-                                        <a href="{{ request()->routeIs('off-market-listings.index') ? route('off-market-listings.index') : route('listings.index') }}"
-                                            class="btn-apply inline-block px-8 py-3 bg-primary text-white rounded-xl mt-6">
-                                            Reset Filters
-                                        </a>
-                                    </div>
-                                @endforelse
-                            </div>
-
-                            <!-- Pagination -->
-                            <div class="mt-12 pagination-container">
-                                {{ $listings->links() }}
-                            </div>
-                        </div>
-
-                        <!-- Sidebar Section (Right) -->
-                        <div class="w-full lg:w-1/4" x-data="{ showFilters: window.innerWidth >= 1024 }">
-
-                            <button @click="showFilters = !showFilters" type="button"
-                                class="w-full bg-white border border-gray-200 py-3 px-4 rounded-xl font-bold text-gray-700 shadow-sm mb-4 flex items-center justify-between hover:bg-gray-50 transition-colors">
-                                <span class="flex items-center gap-2"><i class="fa-solid fa-filter text-secondary"></i> Filter
-                                    Results</span>
-                                <i class="fa-solid transition-transform duration-200"
-                                    :class="showFilters ? 'fa-chevron-up' : 'fa-chevron-down'"></i>
-                            </button>
-
-                            <div class="filters-sidebar" x-show="showFilters" x-transition>
-                                <div class="flex justify-between items-center mb-6">
-                                    <h2 class="sidebar-title !mb-0">Filters</h2>
-                                    <button @click="showFilters = false" class="text-gray-400 hover:text-gray-600">
-                                        <i class="fa-solid fa-xmark text-xl"></i>
-                                    </button>
-                                </div>
-
-                                <form id="sidebar-filter-form"
-                                    action="{{ request()->routeIs('off-market-listings.index') ? route('off-market-listings.index') : route('listings.index') }}"
-                                    method="GET">
-                                    <input type="hidden" name="view" id="sidebar-view" value="{{ request('view', 'list') }}">
-                                    <input type="hidden" name="sort" id="sidebar-sort" value="{{ request('sort', 'newest') }}">
-                                    <input type="hidden" name="lat" id="sidebar-lat" value="{{ request('lat') }}">
-                                    <input type="hidden" name="lng" id="sidebar-lng" value="{{ request('lng') }}">
-                                    <input type="hidden" name="discounted" value="{{ request('discounted') }}">
-
-                                    <!-- Purpose Switching -->
-                                    <div class="purpose-tabs">
-                                        <button type="button"
-                                            onclick="document.getElementById('purpose-hidden-input').value = 'Buy'; this.form.submit()"
-                                            class="sidebar-purpose-btn {{ request('purpose', 'Buy') == 'Buy' ? 'active' : '' }}">Buy</button>
-                                        <button type="button"
-                                            onclick="document.getElementById('purpose-hidden-input').value = 'Rent'; this.form.submit()"
-                                            class="sidebar-purpose-btn {{ request('purpose') == 'Rent' ? 'active' : '' }}">Rent</button>
-                                        <input type="hidden" name="purpose" id="purpose-hidden-input"
-                                            value="{{ request('purpose', 'Buy') }}">
-                                    </div>
-
-                                    <!-- Filter Controls -->
-                                    <div class="space-y-4">
-                                        <div class="form-group-custom">
-                                            <label class="form-label-custom">Location</label>
-                                            <div class="relative">
-                                                <i
-                                                    class="fa-solid fa-location-dot absolute left-4 top-1/2 -translate-y-1/2 text-gray-400"></i>
-                                                <input type="text" name="location" id="sidebar-location" class="sidebar-input pl-16"
-                                                    placeholder="e.g. London" value="{{ request('location') }}">
-                                            </div>
-                                        </div>
-
-                                        <div class="form-group-custom">
-                                            <label class="form-label-custom">Search Radius</label>
-                                            <select name="radius" class="select2-filter">
-                                                <option value="0.5" {{ request('radius') == '0.5' ? 'selected' : '' }}>This area only
-                                                </option>
-                                                <option value="1" {{ request('radius') == '1' ? 'selected' : '' }}>+ 1 mile</option>
-                                                <option value="3" {{ request('radius') == '3' ? 'selected' : '' }}>+ 3 miles</option>
-                                                <option value="5" {{ request('radius') == '5' ? 'selected' : '' }}>+ 5 miles</option>
-                                                <option value="10" {{ request('radius') == '10' ? 'selected' : '' }}>+ 10 miles
-                                                </option>
-                                                <option value="15" {{ request('radius') == '15' ? 'selected' : '' }}>+ 15 miles
-                                                </option>
-                                                <option value="20" {{ request('radius') == '20' ? 'selected' : '' }}>+ 20 miles
-                                                </option>
-                                                <option value="30" {{ request('radius') == '30' ? 'selected' : '' }}>+ 30 miles
-                                                </option>
-                                                <option value="40" {{ request('radius') == '40' ? 'selected' : '' }}>+ 40 miles
-                                                </option>
-                                                <option value="50" {{ request('radius') == '50' ? 'selected' : '' }}>+ 50 miles
-                                                </option>
-                                            </select>
-                                        </div>
-
-                                        <div class="form-group-custom">
-                                            <label class="form-label-custom">Property Type</label>
-                                            <select name="property_type" class="select2-filter">
-                                                <option value="">Any Type</option>
-                                                @foreach(\App\Models\PropertyType::all() as $type)
-                                                    <option value="{{ $type->id }}" {{ request('property_type') == $type->id ? 'selected' : '' }}>{{ $type->title }}</option>
-                                                @endforeach
-                                            </select>
-                                        </div>
-
-                                        <div class="form-group-custom">
-                                            <label class="form-label-custom">Bedrooms</label>
-                                            <select name="min_bedrooms" class="select2-filter">
-                                                <option value="">Any Beds</option>
-                                                <option value="1" {{ request('min_bedrooms') == '1' ? 'selected' : '' }}>1+ Beds
-                                                </option>
-                                                <option value="2" {{ request('min_bedrooms') == '2' ? 'selected' : '' }}>2+ Beds
-                                                </option>
-                                                <option value="3" {{ request('min_bedrooms') == '3' ? 'selected' : '' }}>3+ Beds
-                                                </option>
-                                                <option value="4" {{ request('min_bedrooms') == '4' ? 'selected' : '' }}>4+ Beds
-                                                </option>
-                                            </select>
-                                        </div>
-
-                                        <div class="grid grid-cols-2 gap-2">
-                                            <div>
-                                                <label class="form-label-custom">Min Price</label>
-                                                <select name="min_price" class="select2-filter">
-                                                    <option value="">No Min</option>
-                                                    <option value="100000" {{ request('min_price') == '100000' ? 'selected' : '' }}>
-                                                        £100k</option>
-                                                    <option value="250000" {{ request('min_price') == '250000' ? 'selected' : '' }}>
-                                                        £250k</option>
-                                                    <option value="500000" {{ request('min_price') == '500000' ? 'selected' : '' }}>
-                                                        £500k</option>
-                                                </select>
-                                            </div>
-                                            <div>
-                                                <label class="form-label-custom">Max Price</label>
-                                                <select name="max_price" class="select2-filter">
-                                                    <option value="">No Max</option>
-                                                    <option value="500000" {{ request('max_price') == '500000' ? 'selected' : '' }}>
-                                                        £500k</option>
-                                                    <option value="1000000" {{ request('max_price') == '1000000' ? 'selected' : '' }}>
-                                                        £1m</option>
-                                                    <option value="5000000" {{ request('max_price') == '5000000' ? 'selected' : '' }}>
-                                                        £5m</option>
-                                                </select>
-                                            </div>
-                                        </div>
-
-                                        <!-- Amenities List -->
-                                        <div class="form-group-custom !mb-6">
-                                            <label class="form-label-custom mb-3">Must have features</label>
-                                            <div class="amenity-checkbox-group">
-                                                @foreach($features_all as $feature)
-                                                    <label class="custom-checkbox">
-                                                        <input type="checkbox" name="feature_ids[]" value="{{ $feature->id }}" {{ in_array($feature->id, (array) request('feature_ids')) ? 'checked' : '' }}>
-                                                        <span>{{ $feature->title }}</span>
-                                                    </label>
-                                                @endforeach
-                                            </div>
-                                        </div>
-                                    </div>
-
-                                    <button type="submit" class="btn-apply">
-                                        Update results
-                                    </button>
-
-                                    <a href="{{ request()->routeIs('off-market-listings.index') ? route('off-market-listings.index') : route('listings.index') }}"
-                                        class="block text-center text-sm font-bold text-gray-400 mt-4 hover:text-primary transition-colors">
-                                        Clear all filters
-                                    </a>
-                                </form>
+                                    <i class="fa-solid fa-border-all text-base"></i>
+                                </button>
+                                <button type="button" onclick="toggleView('list')" id="list-view-btn"
+                                    class="w-10 h-10 flex items-center justify-center rounded-md transition-all duration-200 {{ request('view', 'list') == 'list' ? 'bg-white shadow-sm text-primary' : 'text-gray-400 hover:text-gray-600' }}">
+                                    <i class="fa-solid fa-list-ul text-base"></i>
+                                </button>
                             </div>
                         </div>
                     </div>
+
+                    <!-- Cards Display -->
+                    <div id="results-grid"
+                        class="grid {{ request('view', 'list') == 'list' ? 'grid-cols-1' : 'grid-cols-1 md:grid-cols-2' }} gap-6">
+                        @forelse($listings as $listing)
+                            <div>
+                                <div
+                                    class="property-card-results {{ request('view', 'list') == 'list' ? 'list-view-card' : '' }}">
+                                    <div class="img-container">
+                                        <a href="{{ route('listing.show', $listing->id) }}">
+                                            <img src="{{ $listing->thumbnail ? asset('storage/' . $listing->thumbnail) : asset('assets/img/all-images/hero/1.jpg') }}"
+                                                alt="Property">
+                                        </a>
+                                        <div class="price-badge flex flex-col items-end">
+                                            @if($listing->old_price && $listing->old_price > 0 && $listing->old_price != $listing->price)
+                                                <span class="text-[10px] text-gray-500 font-bold"
+                                                    style="text-decoration: line-through; margin-bottom: -4px;">£{{ number_format($listing->old_price) }}</span>
+                                            @endif
+                                            <span>£{{ number_format($listing->price) }}</span>
+                                        </div>
+                                        @php
+                                            $isOffMarket = $listing instanceof \App\Models\OffMarketListing;
+                                            $favIds = $isOffMarket ? ($user_favorite_off_market_ids ?? []) : ($user_favorite_ids ?? []);
+                                            $isFavorited = in_array($listing->id, $favIds);
+                                        @endphp
+                                        <button
+                                            onclick="toggleFavorite({{ $isOffMarket ? 'null' : $listing->id }}, {{ $isOffMarket ? $listing->id : 'null' }}, this)"
+                                            class="absolute top-4 right-4 w-10 h-10 bg-white/90 backdrop-blur-sm rounded-full flex items-center justify-center {{ $isFavorited ? 'text-red-500' : 'text-gray-400' }} hover:text-red-500 transition-colors shadow-sm">
+                                            <i class="{{ $isFavorited ? 'fa-solid' : 'fa-regular' }} fa-heart"></i>
+                                        </button>
+                                    </div>
+                                    <div class="card-content">
+                                        <div
+                                            class="inline-block bg-purple-50 text-purple-700 text-[10px] font-bold px-2 py-0.5 rounded uppercase tracking-wider mb-2 w-fit">
+                                            {{ $listing->purpose }}
+                                        </div>
+                                        <h3 class="property-title">
+                                            <a href="{{ route('listing.show', $listing->id) }}"
+                                                class="hover:text-secondary transition-colors">{{ $listing->property_title }}</a>
+                                        </h3>
+                                        <p class="property-addr">
+                                            <i class="fa-solid fa-location-dot"></i> {{ Str::limit($listing->address, 50) }}
+                                        </p>
+
+                                        <div class="stats-row">
+                                            <div class="stat-item"><i class="fa-solid fa-bed"></i> {{ $listing->bedrooms }}
+                                            </div>
+                                            <div class="stat-item"><i class="fa-solid fa-bath"></i> {{ $listing->bathrooms }}
+                                            </div>
+                                            <div class="stat-item"><i class="fa-solid fa-vector-square"></i>
+                                                {{ $listing->area_size ?? 'N/A' }} sqft</div>
+                                        </div>
+
+                                        <div class="mt-4 flex gap-2">
+                                            <a href="https://wa.me/{{ $listing->user?->phone_number }}?text=Interested%20in%20{{ urlencode($listing->property_title) }}"
+                                                class="flex-1 text-center py-2 px-3 bg-green-500 text-white rounded-lg text-xs font-bold hover:bg-green-600 transition-colors">
+                                                <i class="fab fa-whatsapp"></i> Whatsapp
+                                            </a>
+                                            <a href="{{ route('listing.show', $listing->id) }}"
+                                                class="flex-1 text-center py-2 px-3 border border-gray-200 text-gray-700 rounded-lg text-xs font-bold hover:bg-gray-50 transition-colors">
+                                                Details
+                                            </a>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        @empty
+                            <div
+                                class="col-span-full text-center py-20 bg-white rounded-3xl border border-dashed border-gray-200">
+                                <div class="text-5xl text-gray-200 mb-6"><i class="fa-solid fa-house-circle-exclamation"></i>
+                                </div>
+                                <h2 class="text-xl font-bold text-gray-500">No properties found.</h2>
+                                <p class="text-gray-400 mt-2">Try adjusting your filters.</p>
+                                <a href="{{ request()->routeIs('off-market-listings.index') ? route('off-market-listings.index') : route('listings.index') }}"
+                                    class="btn-apply inline-block px-8 py-3 bg-primary text-white rounded-xl mt-6">
+                                    Reset Filters
+                                </a>
+                            </div>
+                        @endforelse
+                    </div>
+
+                    <!-- Pagination -->
+                    <div class="mt-12 pagination-container">
+                        {{ $listings->links() }}
+                    </div>
+                </div>
+
+                <!-- Sidebar Section (Right) -->
+                <div class="w-full lg:w-1/4" x-data="{ showFilters: window.innerWidth >= 1024 }">
+
+                    <button @click="showFilters = !showFilters" type="button"
+                        class="w-full bg-white border border-gray-200 py-3 px-4 rounded-xl font-bold text-gray-700 shadow-sm mb-4 flex items-center justify-between hover:bg-gray-50 transition-colors">
+                        <span class="flex items-center gap-2"><i class="fa-solid fa-filter text-secondary"></i> Filter
+                            Results</span>
+                        <i class="fa-solid transition-transform duration-200"
+                            :class="showFilters ? 'fa-chevron-up' : 'fa-chevron-down'"></i>
+                    </button>
+
+                    <div class="filters-sidebar" x-show="showFilters" x-transition>
+                        <div class="flex justify-between items-center mb-6">
+                            <h2 class="sidebar-title !mb-0">Filters</h2>
+                            <button @click="showFilters = false" class="text-gray-400 hover:text-gray-600">
+                                <i class="fa-solid fa-xmark text-xl"></i>
+                            </button>
+                        </div>
+
+                        <form id="sidebar-filter-form"
+                            action="{{ request()->routeIs('off-market-listings.index') ? route('off-market-listings.index') : route('listings.index') }}"
+                            method="GET">
+                            <input type="hidden" name="view" id="sidebar-view" value="{{ request('view', 'list') }}">
+                            <input type="hidden" name="sort" id="sidebar-sort" value="{{ request('sort', 'newest') }}">
+                            <input type="hidden" name="lat" id="sidebar-lat" value="{{ request('lat') }}">
+                            <input type="hidden" name="lng" id="sidebar-lng" value="{{ request('lng') }}">
+                            <input type="hidden" name="discounted" value="{{ request('discounted') }}">
+
+                            <!-- Purpose Switching -->
+                            <div class="purpose-tabs">
+                                <button type="button"
+                                    onclick="document.getElementById('purpose-hidden-input').value = 'Buy'; this.form.submit()"
+                                    class="sidebar-purpose-btn {{ request('purpose', 'Buy') == 'Buy' ? 'active' : '' }}">Buy</button>
+                                <button type="button"
+                                    onclick="document.getElementById('purpose-hidden-input').value = 'Rent'; this.form.submit()"
+                                    class="sidebar-purpose-btn {{ request('purpose') == 'Rent' ? 'active' : '' }}">Rent</button>
+                                <input type="hidden" name="purpose" id="purpose-hidden-input"
+                                    value="{{ request('purpose', 'Buy') }}">
+                            </div>
+
+                            <!-- Filter Controls -->
+                            <div class="space-y-4">
+                                <div class="form-group-custom">
+                                    <label class="form-label-custom">Location</label>
+                                    <div class="relative">
+                                        <i
+                                            class="fa-solid fa-location-dot absolute left-4 top-1/2 -translate-y-1/2 text-gray-400"></i>
+                                        <input type="text" name="location" id="sidebar-location" class="sidebar-input pl-16"
+                                            placeholder="e.g. London" value="{{ request('location') }}">
+                                    </div>
+                                </div>
+
+                                <div class="form-group-custom">
+                                    <label class="form-label-custom">Search Radius</label>
+                                    <select name="radius" class="select2-filter">
+                                        <option value="0.5" {{ request('radius') == '0.5' ? 'selected' : '' }}>This area only
+                                        </option>
+                                        <option value="1" {{ request('radius') == '1' ? 'selected' : '' }}>+ 1 mile</option>
+                                        <option value="3" {{ request('radius') == '3' ? 'selected' : '' }}>+ 3 miles</option>
+                                        <option value="5" {{ request('radius') == '5' ? 'selected' : '' }}>+ 5 miles</option>
+                                        <option value="10" {{ request('radius') == '10' ? 'selected' : '' }}>+ 10 miles
+                                        </option>
+                                        <option value="15" {{ request('radius') == '15' ? 'selected' : '' }}>+ 15 miles
+                                        </option>
+                                        <option value="20" {{ request('radius') == '20' ? 'selected' : '' }}>+ 20 miles
+                                        </option>
+                                        <option value="30" {{ request('radius') == '30' ? 'selected' : '' }}>+ 30 miles
+                                        </option>
+                                        <option value="40" {{ request('radius') == '40' ? 'selected' : '' }}>+ 40 miles
+                                        </option>
+                                        <option value="50" {{ request('radius') == '50' ? 'selected' : '' }}>+ 50 miles
+                                        </option>
+                                    </select>
+                                </div>
+
+                                <div class="form-group-custom">
+                                    <label class="form-label-custom">Property Type</label>
+                                    <select name="property_type" class="select2-filter">
+                                        <option value="">Any Type</option>
+                                        @foreach(\App\Models\PropertyType::all() as $type)
+                                            <option value="{{ $type->id }}" {{ request('property_type') == $type->id ? 'selected' : '' }}>{{ $type->title }}</option>
+                                        @endforeach
+                                    </select>
+                                </div>
+
+                                <div class="form-group-custom">
+                                    <label class="form-label-custom">Bedrooms</label>
+                                    <select name="min_bedrooms" class="select2-filter">
+                                        <option value="">Any Beds</option>
+                                        <option value="0" {{ request('min_bedrooms') === '0' ? 'selected' : '' }}>Studio
+                                        </option>
+                                        @for($i = 1; $i <= 9; $i++)
+                                            <option value="{{ $i }}" {{ request('min_bedrooms') == $i ? 'selected' : '' }}>
+                                                {{ $i }} Bed{{ $i > 1 ? 's' : '' }}
+                                            </option>
+                                        @endfor
+                                        <option value="10" {{ request('min_bedrooms') == '10' ? 'selected' : '' }}>10+ Beds
+                                        </option>
+                                    </select>
+                                </div>
+
+                                <div class="form-group-custom">
+                                    <label class="form-label-custom">Bathrooms</label>
+                                    <select name="min_bathrooms" class="select2-filter">
+                                        <option value="">Any Baths</option>
+                                        @for($i = 1; $i <= 9; $i++)
+                                            <option value="{{ $i }}" {{ request('min_bathrooms') == $i ? 'selected' : '' }}>
+                                                {{ $i }} Bath{{ $i > 1 ? 's' : '' }}
+                                            </option>
+                                        @endfor
+                                        <option value="10" {{ request('min_bathrooms') == '10' ? 'selected' : '' }}>10+ Baths
+                                        </option>
+                                    </select>
+                                </div>
+
+                                <div class="form-group-custom">
+                                    <label class="form-label-custom">Ownership</label>
+                                    <select name="ownership_status_id" class="select2-filter">
+                                        <option value="">Any Status</option>
+                                        @foreach(\App\Models\OwnershipStatus::all() as $status)
+                                            <option value="{{ $status->id }}" {{ request('ownership_status_id') == $status->id ? 'selected' : '' }}>{{ $status->title }}</option>
+                                        @endforeach
+                                    </select>
+                                </div>
+
+                                <div class="grid grid-cols-2 gap-2">
+                                    <div>
+                                        <label class="form-label-custom">Min Price</label>
+                                        <select name="min_price" class="select2-filter">
+                                            <option value="">No Min</option>
+                                            <option value="100000" {{ request('min_price') == '100000' ? 'selected' : '' }}>
+                                                £100k</option>
+                                            <option value="250000" {{ request('min_price') == '250000' ? 'selected' : '' }}>
+                                                £250k</option>
+                                            <option value="500000" {{ request('min_price') == '500000' ? 'selected' : '' }}>
+                                                £500k</option>
+                                        </select>
+                                    </div>
+                                    <div>
+                                        <label class="form-label-custom">Max Price</label>
+                                        <select name="max_price" class="select2-filter">
+                                            <option value="">No Max</option>
+                                            <option value="500000" {{ request('max_price') == '500000' ? 'selected' : '' }}>
+                                                £500k</option>
+                                            <option value="1000000" {{ request('max_price') == '1000000' ? 'selected' : '' }}>
+                                                £1m</option>
+                                            <option value="5000000" {{ request('max_price') == '5000000' ? 'selected' : '' }}>
+                                                £5m</option>
+                                        </select>
+                                    </div>
+                                </div>
+
+                                <!-- Amenities List -->
+                                <div class="form-group-custom !mb-6">
+                                    <label class="form-label-custom mb-3">Must have features</label>
+                                    <div class="amenity-checkbox-group">
+                                        @foreach($features_all as $feature)
+                                            <label class="custom-checkbox">
+                                                <input type="checkbox" name="feature_ids[]" value="{{ $feature->id }}" {{ in_array($feature->id, (array) request('feature_ids')) ? 'checked' : '' }}>
+                                                <span>{{ $feature->title }}</span>
+                                            </label>
+                                        @endforeach
+                                    </div>
+                                </div>
+                            </div>
+
+                            <button type="submit" class="btn-apply">
+                                Update results
+                            </button>
+
+                            <a href="{{ request()->routeIs('off-market-listings.index') ? route('off-market-listings.index') : route('listings.index') }}"
+                                class="block text-center text-sm font-bold text-gray-400 mt-4 hover:text-primary transition-colors">
+                                Clear all filters
+                            </a>
+                        </form>
+                    </div>
                 </div>
             </div>
+        </div>
+    </div>
 
 @endsection
 
@@ -680,55 +705,55 @@
             const cards = $('.property-card-results');
             const sidebarView = $('#sidebar-view');
             const activeClasses = 'bg-white shadow-sm text-primary';
-                const inactiveClasses = 'text-gray-400 hover:text-gray-600';
+            const inactiveClasses = 'text-gray-400 hover:text-gray-600';
 
-                sidebarView.val(view);
+            sidebarView.val(view);
 
-                // Reset buttons
-                $('#grid-view-btn, #list-view-btn').removeClass(activeClasses).addClass(inactiveClasses);
+            // Reset buttons
+            $('#grid-view-btn, #list-view-btn').removeClass(activeClasses).addClass(inactiveClasses);
 
-                if (view === 'list') {
-                    grid.removeClass('md:grid-cols-2').addClass('grid-cols-1');
-                    cards.addClass('list-view-card');
-                    $('#list-view-btn').removeClass(inactiveClasses).addClass(activeClasses);
-                } else {
-                    grid.addClass('md:grid-cols-2');
-                    cards.removeClass('list-view-card');
-                    $('#grid-view-btn').removeClass(inactiveClasses).addClass(activeClasses);
-                }
+            if (view === 'list') {
+                grid.removeClass('md:grid-cols-2').addClass('grid-cols-1');
+                cards.addClass('list-view-card');
+                $('#list-view-btn').removeClass(inactiveClasses).addClass(activeClasses);
+            } else {
+                grid.addClass('md:grid-cols-2');
+                cards.removeClass('list-view-card');
+                $('#grid-view-btn').removeClass(inactiveClasses).addClass(activeClasses);
             }
+        }
 
-            function toggleFavorite(listingId, offMarketId, btn) {
-                @if(!auth()->check())
-                    window.location.href = "{{ route('login') }}";
-                    return;
-                @endif
+        function toggleFavorite(listingId, offMarketId, btn) {
+            @if(!auth()->check())
+                window.location.href = "{{ route('login') }}";
+                return;
+            @endif
 
-                                                                const data = {
-                    _token: '{{ csrf_token() }}'
-                };
-                if (listingId) data.listing_id = listingId;
-                if (offMarketId) data.off_market_listing_id = offMarketId;
+                                                                            const data = {
+                _token: '{{ csrf_token() }}'
+            };
+            if (listingId) data.listing_id = listingId;
+            if (offMarketId) data.off_market_listing_id = offMarketId;
 
-                const icon = $(btn).find('i');
+            const icon = $(btn).find('i');
 
-                $.ajax({
-                    url: '{{ route('favorites.toggle') }}',
-                    type: 'POST',
-                    data: data,
-                    success: function (res) {
-                        if (res.status === 'added') {
-                            $(btn).removeClass('text-gray-400').addClass('text-red-500');
-                            icon.removeClass('fa-regular').addClass('fa-solid');
-                        } else {
-                            $(btn).removeClass('text-red-500').addClass('text-gray-400');
-                            icon.removeClass('fa-solid').addClass('fa-regular');
-                        }
-                    },
-                    error: function () {
-                        alert('Something went wrong. Please try again.');
+            $.ajax({
+                url: '{{ route('favorites.toggle') }}',
+                type: 'POST',
+                data: data,
+                success: function (res) {
+                    if (res.status === 'added') {
+                        $(btn).removeClass('text-gray-400').addClass('text-red-500');
+                        icon.removeClass('fa-regular').addClass('fa-solid');
+                    } else {
+                        $(btn).removeClass('text-red-500').addClass('text-gray-400');
+                        icon.removeClass('fa-solid').addClass('fa-regular');
                     }
-                });
-            }
-        </script>
+                },
+                error: function () {
+                    alert('Something went wrong. Please try again.');
+                }
+            });
+        }
+    </script>
 @endpush

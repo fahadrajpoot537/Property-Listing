@@ -1,6 +1,6 @@
 @extends('layouts.modern')
 
-@section('title', 'GDPR Compliance | Finda UK')
+@section('title', 'GDPR Compliance | PropertyFinda')
 
 @section('content')
     <div class="bg-gray-50 py-16 md:py-24">
@@ -13,7 +13,8 @@
                     <h3>Our Commitment to GDPR</h3>
                     <p>The General Data Protection Regulation (GDPR) is a regulation in EU law on data protection and
                         privacy in the European Union (EU) and the European Economic Area (EEA). It also addresses the
-                        transfer of personal data outside the EU and EEA areas. Finda UK is committed to compliance with the
+                        transfer of personal data outside the EU and EEA areas. PropertyFinda is committed to compliance
+                        with the
                         GDPR and the UK Data Protection Act 2018.</p>
 
                     <h3>Processing Personal Data</h3>

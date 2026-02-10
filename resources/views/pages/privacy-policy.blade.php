@@ -1,6 +1,6 @@
 @extends('layouts.modern')
 
-@section('title', 'Privacy Policy | Finda UK')
+@section('title', 'Privacy Policy | PropertyFinda')
 
 @section('content')
     <div class="bg-gray-50 py-16 md:py-24">
@@ -12,7 +12,8 @@
 
                 <div class="prose prose-lg prose-slate max-w-none text-gray-600">
                     <h3>1. Introduction</h3>
-                    <p>Welcome to Finda UK ("we," "our," or "us"). We are committed to protecting your personal data and
+                    <p>Welcome to PropertyFinda ("we," "our," or "us"). We are committed to protecting your personal data
+                        and
                         respecting your privacy. This privacy policy explains how we handle your personal data when you
                         visit our website (regardless of where you visit it from) and tells you about your privacy rights
                         and how the law protects you.</p>
@@ -57,7 +58,8 @@
                     <h3>6. Contact Details</h3>
                     <p>If you have any questions about this privacy policy or our privacy practices, please contact us at:
                         <a href="mailto:privacy@propertyfinda.co.uk"
-                            class="text-secondary font-bold">privacy@propertyfinda.co.uk</a>.</p>
+                            class="text-secondary font-bold">privacy@propertyfinda.co.uk</a>.
+                    </p>
                 </div>
             </div>
         </div>

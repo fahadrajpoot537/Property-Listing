@@ -1,6 +1,6 @@
 @extends('layouts.modern')
 
-@section('title', 'Cookie Policy | Finda UK')
+@section('title', 'Cookie Policy | PropertyFinda')
 
 @section('content')
     <div class="bg-gray-50 py-16 md:py-24">

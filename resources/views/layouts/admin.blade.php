@@ -203,17 +203,27 @@
     </style>
 </head>
 
-<body class="font-sans antialiased bg-slate-50 text-slate-900">
-    <div class="min-h-screen flex">
+<body class="font-sans antialiased bg-slate-50 text-slate-900" x-data="{ sidebarOpen: false }">
+    <div class="min-h-screen flex overflow-hidden">
+        <!-- Sidebar Backdrop (Mobile) -->
+        <div x-show="sidebarOpen" x-transition:enter="transition ease-out duration-300"
+            x-transition:enter-start="opacity-0" x-transition:enter-end="opacity-100"
+            x-transition:leave="transition ease-in duration-200" x-transition:leave-start="opacity-100"
+            x-transition:leave-end="opacity-0" @click="sidebarOpen = false"
+            class="fixed inset-0 z-40 bg-slate-900/60 backdrop-blur-sm lg:hidden" x-cloak></div>
+
         <!-- Sidebar -->
-        <aside
-            class="w-64 bg-[#131B31] text-white flex-shrink-0 flex flex-col h-screen sticky top-0 transition-all duration-300 z-20">
-            <div class="h-20 flex items-center px-6 border-b border-white/5">
-                <a href="{{ route('admin.dashboard') }}" class="flex items-center justify-center w-full">
-                    <div class="flex items-center gap-2">
-                        <img src="{{ asset('logoor.png') }}" alt="FindaAdmin" class="h-8 w-auto">
-                    </div>
+        <aside :class="sidebarOpen ? 'translate-x-0' : '-translate-x-full'"
+            class="fixed inset-y-0 left-0 z-50 w-64 bg-[#131B31] text-white transform transition-transform duration-300 ease-in-out lg:relative lg:translate-x-0 flex-shrink-0 flex flex-col h-screen lg:sticky lg:top-0">
+            <div class="h-20 flex items-center justify-between px-6 border-b border-white/5">
+                <a href="{{ route('admin.dashboard') }}" class="flex items-center">
+                    <img src="{{ asset('logoor.png') }}" alt="FindaAdmin" class="h-8 w-auto">
                 </a>
+                
+                <!-- Mobile Close Button -->
+                <button @click="sidebarOpen = false" class="lg:hidden text-white/50 hover:text-white transition-colors">
+                    <i class='bx bx-x text-2xl'></i>
+                </button>
             </div>
 
             <nav class="flex-1 overflow-y-auto py-6 space-y-1 px-3">
@@ -428,9 +438,15 @@
         <!-- Content -->
         <div class="flex-1 flex flex-col h-screen overflow-hidden">
             <!-- Topbar -->
-            <header class="glass-header h-16 flex justify-between items-center px-6">
-                <div class="flex items-center">
-                    <h2 class="font-bold text-xl text-slate-800 leading-tight">
+            <header class="glass-header h-16 flex justify-between items-center px-4 lg:px-6">
+                <div class="flex items-center gap-3">
+                    <!-- Mobile Menu Toggle -->
+                    <button @click="sidebarOpen = true"
+                        class="lg:hidden w-10 h-10 flex items-center justify-center rounded-xl bg-slate-100 text-slate-600 active:scale-95 transition-all">
+                        <i class='bx bx-menu-alt-left text-2xl'></i>
+                    </button>
+
+                    <h2 class="font-bold text-lg lg:text-xl text-slate-800 leading-tight truncate">
                         @yield('header')
                     </h2>
                 </div>

@@ -1,336 +1,608 @@
 @extends('layouts.modern')
 
-@section('title', 'Help Center A-Z - Finda UK')
+@section('title', 'Help Center - PropertyFinda')
 
 @section('content')
-    <div class="bg-gray-50 min-h-screen pt-20">
-
-        <!-- Hero Section -->
-        <div class="relative bg-primary overflow-hidden py-24">
-            <div class="absolute inset-0">
-                <img src="{{ asset('assets/img/all-images/hero/hero-img2.png') }}" style="opacity:0.3"
-                    class="w-full h-full object-cover opacity-20" alt="Help Center">
-                <div class="absolute inset-0 bg-gradient-to-b from-primary/90 to-primary"></div>
+    <!-- Hero Section -->
+    <div class="relative bg-gradient-to-br from-primary via-primary-light to-secondary overflow-hidden">
+        <div class="absolute inset-0 opacity-10">
+            <div
+                class="absolute top-0 right-0 w-96 h-96 bg-white rounded-full blur-3xl transform translate-x-1/2 -translate-y-1/2">
             </div>
-            <div class="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center text-white">
-                <span
-                    class="inline-block py-1 px-3 rounded-full bg-secondary/20 text-white text-xs font-bold tracking-widest uppercase mb-6 border border-secondary/20 backdrop-blur-sm">
-                    Documentation & Guide
-                </span>
-                <h1 class="text-5xl md:text-6xl font-black mb-6 tracking-tight">
-                    How can we <span class="text-secondary">help</span> you?
+            <div
+                class="absolute bottom-0 left-0 w-96 h-96 bg-secondary rounded-full blur-3xl transform -translate-x-1/2 translate-y-1/2">
+            </div>
+        </div>
+
+        <div class="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20 lg:py-32">
+            <div class="text-center max-w-4xl mx-auto">
+                <h1 class="text-4xl sm:text-5xl lg:text-6xl font-black text-black mb-6">
+                    How Can We <span class="text-secondary-light">Help You?</span>
                 </h1>
-                <p class="text-xl text-gray-300 max-w-2xl mx-auto font-medium">
-                    The complete A-Z guide to using PropertyFinda. Whether you're buying, selling, renting, or earning.
+                <p class="text-lg sm:text-xl text-whitemb-8 max-w-2xl mx-auto font-medium">
+                    Find answers to your questions and learn how to make the most of PropertyFinda
                 </p>
-            </div>
-        </div>
 
-        <!-- Navigation Tabs (Sticky) -->
-        <div class="sticky top-20 z-40 bg-white/80 backdrop-blur-md border-b border-gray-200 shadow-sm"
-            x-data="{ active: 'getting-started' }">
-            <div class="max-w-7xl mx-auto px-4 overflow-x-auto">
-                <div class="flex space-x-8 min-w-max">
-                    <a href="#getting-started"
-                        class="py-4 border-b-2 border-transparent hover:border-secondary font-bold text-gray-500 hover:text-primary transition-colors">Getting
-                        Started</a>
-                    <a href="#buying-renting"
-                        class="py-4 border-b-2 border-transparent hover:border-secondary font-bold text-gray-500 hover:text-primary transition-colors">Buying
-                        & Renting</a>
-                    <a href="#selling-letting"
-                        class="py-4 border-b-2 border-transparent hover:border-secondary font-bold text-gray-500 hover:text-primary transition-colors">Selling
-                        & Letting</a>
-                    <a href="#partners"
-                        class="py-4 border-b-2 border-transparent hover:border-secondary font-bold text-gray-500 hover:text-primary transition-colors">Partner
-                        Program</a>
-                    <a href="#account-types"
-                        class="py-4 border-b-2 border-transparent hover:border-secondary font-bold text-gray-500 hover:text-primary transition-colors">Account
-                        Types</a>
+                <!-- Search Bar -->
+                <div class="relative max-w-2xl mx-auto">
+                    <input type="text" id="helpSearch"
+                        class="w-full px-6 py-4 pr-14 rounded-full text-lg border-0 shadow-2xl focus:ring-4 focus:ring-secondary/50 transition-all text-gray-900"
+                        placeholder="Search for help articles...">
+                    <i class="fas fa-search absolute right-6 top-1/2 -translate-y-1/2 text-gray-400 text-xl"></i>
                 </div>
             </div>
         </div>
+    </div>
 
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 space-y-24">
+    <!-- Quick Links -->
+    <div class="bg-white border-b sticky top-20 z-40 shadow-sm">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex gap-2 overflow-x-auto py-4 scrollbar-hide">
+                <a href="#getting-started"
+                    class="nav-pill whitespace-nowrap px-6 py-2 rounded-full font-semibold text-sm transition-all hover:bg-primary hover:text-white">
+                    <i class="fas fa-rocket mr-2"></i>Getting Started
+                </a>
+                <a href="#roles"
+                    class="nav-pill whitespace-nowrap px-6 py-2 rounded-full font-semibold text-sm transition-all hover:bg-primary hover:text-white">
+                    <i class="fas fa-users mr-2"></i>User Roles
+                </a>
+                <a href="#search"
+                    class="nav-pill whitespace-nowrap px-6 py-2 rounded-full font-semibold text-sm transition-all hover:bg-primary hover:text-white">
+                    <i class="fas fa-search mr-2"></i>Search
+                </a>
+                <a href="#valuation"
+                    class="nav-pill whitespace-nowrap px-6 py-2 rounded-full font-semibold text-sm transition-all hover:bg-primary hover:text-white">
+                    <i class="fas fa-calculator mr-2"></i>Valuation
+                </a>
+                <a href="#affiliate"
+                    class="nav-pill whitespace-nowrap px-6 py-2 rounded-full font-semibold text-sm transition-all hover:bg-primary hover:text-white">
+                    <i class="fas fa-money-bill-wave mr-2"></i>Affiliate
+                </a>
+                <a href="#faq"
+                    class="nav-pill whitespace-nowrap px-6 py-2 rounded-full font-semibold text-sm transition-all hover:bg-primary hover:text-white">
+                    <i class="fas fa-question-circle mr-2"></i>FAQ
+                </a>
+            </div>
+        </div>
+    </div>
 
-            <!-- Getting Started -->
-            <section id="getting-started" class="scroll-mt-40">
-                <div class="flex flex-col md:flex-row gap-12 items-center">
-                    <div class="md:w-1/2">
+    <div class="bg-gray-50">
+        <!-- Getting Started -->
+        <section id="getting-started" class="py-16 lg:py-24">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="text-center mb-12">
+                    <h2 class="text-3xl sm:text-4xl lg:text-5xl font-black text-primary mb-4">Getting Started</h2>
+                    <p class="text-lg text-gray-600 max-w-2xl mx-auto">Everything you need to know to begin your property
+                        journey</p>
+                </div>
+
+                <div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-6 lg:gap-8">
+                    <div class="bg-white rounded-2xl p-6 lg:p-8 shadow-sm hover:shadow-xl transition-all group">
                         <div
-                            class="w-12 h-12 bg-secondary/10 rounded-2xl flex items-center justify-center text-secondary text-2xl mb-6">
-                            <i class="fa-solid fa-flag-checkered"></i>
+                            class="w-14 h-14 bg-blue-100 rounded-xl flex items-center justify-center text-blue-600 text-2xl mb-4 group-hover:scale-110 transition-transform">
+                            <i class="fas fa-user-plus"></i>
                         </div>
-                        <h2 class="text-3xl font-black text-primary mb-4">Getting Started</h2>
-                        <p class="text-gray-600 text-lg mb-6 leading-relaxed">
-                            Welcome to the UK's most advanced property platform. PropertyFinda connects you with verified
-                            estate agents, landlords, and exclusive off-market opportunities.
-                        </p>
-                        <ul class="space-y-4">
-                            <li class="flex items-start gap-3">
-                                <i class="fa-solid fa-circle-check text-green-500 mt-1"></i>
-                                <span class="text-gray-700 font-medium">Create a free account to save searches and
-                                    properties.</span>
-                            </li>
-                            <li class="flex items-start gap-3">
-                                <i class="fa-solid fa-circle-check text-green-500 mt-1"></i>
-                                <span class="text-gray-700 font-medium">Verify your email to unlock unlimited
-                                    enquiries.</span>
-                            </li>
-                            <li class="flex items-start gap-3">
-                                <i class="fa-solid fa-circle-check text-green-500 mt-1"></i>
-                                <span class="text-gray-700 font-medium">Set up instant alerts for new listings in your
-                                    area.</span>
-                            </li>
-                        </ul>
+                        <h3 class="text-xl font-bold text-primary mb-2">Create Account</h3>
+                        <p class="text-gray-600">Sign up in seconds and choose your account type</p>
                     </div>
-                    <!-- Mockup UI: Login Card -->
-                    <div class="md:w-1/2 relative">
+
+                    <div class="bg-white rounded-2xl p-6 lg:p-8 shadow-sm hover:shadow-xl transition-all group">
                         <div
-                            class="bg-white p-8 rounded-[2rem] shadow-2xl border border-gray-100 rotate-2 hover:rotate-0 transition-transform duration-500">
-                            <div class="flex justify-between items-center mb-8">
-                                <h3 class="text-2xl font-black text-primary">Sign In</h3>
-                                <div class="h-10 w-10 bg-gray-100 rounded-full"></div>
-                            </div>
-                            <div class="space-y-4">
-                                <div class="h-12 bg-gray-50 rounded-xl border border-gray-200 w-full animate-pulse"></div>
-                                <div class="h-12 bg-gray-50 rounded-xl border border-gray-200 w-full animate-pulse"></div>
-                                <div class="h-12 bg-primary rounded-xl w-full"></div>
-                            </div>
+                            class="w-14 h-14 bg-green-100 rounded-xl flex items-center justify-center text-green-600 text-2xl mb-4 group-hover:scale-110 transition-transform">
+                            <i class="fas fa-envelope-circle-check"></i>
                         </div>
+                        <h3 class="text-xl font-bold text-primary mb-2">Verify Email</h3>
+                        <p class="text-gray-600">Verify your email to unlock all features</p>
+                    </div>
+
+                    <div
+                        class="bg-white rounded-2xl p-6 lg:p-8 shadow-sm hover:shadow-xl transition-all group sm:col-span-2 lg:col-span-1">
+                        <div
+                            class="w-14 h-14 bg-purple-100 rounded-xl flex items-center justify-center text-purple-600 text-2xl mb-4 group-hover:scale-110 transition-transform">
+                            <i class="fas fa-bell"></i>
+                        </div>
+                        <h3 class="text-xl font-bold text-primary mb-2">Set Alerts</h3>
+                        <p class="text-gray-600">Get notified about new properties instantly</p>
                     </div>
                 </div>
-            </section>
+            </div>
+        </section>
 
-            <!-- Buying & Renting -->
-            <section id="buying-renting" class="scroll-mt-40">
-                <div class="flex flex-col md:flex-row-reverse gap-12 items-center">
-                    <div class="md:w-1/2">
-                        <div
-                            class="w-12 h-12 bg-blue-500/10 rounded-2xl flex items-center justify-center text-blue-500 text-2xl mb-6">
-                            <i class="fa-solid fa-magnifying-glass-location"></i>
-                        </div>
-                        <h2 class="text-3xl font-black text-primary mb-4">Buying & Renting</h2>
-                        <p class="text-gray-600 text-lg mb-6 leading-relaxed">
-                            Our smart search engine helps you find the perfect home in seconds. Filter by price, location,
-                            features, and even specific keywords.
-                        </p>
-                        <div class="bg-white p-6 rounded-2xl shadow-sm border border-gray-100 mb-6">
-                            <h4 class="font-bold text-primary mb-2"><i
-                                    class="fa-solid fa-map-pin text-secondary mr-2"></i>Smart Map Search</h4>
-                            <p class="text-sm text-gray-500">Draw custom areas on the map to find properties exactly where
-                                you want to live.</p>
-                        </div>
-                        <div class="bg-white p-6 rounded-2xl shadow-sm border border-gray-100">
-                            <h4 class="font-bold text-primary mb-2"><i
-                                    class="fa-solid fa-filter text-secondary mr-2"></i>Advanced Filters</h4>
-                            <p class="text-sm text-gray-500">Filter by 'Pet Friendly', 'Garden', 'Parking', and more to
-                                match your lifestyle.</p>
-                        </div>
-                    </div>
-                    <!-- Mockup UI: Search Bar -->
-                    <div class="md:w-1/2">
-                        <div class="bg-primary p-8 rounded-[2.5rem] shadow-2xl relative overflow-hidden group">
-                            <div
-                                class="absolute top-0 right-0 w-64 h-64 bg-secondary/20 rounded-full blur-3xl -mr-20 -mt-20">
-                            </div>
-                            <div class="relative z-10">
-                                <div class="bg-white p-4 rounded-2xl shadow-lg flex gap-4 items-center">
-                                    <div
-                                        class="w-full h-10 bg-gray-100 rounded-lg flex items-center px-4 text-gray-400 text-sm">
-                                        Enter location...</div>
-                                    <div class="w-24 h-10 bg-secondary rounded-lg"></div>
-                                </div>
-                                <div class="grid grid-cols-2 gap-4 mt-6">
-                                    <div class="bg-white/10 p-4 rounded-xl backdrop-blur-sm">
-                                        <div class="w-8 h-8 bg-white/20 rounded-lg mb-2"></div>
-                                        <div class="h-3 w-20 bg-white/30 rounded-full"></div>
-                                    </div>
-                                    <div class="bg-white/10 p-4 rounded-xl backdrop-blur-sm">
-                                        <div class="w-8 h-8 bg-white/20 rounded-lg mb-2"></div>
-                                        <div class="h-3 w-16 bg-white/30 rounded-full"></div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
+        <!-- User Roles -->
+        <section id="roles" class="py-16 lg:py-24 bg-white">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="text-center mb-12">
+                    <h2 class="text-3xl sm:text-4xl lg:text-5xl font-black text-primary mb-4">User Roles</h2>
+                    <p class="text-lg text-gray-600 max-w-2xl mx-auto">Understand what each role can do on PropertyFinda</p>
                 </div>
-            </section>
 
-            <!-- Selling & Letting -->
-            <section id="selling-letting" class="scroll-mt-40">
-                <div class="flex flex-col md:flex-row gap-12 items-center">
-                    <div class="md:w-1/2">
-                        <div
-                            class="w-12 h-12 bg-green-500/10 rounded-2xl flex items-center justify-center text-green-500 text-2xl mb-6">
-                            <i class="fa-solid fa-house-circle-check"></i>
-                        </div>
-                        <h2 class="text-3xl font-black text-primary mb-4">Selling & Letting</h2>
-                        <p class="text-gray-600 text-lg mb-6 leading-relaxed">
-                            Get the best price for your property. Connect with top-rated local agents or request an instant
-                            online valuation.
-                        </p>
-                        <div class="grid grid-cols-1 gap-4">
-                            <div
-                                class="flex gap-4 p-4 border border-gray-100 rounded-2xl hover:border-secondary/30 transition-colors bg-white">
-                                <div
-                                    class="w-12 h-12 rounded-xl bg-orange-100 text-orange-600 flex items-center justify-center shrink-0 font-black text-xl">
-                                    1</div>
-                                <div>
-                                    <h4 class="font-bold text-primary">Get a Valuation</h4>
-                                    <p class="text-sm text-gray-500">Provide your postcode and details to get an estimated
-                                        market value.</p>
-                                    <a href="{{ route('map') }}"
-                                        class="text-secondary text-sm font-bold mt-1 inline-block">Use Valuation Tool →</a>
-                                </div>
-                            </div>
-                            <div
-                                class="flex gap-4 p-4 border border-gray-100 rounded-2xl hover:border-secondary/30 transition-colors bg-white">
-                                <div
-                                    class="w-12 h-12 rounded-xl bg-purple-100 text-purple-600 flex items-center justify-center shrink-0 font-black text-xl">
-                                    2</div>
-                                <div>
-                                    <h4 class="font-bold text-primary">Choose an Agent</h4>
-                                    <p class="text-sm text-gray-500">Compare reliable local agents based on performance and
-                                        reviews.</p>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="md:w-1/2">
-                        <div
-                            class="bg-white border-8 border-gray-100 rounded-[3rem] shadow-xl overflow-hidden h-80 relative">
-                            <!-- Valuation Mockup -->
-                            <div class="absolute inset-0 bg-gray-50 flex items-center justify-center pb-12">
-                                <div class="text-center">
-                                    <div
-                                        class="w-20 h-20 bg-secondary rounded-full mx-auto mb-4 flex items-center justify-center text-white text-3xl shadow-lg ring-4 ring-secondary/20">
-                                        <i class="fa-solid fa-pound-sign"></i>
-                                    </div>
-                                    <h3 class="text-xl font-bold text-primary">Free Valuation</h3>
-                                    <div
-                                        class="mt-4 bg-white px-4 py-2 rounded-lg shadow-sm w-64 mx-auto border border-gray-200 text-gray-400 text-sm text-left">
-                                        Enter Postcode...
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </section>
-
-            <!-- Partner Program -->
-            <section id="partners" class="scroll-mt-40">
-                <div class="bg-secondary rounded-[3rem] p-8 md:p-16 text-white relative overflow-hidden">
-                    <div class="absolute top-0 right-0 w-96 h-96 bg-white/10 rounded-full blur-3xl -mr-32 -mt-32"></div>
-
-                    <div class="relative z-10 grid md:grid-cols-2 gap-12 items-center">
-                        <div>
-                            <span
-                                class="inline-block bg-white/20 px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider mb-4 border border-white/20">Affiliate
-                                Program</span>
-                            <h2 class="text-4xl font-black mb-6">Earn with Us</h2>
-                            <p class="text-white/80 text-lg mb-8 leading-relaxed">
-                                Join our affiliate network and earn significant commissions by referring new users. We track
-                                every visitor and pay you instantly.
-                            </p>
-                            <a href="{{ route('affiliate.register.view') }}"
-                                class="inline-block bg-white text-secondary font-black px-8 py-4 rounded-xl shadow-lg hover:shadow-2xl hover:-translate-y-1 transition-all">
-                                Join Program <i class="fa-solid fa-arrow-right ml-2"></i>
-                            </a>
-                        </div>
-                        <div>
-                            <!-- Earnings Dashboard Mockup -->
-                            <div class="bg-white/10 backdrop-blur-md rounded-2xl p-6 border border-white/10">
-                                <div class="flex justify-between items-end mb-6">
-                                    <div>
-                                        <p class="text-white/60 text-xs font-bold uppercase tracking-widest">Total Earnings
-                                        </p>
-                                        <p class="text-4xl font-black text-white">£1,250.00</p>
-                                    </div>
-                                    <div class="bg-green-500 text-white text-xs font-bold px-2 py-1 rounded">+12%</div>
-                                </div>
-                                <div class="space-y-3">
-                                    <div class="bg-white/5 p-3 rounded-lg flex justify-between items-center">
-                                        <span class="text-sm font-medium">Referrals</span>
-                                        <span class="font-bold">245</span>
-                                    </div>
-                                    <div class="bg-white/5 p-3 rounded-lg flex justify-between items-center">
-                                        <span class="text-sm font-medium">Clicks</span>
-                                        <span class="font-bold">1,890</span>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </section>
-
-            <!-- Account Types -->
-            <section id="account-types" class="scroll-mt-40">
-                <h2 class="text-3xl font-black text-primary mb-12 text-center">Which account is for you?</h2>
-                <div class="grid md:grid-cols-3 gap-8">
+                <div class="grid sm:grid-cols-2 lg:grid-cols-4 gap-6">
                     <!-- User -->
                     <div
-                        class="bg-white p-8 rounded-[2rem] border border-gray-100 hover:shadow-xl hover:-translate-y-2 transition-all">
-                        <div
-                            class="w-14 h-14 bg-gray-100 rounded-full flex items-center justify-center text-gray-500 text-2xl mb-6">
-                            <i class="fa-solid fa-user"></i>
-                        </div>
-                        <h3 class="text-xl font-bold text-primary mb-2">Home Seeker</h3>
-                        <p class="text-gray-500 text-sm mb-6">Perfect for buying, renting, or browsing.</p>
-                        <ul class="space-y-3 text-sm text-gray-600">
-                            <li class="flex items-center gap-2"><i class="fa-solid fa-check text-secondary"></i> Save
-                                Favorites</li>
-                            <li class="flex items-center gap-2"><i class="fa-solid fa-check text-secondary"></i> Contact
-                                Agents</li>
-                            <li class="flex items-center gap-2"><i class="fa-solid fa-check text-secondary"></i> Rate
-                                Properties</li>
+                        class="bg-gradient-to-br from-blue-50 to-white rounded-2xl p-6 border-2 border-blue-100 hover:border-blue-300 transition-all">
+                        <span
+                            class="inline-block px-3 py-1 bg-blue-600 text-white text-xs font-bold rounded-full mb-4">REGULAR
+                            USER</span>
+                        <h3 class="text-2xl font-black text-primary mb-2">User</h3>
+                        <p class="text-sm text-gray-600 mb-4">Browse and search properties</p>
+                        <ul class="space-y-2 text-sm text-gray-700">
+                            <li class="flex items-center"><i class="fas fa-check-circle text-blue-600 mr-2"></i> Search
+                                properties</li>
+                            <li class="flex items-center"><i class="fas fa-check-circle text-blue-600 mr-2"></i> Save
+                                favorites</li>
+                            <li class="flex items-center"><i class="fas fa-check-circle text-blue-600 mr-2"></i> Contact
+                                agents</li>
+                            <li class="flex items-center"><i class="fas fa-check-circle text-blue-600 mr-2"></i> Get
+                                valuations</li>
                         </ul>
                     </div>
 
                     <!-- Agent -->
                     <div
-                        class="bg-white p-8 rounded-[2rem] border border-secondary/20 shadow-lg shadow-secondary/5 relative overflow-hidden hover:-translate-y-2 transition-all">
-                        <div
-                            class="absolute top-0 right-0 bg-secondary text-white text-[10px] font-bold px-3 py-1 rounded-bl-xl uppercase tracking-widest">
-                            Popular</div>
-                        <div
-                            class="w-14 h-14 bg-secondary/10 rounded-full flex items-center justify-center text-secondary text-2xl mb-6">
-                            <i class="fa-solid fa-user-tie"></i>
-                        </div>
-                        <h3 class="text-xl font-black text-primary mb-2">Estate Agent</h3>
-                        <p class="text-gray-500 text-sm mb-6">For professionals listing properties.</p>
-                        <ul class="space-y-3 text-sm text-gray-600">
-                            <li class="flex items-center gap-2"><i class="fa-solid fa-check text-secondary"></i> Unlimited
-                                Listings</li>
-                            <li class="flex items-center gap-2"><i class="fa-solid fa-check text-secondary"></i> 360° Tours
-                            </li>
-                            <li class="flex items-center gap-2"><i class="fa-solid fa-check text-secondary"></i> Lead
-                                Management</li>
+                        class="bg-gradient-to-br from-green-50 to-white rounded-2xl p-6 border-2 border-green-100 hover:border-green-300 transition-all">
+                        <span
+                            class="inline-block px-3 py-1 bg-green-600 text-white text-xs font-bold rounded-full mb-4">PROFESSIONAL</span>
+                        <h3 class="text-2xl font-black text-primary mb-2">Agent</h3>
+                        <p class="text-sm text-gray-600 mb-4">List and manage properties</p>
+                        <ul class="space-y-2 text-sm text-gray-700">
+                            <li class="flex items-center"><i class="fas fa-check-circle text-green-600 mr-2"></i> Create
+                                listings</li>
+                            <li class="flex items-center"><i class="fas fa-check-circle text-green-600 mr-2"></i> Manage
+                                enquiries</li>
+                            <li class="flex items-center"><i class="fas fa-check-circle text-green-600 mr-2"></i> Track
+                                analytics</li>
+                            <li class="flex items-center"><i class="fas fa-check-circle text-green-600 mr-2"></i> Agency
+                                association</li>
                         </ul>
                     </div>
 
-                    <!-- Partner -->
+                    <!-- Agency -->
                     <div
-                        class="bg-white p-8 rounded-[2rem] border border-gray-100 hover:shadow-xl hover:-translate-y-2 transition-all">
-                        <div
-                            class="w-14 h-14 bg-orange-100 rounded-full flex items-center justify-center text-orange-500 text-2xl mb-6">
-                            <i class="fa-solid fa-handshake"></i>
-                        </div>
-                        <h3 class="text-xl font-bold text-primary mb-2">Partner</h3>
-                        <p class="text-gray-500 text-sm mb-6">For marketers and affiliates.</p>
-                        <ul class="space-y-3 text-sm text-gray-600">
-                            <li class="flex items-center gap-2"><i class="fa-solid fa-check text-secondary"></i> Earn
-                                Commissions</li>
-                            <li class="flex items-center gap-2"><i class="fa-solid fa-check text-secondary"></i> Instant
-                                Payouts</li>
-                            <li class="flex items-center gap-2"><i class="fa-solid fa-check text-secondary"></i> Marketing
-                                Assets</li>
+                        class="bg-gradient-to-br from-purple-50 to-white rounded-2xl p-6 border-2 border-purple-100 hover:border-purple-300 transition-all">
+                        <span
+                            class="inline-block px-3 py-1 bg-purple-600 text-white text-xs font-bold rounded-full mb-4">BUSINESS</span>
+                        <h3 class="text-2xl font-black text-primary mb-2">Agency</h3>
+                        <p class="text-sm text-gray-600 mb-4">Manage team & properties</p>
+                        <ul class="space-y-2 text-sm text-gray-700">
+                            <li class="flex items-center"><i class="fas fa-check-circle text-purple-600 mr-2"></i> Add
+                                agents</li>
+                            <li class="flex items-center"><i class="fas fa-check-circle text-purple-600 mr-2"></i> Bulk
+                                uploads</li>
+                            <li class="flex items-center"><i class="fas fa-check-circle text-purple-600 mr-2"></i> Team
+                                analytics</li>
+                            <li class="flex items-center"><i class="fas fa-check-circle text-purple-600 mr-2"></i> Lead
+                                management</li>
+                        </ul>
+                    </div>
+
+                    <!-- Affiliate -->
+                    <div
+                        class="bg-gradient-to-br from-yellow-50 to-white rounded-2xl p-6 border-2 border-yellow-100 hover:border-yellow-300 transition-all">
+                        <span
+                            class="inline-block px-3 py-1 bg-yellow-600 text-white text-xs font-bold rounded-full mb-4">EARN
+                            MONEY</span>
+                        <h3 class="text-2xl font-black text-primary mb-2">Affiliate</h3>
+                        <p class="text-sm text-gray-600 mb-4">Earn commissions</p>
+                        <ul class="space-y-2 text-sm text-gray-700">
+                            <li class="flex items-center"><i class="fas fa-check-circle text-yellow-600 mr-2"></i> Referral
+                                links</li>
+                            <li class="flex items-center"><i class="fas fa-check-circle text-yellow-600 mr-2"></i> Track
+                                earnings</li>
+                            <li class="flex items-center"><i class="fas fa-check-circle text-yellow-600 mr-2"></i> Instant
+                                payouts</li>
+                            <li class="flex items-center"><i class="fas fa-check-circle text-yellow-600 mr-2"></i> Marketing
+                                tools</li>
                         </ul>
                     </div>
                 </div>
-            </section>
+            </div>
+        </section>
 
-        </div>
+        <!-- Property Search -->
+        <section id="search" class="py-16 lg:py-24">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="grid lg:grid-cols-2 gap-12 items-center">
+                    <div>
+                        <h2 class="text-3xl sm:text-4xl lg:text-5xl font-black text-primary mb-6">Property Search</h2>
+                        <p class="text-lg text-gray-600 mb-8">Find your dream property with our powerful search tools</p>
+
+                        <div class="space-y-4">
+                            <div class="flex items-start gap-4 bg-white p-4 rounded-xl shadow-sm">
+                                <div
+                                    class="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center text-blue-600 flex-shrink-0">
+                                    <i class="fas fa-map-marker-alt"></i>
+                                </div>
+                                <div>
+                                    <h4 class="font-bold text-primary mb-1">Location-Based Search</h4>
+                                    <p class="text-sm text-gray-600">Search by postcode, city, or area with radius filters
+                                    </p>
+                                </div>
+                            </div>
+
+                            <div class="flex items-start gap-4 bg-white p-4 rounded-xl shadow-sm">
+                                <div
+                                    class="w-12 h-12 bg-green-100 rounded-lg flex items-center justify-center text-green-600 flex-shrink-0">
+                                    <i class="fas fa-sliders-h"></i>
+                                </div>
+                                <div>
+                                    <h4 class="font-bold text-primary mb-1">Advanced Filters</h4>
+                                    <p class="text-sm text-gray-600">Filter by price, bedrooms, property type, and more</p>
+                                </div>
+                            </div>
+
+                            <div class="flex items-start gap-4 bg-white p-4 rounded-xl shadow-sm">
+                                <div
+                                    class="w-12 h-12 bg-red-100 rounded-lg flex items-center justify-center text-red-600 flex-shrink-0">
+                                    <i class="fas fa-heart"></i>
+                                </div>
+                                <div>
+                                    <h4 class="font-bold text-primary mb-1">Save Favorites</h4>
+                                    <p class="text-sm text-gray-600">Bookmark properties and get alerts on price changes</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="bg-white rounded-2xl p-6 lg:p-8 shadow-xl">
+                        <h3 class="text-xl font-bold text-primary mb-4">Try Search Now</h3>
+                        <div class="space-y-4">
+                            <input type="text"
+                                class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-secondary focus:border-transparent"
+                                placeholder="Enter location...">
+                            <div class="grid grid-cols-2 gap-4">
+                                <select
+                                    class="px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-secondary focus:border-transparent">
+                                    <option>Property Type</option>
+                                    <option>House</option>
+                                    <option>Flat</option>
+                                </select>
+                                <select
+                                    class="px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-secondary focus:border-transparent">
+                                    <option>Bedrooms</option>
+                                    <option>1+</option>
+                                    <option>2+</option>
+                                    <option>3+</option>
+                                </select>
+                            </div>
+                            <button
+                                class="w-full bg-secondary hover:bg-secondary-dark text-white font-bold py-3 px-6 rounded-xl transition-all transform hover:scale-105">
+                                <i class="fas fa-search mr-2"></i> Search Properties
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Valuation -->
+        <section id="valuation" class="py-16 lg:py-24 bg-gradient-to-br from-green-50 via-blue-50 to-purple-50">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="grid lg:grid-cols-2 gap-12 items-center">
+                    <div class="order-2 lg:order-1">
+                        <h2 class="text-3xl sm:text-4xl lg:text-5xl font-black text-[#131B31] mb-6">Property Valuation</h2>
+                        <p class="text-lg text-[#131B31] mb-8 font-medium">Get an instant, accurate estimate of your
+                            property's market
+                            value</p>
+
+                        <div class="grid sm:grid-cols-2 gap-4 mb-8">
+                            <div class="bg-white rounded-xl p-4 shadow-sm">
+                                <div class="flex items-center gap-3 mb-2">
+                                    <i class="fas fa-location-dot text-green-600 text-xl"></i>
+                                    <h4 class="font-bold text-primary">Enter Postcode</h4>
+                                </div>
+                                <p class="text-sm text-gray-600">Enter your property's postcode</p>
+                            </div>
+
+                            <div class="bg-white rounded-xl p-4 shadow-sm">
+                                <div class="flex items-center gap-3 mb-2">
+                                    <i class="fas fa-home text-blue-600 text-xl"></i>
+                                    <h4 class="font-bold text-primary">Property Details</h4>
+                                </div>
+                                <p class="text-sm text-gray-600">Provide basic information</p>
+                            </div>
+
+                            <div class="bg-white rounded-xl p-4 shadow-sm sm:col-span-2">
+                                <div class="flex items-center gap-3 mb-2">
+                                    <i class="fas fa-chart-line text-purple-600 text-xl"></i>
+                                    <h4 class="font-bold text-primary">Instant Estimate</h4>
+                                </div>
+                                <p class="text-sm text-gray-600">Receive instant market valuation</p>
+                            </div>
+                        </div>
+
+                        <a href="{{ route('map') }}"
+                            class="inline-block bg-green-600 hover:bg-green-700 text-black font-bold py-4 px-8 rounded-xl transition-all transform hover:scale-105 shadow-lg">
+                            <i class="fas fa-calculator mr-2"></i> Get Free Valuation
+                        </a>
+                    </div>
+
+                    <div class="order-1 lg:order-2">
+                        <div class="bg-white rounded-3xl p-8 lg:p-12 shadow-2xl text-center">
+                            <div
+                                class="w-24 h-24 bg-green-600 rounded-full flex items-center justify-center text-white text-4xl mx-auto mb-6 shadow-lg">
+                                <i class="fas fa-pound-sign"></i>
+                            </div>
+                            <h3 class="text-2xl font-black text-[#131B31] mb-2">Free Valuation</h3>
+                            <p class="text-gray-800 mb-6 font-medium">Get your property value in seconds</p>
+                            <div class="bg-gray-100 px-6 py-4 rounded-xl">
+                                <i class="fas fa-location-dot text-green-600 mr-2"></i>
+                                <span class="text-gray-700 font-bold">Enter Postcode...</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Affiliate -->
+        <section id="affiliate" class="py-16 lg:py-24 bg-[#131B31] text-white relative overflow-hidden"
+            style="background: linear-gradient(135deg, #131B31 0%, #8046F1 50%, #6D28D9 100%);">
+            <div class="absolute inset-0 opacity-10">
+                <div class="absolute top-0 right-0 w-96 h-96 bg-white rounded-full blur-3xl"></div>
+                <div class="absolute bottom-0 left-0 w-96 h-96 bg-white rounded-full blur-3xl"></div>
+            </div>
+
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+                <div class="grid lg:grid-cols-2 gap-12 items-center">
+                    <div>
+                        <span
+                            class="inline-block px-4 py-2 bg-white/20 backdrop-blur-sm rounded-full text-sm font-bold mb-4text-white">EARN
+                            MONEY</span>
+                        <h2 class="text-3xl sm:text-4xl lg:text-5xl font-black mb-6 text-white">Affiliate Program</h2>
+                        <p class="text-lg text-white mb-8">Join our affiliate network and earn generous commissions by
+                            referring new users</p>
+
+                        <div class="space-y-4 mb-8">
+                            <div class="flex items-center gap-4">
+                                <div
+                                    class="w-12 h-12 bg-white/20 backdrop-blur-sm rounded-full flex items-center justify-center flex-shrink-0">
+                                    <i class="fas fa-percent"></i>
+                                </div>
+                                <div>
+                                    <h4 class="font-bold text-white">High Commission Rates</h4>
+                                    <p class="text-white text-sm">Earn up to 20% on every referral</p>
+                                </div>
+                            </div>
+
+                            <div class="flex items-center gap-4">
+                                <div
+                                    class="w-12 h-12 bg-white/20 backdrop-blur-sm rounded-full flex items-center justify-center flex-shrink-0">
+                                    <i class="fas fa-chart-simple"></i>
+                                </div>
+                                <div>
+                                    <h4 class="font-bold text-white">Real-Time Analytics</h4>
+                                    <p class="text-white text-sm">Track clicks, conversions, and earnings live</p>
+                                </div>
+                            </div>
+
+                            <div class="flex items-center gap-4">
+                                <div
+                                    class="w-12 h-12 bg-white/20 backdrop-blur-sm rounded-full flex items-center justify-center flex-shrink-0">
+                                    <i class="fas fa-money-bill-wave"></i>
+                                </div>
+                                <div>
+                                    <h4 class="font-bold text-white">Instant Payouts</h4>
+                                    <p class="text-white text-sm">Withdraw your earnings anytime</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <a href="{{ route('affiliate.register.view') }}"
+                            class="inline-block bg-white text-secondary font-bold py-4 px-8 rounded-xl hover:bg-gray-100 transition-all transform hover:scale-105 shadow-lg">
+                            Join Affiliate Program <i class="fas fa-arrow-right ml-2"></i>
+                        </a>
+                    </div>
+
+                    <div>
+                        <div class="bg-white/25 backdrop-blur-md rounded-2xl p-6 lg:p-8 border border-white/30 shadow-2xl">
+                            <div class="flex justify-between items-end mb-6">
+                                <div>
+                                    <p class="text-white text-sm mb-1 font-medium">Total Earnings</p>
+                                    <h3 class="text-4xl lg:text-5xl font-black text-white">£1,250.00</h3>
+                                </div>
+                                <span class="px-3 py-1 bg-green-500 text-white text-sm font-bold rounded-lg">+12%</span>
+                            </div>
+
+                            <div class="grid grid-cols-2 gap-4">
+                                <div class="bg-white/20 backdrop-blur-sm rounded-xl p-4">
+                                    <p class="text-white text-sm mb-1 font-medium">Referrals</p>
+                                    <h4 class="text-2xl font-bold text-white">245</h4>
+                                </div>
+                                <div class="bg-white/20 backdrop-blur-sm rounded-xl p-4">
+                                    <p class="text-white text-sm mb-1 font-medium">Clicks</p>
+                                    <h4 class="text-2xl font-bold text-white">1,890</h4>
+                                </div>
+                                <div class="bg-white/20 backdrop-blur-sm rounded-xl p-4 col-span-2">
+                                    <p class="text-white text-sm mb-1 font-medium">Conversion Rate</p>
+                                    <h4 class="text-2xl font-bold text-white">13%</h4>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- FAQ -->
+        <section id="faq" class="py-16 lg:py-24 bg-white">
+            <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="text-center mb-12">
+                    <h2 class="text-3xl sm:text-4xl lg:text-5xl font-black text-primary mb-4">Frequently Asked Questions
+                    </h2>
+                    <p class="text-lg text-gray-600">Find quick answers to common questions</p>
+                </div>
+
+                <div class="space-y-4" x-data="{ open: 1 }">
+                    <div class="bg-gray-50 rounded-2xl overflow-hidden border border-gray-200">
+                        <button @click="open = open === 1 ? null : 1"
+                            class="w-full px-6 py-5 text-left flex justify-between items-center hover:bg-gray-100 transition-colors">
+                            <span class="font-bold text-primary text-lg">How do I create an account?</span>
+                            <i class="fas fa-chevron-down transition-transform" :class="{ 'rotate-180': open === 1 }"></i>
+                        </button>
+                        <div x-show="open === 1" x-collapse class="px-6 pb-5 text-gray-600">
+                            Click "Sign Up" in the top right corner, choose your account type (User, Agent, Agency, or
+                            Affiliate), fill in your details, and verify your email address.
+                        </div>
+                    </div>
+
+                    <div class="bg-gray-50 rounded-2xl overflow-hidden border border-gray-200">
+                        <button @click="open = open === 2 ? null : 2"
+                            class="w-full px-6 py-5 text-left flex justify-between items-center hover:bg-gray-100 transition-colors">
+                            <span class="font-bold text-primary text-lg">Is PropertyFinda free to use?</span>
+                            <i class="fas fa-chevron-down transition-transform" :class="{ 'rotate-180': open === 2 }"></i>
+                        </button>
+                        <div x-show="open === 2" x-collapse class="px-6 pb-5 text-gray-600">
+                            Yes! Browsing properties, saving favorites, and contacting agents is completely free for regular
+                            users. Agents and agencies may have subscription plans for premium features.
+                        </div>
+                    </div>
+
+                    <div class="bg-gray-50 rounded-2xl overflow-hidden border border-gray-200">
+                        <button @click="open = open === 3 ? null : 3"
+                            class="w-full px-6 py-5 text-left flex justify-between items-center hover:bg-gray-100 transition-colors">
+                            <span class="font-bold text-primary text-lg">How do off-market listings work?</span>
+                            <i class="fas fa-chevron-down transition-transform" :class="{ 'rotate-180': open === 3 }"></i>
+                        </button>
+                        <div x-show="open === 3" x-collapse class="px-6 pb-5 text-gray-600">
+                            Off-market listings are exclusive properties not advertised publicly. They're available only to
+                            verified users and often represent below-market-value investment opportunities.
+                        </div>
+                    </div>
+
+                    <div class="bg-gray-50 rounded-2xl overflow-hidden border border-gray-200">
+                        <button @click="open = open === 4 ? null : 4"
+                            class="w-full px-6 py-5 text-left flex justify-between items-center hover:bg-gray-100 transition-colors">
+                            <span class="font-bold text-primary text-lg">How accurate is the property valuation tool?</span>
+                            <i class="fas fa-chevron-down transition-transform" :class="{ 'rotate-180': open === 4 }"></i>
+                        </button>
+                        <div x-show="open === 4" x-collapse class="px-6 pb-5 text-gray-600">
+                            Our valuation tool uses real-time market data, comparable sales, and local trends to provide
+                            estimates. While highly accurate, we recommend getting a professional valuation for final
+                            decisions.
+                        </div>
+                    </div>
+
+                    <div class="bg-gray-50 rounded-2xl overflow-hidden border border-gray-200">
+                        <button @click="open = open === 5 ? null : 5"
+                            class="w-full px-6 py-5 text-left flex justify-between items-center hover:bg-gray-100 transition-colors">
+                            <span class="font-bold text-primary text-lg">How do I earn money as an affiliate?</span>
+                            <i class="fas fa-chevron-down transition-transform" :class="{ 'rotate-180': open === 5 }"></i>
+                        </button>
+                        <div x-show="open === 5" x-collapse class="px-6 pb-5 text-gray-600">
+                            Sign up for our affiliate program, get your unique referral link, share it on your website or
+                            social media, and earn commissions when people sign up or list properties through your link.
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- CTA -->
+        <section class="py-16 lg:py-24 bg-gradient-to-br from-primary via-primary-light to-secondary text-white">
+            <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+                <div
+                    class="w-20 h-20 bg-white/20 backdrop-blur-sm rounded-full flex items-center justify-center text-4xl mx-auto mb-6">
+                    <i class="fas fa-headset"></i>
+                </div>
+                <h2 class="text-3xl sm:text-4xl lg:text-5xl text-black mb-4">Still Need Help?</h2>
+                <p class="text-lg text-black mb-8 max-w-2xl mx-auto" style="color:black">Our support team is here to help
+                    you with any
+                    questions or issues you may have</p>
+
+                <div class="flex flex-col sm:flex-row gap-4 justify-center">
+                    <a href="{{ route('contact.create') }}"
+                        class="inline-block bg-white text-primary font-bold py-4 px-8 rounded-xl hover:bg-gray-100 transition-all transform hover:scale-105 shadow-lg">
+                        <i class="fas fa-envelope mr-2"></i> Contact Support
+                    </a>
+                    <a href="mailto:support@propertyfinda.co.uk"
+                        class="inline-block bg-white text-primary font-bold py-4 px-8 rounded-xl hover:bg-gray-100 transition-all transform hover:scale-105 shadow-lg">
+                        <i class="fas fa-paper-plane mr-2"></i> Email Us
+                    </a>
+                </div>
+            </div>
+        </section>
     </div>
+
+    <style>
+        .scrollbar-hide::-webkit-scrollbar {
+            display: none;
+        }
+
+        .scrollbar-hide {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+
+        .nav-pill {
+            background: #f3f4f6;
+            color: #1f2937;
+        }
+
+        .nav-pill:hover {
+            background: #131B31;
+            color: white;
+        }
+    </style>
+
+    <script>
+        // Search functionality
+        document.getElementById('helpSearch').addEventListener('input', function (e) {
+            const searchTerm = e.target.value.toLowerCase();
+            const sections = document.querySelectorAll('section[id]');
+
+            sections.forEach(section => {
+                const text = section.textContent.toLowerCase();
+                if (text.includes(searchTerm) || searchTerm === '') {
+                    section.style.display = 'block';
+                } else {
+                    section.style.display = 'none';
+                }
+            });
+        });
+
+        // Smooth scroll
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const targetId = this.getAttribute('href');
+                const target = document.querySelector(targetId);
+                if (target) {
+                    const offset = 120;
+                    const targetPosition = target.offsetTop - offset;
+                    window.scrollTo({
+                        top: targetPosition,
+                        behavior: 'smooth'
+                    });
+                    
+                    // Update URL without jump
+                    history.pushState(null, null, targetId);
+                }
+            });
+        });
+
+        // ScrollSpy
+        const observerOptions = {
+            root: null,
+            rootMargin: '-10% 0px -80% 0px',
+            threshold: 0
+        };
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    const id = entry.target.getAttribute('id');
+                    document.querySelectorAll('.nav-pill').forEach(pill => {
+                        pill.classList.remove('bg-primary', 'text-white');
+                        if (pill.getAttribute('href') === `#${id}`) {
+                            pill.classList.add('bg-primary', 'text-white');
+                        }
+                    });
+                }
+            });
+        }, observerOptions);
+
+        document.querySelectorAll('section[id]').forEach((section) => {
+            observer.observe(section);
+        });
+    </script>
 @endsection

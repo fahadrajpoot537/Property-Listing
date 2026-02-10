@@ -1,6 +1,6 @@
 @extends('layouts.modern')
 
-@section('title', 'Sign In - Finda UK')
+@section('title', 'Sign In - PropertyFinda')
 
 @section('content')
     <div class="min-h-screen pt-28 pb-20 flex items-center justify-center px-4 bg-gray-50">

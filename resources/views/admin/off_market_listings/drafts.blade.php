@@ -35,6 +35,59 @@
             margin-top: 4px;
         }
 
+        /* Select2 Text Visibility Fix */
+        .select2-container--default .select2-selection--single .select2-selection__rendered {
+            color: #1e293b !important;
+            font-size: 0.875rem !important;
+            font-weight: 500 !important;
+            padding-left: 4px !important;
+        }
+
+        .select2-results__option {
+            color: #475569 !important;
+        }
+
+        .select2-container--default .select2-results__option--highlighted[aria-selected] {
+            background-color: var(--brand-secondary) !important;
+            color: white !important;
+        }
+
+        /* Modal Enhancement Animations */
+        @keyframes modalEntry {
+            from {
+                opacity: 0;
+                transform: scale(0.95) translateY(20px);
+            }
+
+            to {
+                opacity: 1;
+                transform: scale(1) translateY(0);
+            }
+        }
+
+        .modal-animate-in {
+            animation: modalEntry 0.4s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+        }
+
+        .modal-glass {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+        }
+
+        .step-circle-active {
+            background: var(--brand-secondary) !important;
+            color: white !important;
+            border-color: var(--brand-secondary) !important;
+            box-shadow: 0 0 0 4px rgba(128, 70, 241, 0.15);
+        }
+
+        .step-circle-completed {
+            background: #10b981 !important;
+            color: white !important;
+            border-color: #10b981 !important;
+        }
+
         /* CKEditor Customization */
         .ck-editor__encoded {
             border-radius: 0.75rem !important;
@@ -270,35 +323,36 @@
     <!-- Distress List Modal -->
     <div id="listingModal" class="fixed inset-0 z-50 hidden" role="dialog" aria-modal="true">
         <div class="flex items-center justify-center min-h-screen p-4 sm:p-6 lg:p-8">
-            <div class="fixed inset-0 bg-black/40 backdrop-blur-md transition-opacity" onclick="closeModal()"></div>
+            <div class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm transition-opacity" onclick="closeModal()"></div>
 
             <div
-                class="relative bg-white rounded-[2.5rem] shadow-2xl w-full max-w-6xl max-h-[90vh] flex flex-col overflow-hidden transform transition-all z-10 border border-white/20">
+                class="relative modal-glass rounded-[2rem] shadow-[0_25px_50px_-12px_rgba(0,0,0,0.25)] w-full max-w-6xl max-h-[90vh] flex flex-col overflow-hidden transform transition-all z-10 modal-animate-in">
                 <div class="px-8 pt-10 pb-4 flex-shrink-0">
                     <div class="flex justify-between items-center mb-8">
                         <div class="flex items-center gap-4">
                             <div
-                                class="w-12 h-12 bg-purple-50 text-[#8046F1] rounded-2xl flex items-center justify-center text-2xl rotate-3 shadow-inner">
+                                class="w-14 h-14 bg-gradient-to-br from-purple-500 to-indigo-600 text-white rounded-2xl flex items-center justify-center text-2xl rotate-3 shadow-lg shadow-purple-200">
                                 <i class='bx bxs-zap'></i>
                             </div>
                             <div>
-                                <h3 class="text-2xl font-black text-black tracking-tighter" id="modalTitle">New Distress
+                                <h3 class="text-3xl font-black text-slate-900 tracking-tight" id="modalTitle">New Distress
                                     Deal</h3>
-                                <p class="text-[10px] text-slate-400 font-bold uppercase tracking-widest">Off-Market Channel
-                                    • Step <span id="currentStepText">1</span> of 3</p>
+                                <p class="text-[11px] text-slate-400 font-bold uppercase tracking-[0.2em] mt-1">Off-Market
+                                    Channel <span class="mx-2 text-slate-200">•</span>
+                                    Step <span id="currentStepText" class="text-purple-600">1</span> of 3</p>
                             </div>
                         </div>
                         <button onclick="closeModal()"
-                            class="w-10 h-10 flex items-center justify-center rounded-2xl bg-slate-50 text-slate-400 hover:bg-rose-500 hover:text-white transition-all duration-300">
+                            class="w-12 h-12 flex items-center justify-center rounded-2xl bg-slate-50 text-slate-400 hover:bg-rose-50 hover:text-rose-600 transition-all duration-300">
                             <i class='bx bx-x text-2xl'></i>
                         </button>
                     </div>
 
-                    <div class="relative flex items-center justify-between mb-10 px-16">
+                    <div class="relative flex items-center justify-between mb-10 px-24">
                         <div
-                            class="absolute top-1/2 left-0 w-full h-1.5 bg-slate-100 -translate-y-1/2 rounded-full overflow-hidden">
+                            class="absolute top-1/2 left-0 w-full h-1 bg-slate-100 -translate-y-1/2 rounded-full overflow-hidden">
                             <div id="stepLine"
-                                class="w-0 h-full bg-[#8046F1] transition-all duration-1000 cubic-bezier(0.4, 0, 0.2, 1)">
+                                class="w-0 h-full bg-gradient-to-r from-purple-500 to-indigo-600 transition-all duration-1000 cubic-bezier(0.4, 0, 0.2, 1)">
                             </div>
                         </div>
                         @for($i = 1; $i <= 3; $i++)
@@ -307,6 +361,10 @@
                                     class="w-12 h-12 rounded-2xl bg-white border-2 border-slate-100 text-slate-400 flex items-center justify-center text-sm font-black shadow-sm transition-all duration-500">
                                     {{$i}}
                                 </div>
+                                <span id="stepLabel{{$i}}"
+                                    class="absolute -bottom-7 text-[9px] font-black uppercase tracking-widest text-slate-300 transition-all">
+                                    {{ $i == 1 ? 'Details' : ($i == 2 ? 'Features' : 'Media') }}
+                                </span>
                             </div>
                         @endfor
                     </div>
@@ -440,18 +498,21 @@
                                 <label
                                     class="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">Bedrooms</label>
                                 <select name="bedrooms" id="bedrooms" class="select2 w-full" required>
-                                    @for($i = 0; $i <= 100; $i++)
+                                    <option value="0">Studio</option>
+                                    @for($i = 1; $i <= 9; $i++)
                                         <option value="{{ $i }}">{{ $i }} Bed{{$i > 1 ? 's' : ''}}</option>
                                     @endfor
+                                    <option value="10">10+ Beds</option>
                                 </select>
                             </div>
                             <div>
                                 <label
                                     class="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">Bathrooms</label>
                                 <select name="bathrooms" id="bathrooms" class="select2 w-full" required>
-                                    @for($i = 0; $i <= 100; $i++)
+                                    @for($i = 1; $i <= 9; $i++)
                                         <option value="{{ $i }}">{{ $i }} Bath{{$i > 1 ? 's' : ''}}</option>
                                     @endfor
+                                    <option value="10">10+ Baths</option>
                                 </select>
                             </div>
                             <div class="full-width">
@@ -607,41 +668,41 @@
                         { data: 'id', orderable: false, className: 'text-center', render: d => `<input type="checkbox" class="row-checkbox rounded-md border-slate-300 text-[#02b8f2] focus:ring-0" value="${d}">` },
                         {
                             data: 'property_title', render: (d, t, r) => `
-                                                                                                                                                            <div class="flex items-center py-2">
-                                                                                                                                                                ${r.thumbnail ? `<img src="/storage/${r.thumbnail}" class="w-12 h-12 rounded-xl object-cover border-2 border-white shadow-md">` : `<div class="w-12 h-12 bg-slate-100 rounded-xl flex items-center justify-center text-slate-400"><i class='bx bx-landscape text-2xl'></i></div>`}
-                                                                                                                                                                <div class="ml-4">
-                                                                                                                                                    <a href="/admin/off-market-listings/${r.id}" class="font-extrabold text-slate-800 hover:text-[#02b8f2] transition-colors tracking-tight leading-tight block">${d}</a>
-                                                                                                                                                    <div class="text-[10px] font-bold text-slate-400 uppercase mt-1">Ref: ${r.property_reference_number}</div>
-                                                                                                                                                </div>
-                                                                                                                                            </div>`
+                                                                                                                                                                                                    <div class="flex items-center py-2">
+                                                                                                                                                                                                        ${r.thumbnail ? `<img src="/storage/${r.thumbnail}" class="w-12 h-12 rounded-xl object-cover border-2 border-white shadow-md">` : `<div class="w-12 h-12 bg-slate-100 rounded-xl flex items-center justify-center text-slate-400"><i class='bx bx-landscape text-2xl'></i></div>`}
+                                                                                                                                                                                                        <div class="ml-4">
+                                                                                                                                                                                            <a href="/admin/off-market-listings/${r.id}" class="font-extrabold text-slate-800 hover:text-[#02b8f2] transition-colors tracking-tight leading-tight block">${d}</a>
+                                                                                                                                                                                            <div class="text-[10px] font-bold text-slate-400 uppercase mt-1">Ref: ${r.property_reference_number}</div>
+                                                                                                                                                                                        </div>
+                                                                                                                                                                                    </div>`
                         },
                         { data: 'user.name', render: d => `<span class="bg-slate-100 text-slate-700 px-3 py-1 rounded-lg text-[10px] font-black uppercase">${d}</span>` },
                         {
                             data: 'property_type.title', render: (d, t, r) => `
-                                                                                                                                                            <div class="flex flex-col">
-                                                                                                                                                                <span class="text-[10px] font-black text-[#02b8f2] uppercase tracked-widest">${d}</span>
-                                                                                                                                                                <span class="text-[10px] font-bold text-slate-400 uppercase tracking-tighter">${r.unit_type ? r.unit_type.title : 'Deal'}</span>
-                                                                                                                                                            </div>`
+                                                                                                                                                                                                    <div class="flex flex-col">
+                                                                                                                                                                                                        <span class="text-[10px] font-black text-[#02b8f2] uppercase tracked-widest">${d}</span>
+                                                                                                                                                                                                        <span class="text-[10px] font-bold text-slate-400 uppercase tracking-tighter">${r.unit_type ? r.unit_type.title : 'Deal'}</span>
+                                                                                                                                                                                                    </div>`
                         },
                         { data: 'price', render: d => `<span class="font-black text-slate-800">£${numberWithCommas(d)}</span>` },
                         {
                             data: 'status', render: (d, t, r) => {
                                 let color = d === 'approved' ? 'emerald' : (d === 'rejected' ? 'rose' : 'amber');
                                 return `
-                                                                                                                                                                <select onchange="updateStatus(${r.id}, this.value)" class="bg-${color}-50 text-${color}-600 border border-${color}-100 rounded-lg px-2 py-1 text-[10px] font-black uppercase focus:ring-0 cursor-pointer">
-                                                                                                                                                                    <option value="pending" ${d === 'pending' ? 'selected' : ''}>Pending</option>
-                                                                                                                                                                    <option value="approved" ${d === 'approved' ? 'selected' : ''}>Approved</option>
-                                                                                                                                                                    <option value="rejected" ${d === 'rejected' ? 'selected' : ''}>Rejected</option>
-                                                                                                                                                                    <option value="draft" ${d === 'draft' ? 'selected' : ''}>Draft</option>
-                                                                                                                                                                </select>`;
+                                                                                                                                                                                                        <select onchange="updateStatus(${r.id}, this.value)" class="bg-${color}-50 text-${color}-600 border border-${color}-100 rounded-lg px-2 py-1 text-[10px] font-black uppercase focus:ring-0 cursor-pointer">
+                                                                                                                                                                                                            <option value="pending" ${d === 'pending' ? 'selected' : ''}>Pending</option>
+                                                                                                                                                                                                            <option value="approved" ${d === 'approved' ? 'selected' : ''}>Approved</option>
+                                                                                                                                                                                                            <option value="rejected" ${d === 'rejected' ? 'selected' : ''}>Rejected</option>
+                                                                                                                                                                                                            <option value="draft" ${d === 'draft' ? 'selected' : ''}>Draft</option>
+                                                                                                                                                                                                        </select>`;
                             }
                         },
                         {
                             data: 'id', render: d => `
-                                                                                                                                                            <div class="flex gap-2">
-                                                                                                                                                                <button onclick="editListing(${d})" class="w-8 h-8 rounded-lg bg-slate-50 text-slate-500 hover:bg-slate-900 hover:text-white transition-all flex items-center justify-center"><i class='bx bxs-edit-alt text-lg'></i></button>
-                                                                                                                                                                <button onclick="deleteListing(${d})" class="w-8 h-8 rounded-lg bg-slate-50 text-slate-500 hover:bg-rose-600 hover:text-white transition-all flex items-center justify-center"><i class='bx bxs-trash text-lg'></i></button>
-                                                                                                                                                            </div>`
+                                                                                                                                                                                                    <div class="flex gap-2">
+                                                                                                                                                                                                        <button onclick="editListing(${d})" class="w-8 h-8 rounded-lg bg-slate-50 text-slate-500 hover:bg-slate-900 hover:text-white transition-all flex items-center justify-center"><i class='bx bxs-edit-alt text-lg'></i></button>
+                                                                                                                                                                                                        <button onclick="deleteListing(${d})" class="w-8 h-8 rounded-lg bg-slate-50 text-slate-500 hover:bg-rose-600 hover:text-white transition-all flex items-center justify-center"><i class='bx bxs-trash text-lg'></i></button>
+                                                                                                                                                                                                    </div>`
                         }
                     ],
                     drawCallback: function () { toggleBulkBar(); }
@@ -822,11 +883,25 @@
 
                 // Update step circles
                 for (let i = 1; i <= 3; i++) {
-                    const c = $(`#stepCircle${i}`);
-                    if (i <= n) {
-                        c.html(`<i class='bx bx-check'></i>`).addClass('bg-[#8046F1] border-[#8046F1] text-white shadow-lg shadow-purple-100').removeClass('border-slate-100 text-slate-400');
+                    const circle = $(`#stepCircle${i}`);
+                    const label = $(`#stepLabel${i}`);
+
+                    // Reset classes
+                    circle.removeClass('step-circle-active step-circle-completed text-slate-400 border-slate-100 bg-white');
+                    label.removeClass('text-purple-600 text-slate-300 font-black').addClass('text-slate-300');
+
+                    if (i < n) {
+                        // Completed steps
+                        circle.addClass('step-circle-completed').html('<i class="bx bx-check text-xl"></i>');
+                        label.addClass('text-emerald-500 font-bold');
+                    } else if (i === n) {
+                        // Active step
+                        circle.addClass('step-circle-active').text(i);
+                        label.addClass('text-purple-600 font-black').removeClass('text-slate-300');
                     } else {
-                        c.html(i).removeClass('bg-[#8046F1] border-[#8046F1] text-white shadow-lg shadow-purple-100').addClass('bg-white border-slate-100 text-slate-400');
+                        // Future steps
+                        circle.addClass('text-slate-400 border-slate-100 bg-white').text(i);
+                        label.addClass('text-slate-300');
                     }
                 }
             }
@@ -900,14 +975,14 @@
                         const galleryPreview = $('#galleryPreview').html('');
                         d.gallery.forEach((image, index) => {
                             galleryPreview.append(`
-                                                                        <div class="relative group">
-                                                                            <img src="/storage/${image}" class="w-16 h-12 object-cover rounded-xl border border-slate-100 shadow-sm">
-                                                                            <button type="button" onclick="removeExistingImage(${index})" class="absolute -top-2 -right-2 w-6 h-6 bg-rose-500 text-white rounded-full flex items-center justify-center text-xs opacity-0 group-hover:opacity-100 transition-opacity hover:bg-rose-600">
-                                                                                <i class='bx bx-x'></i>
-                                                                            </button>
-                                                                            <input type="hidden" name="existing_gallery[]" value="${image}">
-                                                                        </div>
-                                                                    `);
+                                                                                                                <div class="relative group">
+                                                                                                                    <img src="/storage/${image}" class="w-16 h-12 object-cover rounded-xl border border-slate-100 shadow-sm">
+                                                                                                                    <button type="button" onclick="removeExistingImage(${index})" class="absolute -top-2 -right-2 w-6 h-6 bg-rose-500 text-white rounded-full flex items-center justify-center text-xs opacity-0 group-hover:opacity-100 transition-opacity hover:bg-rose-600">
+                                                                                                                        <i class='bx bx-x'></i>
+                                                                                                                    </button>
+                                                                                                                    <input type="hidden" name="existing_gallery[]" value="${image}">
+                                                                                                                </div>
+                                                                                                            `);
                         });
                     }
 

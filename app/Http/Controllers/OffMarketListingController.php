@@ -4,6 +4,10 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 
+use Illuminate\Support\Facades\Mail;
+use App\Models\ContactSubmission;
+use App\Mail\OffMarketInquiry;
+
 class OffMarketListingController extends Controller
 {
     public function index(Request $request)
@@ -28,7 +32,8 @@ class OffMarketListingController extends Controller
             if ($radius <= 0)
                 $radius = 0.1;
 
-            $query->whereRaw("( 3959 * acos( cos( radians(?) ) * cos( radians( latitude ) ) * cos( radians( longitude ) - radians(?) ) + sin( radians(?) ) * sin( radians( latitude ) ) ) ) <= ?", [$lat, $lng, $lat, $radius]);
+            // Use COALESCE to handle NULL distances (when coordinates are identical)
+            $query->whereRaw("COALESCE(( 3959 * acos( LEAST(1, GREATEST(-1, cos( radians(?) ) * cos( radians( latitude ) ) * cos( radians( longitude ) - radians(?) ) + sin( radians(?) ) * sin( radians( latitude ) ) )) ) ), 0) <= ?", [$lat, $lng, $lat, $radius]);
         } elseif ($request->filled('location') && $request->filled('radius') && $request->radius != '') {
             // If location name and radius are provided but no coordinates, try to geocode the location
             $location = $request->location;
@@ -41,7 +46,8 @@ class OffMarketListingController extends Controller
                 $lat = $coordinates['lat'];
                 $lng = $coordinates['lng'];
 
-                $query->whereRaw("( 3959 * acos( cos( radians(?) ) * cos( radians( latitude ) ) * cos( radians( longitude ) - radians(?) ) + sin( radians(?) ) * sin( radians( latitude ) ) ) ) <= ?", [$lat, $lng, $lat, (float) $radius]);
+                // Use COALESCE to handle NULL distances (when coordinates are identical)
+                $query->whereRaw("COALESCE(( 3959 * acos( LEAST(1, GREATEST(-1, cos( radians(?) ) * cos( radians( latitude ) ) * cos( radians( longitude ) - radians(?) ) + sin( radians(?) ) * sin( radians( latitude ) ) )) ) ), 0) <= ?", [$lat, $lng, $lat, (float) $radius]);
             } else {
                 // Fallback to basic location search if geocoding fails
                 $query->where('address', 'like', '%' . $location . '%');
@@ -197,6 +203,36 @@ class OffMarketListingController extends Controller
         }
 
         return view('off-market-property-detail', compact('listing', 'similarProperties', 'user_favorite_off_market_ids'));
+    }
+
+    public function sendInquiry(Request $request, $id)
+    {
+        $listing = \App\Models\OffMarketListing::findOrFail($id);
+
+        $request->validate([
+            'name' => 'required|string|max:255',
+            'email' => 'required|email|max:255',
+            'phone' => 'required|string|max:20',
+            'message' => 'required|string',
+        ]);
+
+        $inquiryData = [
+            'name' => $request->name,
+            'email' => $request->email,
+            'phone' => $request->phone,
+            'subject' => 'Off-Market Inquiry: ' . $listing->property_title,
+            'message' => $request->message,
+        ];
+
+        // Store in ContactSubmission
+        ContactSubmission::create($inquiryData);
+
+        // Send email to property owner
+        if ($listing->user && $listing->user->email) {
+            Mail::to($listing->user->email)->send(new OffMarketInquiry($inquiryData, $listing));
+        }
+
+        return back()->with('success', 'Your request for the prospectus has been sent. Our team will verify your credentials and contact you.');
     }
 
     private function geocodeAddress($address)

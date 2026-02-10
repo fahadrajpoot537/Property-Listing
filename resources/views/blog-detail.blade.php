@@ -88,12 +88,12 @@
                     <div class="bg-white rounded-2xl p-6 md:p-10 shadow-sm border border-gray-100 mb-8">
                         <!-- Content Body -->
                         <article class="prose prose-lg max-w-none 
-                                                            prose-headings:text-primary prose-headings:font-bold prose-headings:tracking-tight
-                                                            prose-p:text-gray-600 prose-p:leading-relaxed prose-p:mb-6
-                                                            prose-li:text-gray-600
-                                                            prose-strong:text-primary prose-strong:font-bold
-                                                            prose-blockquote:border-l-4 prose-blockquote:border-secondary prose-blockquote:bg-gray-50 prose-blockquote:px-6 prose-blockquote:py-4 prose-blockquote:rounded-r-lg prose-blockquote:italic prose-blockquote:text-primary prose-blockquote:font-medium
-                                                            prose-img:rounded-xl prose-img:shadow-md prose-img:my-10">
+                                                                prose-headings:text-primary prose-headings:font-bold prose-headings:tracking-tight
+                                                                prose-p:text-gray-600 prose-p:leading-relaxed prose-p:mb-6
+                                                                prose-li:text-gray-600
+                                                                prose-strong:text-primary prose-strong:font-bold
+                                                                prose-blockquote:border-l-4 prose-blockquote:border-secondary prose-blockquote:bg-gray-50 prose-blockquote:px-6 prose-blockquote:py-4 prose-blockquote:rounded-r-lg prose-blockquote:italic prose-blockquote:text-primary prose-blockquote:font-medium
+                                                                prose-img:rounded-xl prose-img:shadow-md prose-img:my-10">
                             {!! $blog->content !!}
                         </article>
 

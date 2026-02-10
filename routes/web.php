@@ -18,6 +18,10 @@ Route::get('/off-market-property/{id}', [
     \App\Http\Controllers\OffMarketListingController::class,
     'show'
 ])->name('off-market-listing.show');
+Route::post('/off-market-property/{id}/inquiry', [
+    \App\Http\Controllers\OffMarketListingController::class,
+    'sendInquiry'
+])->name('off-market-listing.inquiry');
 
 Route::get('/property-halfmap-grid', [
     \App\Http\Controllers\ListingController::class,
@@ -25,6 +29,7 @@ Route::get('/property-halfmap-grid', [
 ])->name('listings.index');
 Route::get('/property-map', [\App\Http\Controllers\ListingController::class, 'map'])->name('listings.map');
 Route::get('/property/{id}', [App\Http\Controllers\ListingController::class, 'show'])->name('listing.show');
+Route::post('/property/{id}/inquiry', [App\Http\Controllers\PropertyInquiryController::class, 'store'])->name('listing.inquiry');
 
 Route::get('/api/home/featured-listings', [
     App\Http\Controllers\ListingController::class,
@@ -157,3 +162,4 @@ Route::post('/affiliate/register', [
 ])->name('affiliate.register');
 
 require __DIR__ . '/auth.php';
+require __DIR__ . '/debug.php';

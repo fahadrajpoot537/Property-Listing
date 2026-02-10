@@ -393,7 +393,7 @@
                             <p class="text-white/70 text-sm mb-8 leading-relaxed">This property is part of our off-market portfolio. Contact us for the full prospectus and NDA.</p>
                             
                             <div class="space-y-4">
-                                <a href="https://wa.me/{{ $listing->user->phone ?? '447000000000' }}?text=Interested%20in%20Confidential%20Deal%20{{ $listing->id }}"
+                                <a href="https://wa.me/{{ $listing->user->phone_number ?? '447000000000' }}?text=Interested%20in%20Confidential%20Deal%20{{ $listing->id }}"
                                     class="py-4 bg-[#25D366] text-white font-black rounded-xl flex items-center justify-center gap-3 text-sm tracking-wider uppercase shadow-xl">
                                     <i class="fab fa-whatsapp text-lg"></i> WhatsApp Agent
                                 </a>
@@ -405,10 +405,18 @@
 
                             <hr class="my-8 border-white/10">
 
-                            <form class="space-y-4" id="confidential-inquiry">
-                                <input type="text" placeholder="Full Name" class="w-full bg-white/10 border border-white/10 rounded-xl p-4 text-sm text-white focus:ring-secondary outline-none">
-                                <input type="email" placeholder="Email Address" class="w-full bg-white/10 border border-white/10 rounded-xl p-4 text-sm text-white focus:ring-secondary outline-none">
-                                <textarea rows="3" placeholder="Explain your interest..." class="w-full bg-white/10 border border-white/10 rounded-xl p-4 text-sm text-white focus:ring-secondary outline-none"></textarea>
+                            @if(session('success'))
+                                <div class="bg-green-500/20 border border-green-500/50 text-green-200 p-4 rounded-xl mb-6 text-sm font-bold">
+                                    {{ session('success') }}
+                                </div>
+                            @endif
+
+                            <form action="{{ route('off-market-listing.inquiry', $listing->id) }}" method="POST" class="space-y-4">
+                                @csrf
+                                <input type="text" name="name" placeholder="Full Name" required class="w-full bg-white/10 border border-white/10 rounded-xl p-4 text-sm text-white focus:ring-secondary outline-none">
+                                <input type="email" name="email" placeholder="Email Address" required class="w-full bg-white/10 border border-white/10 rounded-xl p-4 text-sm text-white focus:ring-secondary outline-none">
+                                <input type="tel" name="phone" placeholder="Phone Number" required class="w-full bg-white/10 border border-white/10 rounded-xl p-4 text-sm text-white focus:ring-secondary outline-none">
+                                <textarea name="message" rows="3" placeholder="Explain your interest..." required class="w-full bg-white/10 border border-white/10 rounded-xl p-4 text-sm text-white focus:ring-secondary outline-none"></textarea>
                                 <button type="submit" class="w-full py-4 bg-secondary text-white font-black rounded-xl hover:bg-white hover:text-primary transition-all uppercase tracking-[0.2em] text-[10px] shadow-lg">Request Prospectus</button>
                             </form>
                         </div>
@@ -509,12 +517,6 @@
             if (e.key === "Escape") closeLightbox();
         });
 
-        // Form Submission
-        document.getElementById('confidential-inquiry')?.addEventListener('submit', function(e) {
-            e.preventDefault();
-            alert('Your request for the prospectus has been sent. Our team will verify your credentials and contact you.');
-            this.reset();
-        });
 
         function toggleFavorite(listingId, offMarketId, btn) {
             @if(!auth()->check())

@@ -7,15 +7,19 @@
     <!-- Background Pattern -->
     <div class="absolute inset-0 z-0">
       <!-- Image with Overlay -->
-      <img src="{{ asset('assets/img/all-images/hero/1.jpg') }}"
-        class="w-full h-full object-cover opacity-40 mix-blend-overlay" alt="Background">
-      <div class="absolute inset-0 bg-primary/80 mix-blend-multiply"></div>
+      <img src="{{ asset('assets/img/all-images/hero/1.jpg') }}" class="w-full h-full object-cover" alt="Background">
+      <!-- <div class="absolute inset-0 bg-primary/80 mix-blend-multiply"></div> -->
     </div>
 
     <div class="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 md:py-24">
       <div class="text-center mb-10">
-        <h1 class="text-3xl md:text-6xl font-extrabold text-white mb-4 tracking-tight">Find your happy place</h1>
-        <p class="text-xl text-gray-300 font-medium">Search properties for sale and to rent in the UK</p>
+        <h1 class="text-3xl md:text-6xl font-extrabold text-white mb-4 tracking-tight"
+          style="text-shadow: 2px 2px 4px rgba(0,0,0,0.7);">
+          Find your happy place
+        </h1>
+        <p class="text-xl text-white font-medium" style="text-shadow: 1px 1px 3px rgba(0,0,0,0.6);">
+          Search properties for sale and to rent in the UK
+        </p>
       </div>
 
       <!-- Main Portal Search Box (Rightmove-meets-Zoopla Mixture) -->
@@ -148,7 +152,7 @@
               </div>
 
               <!-- Filters Grid -->
-              <div class="grid grid-cols-2 md:grid-cols-5 gap-3">
+              <div class="grid grid-cols-2 lg:grid-cols-6 gap-3">
                 <div class="relative">
                   <div class="filter-icon-wrapper"><i class="fa-solid fa-bullseye"></i></div>
                   <select name="radius" class="select2-filter w-full" data-placeholder="Radius">
@@ -192,14 +196,25 @@
                     <option value="5000000">£5,000,000</option>
                   </select>
                 </div>
-                <div class="relative col-span-2 md:col-span-1">
+                <div class="relative">
                   <div class="filter-icon-wrapper"><i class="fa-solid fa-bed"></i></div>
                   <select name="min_bedrooms" class="select2-filter w-full" data-placeholder="Bedrooms">
                     <option value="">Any Beds</option>
-                    <option value="1">1+ Beds</option>
-                    <option value="2">2+ Beds</option>
-                    <option value="3">3+ Beds</option>
-                    <option value="4">4+ Beds</option>
+                    <option value="0">Studio</option>
+                    @for($i = 1; $i <= 9; $i++)
+                      <option value="{{ $i }}">{{ $i }} Bed{{ $i > 1 ? 's' : '' }}</option>
+                    @endfor
+                    <option value="10">10+ Beds</option>
+                  </select>
+                </div>
+                <div class="relative">
+                  <div class="filter-icon-wrapper"><i class="fa-solid fa-bath"></i></div>
+                  <select name="min_bathrooms" class="select2-filter w-full" data-placeholder="Bathrooms">
+                    <option value="">Any Baths</option>
+                    @for($i = 1; $i <= 9; $i++)
+                      <option value="{{ $i }}">{{ $i }} Bath{{ $i > 1 ? 's' : '' }}</option>
+                    @endfor
+                    <option value="10">10+ Baths</option>
                   </select>
                 </div>
               </div>
@@ -705,7 +720,7 @@
         return;
       @endif
 
-                                            const data = {
+                                                              const data = {
         _token: '{{ csrf_token() }}'
       };
       if (listingId) data.listing_id = listingId;

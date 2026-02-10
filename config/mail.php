@@ -49,6 +49,36 @@ return [
             'local_domain' => env('MAIL_EHLO_DOMAIN', parse_url((string) env('APP_URL', 'http://localhost'), PHP_URL_HOST)),
         ],
 
+        'inquiries' => [
+            'transport' => 'smtp',
+            'host' => env('MAIL_INQUIRIES_HOST', 'smtp.ionos.co.uk'),
+            'port' => env('MAIL_INQUIRIES_PORT', 587),
+            'encryption' => env('MAIL_INQUIRIES_ENCRYPTION', 'tls'),
+            'username' => env('MAIL_INQUIRIES_USERNAME'),
+            'password' => env('MAIL_INQUIRIES_PASSWORD'),
+            'timeout' => null,
+            'local_domain' => env('MAIL_EHLO_DOMAIN', parse_url((string) env('APP_URL', 'http://localhost'), PHP_URL_HOST)),
+            'from' => [
+                'address' => env('MAIL_INQUIRIES_FROM_ADDRESS', 'inquiries@propertyfinda.co.uk'),
+                'name' => env('MAIL_INQUIRIES_FROM_NAME', 'PropertyFinda Inquiries'),
+            ],
+        ],
+
+        'noreply' => [
+            'transport' => 'smtp',
+            'host' => env('MAIL_NOREPLY_HOST', 'smtp.ionos.co.uk'),
+            'port' => env('MAIL_NOREPLY_PORT', 587),
+            'encryption' => env('MAIL_NOREPLY_ENCRYPTION', 'tls'),
+            'username' => env('MAIL_NOREPLY_USERNAME'),
+            'password' => env('MAIL_NOREPLY_PASSWORD'),
+            'timeout' => null,
+            'local_domain' => env('MAIL_EHLO_DOMAIN', parse_url((string) env('APP_URL', 'http://localhost'), PHP_URL_HOST)),
+            'from' => [
+                'address' => env('MAIL_NOREPLY_FROM_ADDRESS', 'no-reply@propertyfinda.co.uk'),
+                'name' => env('MAIL_NOREPLY_FROM_NAME', 'PropertyFinda'),
+            ],
+        ],
+
         'ses' => [
             'transport' => 'ses',
         ],

@@ -60,19 +60,19 @@
                     </a>
                     <div class="hidden md:ml-10 md:flex space-x-8">
                         <a href="{{ route('home') }}"
-                            class="inline-flex items-center px-1 pt-1 border-b-2 border-transparent text-sm font-medium leading-5 text-gray-500 hover:text-primary hover:border-secondary transition duration-150 ease-in-out">Home</a>
+                            class="inline-flex items-center px-1 pt-1 border-b-2 {{ request()->routeIs('home') ? 'border-secondary text-primary' : 'border-transparent text-gray-500' }} text-sm font-medium leading-5 hover:text-primary hover:border-secondary transition duration-150 ease-in-out">Home</a>
                         <a href="{{ route('listings.index') }}"
-                            class="inline-flex items-center px-1 pt-1 border-b-2 border-transparent text-sm font-medium leading-5 text-gray-500 hover:text-primary hover:border-secondary transition duration-150 ease-in-out">Properties</a>
+                            class="inline-flex items-center px-1 pt-1 border-b-2 {{ request()->routeIs('listings.index') ? 'border-secondary text-primary' : 'border-transparent text-gray-500' }} text-sm font-medium leading-5 hover:text-primary hover:border-secondary transition duration-150 ease-in-out">Properties</a>
                         <a href="{{ route('off-market-listings.index') }}"
-                            class="inline-flex items-center px-1 pt-1 border-b-2 border-transparent text-sm font-medium leading-5 text-gray-500 hover:text-primary hover:border-secondary transition duration-150 ease-in-out">Off
+                            class="inline-flex items-center px-1 pt-1 border-b-2 {{ request()->routeIs('off-market-listings.index') ? 'border-secondary text-primary' : 'border-transparent text-gray-500' }} text-sm font-medium leading-5 hover:text-primary hover:border-secondary transition duration-150 ease-in-out">Off
                             Market</a>
                         <a href="{{ route('blog.list') }}"
-                            class="inline-flex items-center px-1 pt-1 border-b-2 border-transparent text-sm font-medium leading-5 text-gray-500 hover:text-primary hover:border-secondary transition duration-150 ease-in-out">News</a>
+                            class="inline-flex items-center px-1 pt-1 border-b-2 {{ request()->routeIs('blog.*') ? 'border-secondary text-primary' : 'border-transparent text-gray-500' }} text-sm font-medium leading-5 hover:text-primary hover:border-secondary transition duration-150 ease-in-out">News</a>
                         
                         <!-- Contact Dropdown -->
                         <div class="relative flex items-center h-20" x-data="{ open: false }" @mouseenter="open = true" @mouseleave="open = false">
                             <button @click="open = !open" 
-                                class="inline-flex items-center gap-1 px-1 pt-1 border-b-2 border-transparent text-sm font-medium leading-5 text-gray-500 hover:text-primary hover:border-secondary transition duration-150 ease-in-out h-full focus:outline-none">
+                                class="inline-flex items-center gap-1 px-1 pt-1 border-b-2 {{ request()->routeIs('help') || request()->routeIs('contact.create') ? 'border-secondary text-primary' : 'border-transparent text-gray-500' }} text-sm font-medium leading-5 hover:text-primary hover:border-secondary transition duration-150 ease-in-out h-full focus:outline-none">
                                 Support
                                 <i class="fa-solid fa-chevron-down text-[10px] ml-1 transition-transform duration-200" :class="open ? 'rotate-180' : ''"></i>
                             </button>
@@ -94,7 +94,7 @@
                                 </a>
                                 <a href="{{ route('help') }}" class="relative flex items-center gap-3 px-4 py-3 text-sm font-bold text-gray-600 hover:text-primary hover:bg-gray-50 transition-all">
                                     <i class="fa-solid fa-circle-question text-secondary w-5"></i>
-                                    Help Center (A-Z)
+                                    Help Center
                                 </a>
                             </div>
                         </div>
@@ -177,18 +177,18 @@
             id="mobile-menu" style="display: none;">
             <div class="pt-2 pb-3 space-y-1 px-4">
                 <a href="{{ route('home') }}"
-                    class="block pl-3 pr-4 py-3 rounded-lg text-base font-medium text-gray-600 hover:text-primary hover:bg-gray-50 transition duration-150 ease-in-out border-l-4 border-transparent hover:border-secondary">Home</a>
+                    class="block pl-3 pr-4 py-3 rounded-lg text-base font-medium {{ request()->routeIs('home') ? 'text-primary bg-gray-50 border-secondary' : 'text-gray-600 border-transparent' }} hover:text-primary hover:bg-gray-50 transition duration-150 ease-in-out border-l-4">Home</a>
                 <a href="{{ route('listings.index') }}"
-                    class="block pl-3 pr-4 py-3 rounded-lg text-base font-medium text-gray-600 hover:text-primary hover:bg-gray-50 transition duration-150 ease-in-out border-l-4 border-transparent hover:border-secondary">Properties</a>
+                    class="block pl-3 pr-4 py-3 rounded-lg text-base font-medium {{ request()->routeIs('listings.index') ? 'text-primary bg-gray-50 border-secondary' : 'text-gray-600 border-transparent' }} hover:text-primary hover:bg-gray-50 transition duration-150 ease-in-out border-l-4">Properties</a>
                 <a href="{{ route('off-market-listings.index') }}"
-                    class="block pl-3 pr-4 py-3 rounded-lg text-base font-medium text-gray-600 hover:text-primary hover:bg-gray-50 transition duration-150 ease-in-out border-l-4 border-transparent hover:border-secondary">Off
+                    class="block pl-3 pr-4 py-3 rounded-lg text-base font-medium {{ request()->routeIs('off-market-listings.index') ? 'text-primary bg-gray-50 border-secondary' : 'text-gray-600 border-transparent' }} hover:text-primary hover:bg-gray-50 transition duration-150 ease-in-out border-l-4">Off
                     Market</a>
                 <a href="{{ route('blog.list') }}"
-                    class="block pl-3 pr-4 py-3 rounded-lg text-base font-medium text-gray-600 hover:text-primary hover:bg-gray-50 transition duration-150 ease-in-out border-l-4 border-transparent hover:border-secondary">News</a>
+                    class="block pl-3 pr-4 py-3 rounded-lg text-base font-medium {{ request()->routeIs('blog.list') ? 'text-primary bg-gray-50 border-secondary' : 'text-gray-600 border-transparent' }} hover:text-primary hover:bg-gray-50 transition duration-150 ease-in-out border-l-4">News</a>
                 <a href="{{ route('contact.create') }}"
-                    class="block pl-3 pr-4 py-3 rounded-lg text-base font-medium text-gray-600 hover:text-primary hover:bg-gray-50 transition duration-150 ease-in-out border-l-4 border-transparent hover:border-secondary">Contact Us</a>
+                    class="block pl-3 pr-4 py-3 rounded-lg text-base font-medium {{ request()->routeIs('contact.create') ? 'text-primary bg-gray-50 border-secondary' : 'text-gray-600 border-transparent' }} hover:text-primary hover:bg-gray-50 transition duration-150 ease-in-out border-l-4">Contact Us</a>
                 <a href="{{ route('help') }}"
-                    class="block pl-3 pr-4 py-3 rounded-lg text-base font-medium text-gray-600 hover:text-primary hover:bg-gray-50 transition duration-150 ease-in-out border-l-4 border-transparent hover:border-secondary">Help Center (A-Z)</a>
+                    class="block pl-3 pr-4 py-3 rounded-lg text-base font-medium {{ request()->routeIs('help') ? 'text-primary bg-gray-50 border-secondary' : 'text-gray-600 border-transparent' }} hover:text-primary hover:bg-gray-50 transition duration-150 ease-in-out border-l-4">Help Center (A-Z)</a>
                 {{-- Removed from primary mobile menu as it goes into bottom section --}}
             </div>
             <div class="pt-4 pb-6 border-t border-gray-200 px-4">
