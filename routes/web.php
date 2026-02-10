@@ -137,6 +137,8 @@ Route::middleware('auth')->group(function () {
         Route::get('/contact', [ContactController::class, 'index'])->name('contact.index');
         Route::get('/contact/{submission}', [ContactController::class, 'show'])->name('contact.show');
         Route::delete('/contact/{submission}', [ContactController::class, 'destroy'])->name('contact.destroy');
+
+        Route::resource('email-templates', \App\Http\Controllers\Admin\AdminEmailTemplateController::class);
     });
 });
 

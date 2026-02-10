@@ -532,8 +532,12 @@
                                 @csrf
                                 <input type="text" name="name" placeholder="Full Name" required
                                     class="w-full bg-white/10 border border-white/10 rounded-xl p-4 text-sm text-white focus:ring-secondary outline-none">
-                                <input type="email" name="email" placeholder="Email Address" required
-                                    class="w-full bg-white/10 border border-white/10 rounded-xl p-4 text-sm text-white focus:ring-secondary outline-none">
+                                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                    <input type="email" name="email" placeholder="Email Address" required
+                                        class="w-full bg-white/10 border border-white/10 rounded-xl p-4 text-sm text-white focus:ring-secondary outline-none">
+                                    <input type="text" name="phone" placeholder="Phone Number" required
+                                        class="w-full bg-white/10 border border-white/10 rounded-xl p-4 text-sm text-white focus:ring-secondary outline-none">
+                                </div>
                                 <textarea name="message" rows="3" placeholder="Message..." required
                                     class="w-full bg-white/10 border border-white/10 rounded-xl p-4 text-sm text-white focus:ring-secondary outline-none">I am interested in this {{ $listing->property_title }}. Please contact me.</textarea>
                                 <button type="submit"
@@ -687,7 +691,7 @@
                 return;
             @endif
 
-                        const data = {
+                            const data = {
                 _token: '{{ csrf_token() }}'
             };
             if (listingId) data.listing_id = listingId;

@@ -219,7 +219,7 @@
                 <a href="{{ route('admin.dashboard') }}" class="flex items-center">
                     <img src="{{ asset('logoor.png') }}" alt="FindaAdmin" class="h-8 w-auto">
                 </a>
-                
+
                 <!-- Mobile Close Button -->
                 <button @click="sidebarOpen = false" class="lg:hidden text-white/50 hover:text-white transition-colors">
                     <i class='bx bx-x text-2xl'></i>
@@ -395,6 +395,10 @@
                         <a href="{{ route('admin.contact.index') }}"
                             class="flex items-center px-4 py-2.5 rounded-xl text-[11px] font-bold text-white/40 hover:text-white transition-all {{ request()->routeIs('admin.contact.*') ? 'text-white bg-white/5' : '' }}">
                             Contact Messages
+                        </a>
+                        <a href="{{ route('admin.email-templates.index') }}"
+                            class="flex items-center px-4 py-2.5 rounded-xl text-[11px] font-bold text-white/40 hover:text-white transition-all {{ request()->routeIs('admin.email-templates.*') ? 'text-white bg-white/5' : '' }}">
+                            Email Templates
                         </a>
                     </div>
                 </div>
