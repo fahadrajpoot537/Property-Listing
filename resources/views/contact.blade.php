@@ -43,15 +43,15 @@
                             <i class="fa-solid fa-location-dot text-2xl"></i>
                         </div>
                         <span class="text-xs font-bold text-gray-400 uppercase tracking-widest mb-1">Visit us</span>
-                        <span class="font-bold text-gray-800 text-lg text-center">5-7 High Street, London, England, E13
-                            0AD</span>
+                        <span class="font-bold text-gray-800 text-lg text-center">5-7 High Street London United Kingdom. E
+                            13 0AD</span>
                     </div>
                     <div id="map" style="
-                                        width:100%;
-                                        height:165px;
-                                        border-radius:15px;
-                                        box-shadow: 0 8px 25px rgba(128, 70, 241, 0.45);
-                                    ">
+                                            width:100%;
+                                            height:165px;
+                                            border-radius:15px;
+                                            box-shadow: 0 8px 25px rgba(128, 70, 241, 0.45);
+                                        ">
                     </div>
 
                 </div>

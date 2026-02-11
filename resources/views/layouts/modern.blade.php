@@ -293,7 +293,7 @@
                                     d="M15 11a3 3 0 11-6 0 3 3 0 016 0z">
                                 </path>
                             </svg>
-                            <span>5-7 High Street, London, England,<br>E13 0AD</span>
+                            <span>5-7 High Street London United Kingdom. E13 0AD</span>
                         </li>
                         <li class="flex items-center gap-3">
                             <svg class="w-5 h-5 text-secondary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
