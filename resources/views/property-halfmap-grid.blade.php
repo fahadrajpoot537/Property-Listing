@@ -543,6 +543,16 @@
                                 </div>
 
                                 <div class="form-group-custom">
+                                    <label class="form-label-custom">Unit Type</label>
+                                    <select name="unit_type" class="select2-filter">
+                                        <option value="">Any Unit</option>
+                                        @foreach(\App\Models\UnitType::all() as $type)
+                                            <option value="{{ $type->id }}" {{ request('unit_type') == $type->id ? 'selected' : '' }}>{{ $type->title }}</option>
+                                        @endforeach
+                                    </select>
+                                </div>
+
+                                <div class="form-group-custom">
                                     <label class="form-label-custom">Bedrooms</label>
                                     <select name="min_bedrooms" class="select2-filter">
                                         <option value="">Any Beds</option>
@@ -729,7 +739,7 @@
                 return;
             @endif
 
-                                                                            const data = {
+                                                                                const data = {
                 _token: '{{ csrf_token() }}'
             };
             if (listingId) data.listing_id = listingId;

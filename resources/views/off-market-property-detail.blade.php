@@ -1,439 +1,401 @@
 @extends('layouts.modern')
 
+@section('title', 'Private Listing: ' . ($listing->property_title ?? 'Exclusive Asset') . ' - Finda-UK Vault')
+
 @push('styles')
-    <!-- Swiper CSS -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css" />
     <style>
-        :root {
-            --primary-navy: #131B31;
-            --secondary-purple: #8046F1;
-            --accent-teal: #00DEB6;
-            --bg-soft: #F9FAFB;
-            --border-color: #E5E7EB;
-            --text-main: #1F2937;
-            --text-light: #6B7280;
+        .property-gallery-grid {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            grid-template-rows: repeat(2, 350px);
+            gap: 15px;
         }
 
-        body {
-            background-color: var(--bg-soft);
-            color: var(--text-main);
-        }
-
-        .premium-card-v2 {
-            background: white;
-            border-radius: 1.5rem;
-            border: 1px solid var(--border-color);
-            padding: 2rem;
-            margin-bottom: 2rem;
-            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
-        }
-
-        /* Gallery Container */
-        .gallery-container {
-            border-radius: 1.5rem;
+        .gallery-item {
+            position: relative;
             overflow: hidden;
-            margin-bottom: 2.5rem;
-            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
-        }
-
-        @media (min-width: 1024px) {
-            .gallery-grid-v2 {
-                display: grid;
-                grid-template-columns: 2fr 1fr;
-                grid-template-rows: 250px 250px;
-                gap: 12px;
-                height: 512px;
-            }
-            .mobile-only-gallery { display: none !important; }
-        }
-
-        @media (max-width: 1023px) {
-            .gallery-grid-v2 { display: none !important; }
-            .mobile-only-gallery {
-                display: block !important;
-                height: 400px;
-            }
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            cursor: pointer;
         }
 
         .gallery-item img {
             width: 100%;
             height: 100%;
             object-fit: cover;
-            transition: transform 0.3s ease;
+            transition: transform 0.6s ease;
         }
 
-        .gallery-item:hover img { transform: scale(1.05); }
-
-        .gallery-main {
-            grid-row: span 2;
-            position: relative;
+        .gallery-item:hover img {
+            transform: scale(1.08);
         }
 
-        .gallery-overlay-btn {
+        .gallery-item::before {
+            content: '';
             position: absolute;
-            bottom: 20px;
-            right: 20px;
-            background: white;
-            padding: 10px 20px;
-            border-radius: 10px;
-            font-weight: 700;
-            font-size: 14px;
-            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
-            cursor: pointer;
-            z-index: 10;
-        }
-
-        /* Lightbox Modal Stylings */
-        #galleryLightbox {
-            display: none;
-            position: fixed;
             inset: 0;
-            z-index: 9999;
-            background: rgba(0, 0, 0, 0.98);
-            backdrop-filter: blur(15px);
+            background: linear-gradient(to top, rgba(19, 27, 49, 0.6) 0%, transparent 50%);
+            opacity: 0;
+            transition: opacity 0.4s ease;
+            z-index: 1;
         }
 
-        .lightbox-close {
-            position: absolute;
-            top: 25px;
-            right: 25px;
-            color: white;
-            font-size: 2.5rem;
-            cursor: pointer;
-            z-index: 100;
-            transition: all 0.2s;
-            opacity: 0.8;
-            line-height: 1;
-        }
-
-        .lightbox-close:hover {
+        .gallery-item:hover::before {
             opacity: 1;
-            transform: scale(1.1);
         }
 
-        .lightbox-swiper {
-            width: 100%;
-            height: 100%;
-            padding: 40px 0;
-        }
-
-        .lightbox-slide {
+        .gallery-overlay {
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(135deg, rgba(128, 70, 241, 0.85) 0%, rgba(19, 27, 49, 0.85) 100%);
             display: flex;
             align-items: center;
             justify-content: center;
-            height: 100%;
+            z-index: 2;
         }
 
-        .lightbox-slide img {
-            max-width: 100%;
-            max-height: 90vh;
-            width: auto;
-            height: auto;
-            object-fit: contain;
-            border-radius: 8px;
-            box-shadow: 0 20px 50px rgba(0,0,0,0.5);
+        .gallery-overlay-text {
+            text-align: center;
+            color: white;
         }
 
-        .stat-badge-v2 {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            padding: 16px 24px;
-            background: white;
-            border: 1px solid var(--border-color);
-            border-radius: 1.25rem;
-            font-weight: 600;
-            transition: all 0.2s;
+        .gallery-overlay i {
+            font-size: 2.5rem;
+            margin-bottom: 0.75rem;
+            display: block;
         }
 
-        .stat-badge-v2:hover {
-            border-color: var(--secondary-purple);
-            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.05);
+        .gallery-overlay p {
+            font-size: 1.125rem;
+            font-weight: 700;
+            letter-spacing: 0.5px;
         }
 
-        .stat-badge-v2 i {
-            color: var(--secondary-purple);
-            font-size: 1.5rem;
+        @media (max-width: 1024px) {
+            .property-gallery-grid {
+                display: none;
+            }
+
+            .mobile-gallery-slider {
+                display: block !important;
+            }
         }
 
-        .sidebar-v2 {
+        .mobile-gallery-slider {
+            display: none;
+            height: 450px;
+        }
+
+        .sidebar-sticky {
             position: sticky;
             top: 120px;
         }
 
-        .agent-box-v2 {
-            background: var(--primary-navy);
-            color: white;
-            border-radius: 2rem;
-            padding: 2.5rem;
-            margin-bottom: 2rem;
-            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
-        }
-
-        .amenity-item-v2 {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            padding: 14px 20px;
-            background: #F9FAFB;
-            border-radius: 1rem;
-            font-weight: 600;
-            border: 1px solid transparent;
-            transition: all 0.2s;
-        }
-
-        .amenity-item-v2:hover {
-            border-color: var(--secondary-purple);
-            background: white;
-            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
-        }
-
-        .confidential-badge {
-            background: #fee2e2;
-            color: #ef4444;
-            padding: 4px 12px;
-            border-radius: 6px;
-            font-weight: 800;
-            font-size: 10px;
-            text-transform: uppercase;
-            letter-spacing: 0.1em;
-            display: flex;
-            align-items: center;
-            gap: 6px;
+        #lightbox-viewer {
+            display: none;
+            position: fixed;
+            inset: 0;
+            z-index: 9999;
+            background: rgba(0, 0, 0, 0.95);
         }
     </style>
 @endpush
 
-@section('title', $listing->property_title . ' - Confidential Deal')
-
 @section('content')
-    <div class="pt-48 pb-12 bg-[#F9FAFB]">
+    <div class="bg-gray-50 pt-32 pb-24">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
 
-            <!-- Breadcrumb & Header -->
-            <div class="flex flex-col md:flex-row justify-between items-start mb-12 gap-6">
-                <div class="w-full md:w-auto">
-                    <div class="flex items-center gap-3 mb-6">
-                        <span class="confidential-badge">
-                            <i class="fa-solid fa-lock"></i> Confidential Deal
-                        </span>
-                        <span class="inline-flex items-center px-4 py-1.5 rounded-full text-xs font-black uppercase tracking-widest bg-secondary/10 text-secondary border border-secondary/20">
-                            {{ $listing->purpose }}
-                        </span>
+            <!-- Header -->
+            <div class="mb-8 bg-white p-8 rounded-3xl border border-gray-100 shadow-sm">
+                <div class="flex flex-col lg:flex-row justify-between items-start lg:items-end gap-8">
+                    <div class="flex-1">
+                        <nav class="flex mb-4 text-xs font-bold text-gray-400 gap-2">
+                            <a href="{{ route('home') }}" class="hover:text-secondary">Home</a>
+                            <span>/</span>
+                            <a href="{{ route('off-market-listings.index') }}" class="hover:text-secondary">Off-Market
+                                Vault</a>
+                            <span>/</span>
+                            <span class="text-gray-900">{{ $listing->property_reference_number }}</span>
+                        </nav>
+
+                        <div class="flex items-center gap-3 mb-4">
+                            <span class="bg-secondary text-white px-4 py-1 rounded-full text-xs font-bold">FOR
+                                {{ $listing->purpose }}</span>
+                            <span
+                                class="bg-gray-100 text-gray-600 px-4 py-1 rounded-full text-xs font-bold">{{ $listing->propertyType->title ?? 'Property' }}</span>
+                            <span class="bg-gray-800 text-white px-4 py-1 rounded-full text-xs font-bold">PRIVATE
+                                LISTING</span>
+                        </div>
+
+                        <h1 class="text-3xl md:text-5xl font-black text-primary mb-4">
+                            {{ $listing->property_title }}
+                        </h1>
+
+                        <div class="flex items-center gap-2 text-gray-500 font-medium">
+                            <i class="fa-solid fa-location-dot text-secondary"></i>
+                            <span>{{ $listing->address }}</span>
+                        </div>
                     </div>
-                    <h1 class="text-4xl md:text-6xl font-black text-primary tracking-tight leading-tight mb-4">
-                        {{ $listing->property_title }}
-                    </h1>
-                    <p class="text-gray-500 font-bold flex items-center gap-2 text-xl mt-2">
-                        <i class="fa-solid fa-map-marker-alt text-secondary"></i>
-                        {{ $listing->address ?? 'Location disclosed to qualified buyers only' }}
-                    </p>
-                </div>
-                <div class="text-left md:text-right bg-white p-6 rounded-2xl shadow-sm border border-gray-100 min-w-[200px] flex md:flex-col justify-between items-center md:items-end gap-4">
-                    <div class="flex flex-col items-start md:items-end">
-                        <div class="text-gray-400 text-xs font-black uppercase tracking-[0.2em] mb-1">Confidential Price</div>
-                        <div class="text-4xl font-black text-secondary">£{{ number_format($listing->price) }}</div>
+
+                    <div class="flex items-center gap-4">
+                        <div class="text-right">
+                            @if($listing->old_price && $listing->old_price > $listing->price)
+                                <span
+                                    class="text-sm text-gray-400 line-through block mb-1">£{{ number_format($listing->old_price) }}</span>
+                            @endif
+                            <span class="text-4xl font-black text-primary">£{{ number_format($listing->price) }}</span>
+                        </div>
+
+                        @if(auth()->check())
+                            <a href="{{ route('off-market-listing.brochure', $listing->id) }}"
+                                class="w-14 h-14 rounded-2xl border-2 border-secondary bg-secondary/10 flex items-center justify-center hover:bg-secondary hover:text-white text-secondary transition-all group"
+                                title="Download Brochure">
+                                <i class="fa-solid fa-download text-xl group-hover:scale-110 transition-transform"></i>
+                            </a>
+                        @else
+                            <a href="{{ route('login') }}"
+                                class="bg-secondary text-white px-4 py-3 rounded-xl text-sm font-bold hover:bg-secondary-dark transition-all shadow-lg shadow-secondary/20">
+                                Login for Download Brochure
+                            </a>
+                        @endif
+
+                        <button onclick="toggleFavorite(null, {{ $listing->id }}, this)"
+                            class="w-14 h-14 rounded-2xl border-2 border-gray-200 flex items-center justify-center hover:border-secondary transition-all {{ in_array($listing->id, $user_favorite_off_market_ids ?? []) ? 'text-rose-500' : 'text-gray-300' }}">
+                            <i
+                                class="{{ in_array($listing->id, $user_favorite_off_market_ids ?? []) ? 'fa-solid' : 'fa-regular' }} fa-heart text-xl"></i>
+                        </button>
                     </div>
-                    <button onclick="toggleFavorite(null, {{ $listing->id }}, this)" 
-                            class="w-14 h-14 rounded-2xl bg-gray-50 flex items-center justify-center transition-all hover:scale-110 {{ in_array($listing->id, $user_favorite_off_market_ids ?? []) ? 'text-red-500' : 'text-gray-300' }}">
-                        <i class="{{ in_array($listing->id, $user_favorite_off_market_ids ?? []) ? 'fa-solid' : 'fa-regular' }} fa-heart text-2xl"></i>
-                    </button>
                 </div>
             </div>
 
-            <!-- Gallery Container -->
-            @php 
-                $gallery = is_array($listing->gallery) ? $listing->gallery : json_decode($listing->gallery, true) ?? []; 
-            @endphp
-            <div class="gallery-container">
-                @if(count($gallery) > 0 || $listing->thumbnail)
-                    <!-- Desktop Grid -->
-                    <div class="gallery-grid-v2">
-                        <div class="gallery-main gallery-item cursor-pointer" onclick="openLightbox(0)">
-                            <img src="{{ $listing->thumbnail ? asset('storage/' . $listing->thumbnail) : (isset($gallery[0]) ? asset('storage/' . $gallery[0]) : asset('assets/img/all-images/hero/1.jpg')) }}" alt="Main">
+            <!-- Gallery -->
+            <div class="mb-12">
+                @php $gallery = is_array($listing->gallery) ? $listing->gallery : json_decode($listing->gallery, true) ?? []; @endphp
+
+                <div class="property-gallery-grid ">
+                    <div class="gallery-item row-span-2" onclick="openLightbox(0)">
+                        <img src="{{ $listing->thumbnail ? asset('storage/' . $listing->thumbnail) : asset('assets/img/all-images/hero/1.jpg') }}"
+                            alt="Main Property Image">
+                    </div>
+                    <div class="gallery-item" onclick="openLightbox(1)">
+                        <img src="{{ isset($gallery[0]) ? asset('storage/' . $gallery[0]) : asset('assets/img/all-images/hero/1.jpg') }}"
+                            alt="Gallery Image 1">
+                    </div>
+                    <div class="gallery-item" onclick="openLightbox(2)">
+                        <img src="{{ isset($gallery[1]) ? asset('storage/' . $gallery[1]) : asset('assets/img/all-images/hero/1.jpg') }}"
+                            alt="Gallery Image 2">
+                        @if(count($gallery) > 2)
+                            <div class="gallery-overlay">
+                                <div class="gallery-overlay-text">
+                                    <i class="fa-solid fa-images"></i>
+                                    <p>+{{ count($gallery) - 2 }} More Photos</p>
+                                </div>
+                            </div>
+                        @endif
+                    </div>
+                </div>
+
+                <div class="mobile-gallery-slider rounded-3xl overflow-hidden shadow-lg">
+                    <div class="swiper mobile-swiper h-full">
+                        <div class="swiper-wrapper">
+                            <div class="swiper-slide"><img src="{{ asset('storage/' . $listing->thumbnail) }}"
+                                    class="w-full h-full object-cover"></div>
+                            @foreach($gallery as $img)
+                                <div class="swiper-slide"><img src="{{ asset('storage/' . $img) }}"
+                                        class="w-full h-full object-cover"></div>
+                            @endforeach
                         </div>
-                        <div class="gallery-item cursor-pointer" onclick="openLightbox(1)">
-                            <img src="{{ isset($gallery[0]) ? asset('storage/' . $gallery[0]) : asset('assets/img/all-images/hero/1.jpg') }}" alt="G1">
+                        <div class="swiper-pagination"></div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="flex flex-col lg:flex-row gap-8">
+                <!-- Main Content -->
+                <div class="w-full lg:w-2/3 space-y-8">
+
+                    <!-- Quick Stats -->
+                    <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+                        <div class="bg-white p-6 rounded-2xl border border-gray-100 text-center">
+                            <i class="fa-solid fa-bed text-2xl text-secondary mb-2"></i>
+                            <p class="text-2xl font-black text-primary">{{ $listing->bedrooms }}</p>
+                            <p class="text-xs text-gray-500 font-medium">Bedrooms</p>
                         </div>
-                        <div class="gallery-item relative cursor-pointer" onclick="openLightbox(2)">
-                            <img src="{{ isset($gallery[1]) ? asset('storage/' . $gallery[1]) : asset('assets/img/all-images/hero/1.jpg') }}" alt="G2">
-                            @if(count($gallery) > 2)
-                                <div class="gallery-overlay-btn" onclick="openLightbox(0); event.stopPropagation();">
-                                    <i class="fa-solid fa-camera mr-2"></i> Show all photos
+                        <div class="bg-white p-6 rounded-2xl border border-gray-100 text-center">
+                            <i class="fa-solid fa-bath text-2xl text-secondary mb-2"></i>
+                            <p class="text-2xl font-black text-primary">{{ $listing->bathrooms }}</p>
+                            <p class="text-xs text-gray-500 font-medium">Bathrooms</p>
+                        </div>
+                        <div class="bg-white p-6 rounded-2xl border border-gray-100 text-center">
+                            <i class="fa-solid fa-vector-square text-2xl text-secondary mb-2"></i>
+                            <p class="text-2xl font-black text-primary">{{ $listing->area_size ?? 'N/A' }}</p>
+                            <p class="text-xs text-gray-500 font-medium">Sq Ft</p>
+                        </div>
+                        <div class="bg-white p-6 rounded-2xl border border-gray-100 text-center">
+                            <i class="fa-solid fa-stairs text-2xl text-secondary mb-2"></i>
+                            <p class="text-2xl font-black text-primary">{{ $listing->floors_count ?? '1' }}</p>
+                            <p class="text-xs text-gray-500 font-medium">Floors</p>
+                        </div>
+                    </div>
+
+                    <!-- Property Details -->
+                    <div class="bg-white p-8 rounded-3xl border border-gray-100">
+                        <h2 class="text-2xl font-black text-primary mb-6">Property Details</h2>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div class="flex justify-between py-3 border-b border-gray-100">
+                                <span class="text-gray-600 font-medium">Property ID</span>
+                                <span class="font-bold text-primary">{{ $listing->property_reference_number }}</span>
+                            </div>
+                            <div class="flex justify-between py-3 border-b border-gray-100">
+                                <span class="text-gray-600 font-medium">Ownership</span>
+                                <span
+                                    class="font-bold text-primary">{{ $listing->ownershipStatus->title ?? 'Freehold' }}</span>
+                            </div>
+                            @if($listing->epc_rating)
+                                <div class="flex justify-between py-3 border-b border-gray-100">
+                                    <span class="text-gray-600 font-medium">EPC Rating</span>
+                                    <span
+                                        class="px-3 py-1 bg-emerald-500 text-white rounded-lg text-sm font-bold">{{ $listing->epc_rating }}</span>
+                                </div>
+                            @endif
+                            @if($listing->council_tax_band)
+                                <div class="flex justify-between py-3 border-b border-gray-100">
+                                    <span class="text-gray-600 font-medium">Council Tax</span>
+                                    <span class="font-bold text-primary">Band {{ $listing->council_tax_band }}</span>
                                 </div>
                             @endif
                         </div>
                     </div>
 
-                    <!-- Mobile Slider -->
-                    <div class="mobile-only-gallery">
-                        <div class="swiper property-mobile-slider h-full">
-                            <div class="swiper-wrapper">
-                                <div class="swiper-slide"><img src="{{ $listing->thumbnail ? asset('storage/' . $listing->thumbnail) : (isset($gallery[0]) ? asset('storage/' . $gallery[0]) : asset('assets/img/all-images/hero/1.jpg')) }}" class="w-full h-full object-cover"></div>
-                                @foreach($gallery as $img)
-                                    <div class="swiper-slide"><img src="{{ asset('storage/' . $img) }}" class="w-full h-full object-cover"></div>
-                                @endforeach
-                            </div>
-                            <div class="swiper-pagination"></div>
-                        </div>
-                    </div>
-                @else
-                    <div class="h-64 bg-gray-100 flex flex-col items-center justify-center rounded-3xl">
-                        <i class="fa-solid fa-lock text-4xl text-gray-300 mb-4"></i>
-                        <p class="text-gray-400 font-bold uppercase tracking-widest text-xs">Visuals Confidential</p>
-                    </div>
-                @endif
-            </div>
-
-            <div class="flex flex-col lg:flex-row gap-8">
-                <!-- Left Content Area -->
-                <div class="w-full lg:w-2/3">
-
-                    <!-- Quick Stats -->
-                    <div class="grid grid-cols-2 md:grid-cols-3 gap-4 mb-8">
-                        <div class="stat-badge-v2">
-                            <i class="fa-solid fa-bed"></i>
-                            <div>
-                                <span class="block text-xl font-bold">{{ $listing->bedrooms }}</span>
-                                <span class="text-xs text-gray-400 uppercase font-bold">Bedrooms</span>
-                            </div>
-                        </div>
-                        <div class="stat-badge-v2">
-                            <i class="fa-solid fa-bath"></i>
-                            <div>
-                                <span class="block text-xl font-bold">{{ $listing->bathrooms }}</span>
-                                <span class="text-xs text-gray-400 uppercase font-bold">Bathrooms</span>
-                            </div>
-                        </div>
-                        <div class="stat-badge-v2">
-                            <i class="fa-solid fa-vector-square"></i>
-                            <div>
-                                <span class="block text-xl font-bold">{{ $listing->area_size ?? 'N/A' }}</span>
-                                <span class="text-xs text-gray-400 uppercase font-bold">Area Size</span>
-                            </div>
-                        </div>
-                    </div>
-
                     <!-- Description -->
-                    <div class="premium-card-v2">
-                        <h2 class="text-2xl font-extrabold text-primary mb-6">Confidential Overview</h2>
-                        <div class="prose max-w-none text-gray-600 leading-relaxed font-medium">
-                            {!! $listing->description !!}
-                        </div>
-                    </div>
-
-                    <!-- Details Table -->
-                    <div class="premium-card-v2">
-                        <h2 class="text-2xl font-extrabold text-primary mb-8 flex items-center gap-3">
-                            <span class="w-2 h-8 bg-secondary rounded-full"></span>
-                            Key Details
-                        </h2>
-                        
-                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
-                            <div class="flex items-center gap-4 p-4 rounded-2xl bg-gray-50 border border-gray-100">
-                                <div class="w-12 h-12 rounded-xl bg-white shadow-sm flex items-center justify-center text-secondary">
-                                    <i class="fa-solid fa-hashtag"></i>
-                                </div>
-                                <div class="flex flex-col">
-                                    <span class="text-[10px] font-black uppercase tracking-widest text-gray-400">Reference</span>
-                                    <span class="text-sm font-bold text-primary">{{ $listing->property_reference_number ?? 'CONF-'.$listing->id }}</span>
-                                </div>
+                    <div class="bg-white p-8 rounded-3xl border border-gray-100" x-data="{ expanded: false }">
+                        <h2 class="text-2xl font-black text-primary mb-6">Description</h2>
+                        <div class="prose prose-slate max-w-none text-gray-600">
+                            <div x-show="!expanded">
+                                {{ \Illuminate\Support\Str::limit(strip_tags($listing->description), 200) }}
                             </div>
-                            <div class="flex items-center gap-4 p-4 rounded-2xl bg-gray-50 border border-gray-100">
-                                <div class="w-12 h-12 rounded-xl bg-white shadow-sm flex items-center justify-center text-secondary">
-                                    <i class="fa-solid fa-house-chimney"></i>
-                                </div>
-                                <div class="flex flex-col">
-                                    <span class="text-[10px] font-black uppercase tracking-widest text-gray-400">Type</span>
-                                    <span class="text-sm font-bold text-primary">{{ $listing->propertyType->title ?? 'Apartment' }}</span>
-                                </div>
+                            <div x-show="expanded" x-cloak>
+                                {!! $listing->description !!}
                             </div>
-                            <div class="flex items-center gap-4 p-4 rounded-2xl bg-gray-50 border border-gray-100">
-                                <div class="w-12 h-12 rounded-xl bg-white shadow-sm flex items-center justify-center text-secondary">
-                                    <i class="fa-solid fa-bullseye"></i>
-                                </div>
-                                <div class="flex flex-col">
-                                    <span class="text-[10px] font-black uppercase tracking-widest text-gray-400">Purpose</span>
-                                    <span class="text-sm font-bold text-primary">{{ $listing->purpose }}</span>
-                                </div>
-                            </div>
-                            <div class="flex items-center gap-4 p-4 rounded-2xl bg-gray-50 border border-gray-100">
-                                <div class="w-12 h-12 rounded-xl bg-white shadow-sm flex items-center justify-center text-green-500">
-                                    <i class="fa-solid fa-lock"></i>
-                                </div>
-                                <div class="flex flex-col">
-                                    <span class="text-[10px] font-black uppercase tracking-widest text-gray-400">Market Status</span>
-                                    <span class="text-sm font-bold text-green-600">Off-Market Exclusive</span>
-                                </div>
-                            </div>
+                            
+                            @if(strlen(strip_tags($listing->description)) > 200)
+                                <button @click="expanded = !expanded" class="text-secondary font-bold hover:underline mt-4">
+                                    <span x-text="expanded ? 'See Less' : 'See More'"></span>
+                                </button>
+                            @endif
                         </div>
                     </div>
 
                     <!-- Features -->
                     @if($listing->features->count() > 0)
-                        <div class="premium-card-v2">
-                            <h2 class="text-2xl font-extrabold text-primary mb-6">Amenities & Features</h2>
-                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div class="bg-white p-8 rounded-3xl border border-gray-100">
+                            <h2 class="text-2xl font-black text-primary mb-6">Key Features</h2>
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
                                 @foreach($listing->features as $feature)
-                                    <div class="amenity-item-v2">
-                                        <i class="fa-solid fa-check-double text-secondary"></i>
-                                        <span>{{ $feature->title ?? $feature->name }}</span>
+                                    <div class="flex items-center gap-3 p-3 bg-gray-50 rounded-xl">
+                                        <i class="fa-solid fa-check-circle text-secondary"></i>
+                                        <span class="text-sm font-medium text-gray-700">{{ $feature->title }}</span>
                                     </div>
                                 @endforeach
                             </div>
                         </div>
                     @endif
+
+                    <!-- Video & Map -->
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        @if($listing->video)
+                            <div class="bg-white p-6 rounded-3xl border border-gray-100">
+                                <h3 class="text-lg font-black text-primary mb-4">Video Tour</h3>
+                                <div class="aspect-video rounded-2xl overflow-hidden bg-black">
+                                    @if(Str::startsWith($listing->video, ['http', 'https']))
+                                        <iframe src="{{ $listing->video }}" class="w-full h-full" frameborder="0"
+                                            allowfullscreen></iframe>
+                                    @else
+                                        <video controls class="w-full h-full">
+                                            <source src="{{ asset('storage/' . $listing->video) }}" type="video/mp4">
+                                        </video>
+                                    @endif
+                                </div>
+                            </div>
+                        @endif
+
+                        @if($listing->latitude && $listing->longitude)
+                            <div class="bg-white p-6 rounded-3xl border border-gray-100">
+                                <h3 class="text-lg font-black text-primary mb-4">Location</h3>
+                                <div id="property-map" class="aspect-video rounded-2xl overflow-hidden bg-gray-100"></div>
+                            </div>
+                        @endif
+                    </div>
                 </div>
 
                 <!-- Sidebar -->
                 <div class="w-full lg:w-1/3">
-                    <div class="sidebar-v2">
-                        <div class="agent-box-v2 shadow-2xl">
-                            <h3 class="text-xl font-extrabold mb-6">Interested in this Deal?</h3>
-                            <p class="text-white/70 text-sm mb-8 leading-relaxed">This property is part of our off-market portfolio. Contact us for the full prospectus and NDA.</p>
-                            
-                            <div class="space-y-4">
-                                <a href="https://wa.me/{{ $listing->user->phone_number ?? '447000000000' }}?text=Interested%20in%20Confidential%20Deal%20{{ $listing->id }}"
-                                    class="py-4 bg-[#25D366] text-white font-black rounded-xl flex items-center justify-center gap-3 text-sm tracking-wider uppercase shadow-xl">
-                                    <i class="fab fa-whatsapp text-lg"></i> WhatsApp Agent
-                                </a>
-                                <a href="mailto:{{ $listing->user->email ?? 'info@findauk.com' }}"
-                                    class="py-4 bg-white text-primary font-black rounded-xl flex items-center justify-center gap-3 text-sm tracking-wider uppercase shadow-md text-center">
-                                    <i class="fa-solid fa-envelope text-lg"></i> Send Email
-                                </a>
+                    <div class="sidebar-sticky space-y-6">
+
+                        <!-- Contact Agent -->
+                        <div class="bg-primary p-8 rounded-3xl text-white">
+                            <div class="flex items-center gap-4 mb-6">
+                                <div
+                                    class="w-16 h-16 rounded-2xl bg-secondary flex items-center justify-center text-2xl font-black">
+                                    {{ substr($listing->user->name ?? 'A', 0, 1) }}
+                                </div>
+                                <div>
+                                    <h3 class="text-xl font-black">{{ $listing->user->name ?? 'Agent' }}</h3>
+                                    <p class="text-sm text-gray-300">Private Client Advisor</p>
+                                </div>
                             </div>
 
-                            <hr class="my-8 border-white/10">
-
-                            @if(session('success'))
-                                <div class="bg-green-500/20 border border-green-500/50 text-green-200 p-4 rounded-xl mb-6 text-sm font-bold">
-                                    {{ session('success') }}
-                                </div>
-                            @endif
-
-                            <form action="{{ route('off-market-listing.inquiry', $listing->id) }}" method="POST" class="space-y-4">
+                            <form action="{{ route('off-market-listing.inquiry', $listing->id) }}" method="POST"
+                                class="space-y-4">
                                 @csrf
-                                <input type="text" name="name" placeholder="Full Name" required class="w-full bg-white/10 border border-white/10 rounded-xl p-4 text-sm text-white focus:ring-secondary outline-none">
-                                <input type="email" name="email" placeholder="Email Address" required class="w-full bg-white/10 border border-white/10 rounded-xl p-4 text-sm text-white focus:ring-secondary outline-none">
-                                <input type="tel" name="phone" placeholder="Phone Number" required class="w-full bg-white/10 border border-white/10 rounded-xl p-4 text-sm text-white focus:ring-secondary outline-none">
-                                <textarea name="message" rows="3" placeholder="Explain your interest..." required class="w-full bg-white/10 border border-white/10 rounded-xl p-4 text-sm text-white focus:ring-secondary outline-none"></textarea>
-                                <button type="submit" class="w-full py-4 bg-secondary text-white font-black rounded-xl hover:bg-white hover:text-primary transition-all uppercase tracking-[0.2em] text-[10px] shadow-lg">Request Prospectus</button>
+                                <input type="text" name="name" placeholder="Your Name" required
+                                    value="{{ auth()->check() ? auth()->user()->name : '' }}"
+                                    class="w-full bg-white/10 border border-white/20 rounded-xl p-3 text-white placeholder-gray-400 focus:ring-2 focus:ring-secondary outline-none">
+                                <input type="text" name="phone" placeholder="Phone Number" required
+                                    value="{{ auth()->check() ? auth()->user()->phone_number : '' }}"
+                                    class="w-full bg-white/10 border border-white/20 rounded-xl p-3 text-white placeholder-gray-400 focus:ring-2 focus:ring-secondary outline-none">
+                                <input type="email" name="email" placeholder="Email Address" required
+                                    value="{{ auth()->check() ? auth()->user()->email : '' }}"
+                                    class="w-full bg-white/10 border border-white/20 rounded-xl p-3 text-white placeholder-gray-400 focus:ring-2 focus:ring-secondary outline-none">
+                                <textarea name="message" rows="3"
+                                    class="w-full bg-white/10 border border-white/20 rounded-xl p-3 text-white placeholder-gray-400 focus:ring-2 focus:ring-secondary outline-none resize-none">I'm interested in this off-market opportunity {{ $listing->property_reference_number }}</textarea>
+
+                                <button type="submit"
+                                    class="w-full py-4 bg-secondary hover:bg-secondary/90 text-white font-bold rounded-xl transition-all">
+                                    Send Inquiry
+                                </button>
                             </form>
+
+                            <div class="mt-6 grid grid-cols-2 gap-3">
+                                <a href="https://wa.me/{{ auth()->check() && auth()->user()->phone_number ? auth()->user()->phone_number : ($listing->user->phone_number ?? '44') }}"
+                                    class="py-3 bg-emerald-500 rounded-xl flex items-center justify-center gap-2 text-sm font-bold hover:bg-emerald-600 transition-all">
+                                    <i class="fab fa-whatsapp"></i> WhatsApp
+                                </a>
+                                <a href="tel:{{ auth()->check() && auth()->user()->phone_number ? auth()->user()->phone_number : ($listing->user->phone_number ?? '') }}"
+                                    class="py-3 bg-white/10 rounded-xl flex items-center justify-center gap-2 text-sm font-bold border border-white/20 hover:bg-white/20 transition-all">
+                                    <i class="fa-solid fa-phone"></i> Call
+                                </a>
+                            </div>
                         </div>
 
-                        <!-- Similar Off Market Properties -->
+                        <!-- Similar Properties -->
                         @if($similarProperties->count() > 0)
-                            <div class="bg-white rounded-3xl p-6 border border-gray-100 shadow-sm">
-                                <h3 class="text-xl font-black text-primary mb-6">More Off-Market</h3>
-                                <div class="space-y-6">
+                            <div class="bg-white p-6 rounded-3xl border border-gray-100">
+                                <h3 class="text-lg font-black text-primary mb-4">Similar Opportunities</h3>
+                                <div class="space-y-4">
                                     @foreach($similarProperties as $s)
-                                        <a href="{{ route('off-market-listing.show', $s->id) }}" class="flex gap-4 group">
-                                            <div class="w-20 h-20 rounded-2xl overflow-hidden flex-shrink-0 bg-gray-50 border border-gray-100">
-                                                <img src="{{ $s->thumbnail ? asset('storage/' . $s->thumbnail) : asset('assets/img/all-images/hero/1.jpg') }}" class="w-full h-full object-cover group-hover:scale-110 transition-transform">
+                                        <a href="{{ url('/off-market-property/' . $s->id) }}" class="flex gap-4 group">
+                                            <div class="w-20 h-20 rounded-xl overflow-hidden flex-shrink-0">
+                                                <img src="{{ $s->thumbnail ? asset('storage/' . $s->thumbnail) : asset('assets/img/all-images/hero/1.jpg') }}"
+                                                    class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500">
                                             </div>
-                                            <div class="flex flex-col justify-center">
-                                                <h4 class="text-sm font-bold text-gray-800 line-clamp-1 group-hover:text-secondary">{{ $s->property_title }}</h4>
-                                                <div class="text-secondary font-black">£{{ number_format($s->price) }}</div>
+                                            <div class="flex-1 min-w-0">
+                                                <p
+                                                    class="text-sm font-bold text-primary line-clamp-2 group-hover:text-secondary transition-colors">
+                                                    {{ $s->property_title }}</p>
+                                                <p class="text-lg font-black text-secondary mt-1">£{{ number_format($s->price) }}
+                                                </p>
                                             </div>
                                         </a>
                                     @endforeach
@@ -446,61 +408,91 @@
         </div>
     </div>
 
-    <!-- Gallery Lightbox Modal -->
-    <div id="galleryLightbox">
-        <span class="lightbox-close" onclick="closeLightbox()">&times;</span>
-        <div class="swiper lightbox-swiper">
+    <!-- Lightbox -->
+    <div id="lightbox-viewer">
+        <button
+            class="absolute top-6 right-6 w-12 h-12 bg-white/10 hover:bg-white/20 rounded-full flex items-center justify-center text-white z-50"
+            onclick="closeLightbox()">
+            <i class="fa-solid fa-xmark text-xl"></i>
+        </button>
+        <div class="swiper lightbox-swiper h-full">
             <div class="swiper-wrapper">
-                <div class="swiper-slide lightbox-slide">
-                    <img src="{{ $listing->thumbnail ? asset('storage/' . $listing->thumbnail) : (isset($gallery[0]) ? asset('storage/' . $gallery[0]) : asset('assets/img/all-images/hero/1.jpg')) }}" alt="Main">
+                <div class="swiper-slide flex items-center justify-center p-8">
+                    <img src="{{ $listing->thumbnail ? asset('storage/' . $listing->thumbnail) : asset('assets/img/all-images/hero/1.jpg') }}"
+                        class="max-h-full max-w-full rounded-2xl">
                 </div>
                 @foreach($gallery as $img)
-                    <div class="swiper-slide lightbox-slide">
-                        <img src="{{ asset('storage/' . $img) }}" alt="Gallery Image">
+                    <div class="swiper-slide flex items-center justify-center p-8">
+                        <img src="{{ asset('storage/' . $img) }}" class="max-h-full max-w-full rounded-2xl">
                     </div>
                 @endforeach
             </div>
-            <div class="swiper-button-next"></div>
-            <div class="swiper-button-prev"></div>
-            <div class="swiper-pagination !text-white !bottom-10"></div>
+            <div class="swiper-button-next !text-white"></div>
+            <div class="swiper-button-prev !text-white"></div>
+            <div class="swiper-pagination !text-white"></div>
         </div>
     </div>
 @endsection
 
 @push('scripts')
     <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
+    <script src="https://maps.googleapis.com/maps/api/js?key={{ config('services.google.maps_api_key') }}&callback=initMap"
+        async defer></script>
     <script>
         let lightboxSwiper;
 
-        document.addEventListener('DOMContentLoaded', function () {
-            // Mobile Slider
-            if (document.querySelector('.property-mobile-slider')) {
-                new Swiper(".property-mobile-slider", {
-                    loop: true,
-                    pagination: { el: ".swiper-pagination", clickable: true },
-                    autoplay: { delay: 4000 }
-                });
+        function initMap() {
+            const mapEl = document.getElementById("property-map");
+            if (!mapEl) return;
+
+            const lat = parseFloat("{{ $listing->latitude }}");
+            const lng = parseFloat("{{ $listing->longitude }}");
+
+            if (!lat || !lng || isNaN(lat) || isNaN(lng)) {
+                mapEl.innerHTML = '<div class="h-full flex items-center justify-center text-gray-400"><i class="fa-solid fa-map-marked-alt text-4xl"></i></div>';
+                return;
             }
 
-            // Lightbox Swiper
+            const position = { lat, lng };
+            const map = new google.maps.Map(mapEl, {
+                zoom: 15,
+                center: position,
+                disableDefaultUI: true,
+                zoomControl: true
+            });
+
+            new google.maps.Marker({
+                position: position,
+                map: map,
+                icon: {
+                    path: google.maps.SymbolPath.CIRCLE,
+                    scale: 10,
+                    fillColor: "#8046F1",
+                    fillOpacity: 1,
+                    strokeWeight: 4,
+                    strokeColor: "white"
+                }
+            });
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            new Swiper(".mobile-swiper", {
+                loop: true,
+                pagination: { el: ".swiper-pagination", clickable: true }
+            });
+
             lightboxSwiper = new Swiper(".lightbox-swiper", {
                 loop: true,
-                spaceBetween: 50,
                 navigation: {
                     nextEl: ".swiper-button-next",
-                    prevEl: ".swiper-button-prev",
+                    prevEl: ".swiper-button-prev"
                 },
-                pagination: {
-                    el: ".swiper-pagination",
-                    type: "fraction",
-                }
+                pagination: { el: ".swiper-pagination", type: "fraction" }
             });
         });
 
         function openLightbox(index) {
-            const modal = document.getElementById('galleryLightbox');
-            if(!modal) return;
-            modal.style.display = 'block';
+            document.getElementById('lightbox-viewer').style.display = 'block';
             document.body.style.overflow = 'hidden';
             if (lightboxSwiper) {
                 lightboxSwiper.update();
@@ -509,43 +501,46 @@
         }
 
         function closeLightbox() {
-            document.getElementById('galleryLightbox').style.display = 'none';
+            document.getElementById('lightbox-viewer').style.display = 'none';
             document.body.style.overflow = 'auto';
         }
 
-        document.addEventListener('keydown', function (e) {
-            if (e.key === "Escape") closeLightbox();
-        });
-
-
-        function toggleFavorite(listingId, offMarketId, btn) {
+        async function toggleFavorite(listingId, offMarketId, btn) {
             @if(!auth()->check())
                 window.location.href = "{{ route('login') }}";
                 return;
             @endif
 
-            const data = {
-                _token: '{{ csrf_token() }}'
-            };
-            if (listingId) data.listing_id = listingId;
-            if (offMarketId) data.off_market_listing_id = offMarketId;
+                try {
+                const response = await fetch('{{ route('favorites.toggle') }}', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                    },
+                    body: JSON.stringify({
+                        listing_id: listingId,
+                        off_market_listing_id: offMarketId
+                    })
+                });
 
-            const icon = $(btn).find('i');
+                const data = await response.json();
+                const icon = btn.querySelector('i');
 
-            $.ajax({
-                url: '{{ route('favorites.toggle') }}',
-                type: 'POST',
-                data: data,
-                success: function(res) {
-                    if (res.status === 'added') {
-                        $(btn).removeClass('text-gray-300').addClass('text-red-500');
-                        icon.removeClass('fa-regular').addClass('fa-solid');
-                    } else {
-                        $(btn).removeClass('text-red-500').addClass('text-gray-300');
-                        icon.removeClass('fa-solid').addClass('fa-regular');
-                    }
+                if (data.status === 'added') {
+                    btn.classList.add('text-rose-500');
+                    btn.classList.remove('text-gray-300');
+                    icon.classList.remove('fa-regular');
+                    icon.classList.add('fa-solid');
+                } else {
+                    btn.classList.remove('text-rose-500');
+                    btn.classList.add('text-gray-300');
+                    icon.classList.remove('fa-solid');
+                    icon.classList.add('fa-regular');
                 }
-            });
+            } catch (error) {
+                console.error('Error:', error);
+            }
         }
     </script>
 @endpush

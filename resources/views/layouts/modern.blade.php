@@ -66,6 +66,8 @@
                         <a href="{{ route('off-market-listings.index') }}"
                             class="inline-flex items-center px-1 pt-1 border-b-2 {{ request()->routeIs('off-market-listings.index') ? 'border-secondary text-primary' : 'border-transparent text-gray-500' }} text-sm font-medium leading-5 hover:text-primary hover:border-secondary transition duration-150 ease-in-out">Off
                             Market</a>
+                        <a href="{{ route('agents.index') }}"
+                            class="inline-flex items-center px-1 pt-1 border-b-2 {{ request()->routeIs('agents.*') ? 'border-secondary text-primary' : 'border-transparent text-gray-500' }} text-sm font-medium leading-5 hover:text-primary hover:border-secondary transition duration-150 ease-in-out">Agents</a>
                         <a href="{{ route('blog.list') }}"
                             class="inline-flex items-center px-1 pt-1 border-b-2 {{ request()->routeIs('blog.*') ? 'border-secondary text-primary' : 'border-transparent text-gray-500' }} text-sm font-medium leading-5 hover:text-primary hover:border-secondary transition duration-150 ease-in-out">News</a>
                         
@@ -183,6 +185,8 @@
                 <a href="{{ route('off-market-listings.index') }}"
                     class="block pl-3 pr-4 py-3 rounded-lg text-base font-medium {{ request()->routeIs('off-market-listings.index') ? 'text-primary bg-gray-50 border-secondary' : 'text-gray-600 border-transparent' }} hover:text-primary hover:bg-gray-50 transition duration-150 ease-in-out border-l-4">Off
                     Market</a>
+                <a href="{{ route('agents.index') }}"
+                    class="block pl-3 pr-4 py-3 rounded-lg text-base font-medium {{ request()->routeIs('agents.*') ? 'text-primary bg-gray-50 border-secondary' : 'text-gray-600 border-transparent' }} hover:text-primary hover:bg-gray-50 transition duration-150 ease-in-out border-l-4">Agents</a>
                 <a href="{{ route('blog.list') }}"
                     class="block pl-3 pr-4 py-3 rounded-lg text-base font-medium {{ request()->routeIs('blog.list') ? 'text-primary bg-gray-50 border-secondary' : 'text-gray-600 border-transparent' }} hover:text-primary hover:bg-gray-50 transition duration-150 ease-in-out border-l-4">News</a>
                 <a href="{{ route('contact.create') }}"

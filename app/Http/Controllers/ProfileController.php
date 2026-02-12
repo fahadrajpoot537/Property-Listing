@@ -57,4 +57,43 @@ class ProfileController extends Controller
 
         return Redirect::to('/');
     }
+
+    /**
+     * Store user document and auto-approve if unique.
+     */
+    public function storeDocument(Request $request): RedirectResponse
+    {
+        $request->validate([
+            'document' => 'required|file|mimes:jpeg,png,jpg,pdf|max:5120', // 5MB max
+            'type' => 'required|string',
+        ]);
+
+        $file = $request->file('document');
+
+        // Calculate hash to ensure uniqueness across the system
+        $hash = hash_file('sha256', $file->getRealPath());
+
+        // Check if hash exists anywhere in the system
+        if (\App\Models\UserDocument::where('file_hash', $hash)->exists()) {
+            return back()->with('error', 'This document is already in our system. Duplicate submissions are rejected.');
+        }
+
+        $path = $file->store('user_documents', 'public');
+
+        $request->user()->documents()->create([
+            'type' => $request->input('type'),
+            'file_path' => $path,
+            'file_hash' => $hash,
+            'status' => 'approved',
+        ]);
+
+        // Auto-approve user status upon successful unique document upload
+        $user = $request->user();
+        if ($user->status !== 'document_approved') {
+            $user->status = 'document_approved';
+            $user->save();
+        }
+
+        return back()->with('status', 'document-uploaded');
+    }
 }

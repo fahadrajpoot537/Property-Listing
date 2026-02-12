@@ -74,7 +74,7 @@
 
               /* Select2 Premium Styling (Zoopla Purple Accent) */
               .select2-container .select2-selection--single {
-                height: 54px !important;
+                height: 56px !important;
                 background-color: #f9fafb;
                 border: 1px solid #e5e7eb;
                 border-radius: 0.75rem;
@@ -84,7 +84,7 @@
               }
 
               .select2-container--default .select2-selection--single .select2-selection__rendered {
-                line-height: 54px !important;
+                line-height: 56px !important;
                 padding-left: 2.5rem !important;
                 color: #111827;
                 font-weight: 500;
@@ -136,7 +136,7 @@
               <input type="hidden" name="lat" id="search-lat">
               <input type="hidden" name="lng" id="search-lng">
 
-              <!-- Main Row: Location & Search Button -->
+              <!-- Main Row: Location, Radius & Search Button -->
               <div class="flex flex-col md:flex-row gap-3 mb-6">
                 <div class="relative flex-grow group">
                   <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none z-10">
@@ -145,16 +145,9 @@
                   <input type="text" name="location" id="search-location" placeholder="e.g. 'London', 'SW1A' or 'Oxford'"
                     class="w-full pl-12 pr-4 py-4 text-lg font-medium text-gray-900 bg-gray-50 border border-gray-200 rounded-xl focus:bg-white focus:ring-4 focus:ring-secondary/10 focus:border-secondary transition-all h-[56px] placeholder-gray-400">
                 </div>
-                <button type="submit"
-                  class="md:w-48 py-4 bg-secondary hover:bg-secondary-dark text-white font-extrabold text-lg rounded-xl shadow-lg shadow-secondary/20 transition-all transform hover:-translate-y-0.5 flex items-center justify-center gap-2 h-[56px]">
-                  Search
-                </button>
-              </div>
 
-              <!-- Filters Grid -->
-              <div class="grid grid-cols-2 lg:grid-cols-6 gap-3">
-                <div class="relative">
-                  <div class="filter-icon-wrapper"><i class="fa-solid fa-bullseye"></i></div>
+                <!-- Radius Select (Moved here) -->
+                <div class="w-full md:w-48">
                   <select name="radius" class="select2-filter w-full" data-placeholder="Radius">
                     <option value="0.5">This area only</option>
                     <option value="1">+ 1 mile</option>
@@ -168,6 +161,16 @@
                     <option value="50">+ 50 miles</option>
                   </select>
                 </div>
+
+                <button type="submit"
+                  class="md:w-48 py-4 bg-secondary hover:bg-secondary-dark text-white font-extrabold text-lg rounded-xl shadow-lg shadow-secondary/20 transition-all transform hover:-translate-y-0.5 flex items-center justify-center gap-2 h-[56px]">
+                  Search
+                </button>
+              </div>
+
+              <!-- Filters Grid -->
+              <div class="grid grid-cols-2 lg:grid-cols-6 gap-3">
+                <!-- Property Type (Moved from 2nd position to 1st) -->
                 <div class="relative">
                   <div class="filter-icon-wrapper"><i class="fa-solid fa-house"></i></div>
                   <select name="property_type" class="select2-filter w-full" data-placeholder="Property type">
@@ -177,6 +180,18 @@
                     @endforeach
                   </select>
                 </div>
+
+                <!-- Unit Type (New) -->
+                <div class="relative">
+                  <div class="filter-icon-wrapper"><i class="fa-solid fa-building"></i></div>
+                  <select name="unit_type" class="select2-filter w-full" data-placeholder="Unit type">
+                    <option value="">Any Unit</option>
+                    @foreach(\App\Models\UnitType::all() as $type)
+                      <option value="{{ $type->id }}">{{ $type->title }}</option>
+                    @endforeach
+                  </select>
+                </div>
+
                 <div class="relative">
                   <div class="filter-icon-wrapper"><i class="fa-solid fa-sterling-sign"></i></div>
                   <select name="min_price" class="select2-filter w-full" data-placeholder="Min price">
@@ -470,7 +485,7 @@
           <span class="w-1.5 h-1.5 bg-secondary rounded-full animate-pulse"></span> Partnership
         </div>
         <h2 class="text-3xl md:text-5xl font-black text-white mb-4 tracking-tight">
-          Grow with <span class="text-secondary">Finda</span>
+          Grow with <span class="text-secondary">PropertyFinda</span>
         </h2>
         <p class="text-base text-white/50 font-medium max-w-xl mx-auto leading-relaxed">
           Join our affiliate network. Earn competitive commissions by referring users to the UK's fastest-growing property
@@ -568,7 +583,7 @@
         <div>
           <div class="text-secondary text-5xl mb-6"><i class="fa-solid fa-shield"></i></div>
           <h3 class="text-xl font-bold mb-4">Verified Agents</h3>
-          <p class="text-gray-500">Every listing on Finda comes from registered, vetted UK estate agents.</p>
+          <p class="text-gray-500">Every listing on PropertyFinda comes from registered, vetted UK estate agents.</p>
         </div>
         <div>
           <div class="text-secondary text-5xl mb-6"><i class="fa-solid fa-bolt"></i></div>
@@ -720,7 +735,7 @@
         return;
       @endif
 
-                                                              const data = {
+                                                                    const data = {
         _token: '{{ csrf_token() }}'
       };
       if (listingId) data.listing_id = listingId;

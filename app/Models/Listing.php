@@ -35,6 +35,18 @@ class Listing extends Model
         'longitude',
         'slug',
         'status',
+        'council_tax_band',
+        'epc_rating',
+        'floors_count',
+        'availability_date',
+        'no_onward_chain',
+        'private_rights_of_way',
+        'public_rights_of_way',
+        'listed_property',
+        'restrictions',
+        'flood_risk',
+        'flood_history',
+        'flood_defenses',
     ];
 
     protected $casts = [

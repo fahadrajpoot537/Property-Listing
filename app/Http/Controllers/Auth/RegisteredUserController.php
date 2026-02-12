@@ -33,6 +33,9 @@ class RegisteredUserController extends Controller
             'name' => ['required', 'string', 'max:255'],
             'email' => ['required', 'string', 'lowercase', 'email', 'max:255', 'unique:' . User::class],
             'phone' => ['required', 'string', 'max:20'],
+            'address' => ['nullable', 'string', 'max:500'],
+            'latitude' => ['nullable', 'numeric', 'between:-90,90'],
+            'longitude' => ['nullable', 'numeric', 'between:-180,180'],
             'password' => ['required', 'confirmed', Rules\Password::defaults()],
             'role' => ['required', 'string', 'in:agent,agency,landlord,buyer'],
         ]);
@@ -44,6 +47,9 @@ class RegisteredUserController extends Controller
             'name' => $request->name,
             'email' => $request->email,
             'phone_number' => $request->phone,
+            'address' => $request->address,
+            'latitude' => $request->latitude,
+            'longitude' => $request->longitude,
             'password' => Hash::make($request->password),
             'slug' => \Illuminate\Support\Str::slug($request->name) . '-' . time(),
             'status' => 'pending',
@@ -68,8 +74,9 @@ class RegisteredUserController extends Controller
 
         event(new Registered($user));
 
-        // Note: We DO NOT log in the user here. Admin must approve first.
-        return redirect()->route('login')->with('success', 'Registration successful! Your account is pending admin approval.');
+        Auth::login($user);
+
+        return redirect(route('dashboard', absolute: false));
     }
 
     /**

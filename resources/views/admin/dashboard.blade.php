@@ -35,7 +35,7 @@
                 class="w-10 h-10 bg-purple-50 text-[#8046F1] rounded-xl flex items-center justify-center text-xl mb-4 group-hover:rotate-6 transition-transform">
                 <i class='bx bxs-bolt-circle'></i>
             </div>
-            <div class="text-slate-400 text-[9px] font-black uppercase tracking-[0.2em] mb-1">Distress Deals</div>
+            <div class="text-slate-400 text-[9px] font-black uppercase tracking-[0.2em] mb-1">Off-Market Deals</div>
             <div class="text-2xl font-black text-black tracking-tighter">
                 {{ number_format($data['offMarketListingsCount']) }}</div>
         </div>
@@ -189,7 +189,7 @@
             new Chart(assetCtx, {
                 type: 'doughnut',
                 data: {
-                    labels: ['Commercial', 'Residential', 'Distress', 'Off-Plan'],
+                    labels: ['Commercial', 'Residential', 'Off-Market', 'Off-Plan'],
                     datasets: [{
                         data: [35, 45, 15, 5],
                         backgroundColor: ['#131B31', '#ffffff', '#8046F1', 'rgba(255,255,255,0.1)'],

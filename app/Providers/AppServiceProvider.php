@@ -22,5 +22,15 @@ class AppServiceProvider extends ServiceProvider
     {
         Paginator::useTailwind();
         \App\Models\Listing::observe(\App\Observers\ListingObserver::class);
+
+        \Illuminate\Support\Facades\Event::listen(
+            \Illuminate\Auth\Events\Verified::class,
+            function ($event) {
+                if ($event->user->status === 'pending') {
+                    $event->user->status = 'approved';
+                    $event->user->save();
+                }
+            }
+        );
     }
 }

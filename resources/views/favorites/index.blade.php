@@ -16,7 +16,7 @@
                         @php
                             $listing = $favorite->listing ?? $favorite->offMarketListing;
                             $route = $favorite->listing_id ? route('listing.show', $listing->id) : route('off-market-listing.show', $listing->id);
-                            $typeLabel = $favorite->listing_id ? 'Public Listing' : 'Distress Deal';
+                            $typeLabel = $favorite->listing_id ? 'Public Listing' : 'Off-Market Deal';
                             $typeColor = $favorite->listing_id ? 'bg-purple-100 text-purple-700' : 'bg-amber-100 text-amber-700';
                         @endphp
                         @if($listing)

@@ -236,6 +236,11 @@
                         <i class='bx bxs-dashboard mr-3 text-xl nav-icon'></i>
                         <span class="text-[11px] uppercase tracking-widest">Overview</span>
                     </a>
+                    <a href="{{ route('admin.profile.edit') }}"
+                        class="flex items-center px-4 py-3 rounded-xl text-white/70 font-bold hover:bg-white/5 transition-all duration-300 {{ request()->routeIs('admin.profile.edit') ? 'active-link' : '' }}">
+                        <i class='bx bxs-user-circle mr-3 text-xl nav-icon'></i>
+                        <span class="text-[11px] uppercase tracking-widest">My Profile</span>
+                    </a>
                 </div>
 
                 @if(auth()->user()->hasAnyRole(['admin', 'manager', 'listing director', 'Q/A', 'Agency']))
@@ -338,11 +343,11 @@
                     <div x-show="open" x-collapse x-cloak class="mt-1 space-y-1 ml-4 border-l border-white/10 pl-2">
                         <a href="{{ route('admin.listings.index') }}"
                             class="flex items-center px-4 py-2.5 rounded-xl text-[11px] font-bold text-white/40 hover:text-white transition-all {{ (request()->routeIs('admin.listings.*') && !request()->routeIs('admin.listings.drafts')) ? 'text-white bg-white/5' : '' }}">
-                            Public Asset Pool
+                            Listings
                         </a>
                         <a href="{{ route('admin.off-market-listings.index') }}"
                             class="flex items-center px-4 py-2.5 rounded-xl text-[11px] font-bold text-white/40 hover:text-white transition-all {{ (request()->routeIs('admin.off-market-listings.*') && !request()->routeIs('admin.off-market-listings.drafts')) ? 'text-white bg-white/5' : '' }}">
-                            Confidential Deals
+                            Off Market Listings
                         </a>
                     </div>
                 </div>

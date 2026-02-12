@@ -33,7 +33,7 @@
                         <i class="fa-solid fa-house-chimney text-white text-2xl"></i>
                     </div>
                     <h3 class="text-4xl font-serif font-bold text-white mb-3 tracking-wide leading-tight pl-3">Welcome to
-                        <br>Finda
+                        <br>PropertyFinda
                     </h3>
                     <div class="h-1.5 w-16 bg-secondary rounded-full mt-4"></div>
                 </div>
@@ -132,7 +132,7 @@
                     <!-- No Social Buttons Here -->
 
                     <p class="mt-8 text-center text-gray-500 font-medium">
-                        New to Finda?
+                        New to PropertyFinda?
                         <a href="{{ route('register') }}" class="text-secondary font-black hover:underline ml-1">Create
                             Account</a>
                     </p>

@@ -135,6 +135,9 @@ class ListingController extends Controller
         if ($request->filled('unit_type_id')) {
             $query->where('unit_type_id', $request->unit_type_id);
             Log::info('Filtering by unit_type_id: ' . $request->unit_type_id);
+        } elseif ($request->filled('unit_type')) {
+            $query->where('unit_type_id', $request->unit_type);
+            Log::info('Filtering by unit_type (alias): ' . $request->unit_type);
         }
 
         // Discounted Properties Filter

@@ -62,6 +62,8 @@ class OffMarketListingController extends Controller
 
         if ($request->filled('unit_type_id')) {
             $query->where('unit_type_id', $request->unit_type_id);
+        } elseif ($request->filled('unit_type')) {
+            $query->where('unit_type_id', $request->unit_type);
         }
 
         if ($request->filled('min_price') && $request->filled('max_price')) {

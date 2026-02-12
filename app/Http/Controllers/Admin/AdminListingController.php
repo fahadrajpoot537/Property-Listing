@@ -6,11 +6,18 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 
-class AdminListingController extends Controller
+use Illuminate\Routing\Controllers\HasMiddleware;
+use Illuminate\Routing\Controllers\Middleware;
+
+class AdminListingController extends Controller implements HasMiddleware
 {
-    /**
-     * Display a listing of the resource.
-     */
+    public static function middleware(): array
+    {
+        return [
+            new Middleware('document.approved', only: ['create', 'store']),
+        ];
+    }
+
     /**
      * Display a listing of the resource.
      */
@@ -110,7 +117,14 @@ class AdminListingController extends Controller
 
     public function create()
     {
-        abort(404);
+        $users = \App\Models\User::all();
+        $propertyTypes = \App\Models\PropertyType::all();
+        $unitTypes = \App\Models\UnitType::all();
+        $features = \App\Models\Feature::all();
+        $ownershipStatuses = \App\Models\OwnershipStatus::all();
+        $rentFrequencies = \App\Models\RentFrequency::all();
+        $cheques = \App\Models\Cheque::all();
+        return view('admin.listings.form', compact('users', 'propertyTypes', 'unitTypes', 'features', 'ownershipStatuses', 'rentFrequencies', 'cheques'));
     }
 
     public function store(Request $request)
@@ -136,6 +150,19 @@ class AdminListingController extends Controller
             'ownership_status_id' => 'nullable|exists:ownership_statuses,id',
             'rent_frequency_id' => 'nullable|exists:rent_frequencies,id',
             'cheque_id' => 'nullable|exists:cheques,id',
+            'council_tax_band' => 'nullable|string',
+            'epc_rating' => 'nullable|string',
+            'floors_count' => 'nullable|integer',
+            'availability_date' => 'nullable|date',
+            'no_onward_chain' => 'nullable|boolean',
+            'private_rights_of_way' => 'nullable|string',
+            'public_rights_of_way' => 'nullable|string',
+            'listed_property' => 'nullable|string',
+            'restrictions' => 'nullable|string',
+            'flood_risk' => 'nullable|string',
+            'flood_history' => 'nullable|string',
+            'flood_defenses' => 'nullable|string',
+            'brochure_pdf' => 'nullable|file|mimes:pdf|max:10240',
         ]);
 
         $validated['property_reference_number'] = 'REF-' . time();
@@ -157,6 +184,10 @@ class AdminListingController extends Controller
                 $galleryPaths[] = $file->store('gallery', 'public');
             }
             $validated['gallery'] = $galleryPaths;
+        }
+
+        if ($request->hasFile('brochure_pdf')) {
+            $validated['brochure_pdf'] = $request->file('brochure_pdf')->store('brochures', 'public');
         }
 
         $listing = \App\Models\Listing::create($validated);
@@ -182,7 +213,14 @@ class AdminListingController extends Controller
     public function edit(string $id)
     {
         $listing = \App\Models\Listing::with(['features', 'ownershipStatus', 'rentFrequency', 'cheque'])->findOrFail($id);
-        return response()->json($listing);
+        $users = \App\Models\User::all();
+        $propertyTypes = \App\Models\PropertyType::all();
+        $unitTypes = \App\Models\UnitType::all();
+        $features = \App\Models\Feature::all();
+        $ownershipStatuses = \App\Models\OwnershipStatus::all();
+        $rentFrequencies = \App\Models\RentFrequency::all();
+        $cheques = \App\Models\Cheque::all();
+        return view('admin.listings.form', compact('listing', 'users', 'propertyTypes', 'unitTypes', 'features', 'ownershipStatuses', 'rentFrequencies', 'cheques'));
     }
 
     public function update(Request $request, string $id)
@@ -211,6 +249,19 @@ class AdminListingController extends Controller
             'ownership_status_id' => 'nullable|exists:ownership_statuses,id',
             'rent_frequency_id' => 'nullable|exists:rent_frequencies,id',
             'cheque_id' => 'nullable|exists:cheques,id',
+            'council_tax_band' => 'nullable|string',
+            'epc_rating' => 'nullable|string',
+            'floors_count' => 'nullable|integer',
+            'availability_date' => 'nullable|date',
+            'no_onward_chain' => 'nullable|boolean',
+            'private_rights_of_way' => 'nullable|string',
+            'public_rights_of_way' => 'nullable|string',
+            'listed_property' => 'nullable|string',
+            'restrictions' => 'nullable|string',
+            'flood_risk' => 'nullable|string',
+            'flood_history' => 'nullable|string',
+            'flood_defenses' => 'nullable|string',
+            'brochure_pdf' => 'nullable|file|mimes:pdf|max:10240',
         ]);
 
         if ($request->hasFile('thumbnail')) {
@@ -221,33 +272,30 @@ class AdminListingController extends Controller
             $validated['video'] = $request->file('video')->store('videos', 'public');
         }
 
-        // Handle gallery updates - replace existing images with new ones
-        $galleryPaths = [];
+        // Keep existing images (minus removed ones)
+        $galleryPaths = $listing->gallery ?? [];
 
-        // Debug: Log remove_gallery data
+        // Remove images marked for deletion
         if ($request->has('remove_gallery')) {
-            Log::info('remove_gallery data: ', $request->remove_gallery);
-            Log::info('Original gallery paths: ', $listing->gallery ?? []);
+            $galleryPaths = array_diff($galleryPaths, array_filter($request->remove_gallery));
+            Log::info('Gallery paths after removal: ', $galleryPaths);
         }
 
-        // If new images are uploaded, replace all existing images
+        // Add new uploaded images
         if ($request->hasFile('gallery')) {
             foreach ($request->file('gallery') as $file) {
                 $galleryPaths[] = $file->store('gallery', 'public');
             }
-            Log::info('New gallery paths: ', $galleryPaths);
-        } else {
-            // If no new images are uploaded, keep existing images (minus removed ones)
-            $galleryPaths = $listing->gallery ?? [];
-
-            // Remove images marked for deletion
-            if ($request->has('remove_gallery')) {
-                $galleryPaths = array_diff($galleryPaths, $request->remove_gallery);
-                Log::info('Gallery paths after removal: ', $galleryPaths);
-            }
+            Log::info('New gallery paths added: ', $galleryPaths);
         }
 
         $validated['gallery'] = array_values($galleryPaths);
+
+        if ($request->hasFile('brochure_pdf')) {
+            if ($listing->brochure_pdf)
+                \Storage::disk('public')->delete($listing->brochure_pdf);
+            $validated['brochure_pdf'] = $request->file('brochure_pdf')->store('brochures', 'public');
+        }
 
         $listing->update($validated);
 

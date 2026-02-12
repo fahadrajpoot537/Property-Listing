@@ -140,6 +140,24 @@
                         <x-input-error :messages="$errors->get('phone')" class="mt-1" />
                     </div>
 
+                    <!-- Address with Google Places -->
+                    <div class="space-y-2">
+                        <label for="address"
+                            class="text-xs font-black uppercase tracking-widest text-gray-400 ml-1">Address</label>
+                        <div class="relative group">
+                            <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+                                <i
+                                    class="fa-solid fa-location-dot text-gray-300 group-focus-within:text-secondary transition-colors"></i>
+                            </div>
+                            <input type="text" id="address" name="address" value="{{ old('address') }}"
+                                class="w-full pl-11 pr-4 py-3.5 bg-gray-50 border border-gray-200 rounded-2xl focus:bg-white focus:ring-4 focus:ring-secondary/10 focus:border-secondary transition-all outline-none font-medium"
+                                placeholder="Start typing your address...">
+                            <input type="hidden" id="latitude" name="latitude" value="{{ old('latitude') }}">
+                            <input type="hidden" id="longitude" name="longitude" value="{{ old('longitude') }}">
+                        </div>
+                        <x-input-error :messages="$errors->get('address')" class="mt-1" />
+                    </div>
+
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                         <!-- Password -->
                         <div class="space-y-2">
@@ -196,4 +214,53 @@
             </div>
         </div>
     </div>
+
+    @push('scripts')
+        <script
+            src="https://maps.googleapis.com/maps/api/js?key={{ config('services.google.maps_api_key') }}&libraries=places&callback=initAutocomplete"
+            async defer></script>
+        <script>
+            let autocomplete;
+
+            function initAutocomplete() {
+                const addressInput = document.getElementById('address');
+
+                if (!addressInput) return;
+
+                // Initialize autocomplete
+                autocomplete = new google.maps.places.Autocomplete(addressInput, {
+                    componentRestrictions: { country: 'gb' },
+                    fields: ['address_components', 'geometry', 'formatted_address']
+                });
+
+                // Listen for place selection
+                autocomplete.addListener('place_changed', function () {
+                    const place = autocomplete.getPlace();
+
+                    if (!place.geometry) {
+                        console.log('No geometry found for this place');
+                        return;
+                    }
+
+                    // Set latitude and longitude
+                    document.getElementById('latitude').value = place.geometry.location.lat();
+                    document.getElementById('longitude').value = place.geometry.location.lng();
+
+                    // Set formatted address
+                    document.getElementById('address').value = place.formatted_address;
+
+                    console.log('Address:', place.formatted_address);
+                    console.log('Latitude:', place.geometry.location.lat());
+                    console.log('Longitude:', place.geometry.location.lng());
+                });
+            }
+
+            // Fallback if callback doesn't work
+            window.addEventListener('load', function () {
+                if (typeof google !== 'undefined' && !autocomplete) {
+                    initAutocomplete();
+                }
+            });
+        </script>
+    @endpush
 @endsection

@@ -30,7 +30,7 @@
 
     /* Select2 Premium Styling */
     .select2-container .select2-selection--single {
-      height: 54px !important;
+      height: 56px !important;
       background-color: #f9fafb;
       border: 1px solid #e5e7eb;
       border-radius: 0.75rem;
@@ -40,7 +40,7 @@
     }
 
     .select2-container--default .select2-selection--single .select2-selection__rendered {
-      line-height: 54px !important;
+      line-height: 56px !important;
       padding-left: 2.5rem !important;
       color: #111827;
       font-weight: 500;
@@ -141,15 +141,9 @@
                   <input type="text" id="location-sale" placeholder="Enter city, area or postcode"
                     class="w-full pl-16 pr-4 py-4 text-lg font-medium text-gray-900 bg-gray-50 border border-gray-200 rounded-xl focus:bg-white focus:ring-4 focus:ring-secondary/10 focus:border-secondary transition-all h-16 placeholder-gray-400">
                 </div>
-                <button onclick="searchOffMarketProperties('sale')"
-                  class="md:w-64 px-10 bg-secondary hover:bg-secondary-dark text-white font-extrabold text-xl rounded-xl shadow-lg shadow-secondary/20 transition-all transform hover:-translate-y-0.5 flex items-center justify-center gap-2 h-16">
-                  Search
-                </button>
-              </div>
-
-              <div class="grid grid-cols-2 md:grid-cols-5 gap-3">
-                <div class="relative">
-                  <div class="filter-icon-wrapper"><i class="fa-solid fa-bullseye text-secondary"></i></div>
+                
+                <!-- Radius Select (Moved here) -->
+                <div class="w-full md:w-48">
                   <select id="radius-sale" class="select2-filter w-full" data-placeholder="Radius">
                     <option value="0.5">This area only</option>
                     <option value="1">+ 1 mile</option>
@@ -163,11 +157,31 @@
                     <option value="50">+ 50 miles</option>
                   </select>
                 </div>
+
+                <button onclick="searchOffMarketProperties('sale')"
+                  class="md:w-64 px-10 bg-secondary hover:bg-secondary-dark text-white font-extrabold text-xl rounded-xl shadow-lg shadow-secondary/20 transition-all transform hover:-translate-y-0.5 flex items-center justify-center gap-2 h-16">
+                  Search
+                </button>
+              </div>
+
+              <div class="grid grid-cols-2 lg:grid-cols-6 gap-3">
+                <!-- Property Type (Moved to first position) -->
                 <div class="relative">
                   <div class="filter-icon-wrapper"><i class="fa-solid fa-house text-secondary"></i></div>
                   <select id="property-type-sale" class="select2-filter w-full" data-placeholder="Property Type">
                     <option value="">Any Type</option>
                     @foreach(\App\Models\PropertyType::all() as $type)
+                      <option value="{{ $type->id }}">{{ $type->title }}</option>
+                    @endforeach
+                  </select>
+                </div>
+
+                <!-- Unit Type (New) -->
+                <div class="relative">
+                  <div class="filter-icon-wrapper"><i class="fa-solid fa-building text-secondary"></i></div>
+                  <select id="unit-type-sale" class="select2-filter w-full" data-placeholder="Unit Type">
+                    <option value="">Any Unit</option>
+                    @foreach(\App\Models\UnitType::all() as $type)
                       <option value="{{ $type->id }}">{{ $type->title }}</option>
                     @endforeach
                   </select>
@@ -191,7 +205,7 @@
                     <option value="5000000">£5,000,000</option>
                   </select>
                 </div>
-                <div class="relative col-span-2 md:col-span-1">
+                <div class="relative">
                   <div class="filter-icon-wrapper"><i class="fa-solid fa-bed text-secondary"></i></div>
                   <select id="min-bedrooms-sale" class="select2-filter w-full" data-placeholder="Bedrooms">
                     <option value="">Any Beds</option>
@@ -202,8 +216,7 @@
                     <option value="10">10+ Beds</option>
                   </select>
                 </div>
-                <!-- Additional Filters Row -->
-                <div class="relative col-span-2 md:col-span-1 md:col-start-1">
+                <div class="relative">
                   <div class="filter-icon-wrapper"><i class="fa-solid fa-bath text-secondary"></i></div>
                   <select id="min-bathrooms-sale" class="select2-filter w-full" data-placeholder="Bathrooms">
                     <option value="">Any Baths</option>
@@ -211,15 +224,6 @@
                       <option value="{{ $i }}">{{ $i }} Bath{{ $i > 1 ? 's' : '' }}</option>
                     @endfor
                     <option value="10">10+ Baths</option>
-                  </select>
-                </div>
-                <div class="relative col-span-2 md:col-span-1">
-                  <div class="filter-icon-wrapper"><i class="fa-solid fa-file-contract text-secondary"></i></div>
-                  <select id="ownership-status-sale" class="select2-filter w-full" data-placeholder="Ownership">
-                    <option value="">Any Status</option>
-                    @foreach(\App\Models\OwnershipStatus::all() as $status)
-                      <option value="{{ $status->id }}">{{ $status->title }}</option>
-                    @endforeach
                   </select>
                 </div>
               </div>
@@ -235,15 +239,9 @@
                   <input type="text" id="location-rent" placeholder="Enter city, area or postcode"
                     class="w-full pl-16 pr-4 py-4 text-lg font-medium text-gray-900 bg-gray-50 border border-gray-200 rounded-xl focus:bg-white focus:ring-4 focus:ring-secondary/10 focus:border-secondary transition-all h-16 placeholder-gray-400">
                 </div>
-                <button onclick="searchOffMarketProperties('rent')"
-                  class="md:w-64 px-10 bg-secondary hover:bg-secondary-dark text-white font-extrabold text-xl rounded-xl shadow-lg shadow-secondary/20 transition-all transform hover:-translate-y-0.5 flex items-center justify-center gap-2 h-16">
-                  Search
-                </button>
-              </div>
-
-              <div class="grid grid-cols-2 md:grid-cols-5 gap-3">
-                <div class="relative">
-                  <div class="filter-icon-wrapper"><i class="fa-solid fa-bullseye text-secondary"></i></div>
+                
+                <!-- Radius Select (Moved here) -->
+                <div class="w-full md:w-48">
                   <select id="radius-rent" class="select2-filter w-full" data-placeholder="Radius">
                     <option value="0.5">This area only</option>
                     <option value="1">+ 1 mile</option>
@@ -257,11 +255,31 @@
                     <option value="50">+ 50 miles</option>
                   </select>
                 </div>
+
+                <button onclick="searchOffMarketProperties('rent')"
+                  class="md:w-64 px-10 bg-secondary hover:bg-secondary-dark text-white font-extrabold text-xl rounded-xl shadow-lg shadow-secondary/20 transition-all transform hover:-translate-y-0.5 flex items-center justify-center gap-2 h-16">
+                  Search
+                </button>
+              </div>
+
+              <div class="grid grid-cols-2 lg:grid-cols-6 gap-3">
+                <!-- Property Type (Moved to first position) -->
                 <div class="relative">
                   <div class="filter-icon-wrapper"><i class="fa-solid fa-house text-secondary"></i></div>
                   <select id="property-type-rent" class="select2-filter w-full" data-placeholder="Property Type">
                     <option value="">Any Type</option>
                     @foreach(\App\Models\PropertyType::all() as $type)
+                      <option value="{{ $type->id }}">{{ $type->title }}</option>
+                    @endforeach
+                  </select>
+                </div>
+
+                <!-- Unit Type (New) -->
+                <div class="relative">
+                  <div class="filter-icon-wrapper"><i class="fa-solid fa-building text-secondary"></i></div>
+                  <select id="unit-type-rent" class="select2-filter w-full" data-placeholder="Unit Type">
+                    <option value="">Any Unit</option>
+                    @foreach(\App\Models\UnitType::all() as $type)
                       <option value="{{ $type->id }}">{{ $type->title }}</option>
                     @endforeach
                   </select>
@@ -285,7 +303,7 @@
                     <option value="5000">£5,000 pcm</option>
                   </select>
                 </div>
-                <div class="relative col-span-2 md:col-span-1">
+                <div class="relative">
                   <div class="filter-icon-wrapper"><i class="fa-solid fa-bed text-secondary"></i></div>
                   <select id="min-bedrooms-rent" class="select2-filter w-full" data-placeholder="Bedrooms">
                     <option value="">Any Beds</option>
@@ -296,8 +314,7 @@
                     <option value="10">10+ Beds</option>
                   </select>
                 </div>
-                <!-- Additional Filters Row -->
-                <div class="relative col-span-2 md:col-span-1 md:col-start-1">
+                <div class="relative">
                   <div class="filter-icon-wrapper"><i class="fa-solid fa-bath text-secondary"></i></div>
                   <select id="min-bathrooms-rent" class="select2-filter w-full" data-placeholder="Bathrooms">
                     <option value="">Any Baths</option>
@@ -307,16 +324,8 @@
                     <option value="10">10+ Baths</option>
                   </select>
                 </div>
-                <div class="relative col-span-2 md:col-span-1">
-                  <div class="filter-icon-wrapper"><i class="fa-solid fa-file-contract text-secondary"></i></div>
-                  <select id="ownership-status-rent" class="select2-filter w-full" data-placeholder="Ownership">
-                    <option value="">Any Status</option>
-                    @foreach(\App\Models\OwnershipStatus::all() as $status)
-                      <option value="{{ $status->id }}">{{ $status->title }}</option>
-                    @endforeach
-                  </select>
-                </div>
               </div>
+            </div>
             </div>
           </div>
         </div>

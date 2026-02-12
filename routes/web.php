@@ -22,6 +22,10 @@ Route::post('/off-market-property/{id}/inquiry', [
     \App\Http\Controllers\OffMarketListingController::class,
     'sendInquiry'
 ])->name('off-market-listing.inquiry');
+Route::get('/off-market-property/{id}/brochure', [
+    \App\Http\Controllers\BrochureController::class,
+    'downloadOffMarket'
+])->name('off-market-listing.brochure');
 
 Route::get('/property-halfmap-grid', [
     \App\Http\Controllers\ListingController::class,
@@ -30,6 +34,10 @@ Route::get('/property-halfmap-grid', [
 Route::get('/property-map', [\App\Http\Controllers\ListingController::class, 'map'])->name('listings.map');
 Route::get('/property/{id}', [App\Http\Controllers\ListingController::class, 'show'])->name('listing.show');
 Route::post('/property/{id}/inquiry', [App\Http\Controllers\PropertyInquiryController::class, 'store'])->name('listing.inquiry');
+Route::get('/property/{id}/brochure', [App\Http\Controllers\BrochureController::class, 'download'])->name('listing.brochure');
+
+// Agents
+Route::get('/agents', [App\Http\Controllers\AgentController::class, 'index'])->name('agents.index');
 
 Route::get('/api/home/featured-listings', [
     App\Http\Controllers\ListingController::class,
@@ -78,10 +86,15 @@ Route::get('/dashboard', [\App\Http\Controllers\Admin\AdminDashboardController::
 Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
+    Route::post('/profile/document', [ProfileController::class, 'storeDocument'])->name('profile.document.store');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 
     Route::prefix('admin')->name('admin.')->middleware(['permission:access dashboard'])->group(function () {
         Route::get('/', [\App\Http\Controllers\Admin\AdminDashboardController::class, 'index'])->name('dashboard');
+
+        // Admin Profile Management
+        Route::get('/profile', [\App\Http\Controllers\Admin\AdminProfileController::class, 'edit'])->name('profile.edit');
+        Route::patch('/profile', [\App\Http\Controllers\Admin\AdminProfileController::class, 'update'])->name('profile.update');
         Route::post('users-status/{id}', [
             \App\Http\Controllers\Admin\AdminUserController::class,
             'toggleStatus'

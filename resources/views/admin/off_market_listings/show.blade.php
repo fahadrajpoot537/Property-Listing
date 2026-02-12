@@ -17,7 +17,7 @@
         </div>
         <div class="flex items-center gap-3">
              <span class="px-5 py-2.5 rounded-2xl text-[11px] font-black uppercase tracking-widest bg-orange-50 text-[#ff931e] ring-1 ring-orange-200 shadow-xl shadow-orange-500/10">
-                DISTRESS ASSET
+                OFF-MARKET ASSET
             </span>
             <button class="w-12 h-12 bg-black text-white rounded-2xl flex items-center justify-center hover:bg-[#ff931e] transition-all shadow-xl">
                 <i class='bx bxs-edit-alt text-xl'></i>
