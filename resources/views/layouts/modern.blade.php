@@ -21,6 +21,9 @@
 
     <!-- Custom Styles Stack -->
     @stack('styles')
+    <style>
+        [x-cloak] { display: none !important; }
+    </style>
 </head>
 
 <body class="font-sans antialiased bg-gray-50 text-gray-900">
@@ -79,7 +82,7 @@
                                 <i class="fa-solid fa-chevron-down text-[10px] ml-1 transition-transform duration-200" :class="open ? 'rotate-180' : ''"></i>
                             </button>
                             
-                            <div x-show="open" 
+                            <div x-show="open" x-cloak
                                 x-transition:enter="transition ease-out duration-200"
                                 x-transition:enter-start="opacity-0 translate-y-1"
                                 x-transition:enter-end="opacity-100 translate-y-0"
@@ -118,7 +121,7 @@
                                     <i class="fa-solid fa-chevron-down text-[10px] text-gray-400 transition-transform duration-200" :class="userDropdownOpen ? 'rotate-180' : ''"></i>
                                 </button>
 
-                                <div x-show="userDropdownOpen" 
+                                <div x-show="userDropdownOpen" x-cloak
                                     x-transition:enter="transition ease-out duration-100"
                                     x-transition:enter-start="transform opacity-0 scale-95"
                                     x-transition:enter-end="transform opacity-100 scale-100"
@@ -171,7 +174,7 @@
         </div>
 
         <!-- Mobile menu -->
-        <div x-show="mobileMenuOpen" x-transition:enter="transition ease-out duration-200"
+        <div x-show="mobileMenuOpen" x-cloak x-transition:enter="transition ease-out duration-200"
             x-transition:enter-start="opacity-0 -translate-y-2" x-transition:enter-end="opacity-100 translate-y-0"
             x-transition:leave="transition ease-in duration-150" x-transition:leave-start="opacity-100 translate-y-0"
             x-transition:leave-end="opacity-0 -translate-y-2"

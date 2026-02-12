@@ -219,13 +219,15 @@
 
         .gallery-cell {
             width: 50%;
+            height: 300px;
             vertical-align: top;
         }
 
         .gallery-img {
             width: 100%;
-            height: 160px;
-            object-fit: cover;
+            height: auto;
+            max-height: 400px;
+            object-fit: contain;
             border-radius: 6px;
             display: block;
         }
@@ -233,14 +235,38 @@
         /* Features */
         .feature-pill {
             display: inline-block;
-            background: #f1f5f9;
-            color: #334155;
+            background: #8046F1;
+            color: white;
             padding: 4px 10px;
             border-radius: 12px;
             font-size: 10px;
             font-weight: 600;
             margin: 0 5px 5px 0;
-            border: 1px solid #e2e8f0;
+            border: 1px solid #8046F1;
+        }
+
+        .property-details-box {
+            background-color: #475569;
+            color: white;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+        }
+
+        .property-details-box .d-label {
+            color: #cbd5e1;
+            /* lighten text for label */
+            font-weight: 600;
+        }
+
+        .property-details-box .d-val {
+            color: white;
+            font-weight: 700;
+            text-align: right;
+        }
+
+        .property-details-box td {
+            border-bottom: 1px solid #64748b;
         }
 
         /* Two Column Layout */
@@ -259,6 +285,7 @@
         .mortgage-box {
             background: #f0f9ff;
             border: 1px dashed #bae6fd;
+            color: black;
             border-radius: 8px;
             padding: 15px;
             margin-top: 10px;
@@ -273,7 +300,7 @@
         .m-val {
             float: right;
             font-weight: 700;
-            color: #0284c7;
+            color: black !important;
         }
 
         .details-table {
@@ -458,25 +485,28 @@
         <table class="two-col-table">
             <tr>
                 <td class="col-half">
-                    <div class="section-heading">Property Details</div>
-                    <table class="details-table">
-                        <tr>
-                            <td class="d-label">Reference</td>
-                            <td class="d-val">{{ $listing->property_reference_number }}</td>
-                        </tr>
-                        <tr>
-                            <td class="d-label">Completion</td>
-                            <td class="d-val">{{ $listing->completion_status ?? 'Ready' }}</td>
-                        </tr>
-                        <tr>
-                            <td class="d-label">Furnished</td>
-                            <td class="d-val">{{ $listing->furnishing_status ?? 'No' }}</td>
-                        </tr>
-                        <tr>
-                            <td class="d-label">Tenure</td>
-                            <td class="d-val">{{ $listing->tenure ?? 'Freehold' }}</td>
-                        </tr>
-                    </table>
+                    <div class="property-details-box">
+                        <div class="section-heading" style="color: white; border-color: rgba(255,255,255,0.2);">Property
+                            Details</div>
+                        <table class="details-table" style="border: none;">
+                            <tr>
+                                <td class="d-label">Reference</td>
+                                <td class="d-val">{{ $listing->property_reference_number }}</td>
+                            </tr>
+                            <tr>
+                                <td class="d-label">Completion</td>
+                                <td class="d-val">{{ $listing->completion_status ?? 'Ready' }}</td>
+                            </tr>
+                            <tr>
+                                <td class="d-label">Furnished</td>
+                                <td class="d-val">{{ $listing->furnishing_status ?? 'No' }}</td>
+                            </tr>
+                            <tr>
+                                <td class="d-label">Tenure</td>
+                                <td class="d-val">{{ $listing->tenure ?? 'Freehold' }}</td>
+                            </tr>
+                        </table>
+                    </div>
 
                     <div style="margin-top:20px;">
                         <div class="section-heading">Features</div>
@@ -487,24 +517,88 @@
                 </td>
 
                 <td class="col-half">
-                    @if($mortgageDetails)
-                        <div class="section-heading">Mortgage Calculator</div>
-                        <div class="mortgage-box">
-                            <div class="mortgage-row"><span style="float:left;">Price</span><span
-                                    class="m-val">£{{ number_format($listing->price) }}</span></div>
-                            <div class="mortgage-row"><span style="float:left;">Deposit
-                                    ({{ $mortgageDetails['deposit_percent'] }}%)</span><span
-                                    class="m-val">£{{ number_format($mortgageDetails['deposit']) }}</span></div>
-                            <div class="mortgage-row"><span style="float:left;">Interest Rate</span><span
-                                    class="m-val">{{ $mortgageDetails['interest_rate'] }}%</span></div>
-                            <div
-                                style="border-top:1px dashed #bae6fd; margin-top:5px; padding-top:5px; color:#0369a1; font-weight:bold;">
-                                <span style="float:left;">Monthly Payment</span><span
-                                    style="float:right;">£{{ number_format($mortgageDetails['monthly_payment']) }}</span>
-                                <div style="clear:both;"></div>
-                            </div>
-                        </div>
-                    @endif
+                    @php
+                        // Defaults as requested
+                        $mPrice = $listing->price;
+                        $mDepositPercent = 40;
+                        $mInterestRate = 3.5;
+                        $mYears = 20;
+
+                        // Calculations
+                        $mDepositAmount = $mPrice * ($mDepositPercent / 100);
+                        $mLoanAmount = $mPrice - $mDepositAmount;
+
+                        $mMonthlyInterest = ($mInterestRate / 100) / 12;
+                        $mMonths = $mYears * 12;
+
+                        if ($mLoanAmount > 0) {
+                            $mMonthlyPayment = ($mLoanAmount * $mMonthlyInterest * pow((1 + $mMonthlyInterest), $mMonths)) / (pow((1 + $mMonthlyInterest), $mMonths) - 1);
+                        } else {
+                            $mMonthlyPayment = 0;
+                        }
+                    @endphp
+
+                    <div class="section-heading">Mortgage Calculator</div>
+                    <style>
+                        .mortgage-table {
+                            width: 100%;
+                            border-collapse: collapse;
+                        }
+
+                        .mortgage-table td {
+                            padding: 4px 0;
+                            color: #000000 !important;
+                            font-size: 11px;
+                        }
+
+                        .mortgage-table .m-label {
+                            text-align: left;
+                        }
+
+                        .mortgage-table .m-val {
+                            text-align: right;
+                            font-weight: 700;
+                            color: #000000 !important;
+                        }
+                    </style>
+                    <div class="mortgage-box">
+                        <table class="mortgage-table">
+                            <tr>
+                                <td class="m-label">Estimated Monthly Payment</td>
+                                <td class="m-val" style="font-size: 14px;">£{{ number_format($mMonthlyPayment, 2) }}
+                                </td>
+                            </tr>
+                            <tr>
+                                <td colspan="2"
+                                    style="border-bottom: 1px dashed #bae6fd; height: 1px; padding: 0; margin: 5px 0;">
+                                </td>
+                            </tr>
+                            <tr>
+                                <td class="m-label">Total Amount (£)</td>
+                                <td class="m-val">{{ number_format($mPrice, 2) }}</td>
+                            </tr>
+                            <tr>
+                                <td class="m-label">Down Payment (%)</td>
+                                <td class="m-val">{{ number_format($mDepositPercent, 2) }}</td>
+                            </tr>
+                            <tr>
+                                <td class="m-label">Interest Rate (%)</td>
+                                <td class="m-val">{{ number_format($mInterestRate, 2) }}</td>
+                            </tr>
+                            <tr>
+                                <td class="m-label">Loan Terms (Years)</td>
+                                <td class="m-val">{{ $mYears }}</td>
+                            </tr>
+                            <tr>
+                                <td class="m-label">Down Payment Amount:</td>
+                                <td class="m-val">£{{ number_format($mDepositAmount, 2) }}</td>
+                            </tr>
+                            <tr>
+                                <td class="m-label">Loan Amount:</td>
+                                <td class="m-val">£{{ number_format($mLoanAmount, 2) }}</td>
+                            </tr>
+                        </table>
+                    </div>
 
                     @if($mapImage)
                         <div class="section-heading" style="margin-top:20px;">Location</div>

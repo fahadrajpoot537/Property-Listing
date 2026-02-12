@@ -19,6 +19,23 @@
 
     <!-- Select2 CSS -->
     <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+    <style>
+        .select2-container--default .select2-selection--single {
+            border-color: #e2e8f0;
+            border-radius: 0.5rem;
+            height: 42px;
+            display: flex;
+            align-items: center;
+        }
+
+        .select2-container--default .select2-selection--single .select2-selection__arrow {
+            height: 40px;
+        }
+
+        .select2 {
+            width: 100% !important;
+        }
+    </style>
 
     <!-- Scripts -->
     <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
@@ -192,15 +209,11 @@
         }
 
         /* Nav Icon Colors */
-        .nav-icon {
-            color: rgba(255, 255, 255, 0.5);
-            transition: color 0.3s;
-        }
-
         .active-link .nav-icon {
             color: var(--brand-secondary);
         }
     </style>
+    @stack('styles')
 </head>
 
 <body class="font-sans antialiased bg-slate-50 text-slate-900" x-data="{ sidebarOpen: false }">
@@ -329,27 +342,24 @@
                 </div>
 
                 <!-- Strategic Operations -->
-                <div class="mb-2"
-                    x-data="{ open: {{ request()->routeIs('admin.listings.*', 'admin.off-market-listings.*') ? 'true' : 'false' }} }">
-                    <button @click="open = !open"
-                        class="w-full flex items-center justify-between px-4 py-3 rounded-xl text-white/50 hover:text-white hover:bg-white/5 transition-all duration-300">
-                        <div class="flex items-center">
-                            <i class='bx bxs-zap mr-3 text-xl nav-icon'></i>
-                            <span class="text-[10px] font-black uppercase tracking-[0.15em]">Operations</span>
-                        </div>
-                        <i class='bx bx-chevron-down transition-transform duration-300 text-white/30'
-                            :class="open ? 'rotate-180' : ''"></i>
-                    </button>
-                    <div x-show="open" x-collapse x-cloak class="mt-1 space-y-1 ml-4 border-l border-white/10 pl-2">
-                        <a href="{{ route('admin.listings.index') }}"
-                            class="flex items-center px-4 py-2.5 rounded-xl text-[11px] font-bold text-white/40 hover:text-white transition-all {{ (request()->routeIs('admin.listings.*') && !request()->routeIs('admin.listings.drafts')) ? 'text-white bg-white/5' : '' }}">
-                            Listings
-                        </a>
-                        <a href="{{ route('admin.off-market-listings.index') }}"
-                            class="flex items-center px-4 py-2.5 rounded-xl text-[11px] font-bold text-white/40 hover:text-white transition-all {{ (request()->routeIs('admin.off-market-listings.*') && !request()->routeIs('admin.off-market-listings.drafts')) ? 'text-white bg-white/5' : '' }}">
-                            Off Market Listings
-                        </a>
-                    </div>
+                <!-- Strategic Operations -->
+                <div class="mb-6">
+                    <p class="px-4 text-[10px] font-black text-white/30 uppercase tracking-[0.2em] mb-3">Realty Operations</p>
+                    <a href="{{ route('admin.listings.index') }}"
+                        class="flex items-center px-4 py-3 rounded-xl text-white/70 font-bold hover:bg-white/5 transition-all duration-300 {{ (request()->routeIs('admin.listings.*') && !request()->routeIs('admin.listings.create') && !request()->routeIs('admin.listings.drafts')) ? 'active-link' : '' }}">
+                        <i class='bx bxs-building-house mr-3 text-xl nav-icon'></i>
+                        <span class="text-[11px] uppercase tracking-widest">Listings</span>
+                    </a>
+                    <a href="{{ route('admin.listings.create') }}"
+                        class="flex items-center px-4 py-3 rounded-xl text-white/70 font-bold hover:bg-white/5 transition-all duration-300 {{ request()->routeIs('admin.listings.create') ? 'active-link' : '' }}">
+                        <i class='bx bxs-plus-circle mr-3 text-xl nav-icon'></i>
+                        <span class="text-[11px] uppercase tracking-widest">Add Listing</span>
+                    </a>
+                    <a href="{{ route('admin.off-market-listings.index') }}"
+                        class="flex items-center px-4 py-3 rounded-xl text-white/70 font-bold hover:bg-white/5 transition-all duration-300 {{ (request()->routeIs('admin.off-market-listings.*') && !request()->routeIs('admin.off-market-listings.drafts')) ? 'active-link' : '' }}">
+                        <i class='bx bxs-ghost mr-3 text-xl nav-icon'></i>
+                        <span class="text-[11px] uppercase tracking-widest">Off Market</span>
+                    </a>
                 </div>
 
                 <!-- Drafts Management -->
@@ -503,6 +513,23 @@
             </main>
         </div>
     </div>
+    <script>
+        $(document).ready(function () {
+            // Auto-initialize Select2 if not manually handled
+            if (typeof $.fn.select2 !== 'undefined' && $('.select2').length > 0) {
+                // Check if any instance is not initialized
+                $('.select2').each(function () {
+                    if (!$(this).data('select2')) {
+                        $(this).select2({
+                            width: '100%',
+                            placeholder: "Select an option",
+                            allowClear: true
+                        });
+                    }
+                });
+            }
+        });
+    </script>
     @stack('scripts')
 </body>
 

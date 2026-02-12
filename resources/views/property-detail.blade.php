@@ -172,7 +172,7 @@
 
                 <div class="property-gallery-grid">
                     <!-- Main Thumbnail (Left - Big) -->
-                    <div class="gallery-item row-span-2" onclick="openLightbox({{ $listing->video ? 1 : 0 }})">
+                    <div class="gallery-item row-span-2" style="grid-row: span 2;" onclick="openLightbox({{ $listing->video ? 1 : 0 }})">
                         <img src="{{ $listing->thumbnail ? asset('storage/' . $listing->thumbnail) : asset('assets/img/all-images/hero/1.jpg') }}"
                             alt="Main Property Image">
                     </div>
@@ -530,7 +530,7 @@
             <div class="swiper lightbox-swiper h-full">
                 <div class="swiper-wrapper">
                     @if($listing->video)
-                        <div class="swiper-slide flex items-center justify-center p-4">
+                        <div class="swiper-slide h-full flex items-center justify-center p-4">
                             <div class="w-full max-w-4xl aspect-video bg-black rounded-2xl overflow-hidden shadow-2xl">
                                 @if(Str::startsWith($listing->video, ['http', 'https']))
                                     <iframe src="{{ $listing->video }}" class="w-full h-full" frameborder="0"
