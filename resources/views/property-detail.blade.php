@@ -144,11 +144,18 @@
                             <span class="text-4xl font-black text-primary">£{{ number_format($listing->price) }}</span>
                         </div>
 
-                        <a href="{{ route('listing.brochure', $listing->id) }}"
-                            class="w-14 h-14 rounded-2xl border-2 border-secondary bg-secondary/10 flex items-center justify-center hover:bg-secondary hover:text-white text-secondary transition-all group"
-                            title="Download Brochure">
-                            <i class="fa-solid fa-download text-xl group-hover:scale-110 transition-transform"></i>
-                        </a>
+                        @if(auth()->check())
+                            <a href="{{ route('listing.brochure', $listing->id) }}"
+                                class="w-14 h-14 rounded-2xl border-2 border-secondary bg-secondary/10 flex items-center justify-center hover:bg-secondary hover:text-white text-secondary transition-all group"
+                                title="Download Brochure">
+                                <i class="fa-solid fa-download text-xl group-hover:scale-110 transition-transform"></i>
+                            </a>
+                        @else
+                            <a href="{{ route('login') }}"
+                                class="bg-secondary text-white px-4 py-3 rounded-xl text-sm font-bold hover:bg-secondary-dark transition-all shadow-lg shadow-secondary/20">
+                                Login for Download Brochure
+                            </a>
+                        @endif
 
                         <button onclick="toggleFavorite({{ $listing->id }}, null, this)"
                             class="w-14 h-14 rounded-2xl border-2 border-gray-200 flex items-center justify-center hover:border-secondary transition-all {{ in_array($listing->id, $user_favorite_ids ?? []) ? 'text-rose-500' : 'text-gray-300' }}">
@@ -163,18 +170,53 @@
             <div class="mb-12">
                 @php $gallery = is_array($listing->gallery) ? $listing->gallery : json_decode($listing->gallery, true) ?? []; @endphp
 
-                <div class="property-gallery-grid ">
-                        <div class="gallery-item row-span-2" onclick="openLightbox(0)">
-                            <img src="{{ $listing->thumbnail ? asset('storage/' . $listing->thumbnail) : asset('assets/img/all-images/hero/1.jpg') }}" 
-                                 alt="Main Property Image">
+                <div class="property-gallery-grid">
+                    <!-- Main Thumbnail (Left - Big) -->
+                    <div class="gallery-item row-span-2" onclick="openLightbox({{ $listing->video ? 1 : 0 }})">
+                        <img src="{{ $listing->thumbnail ? asset('storage/' . $listing->thumbnail) : asset('assets/img/all-images/hero/1.jpg') }}"
+                            alt="Main Property Image">
+                    </div>
+
+                    @if($listing->video)
+                        <!-- Video Slot (Right Top) -->
+                        <div class="gallery-item overflow-hidden bg-black" onclick="openLightbox(0)">
+                            @if(Str::startsWith($listing->video, ['http', 'https']))
+                                <iframe src="{{ $listing->video }}" class="w-full h-full pointer-events-none" frameborder="0"></iframe>
+                            @else
+                                <video class="w-full h-full object-cover">
+                                    <source src="{{ asset('storage/' . $listing->video) }}" type="video/mp4">
+                                </video>
+                            @endif
+                            <div class="absolute inset-0 flex flex-col items-center justify-center bg-black/30 group">
+                                <i class="fa-solid fa-circle-play text-5xl text-white opacity-90 group-hover:scale-110 transition-transform"></i>
+                                <span class="text-white font-bold mt-2 text-sm">Video Tour</span>
+                            </div>
                         </div>
-                        <div class="gallery-item" onclick="openLightbox(1)">
-                            <img src="{{ isset($gallery[0]) ? asset('storage/' . $gallery[0]) : asset('assets/img/all-images/hero/1.jpg') }}" 
-                                 alt="Gallery Image 1">
-                        </div>
+
+                        <!-- Gallery 1 (Right Bottom) -->
                         <div class="gallery-item" onclick="openLightbox(2)">
-                            <img src="{{ isset($gallery[1]) ? asset('storage/' . $gallery[1]) : asset('assets/img/all-images/hero/1.jpg') }}" 
-                                 alt="Gallery Image 2">
+                            <img src="{{ isset($gallery[0]) ? asset('storage/' . $gallery[0]) : asset('assets/img/all-images/hero/1.jpg') }}"
+                                alt="Gallery Image 1">
+                            @if(count($gallery) > 1)
+                                <div class="gallery-overlay">
+                                    <div class="gallery-overlay-text">
+                                        <i class="fa-solid fa-images"></i>
+                                        <p>+{{ count($gallery) - 1 }} More Photos</p>
+                                    </div>
+                                </div>
+                            @endif
+                        </div>
+                    @else
+                        <!-- Gallery 1 (Right Top) -->
+                        <div class="gallery-item" onclick="openLightbox(1)">
+                            <img src="{{ isset($gallery[0]) ? asset('storage/' . $gallery[0]) : asset('assets/img/all-images/hero/1.jpg') }}"
+                                alt="Gallery Image 1">
+                        </div>
+
+                        <!-- Gallery 2 (Right Bottom) -->
+                        <div class="gallery-item" onclick="openLightbox(2)">
+                            <img src="{{ isset($gallery[1]) ? asset('storage/' . $gallery[1]) : asset('assets/img/all-images/hero/1.jpg') }}"
+                                alt="Gallery Image 2">
                             @if(count($gallery) > 2)
                                 <div class="gallery-overlay">
                                     <div class="gallery-overlay-text">
@@ -184,19 +226,36 @@
                                 </div>
                             @endif
                         </div>
-                    </div>
+                    @endif
+                </div>
 
-                    <div class="mobile-gallery-slider rounded-3xl overflow-hidden shadow-lg">
-                        <div class="swiper mobile-swiper h-full">
-                            <div class="swiper-wrapper">
-                                <div class="swiper-slide"><img src="{{ asset('storage/' . $listing->thumbnail) }}" class="w-full h-full object-cover"></div>
-                                @foreach($gallery as $img)
-                                    <div class="swiper-slide"><img src="{{ asset('storage/' . $img) }}" class="w-full h-full object-cover"></div>
-                                @endforeach
-                            </div>
-                            <div class="swiper-pagination"></div>
+                <div class="mobile-gallery-slider rounded-3xl overflow-hidden shadow-lg">
+                    <div class="swiper mobile-swiper h-full">
+                        <div class="swiper-wrapper">
+                            <div class="swiper-slide"><img src="{{ asset('storage/' . $listing->thumbnail) }}"
+                                    class="w-full h-full object-cover"></div>
+                            @if($listing->video)
+                                <div class="swiper-slide">
+                                    <div class="w-full h-full bg-black flex items-center justify-center">
+                                        @if(Str::startsWith($listing->video, ['http', 'https']))
+                                            <iframe src="{{ $listing->video }}" class="w-full h-full" frameborder="0"
+                                                allowfullscreen></iframe>
+                                        @else
+                                            <video controls class="w-full h-full">
+                                                <source src="{{ asset('storage/' . $listing->video) }}" type="video/mp4">
+                                            </video>
+                                        @endif
+                                    </div>
+                                </div>
+                            @endif
+                            @foreach($gallery as $img)
+                                <div class="swiper-slide"><img src="{{ asset('storage/' . $img) }}"
+                                        class="w-full h-full object-cover"></div>
+                            @endforeach
                         </div>
+                        <div class="swiper-pagination"></div>
                     </div>
+                </div>
                 </div>
 
                 <div class="flex flex-col lg:flex-row gap-8">
@@ -371,21 +430,8 @@
                         @endif
 
                         <!-- Video & Map -->
-                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                            @if($listing->video)
-                                <div class="bg-white p-6 rounded-3xl border border-gray-100">
-                                    <h3 class="text-lg font-black text-primary mb-4">Video Tour</h3>
-                                    <div class="aspect-video rounded-2xl overflow-hidden bg-black">
-                                        @if(Str::startsWith($listing->video, ['http', 'https']))
-                                            <iframe src="{{ $listing->video }}" class="w-full h-full" frameborder="0" allowfullscreen></iframe>
-                                        @else
-                                            <video controls class="w-full h-full">
-                                                <source src="{{ asset('storage/' . $listing->video) }}" type="video/mp4">
-                                            </video>
-                                        @endif
-                                    </div>
-                                </div>
-                            @endif
+                        <div class="grid grid-cols-1 md:grid-cols-1 gap-6">
+                            
 
                             @if($listing->latitude && $listing->longitude)
                                 <div class="bg-white p-6 rounded-3xl border border-gray-100">
@@ -431,10 +477,10 @@
                                 </form>
 
                                 <div class="mt-6 grid grid-cols-2 gap-3">
-                                    <a href="https://wa.me/{{ auth()->check() && auth()->user()->phone_number ? auth()->user()->phone_number : ($listing->user->phone_number ?? '44') }}" class="py-3 bg-emerald-500 rounded-xl flex items-center justify-center gap-2 text-sm font-bold hover:bg-emerald-600 transition-all">
+                                    <a href="https://wa.me/{{ $listing->user->phone_number ?? '' }}" target="_blank" class="py-3 bg-emerald-500 rounded-xl flex items-center justify-center gap-2 text-sm font-bold hover:bg-emerald-600 transition-all">
                                         <i class="fab fa-whatsapp"></i> WhatsApp
                                     </a>
-                                    <a href="tel:{{ auth()->check() && auth()->user()->phone_number ? auth()->user()->phone_number : ($listing->user->phone_number ?? '') }}" class="py-3 bg-white/10 rounded-xl flex items-center justify-center gap-2 text-sm font-bold border border-white/20 hover:bg-white/20 transition-all">
+                                    <a href="tel:{{ $listing->user->phone_number ?? '' }}" class="py-3 bg-white/10 rounded-xl flex items-center justify-center gap-2 text-sm font-bold border border-white/20 hover:bg-white/20 transition-all">
                                         <i class="fa-solid fa-phone"></i> Call
                                     </a>
                                 </div>
@@ -483,12 +529,28 @@
             </button>
             <div class="swiper lightbox-swiper h-full">
                 <div class="swiper-wrapper">
-                    <div class="swiper-slide flex items-center justify-center p-8">
-                        <img src="{{ $listing->thumbnail ? asset('storage/' . $listing->thumbnail) : asset('assets/img/all-images/hero/1.jpg') }}" class="max-h-full max-w-full rounded-2xl">
+                    @if($listing->video)
+                        <div class="swiper-slide flex items-center justify-center p-4">
+                            <div class="w-full max-w-4xl aspect-video bg-black rounded-2xl overflow-hidden shadow-2xl">
+                                @if(Str::startsWith($listing->video, ['http', 'https']))
+                                    <iframe src="{{ $listing->video }}" class="w-full h-full" frameborder="0"
+                                        allowfullscreen></iframe>
+                                @else
+                                    <video controls class="w-full h-full">
+                                        <source src="{{ asset('storage/' . $listing->video) }}" type="video/mp4">
+                                    </video>
+                                @endif
+                            </div>
+                        </div>
+                    @endif
+                    <div class="swiper-slide flex items-center justify-center p-4 md:p-12">
+                        <img src="{{ $listing->thumbnail ? asset('storage/' . $listing->thumbnail) : asset('assets/img/all-images/hero/1.jpg') }}"
+                            class="max-h-full max-w-full object-contain rounded-2xl mx-auto block shadow-2xl">
                     </div>
                     @foreach($gallery as $img)
-                        <div class="swiper-slide flex items-center justify-center p-8">
-                            <img src="{{ asset('storage/' . $img) }}" class="max-h-full max-w-full rounded-2xl">
+                        <div class="swiper-slide flex items-center justify-center p-4 md:p-12">
+                            <img src="{{ asset('storage/' . $img) }}" 
+                                 class="max-h-full max-w-full object-contain rounded-2xl mx-auto block shadow-2xl">
                         </div>
                     @endforeach
                 </div>
@@ -547,6 +609,8 @@
 
             lightboxSwiper = new Swiper(".lightbox-swiper", {
                 loop: true,
+                observer: true,
+                observeParents: true,
                 navigation: {
                     nextEl: ".swiper-button-next",
                     prevEl: ".swiper-button-prev"

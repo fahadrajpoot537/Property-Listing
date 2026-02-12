@@ -3,755 +3,558 @@
 
 <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>{{ $listing->property_title }}</title>
     <style>
-        * {
+        @page {
             margin: 0;
             padding: 0;
-            box-sizing: border-box;
         }
 
         body {
-            font-family: Arial, sans-serif;
-            color: #1a202c;
-            font-size: 11px;
-            line-height: 1.5;
-            background: #f8f9fa;
-        }
-
-        .text-dark {
-            color: #000000 !important;
-        }
-
-        /* COVER PAGE - Ultra Modern */
-        .cover {
-            position: relative;
-            background: #131B31;
-            color: white;
+            font-family: 'Helvetica', sans-serif;
+            margin: 0;
             padding: 0;
-            height: 1050px;
+            color: #334155;
+            background: #ffffff;
+            line-height: 1.3;
+        }
+
+        /* Helpers */
+        .text-white {
+            color: white;
+        }
+
+        .font-bold {
+            font-weight: bold;
+        }
+
+        /* Hero Image */
+        .hero-section {
+            width: 100%;
+            height: 380px;
+            background-color: #f1f5f9;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .hero-img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            display: block;
+        }
+
+        /* Title Section */
+        .title-section {
+            background-color: #0f172a;
+            color: #ffffff;
+            padding: 20px 30px;
             overflow: hidden;
         }
 
-        .cover-gradient {
-            position: absolute;
-            top: 0;
-            right: 0;
-            width: 60%;
-            height: 100%;
-            background: linear-gradient(135deg, transparent 0%, #8046F1 100%);
-            opacity: 0.3;
-        }
-
-        .cover-content {
-            position: relative;
-            padding: 80px 50px;
-            z-index: 2;
-        }
-
-        .logo {
-            font-size: 28px;
-            font-weight: bold;
-            color: #FFD700;
-            margin-bottom: 120px;
-            letter-spacing: 3px;
-        }
-
-        .ref-badge {
-            display: inline-block;
-            background: rgba(255, 215, 0, 0.2);
-            border: 2px solid #FFD700;
-            color: #FFD700;
-            padding: 8px 20px;
-            border-radius: 20px;
-            font-size: 10px;
-            font-weight: bold;
-            margin-bottom: 30px;
-        }
-
-        .title {
-            font-size: 38px;
-            font-weight: bold;
-            margin-bottom: 20px;
+        .property-title {
+            font-size: 24px;
+            font-weight: 800;
+            margin: 0 0 5px 0;
             line-height: 1.2;
         }
 
-        .address {
-            font-size: 13px;
-            margin-bottom: 50px;
+        .property-address {
+            font-size: 12px;
             opacity: 0.8;
+            margin-bottom: 10px;
         }
 
-        .price-section {
-            background: rgba(255, 255, 255, 0.1);
-            padding: 30px;
-            border-radius: 15px;
-            border: 2px solid rgba(255, 255, 255, 0.2);
-            margin-bottom: 40px;
-            display: inline-block;
-        }
-
-        .price-label {
-            font-size: 11px;
-            opacity: 0.7;
-            margin-bottom: 8px;
-        }
-
-        .price {
-            font-size: 44px;
-            font-weight: bold;
-            color: #FFD700;
-        }
-
-        .cover-badges {
-            margin-top: 60px;
+        .property-price {
+            font-size: 22px;
+            font-weight: 800;
         }
 
         .badge {
-            display: inline-block;
-            background: rgba(128, 70, 241, 0.3);
-            border: 2px solid #8046F1;
-            padding: 10px 22px;
-            margin: 6px;
-            border-radius: 25px;
-            font-size: 10px;
-            font-weight: bold;
-        }
-
-        /* PAGES - Modern Layout */
-        .page {
-            padding: 40px;
-            page-break-after: always;
-        }
-
-        /* Header with accent line */
-        .page-header {
-            margin-bottom: 25px;
-            padding-bottom: 15px;
-            border-bottom: 1px solid #e9ecef;
-        }
-
-        h1 {
-            font-size: 24px;
-            font-weight: bold;
-            color: #131B31;
-            position: relative;
-            padding-left: 15px;
-        }
-
-        h1:before {
-            content: '';
-            position: absolute;
-            left: 0;
-            top: 0;
-            width: 5px;
-            height: 100%;
-            background: linear-gradient(to bottom, #8046F1 0%, #FFD700 100%);
-            border-radius: 3px;
-        }
-
-        h2 {
-            font-size: 16px;
-            font-weight: bold;
-            color: #131B31;
-            margin: 25px 0 15px 0;
-            padding-left: 12px;
-            border-left: 4px solid #8046F1;
-        }
-
-        /* Modern Image Container */
-        .image-container {
-            position: relative;
-            margin-bottom: 25px;
-            border-radius: 15px;
-            overflow: hidden;
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
-        }
-
-        .main-image {
-            width: 100%;
-            height: 300px;
-            object-fit: cover;
-        }
-
-        .image-overlay {
-            position: absolute;
-            bottom: 0;
-            left: 0;
-            right: 0;
-            background: linear-gradient(to top, rgba(19, 27, 49, 0.8) 0%, transparent 100%);
-            padding: 20px;
+            background: #8046F1;
             color: white;
+            padding: 3px 8px;
+            border-radius: 4px;
+            font-size: 10px;
+            font-weight: 700;
+            text-transform: uppercase;
+            display: inline-block;
+            margin-left: 10px;
         }
 
-        /* Modern Stats Grid */
-        .stats-grid {
-            display: table;
-            width: 100%;
-            margin-bottom: 25px;
-            border-collapse: separate;
-            border-spacing: 10px;
-        }
-
-        .stat-card {
-            display: table-cell;
-            width: 25%;
-            background: #f8f9fa;
-            border: 2px solid #e9ecef;
-            border-radius: 12px;
-            padding: 20px 12px;
-            text-align: center;
-            position: relative;
-            overflow: hidden;
-        }
-
-        .stat-card:before {
-            content: '';
+        /* Contact Cards */
+        .contact-card {
             position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            height: 4px;
-            background: linear-gradient(to right, #8046F1 0%, #FFD700 100%);
+            top: 20px;
+            right: 20px;
+            width: 220px;
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 10px;
+            padding: 15px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+            z-index: 10;
         }
 
-        .stat-icon {
+        .contact-avatar {
             width: 50px;
             height: 50px;
-            background: linear-gradient(135deg, #8046F1 0%, #9d5ff5 100%);
-            color: #000000;
-            border-radius: 12px;
-            margin: 0 auto 12px;
-            line-height: 50px;
-            font-size: 22px;
-            font-weight: bold;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 2px solid #e2e8f0;
+            float: left;
+            margin-right: 10px;
         }
 
-        .stat-value {
-            font-size: 30px;
-            font-weight: bold;
-            color: #131B31;
+        .contact-info {
+            overflow: hidden;
+        }
+
+        .contact-name {
+            font-weight: 800;
+            font-size: 13px;
+            color: #0f172a;
             display: block;
-            margin-bottom: 6px;
+            margin-top: 5px;
         }
 
-        .stat-label {
+        .contact-role {
+            font-size: 10px;
+            color: #64748b;
+            display: block;
+        }
+
+        .contact-actions {
+            margin-top: 10px;
+            clear: both;
+            text-align: center;
+        }
+
+        .action-btn {
+            display: inline-block;
+            padding: 5px 8px;
+            border-radius: 4px;
+            color: white;
+            text-decoration: none;
             font-size: 9px;
-            color: #6c757d;
-            text-transform: uppercase;
             font-weight: bold;
-            letter-spacing: 0.5px;
+            margin: 0 2px;
         }
 
-        /* Modern Description Box */
-        .description-box {
-            background: #f8f9fa;
-            padding: 20px;
-            border-radius: 12px;
-            margin-bottom: 25px;
-            line-height: 1.8;
-            border-left: 4px solid #8046F1;
+        .bg-wa {
+            background-color: #25D366;
         }
 
-        /* Modern Table */
-        .info-table {
+        .bg-email {
+            background-color: #0f172a;
+        }
+
+        .bg-call {
+            background-color: #3b82f6;
+        }
+
+        /* Main Content */
+        .content-container {
+            padding: 20px 30px;
+        }
+
+        .section-heading {
+            font-size: 16px;
+            font-weight: 700;
+            color: #0f172a;
+            border-bottom: 2px solid #e2e8f0;
+            padding-bottom: 5px;
+            margin-bottom: 10px;
+            margin-top: 20px;
+        }
+
+        .section-heading:first-child {
+            margin-top: 0;
+        }
+
+        /* Specs */
+        .specs-grid {
             width: 100%;
             border-collapse: collapse;
             margin-bottom: 20px;
         }
 
-        .info-table tr {
-            border-bottom: 1px solid #e9ecef;
-        }
-
-        .info-table tr:last-child {
-            border-bottom: none;
-        }
-
-        .info-table td {
-            padding: 12px 10px;
-        }
-
-        .info-table td:first-child {
-            width: 38%;
-            color: #6c757d;
-            font-weight: bold;
-            font-size: 10px;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-        }
-
-        .info-table td:last-child {
-            color: #131B31;
-            font-weight: bold;
-            font-size: 12px;
-        }
-
-        /* Modern Badges */
-        .badge-modern {
-            background: linear-gradient(135deg, #8046F1 0%, #9d5ff5 100%);
-            color: white;
-            padding: 6px 16px;
-            border-radius: 20px;
-            font-size: 9px;
-            font-weight: bold;
-            letter-spacing: 0.5px;
-        }
-
-        .badge-success {
-            background: linear-gradient(135deg, #28a745 0%, #34ce57 100%);
-        }
-
-        .badge-warning {
-            background: linear-gradient(135deg, #ffc107 0%, #ffcd39 100%);
-            color: #000;
-        }
-
-        .badge-danger {
-            background: linear-gradient(135deg, #dc3545 0%, #e4606d 100%);
-        }
-
-        /* Modern Feature Cards */
-        .features-grid {
-            margin-bottom: 20px;
-        }
-
-        .feature-card {
-            background: #ffffff;
-            border: 2px solid #d1d5db;
-            border-radius: 10px;
-            padding: 12px 15px;
-            margin-bottom: 10px;
-            position: relative;
-            padding-left: 45px;
-        }
-
-        .feature-icon {
-            position: absolute;
-            left: 12px;
-            top: 50%;
-            transform: translateY(-50%);
-            width: 24px;
-            height: 24px;
-            background: linear-gradient(135deg, #8046F1 0%, #9d5ff5 100%);
-            color: white;
-            border-radius: 6px;
+        .specs-cell {
+            width: 25%;
+            padding: 10px;
+            background: #f8fafc;
+            border: 1px solid #e2e8f0;
             text-align: center;
-            line-height: 24px;
-            font-size: 12px;
-            font-weight: bold;
         }
 
-        /* Modern Contact Card */
-        .contact-card {
-            background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
-            color: #000000;
-            padding: 28px;
-            border-radius: 15px;
-            margin-top: 25px;
-            position: relative;
-            overflow: hidden;
-            border: 2px solid #d1d5db;
-        }
-
-        .contact-card:before {
-            content: '';
-            position: absolute;
-            top: -50%;
-            right: -20%;
-            width: 300px;
-            height: 300px;
-            background: radial-gradient(circle, rgba(128, 70, 241, 0.3) 0%, transparent 70%);
-        }
-
-        .contact-header {
-            font-size: 20px;
-            font-weight: bold;
-            margin-bottom: 20px;
-            color: #8046F1;
-            position: relative;
-        }
-
-        .contact-info {
-            position: relative;
-        }
-
-        .contact-row {
-            margin-bottom: 12px;
-            font-size: 12px;
-            padding: 8px 0;
-            border-bottom: 1px solid #e9ecef;
-            color: #000000;
-        }
-
-        .contact-row:last-child {
-            border-bottom: none;
-        }
-
-        .contact-label {
-            color: #6c757d;
-            font-weight: bold;
-            display: inline-block;
-            width: 100px;
+        .specs-label {
             font-size: 10px;
+            color: #64748b;
+            display: block;
             text-transform: uppercase;
         }
 
-        /* Alert Box */
-        .alert-modern {
-            background: #fff3cd;
-            border-left: 5px solid #ffc107;
-            padding: 15px 20px;
-            margin: 15px 0;
-            color: #856404;
+        .specs-value {
+            font-size: 14px;
+            font-weight: 800;
+            color: #0f172a;
+            display: block;
+        }
+
+        /* Description */
+        .description {
+            font-size: 11px;
+            color: #475569;
+            line-height: 1.5;
+            margin-bottom: 20px;
+            text-align: justify;
+        }
+
+        /* Gallery */
+        .gallery-table {
+            width: 100%;
+            margin-bottom: 20px;
+            border-spacing: 5px;
+            margin-left: -5px;
+        }
+
+        .gallery-cell {
+            width: 50%;
+            vertical-align: top;
+        }
+
+        .gallery-img {
+            width: 100%;
+            height: 160px;
+            object-fit: cover;
+            border-radius: 6px;
+            display: block;
+        }
+
+        /* Features */
+        .feature-pill {
+            display: inline-block;
+            background: #f1f5f9;
+            color: #334155;
+            padding: 4px 10px;
+            border-radius: 12px;
+            font-size: 10px;
+            font-weight: 600;
+            margin: 0 5px 5px 0;
+            border: 1px solid #e2e8f0;
+        }
+
+        /* Two Column Layout */
+        .two-col-table {
+            width: 100%;
+            border-spacing: 15px;
+            margin-left: -15px;
+            margin-bottom: 20px;
+        }
+
+        .col-half {
+            width: 50%;
+            vertical-align: top;
+        }
+
+        .mortgage-box {
+            background: #f0f9ff;
+            border: 1px dashed #bae6fd;
             border-radius: 8px;
+            padding: 15px;
+            margin-top: 10px;
+        }
+
+        .mortgage-row {
+            margin-bottom: 5px;
+            font-size: 11px;
+            overflow: hidden;
+        }
+
+        .m-val {
+            float: right;
+            font-weight: 700;
+            color: #0284c7;
+        }
+
+        .details-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .details-table td {
+            padding: 6px 0;
+            border-bottom: 1px solid #e2e8f0;
             font-size: 11px;
         }
 
-        .alert-danger {
-            background: #f8d7da;
-            border-left-color: #dc3545;
-            color: #721c24;
+        .d-label {
+            font-weight: 600;
+            color: #64748b;
         }
 
-        /* Modern Gallery */
-        .gallery-grid {
-            width: 100%;
-            margin-bottom: 20px;
-            border-collapse: separate;
-            border-spacing: 10px;
+        .d-val {
+            font-weight: 700;
+            color: #0f172a;
+            text-align: right;
         }
 
-        .gallery-item {
-            width: 33.33%;
-            padding: 0;
+        .page-break {
+            page-break-after: always;
         }
 
-        .gallery-image {
-            width: 100%;
-            height: 160px;
-            border-radius: 12px;
-            object-fit: cover;
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-        }
-
-        /* Modern Footer */
         .footer {
-            text-align: center;
-            margin-top: 30px;
-            padding-top: 20px;
-            border-top: 2px solid #e9ecef;
             font-size: 9px;
-            color: #6c757d;
+            text-align: center;
+            color: #94a3b8;
+            padding: 20px 0;
         }
 
-        .footer-logo {
-            font-size: 14px;
-            font-weight: bold;
-            background: linear-gradient(to right, #131B31 0%, #8046F1 100%);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            margin-bottom: 6px;
+        .clearfix::after {
+            content: "";
+            clear: both;
+            display: table;
         }
     </style>
 </head>
 
 <body>
-    <!-- MODERN COVER PAGE -->
-    <div class="cover">
-        <div class="cover-gradient"></div>
-        <div class="cover-content">
-            @if(!($hideBranding ?? false))
-                <div class="logo">PROPERTYFINDA</div>
-            @endif
+    @php
+        // ROBUST IMAGE HANDLER
+        function getBase64Image($path)
+        {
+            if (!$path)
+                return null;
 
-            <div class="ref-badge">REF: {{ $listing->property_reference_number }}</div>
-
-            <div class="title">{{ $listing->property_title }}</div>
-            <div class="address">{{ $listing->address }}</div>
-
-            <div class="price-section">
-                <div class="price-label">ASKING PRICE</div>
-                <div class="price">£{{ number_format($listing->price) }}</div>
-            </div>
-
-            <div class="cover-badges">
-                <span class="badge">FOR {{ strtoupper($listing->purpose) }}</span>
-                <span class="badge">{{ strtoupper($listing->propertyType->title ?? 'PROPERTY') }}</span>
-                @if($listing->unitType)
-                    <span class="badge">{{ strtoupper($listing->unitType->title) }}</span>
-                @endif
-            </div>
-        </div>
-    </div>
-
-    <!-- PAGE 1: OVERVIEW -->
-    <div class="page">
-        <div class="page-header">
-            <h1>Property Overview</h1>
-        </div>
-
-        @if($listing->thumbnail)
-            @php
-                $imagePath = public_path('storage/' . $listing->thumbnail);
-                $imageData = '';
-                if (file_exists($imagePath)) {
-                    $imageData = base64_encode(file_get_contents($imagePath));
-                    $imageType = pathinfo($imagePath, PATHINFO_EXTENSION);
-                    $imageData = 'data:image/' . $imageType . ';base64,' . $imageData;
+            // If it's already a full URL
+            if (strpos($path, 'http') === 0) {
+                try {
+                    $ctx = stream_context_create(['http' => ['timeout' => 5]]);
+                    $data = @file_get_contents($path, false, $ctx);
+                    if ($data !== false) {
+                        $finfo = new finfo(FILEINFO_MIME_TYPE);
+                        $mime = $finfo->buffer($data);
+                        return 'data:' . $mime . ';base64,' . base64_encode($data);
+                    }
+                } catch (\Exception $e) {
+                    return null;
                 }
-            @endphp
-            @if($imageData)
-                <div class="image-container">
-                    <img src="{{ $imageData }}" class="main-image">
-                </div>
-            @endif
+            }
+
+            $pathsToCheck = [
+                public_path('storage/' . $path),
+                storage_path('app/public/' . $path),
+                public_path($path)
+            ];
+
+            foreach ($pathsToCheck as $fullPath) {
+                $fullPath = str_replace('\\', '/', $fullPath);
+                if (file_exists($fullPath)) {
+                    $type = pathinfo($fullPath, PATHINFO_EXTENSION) ?: 'jpg';
+                    try {
+                        $data = @file_get_contents($fullPath);
+                        if ($data !== false) {
+                            return 'data:image/' . $type . ';base64,' . base64_encode($data);
+                        }
+                    } catch (\Exception $e) {
+                        continue;
+                    }
+                }
+            }
+            return null;
+        }
+
+        $heroImage = getBase64Image($listing->thumbnail);
+        $contactAvatar = $contactPerson && $contactPerson->profile_photo_path ? getBase64Image($contactPerson->profile_photo_path) : null;
+    @endphp
+
+    <!-- HERO SECTION -->
+    <div class="hero-section">
+        @if($heroImage)
+            <img src="{{ $heroImage }}" class="hero-img">
+        @else
+            <div
+                style="width:100%; height:100%; background:#cbd5e1; text-align:center; line-height:380px; color:#64748b; font-weight:bold;">
+                No Image</div>
         @endif
 
-        <table class="stats-grid">
-            <tr>
-                <td class="stat-card">
-                    <div class="stat-icon text-dark">B</div>
-                    <span class="stat-value">{{ $listing->bedrooms }}</span>
-                    <div class="stat-label">Bedrooms</div>
-                </td>
-                <td class="stat-card">
-                    <div class="stat-icon text-dark">W</div>
-                    <span class="stat-value">{{ $listing->bathrooms }}</span>
-                    <div class="stat-label">Bathrooms</div>
-                </td>
-                <td class="stat-card">
-                    <div class="stat-icon text-dark">A</div>
-                    <span class="stat-value">{{ $listing->area_size ?? 'N/A' }}</span>
-                    <div class="stat-label">Sq Ft</div>
-                </td>
-                <td class="stat-card">
-                    <div class="stat-icon text-dark">F</div>
-                    <span class="stat-value">{{ $listing->floors_count ?? '1' }}</span>
-                    <div class="stat-label">Floors</div>
-                </td>
-            </tr>
-        </table>
-
-        <div class="description-box">
-            {{ strip_tags($listing->description) }}
-        </div>
-    </div>
-
-    <!-- PAGE 2: DETAILS -->
-    <div class="page">
-        <div class="page-header">
-            <h1>Property Details</h1>
-        </div>
-
-        <table class="info-table">
-            <tr>
-                <td>Property ID</td>
-                <td>{{ $listing->property_reference_number }}</td>
-            </tr>
-            <tr>
-                <td>Property Type</td>
-                <td>{{ $listing->propertyType->title ?? 'N/A' }}</td>
-            </tr>
-            @if($listing->unitType)
-                <tr>
-                    <td>Unit Type</td>
-                    <td>{{ $listing->unitType->title }}</td>
-                </tr>
-            @endif
-            <tr>
-                <td>Purpose</td>
-                <td>{{ ucfirst($listing->purpose) }}</td>
-            </tr>
-            <tr>
-                <td>Price</td>
-                <td>£{{ number_format($listing->price) }}</td>
-            </tr>
-            <tr>
-                <td>Ownership</td>
-                <td>{{ $listing->ownershipStatus->title ?? 'Freehold' }}</td>
-            </tr>
-            @if($listing->epc_rating)
-                <tr>
-                    <td>Energy Rating</td>
-                    <td><span class="badge-modern badge-success">EPC {{ $listing->epc_rating }}</span></td>
-                </tr>
-            @endif
-            @if($listing->council_tax_band)
-                <tr>
-                    <td>Council Tax</td>
-                    <td>Band {{ $listing->council_tax_band }}</td>
-                </tr>
-            @endif
-            <tr>
-                <td>Total Area</td>
-                <td>{{ $listing->area_size ?? 'N/A' }} Square Feet</td>
-            </tr>
-        </table>
-
-        @if($listing->flood_risk || $listing->listed_property || $listing->no_onward_chain)
-            <h2>Legal & Environmental</h2>
-
-            <table class="info-table">
-                @if($listing->listed_property)
-                    <tr>
-                        <td>Listed Building</td>
-                        <td><span class="badge-modern badge-warning">{{ $listing->listed_property }}</span></td>
-                    </tr>
-                @endif
-                @if($listing->no_onward_chain)
-                    <tr>
-                        <td>Chain Status</td>
-                        <td><span class="badge-modern badge-success">No Onward Chain</span></td>
-                    </tr>
-                @endif
-                @if($listing->flood_risk)
-                    <tr>
-                        <td>Flood Risk</td>
-                        <td>
-                            @if($listing->flood_risk === 'Very Low' || $listing->flood_risk === 'Low')
-                                <span class="badge-modern badge-success">{{ $listing->flood_risk }}</span>
-                            @elseif($listing->flood_risk === 'Medium')
-                                <span class="badge-modern badge-warning">{{ $listing->flood_risk }}</span>
-                            @else
-                                <span class="badge-modern badge-danger">{{ $listing->flood_risk }}</span>
-                            @endif
-                        </td>
-                    </tr>
-                @endif
-                @if($listing->flood_history)
-                    <tr>
-                        <td>Flood History</td>
-                        <td>{{ ucfirst($listing->flood_history) }}</td>
-                    </tr>
-                @endif
-                @if($listing->flood_defenses)
-                    <tr>
-                        <td>Flood Defenses</td>
-                        <td>{{ ucfirst($listing->flood_defenses) }}</td>
-                    </tr>
-                @endif
-            </table>
-
-            @if($listing->flood_risk && in_array($listing->flood_risk, ['High', 'Medium']))
-                <div class="alert-modern alert-danger">
-                    <strong>⚠ Flood Risk Warning:</strong> This property is in a {{ $listing->flood_risk }} flood risk area.
-                </div>
-            @endif
-        @endif
-
-        @if(isset($mortgageDetails) && $mortgageDetails)
-            <h2>Estimated Mortgage</h2>
-            <div class="alert-modern" style="background: #f0fdf9; border-left-color: #8046F1;">
-                <table class="info-table" style="margin: 0;">
-                    <tr>
-                        <td>Monthly Payment</td>
-                        <td style="font-size: 16px; color: #8046F1;">
-                            £{{ number_format($mortgageDetails['monthly_payment'], 2) }}</td>
-                    </tr>
-                    <tr>
-                        <td>Down Payment ({{ $mortgageDetails['deposit_percent'] }}%)</td>
-                        <td>£{{ number_format($mortgageDetails['deposit']) }}</td>
-                    </tr>
-                    <tr>
-                        <td>Interest Rate</td>
-                        <td>{{ $mortgageDetails['interest_rate'] }}%</td>
-                    </tr>
-                    <tr>
-                        <td>Loan Term</td>
-                        <td>{{ $mortgageDetails['term_years'] }} Years</td>
-                    </tr>
-                </table>
-                <div style="font-size: 9px; color: #666; margin-top: 8px; font-style: italic;">
-                    *Estimated monthly payment based on {{ $mortgageDetails['interest_rate'] }}% interest rate over
-                    {{ $mortgageDetails['term_years'] }} years. Actual rates may vary.
-                </div>
-            </div>
-        @endif
-
-        @if($listing->features->count() > 0)
-            <h2>Key Features & Amenities</h2>
-
-            <div class="features-grid">
-                @foreach($listing->features as $feature)
-                    <div class="feature-card">
-                        <div class="feature-icon">✓</div>
-                        {{ $feature->title }}
-                    </div>
-                @endforeach
-            </div>
-        @endif
-    </div>
-
-    <!-- PAGE 3: GALLERY & CONTACT -->
-    <div class="page">
-        @if(count($gallery) > 0)
-            <div class="page-header">
-                <h1>Property Gallery</h1>
-            </div>
-
-            <table class="gallery-grid">
-                @foreach(array_chunk($gallery, 3) as $row)
-                    <tr>
-                        @foreach($row as $image)
-                            <td class="gallery-item">
-                                @php
-                                    $galleryPath = public_path('storage/' . $image);
-                                    $galleryData = '';
-                                    if (file_exists($galleryPath)) {
-                                        $galleryData = base64_encode(file_get_contents($galleryPath));
-                                        $galleryType = pathinfo($galleryPath, PATHINFO_EXTENSION);
-                                        $galleryData = 'data:image/' . $galleryType . ';base64,' . $galleryData;
-                                    }
-                                @endphp
-                                @if($galleryData)
-                                    <img src="{{ $galleryData }}" class="gallery-image">
-                                @endif
-                            </td>
-                        @endforeach
-                        @if(count($row) < 3)
-                            @for($i = count($row); $i < 3; $i++)
-                                <td class="gallery-item"></td>
-                            @endfor
-                        @endif
-                    </tr>
-                @endforeach
-            </table>
-        @endif
-
+        <!-- Floating Contact Card (Logged in User) -->
         <div class="contact-card">
-            <div class="contact-header">Get In Touch</div>
-            <div class="contact-info">
-                <div class="contact-row text-dark">
-                    <span class="contact-label">Agent Name</span>
-                    {{ $agent->name ?? 'Agent' }}
+            <div class="clearfix">
+                @if($contactAvatar)
+                    <img src="{{ $contactAvatar }}" class="contact-avatar">
+                @else
+                    <div class="contact-avatar"
+                        style="background:#3b82f6; color:white; text-align:center; line-height:50px; font-weight:800; font-size:18px;">
+                        {{ substr($contactPerson->name ?? 'A', 0, 1) }}
+                    </div>
+                @endif
+                <div class="contact-info">
+                    <span
+                        class="contact-name">{{ \Illuminate\Support\Str::limit($contactPerson->name ?? 'Agent', 18) }}</span>
+                    <span class="contact-role">Property Consultant</span>
                 </div>
-                @if($agent && $agent->phone_number)
-                    <div class="contact-row text-dark">
-                        <span class="contact-label">Phone</span>
-                        {{ $agent->phone_number }}
+            </div>
+            <div class="contact-actions">
+                <a href="https://wa.me/{{ $contactPerson->phone_number ?? '' }}" class="action-btn bg-wa">WhatsApp</a>
+                <a href="mailto:{{ $contactPerson->email ?? '' }}" class="action-btn bg-email">Email</a>
+                <a href="tel:{{ $contactPerson->phone_number ?? '' }}" class="action-btn bg-call">Call</a>
+            </div>
+        </div>
+    </div>
+
+    <!-- TITLE SECTION -->
+    <div class="title-section">
+        <div style="float:left; width: 70%;">
+            <div class="property-title">{{ $listing->property_title }} <span
+                    class="badge">{{ $listing->purpose }}</span></div>
+            <div class="property-address">{{ $listing->address }}</div>
+        </div>
+        <div style="float:right; width: 30%; text-align:right; padding-top:5px;">
+            <div class="property-price">£{{ number_format($listing->price) }}</div>
+        </div>
+        <div style="clear:both;"></div>
+    </div>
+
+    <table class="specs-grid">
+        <tr>
+            <td class="specs-cell"><span class="specs-label">Type</span><span
+                    class="specs-value">{{ $listing->propertyType->title ?? 'Flat' }}</span></td>
+            <td class="specs-cell"><span class="specs-label">Bedrooms</span><span
+                    class="specs-value">{{ $listing->bedrooms ?? 0 }}</span></td>
+            <td class="specs-cell"><span class="specs-label">Bathrooms</span><span
+                    class="specs-value">{{ $listing->bathrooms ?? 0 }}</span></td>
+            <td class="specs-cell"><span class="specs-label">Area</span><span
+                    class="specs-value">{{ $listing->area_size ?? 0 }} sqft</span></td>
+        </tr>
+    </table>
+
+    <div class="content-container">
+        <div class="section-heading">Description</div>
+        <div class="description">{{ \Illuminate\Support\Str::limit(strip_tags($listing->description ?? ''), 600) }}
+        </div>
+
+        @if(count($gallery) > 0)
+            <div class="section-heading">Gallery</div>
+            <table class="gallery-table">
+                @foreach(array_chunk($gallery, 2) as $row)
+                    <tr>
+                        @foreach($row as $img)
+                            @php $gVal = getBase64Image($img); @endphp
+                            @if($gVal)
+                                <td class="gallery-cell" style="padding-bottom: 10px;"><img src="{{ $gVal }}" class="gallery-img"></td>
+                            @endif
+                        @endforeach
+                        @if(count($row) < 2)
+                        <td class="gallery-cell"></td> @endif
+                    </tr>
+                @endforeach
+            </table>
+        @endif
+    </div>
+
+    <div class="page-break"></div>
+
+    <div class="content-container" style="padding-top: 20px;">
+        <table class="two-col-table">
+            <tr>
+                <td class="col-half">
+                    <div class="section-heading">Property Details</div>
+                    <table class="details-table">
+                        <tr>
+                            <td class="d-label">Reference</td>
+                            <td class="d-val">{{ $listing->property_reference_number }}</td>
+                        </tr>
+                        <tr>
+                            <td class="d-label">Completion</td>
+                            <td class="d-val">{{ $listing->completion_status ?? 'Ready' }}</td>
+                        </tr>
+                        <tr>
+                            <td class="d-label">Furnished</td>
+                            <td class="d-val">{{ $listing->furnishing_status ?? 'No' }}</td>
+                        </tr>
+                        <tr>
+                            <td class="d-label">Tenure</td>
+                            <td class="d-val">{{ $listing->tenure ?? 'Freehold' }}</td>
+                        </tr>
+                    </table>
+
+                    <div style="margin-top:20px;">
+                        <div class="section-heading">Features</div>
+                        @foreach($listing->features as $feature)
+                            <div class="feature-pill">{{ $feature->title }}</div>
+                        @endforeach
                     </div>
-                @endif
-                @if($agent && $agent->email)
-                    <div class="contact-row text-dark">
-                        <span class="contact-label">Email</span>
-                        {{ $agent->email }}
+                </td>
+
+                <td class="col-half">
+                    @if($mortgageDetails)
+                        <div class="section-heading">Mortgage Calculator</div>
+                        <div class="mortgage-box">
+                            <div class="mortgage-row"><span style="float:left;">Price</span><span
+                                    class="m-val">£{{ number_format($listing->price) }}</span></div>
+                            <div class="mortgage-row"><span style="float:left;">Deposit
+                                    ({{ $mortgageDetails['deposit_percent'] }}%)</span><span
+                                    class="m-val">£{{ number_format($mortgageDetails['deposit']) }}</span></div>
+                            <div class="mortgage-row"><span style="float:left;">Interest Rate</span><span
+                                    class="m-val">{{ $mortgageDetails['interest_rate'] }}%</span></div>
+                            <div
+                                style="border-top:1px dashed #bae6fd; margin-top:5px; padding-top:5px; color:#0369a1; font-weight:bold;">
+                                <span style="float:left;">Monthly Payment</span><span
+                                    style="float:right;">£{{ number_format($mortgageDetails['monthly_payment']) }}</span>
+                                <div style="clear:both;"></div>
+                            </div>
+                        </div>
+                    @endif
+
+                    @if($mapImage)
+                        <div class="section-heading" style="margin-top:20px;">Location</div>
+                        <div
+                            style="width:100%; height:150px; border-radius:6px; overflow:hidden; border:1px solid #e2e8f0;">
+                            <img src="{{ $mapImage }}" style="width:100%; height:100%; object-fit:cover;">
+                        </div>
+                    @endif
+                </td>
+            </tr>
+        </table>
+
+        <!-- BOTTOM CONTACT SECTION -->
+        <div
+            style="margin-top: 40px; background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 12px; padding: 25px;">
+            <div class="clearfix">
+                <div style="float:left; width: 55%;">
+                    <h3 style="margin:0 0 5px 0; color:#0f172a; font-size:16px;">Interested in this property?</h3>
+                    <p style="margin:0 0 15px 0; color:#64748b; font-size:11px;">Contact me today for more information
+                        or a viewing.</p>
+                    <div class="contact-actions" style="text-align: left; margin-top: 0;">
+                        <a href="https://wa.me/{{ $contactPerson->phone_number ?? '' }}" class="action-btn bg-wa"
+                            style="width:auto; padding: 6px 15px;">WhatsApp</a>
+                        <a href="mailto:{{ $contactPerson->email ?? '' }}" class="action-btn bg-email"
+                            style="width:auto; padding: 6px 15px;">Email Agent</a>
+                        <a href="tel:{{ $contactPerson->phone_number ?? '' }}" class="action-btn bg-call"
+                            style="width:auto; padding: 6px 15px;">Call Now</a>
                     </div>
-                @endif
-                <div class="contact-row text-dark">
-                    <span class="contact-label">Reference</span>
-                    {{ $listing->property_reference_number }}
+                </div>
+                <div style="float:right; width: 40%; text-align: right;">
+                    @if($contactAvatar)
+                        <img src="{{ $contactAvatar }}"
+                            style="width: 55px; height: 55px; border-radius: 50%; object-fit: cover; border: 2px solid #e2e8f0; vertical-align: middle;">
+                    @else
+                        <div
+                            style="width:55px; height:55px; background:#3b82f6; color:white; border-radius:50%; display:inline-block; line-height:55px; font-weight:800; font-size:18px; text-align:center; vertical-align: middle;">
+                            {{ substr($contactPerson->name ?? 'A', 0, 1) }}
+                        </div>
+                    @endif
+                    <div style="display:inline-block; vertical-align: middle; text-align: left; margin-left: 10px;">
+                        <div style="font-weight: 800; font-size: 14px; color: #0f172a;">
+                            {{ $contactPerson->name ?? 'Agent' }}
+                        </div>
+                        <div style="font-size: 11px; color: #64748b;">Property Consultant</div>
+                    </div>
                 </div>
             </div>
         </div>
 
-        <div class="footer">
-            @if(!($hideBranding ?? false))
-                <div class="footer-logo">PROPERTYFINDA</div>
-                <div>Your Trusted Real Estate Partner</div>
-            @endif
-            <div>Generated: {{ now()->format('d M Y, h:i A') }}</div>
-            <div style="margin-top: 6px; font-style: italic;">This brochure is for informational purposes only.</div>
-        </div>
+        <div class="footer">Generated on {{ date('d M Y') }} &bull; Private & Confidential</div>
     </div>
 </body>
 
