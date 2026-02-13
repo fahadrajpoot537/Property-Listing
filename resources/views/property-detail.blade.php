@@ -98,6 +98,54 @@
             inset: 0;
             z-index: 9999;
             background: rgba(0, 0, 0, 0.95);
+            backdrop-filter: blur(10px);
+        }
+
+        .lightbox-swiper .swiper-slide {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            height: 100vh; /* Force full viewport height for swiper slide */
+            width: 100vw;
+        }
+
+        @media (max-width: 640px) {
+            .bg-gray-50.pt-32 {
+                padding-top: 5rem;
+            }
+            .p-8 {
+                padding: 1.25rem !important;
+            }
+            .text-3xl {
+                font-size: 1.75rem !important;
+                line-height: 2.25rem !important;
+            }
+            .text-5xl {
+                font-size: 2rem !important;
+                line-height: 2.5rem !important;
+            }
+            .text-4xl {
+                font-size: 1.5rem !important;
+            }
+            .mb-12 {
+                margin-bottom: 2rem !important;
+            }
+            .mobile-gallery-slider {
+                height: 300px;
+            }
+            /* Header responsiveness */
+            .header-flex-wrapper {
+                flex-direction: column !important;
+                align-items: flex-start !important;
+            }
+            .header-actions {
+                width: 100% !important;
+                justify-content: flex-start !important;
+                margin-top: 1.5rem;
+            }
+            .price-display {
+                text-align: left !important;
+            }
         }
     </style>
 @endpush
@@ -108,7 +156,7 @@
 
             <!-- Header -->
             <div class="mb-8 bg-white p-8 rounded-3xl border border-gray-100 shadow-sm">
-                <div class="flex flex-col lg:flex-row justify-between items-start lg:items-end gap-8">
+                <div class="flex flex-col lg:flex-row justify-between items-start lg:items-end gap-8 header-flex-wrapper">
                     <div class="flex-1">
                         <nav class="flex mb-4 text-xs font-bold text-gray-400 gap-2">
                             <a href="{{ route('home') }}" class="hover:text-secondary">Home</a>
@@ -135,8 +183,8 @@
                         </div>
                     </div>
 
-                    <div class="flex items-center gap-4">
-                        <div class="text-right">
+                    <div class="flex items-center gap-4 header-actions">
+                        <div class="text-right price-display">
                             @if($listing->old_price && $listing->old_price > $listing->price)
                                 <div class="flex items-center justify-end gap-2 mb-1">
                                     <span class="text-sm text-gray-400" style="text-decoration: line-through;">£{{ number_format($listing->old_price) }}</span>
@@ -158,7 +206,7 @@
                         @else
                             <a href="{{ route('login') }}"
                                 class="bg-secondary text-white px-4 py-3 rounded-xl text-sm font-bold hover:bg-secondary-dark transition-all shadow-lg shadow-secondary/20">
-                                Login for Download Brochure
+                                Login for Brochure
                             </a>
                         @endif
 
@@ -303,9 +351,9 @@
                         </div>
 
                         <!-- Property Details -->
-                        <div class="bg-white p-8 rounded-3xl border border-gray-100">
+                        <div class="bg-white p-8 rounded-3xl border border-gray-100 shadow-sm">
                             <h2 class="text-2xl font-black text-primary mb-6">Property Details</h2>
-                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-x-12 gap-y-2">
                                 <div class="flex justify-between py-3 border-b border-gray-100">
                                     <span class="text-gray-600 font-medium">Property ID</span>
                                     <span class="font-bold text-primary">{{ $listing->property_reference_number }}</span>
@@ -326,11 +374,47 @@
                                         <span class="font-bold text-primary">Band {{ $listing->council_tax_band }}</span>
                                     </div>
                                 @endif
+                                @if($listing->listed_property)
+                                    <div class="flex justify-between py-3 border-b border-gray-100">
+                                        <span class="text-gray-600 font-medium">Listed Building</span>
+                                        <span class="font-bold text-primary">{{ $listing->listed_property }}</span>
+                                    </div>
+                                @endif
+                                @if($listing->no_onward_chain)
+                                    <div class="flex justify-between py-3 border-b border-gray-100">
+                                        <span class="text-gray-600 font-medium">Clean Status</span>
+                                        <span class="font-bold text-primary">No Onward Chain</span>
+                                    </div>
+                                @endif
+                                @if($listing->flood_risk)
+                                    <div class="flex justify-between py-3 border-b border-gray-100">
+                                        <span class="text-gray-600 font-medium">Flood Risk</span>
+                                        <span class="font-bold text-primary">{{ $listing->flood_risk }}</span>
+                                    </div>
+                                @endif
+                                @if($listing->private_rights_of_way)
+                                    <div class="flex justify-between py-3 border-b border-gray-100">
+                                        <span class="text-gray-600 font-medium">Private Rights of Way</span>
+                                        <span class="font-bold text-primary">{{ $listing->private_rights_of_way }}</span>
+                                    </div>
+                                @endif
+                                @if($listing->public_rights_of_way)
+                                    <div class="flex justify-between py-3 border-b border-gray-100">
+                                        <span class="text-gray-600 font-medium">Public Rights of Way</span>
+                                        <span class="font-bold text-primary">{{ $listing->public_rights_of_way }}</span>
+                                    </div>
+                                @endif
+                                @if($listing->restrictions)
+                                    <div class="col-span-1 md:col-span-2 flex justify-between py-3 border-b border-gray-100">
+                                        <span class="text-gray-600 font-medium">Restrictions</span>
+                                        <span class="font-bold text-primary text-right pl-4">{{ $listing->restrictions }}</span>
+                                    </div>
+                                @endif
                             </div>
                         </div>
 
                         <!-- Description -->
-                        <div class="bg-white p-8 rounded-3xl border border-gray-100" x-data="{ expanded: false }">
+                        <div class="bg-white p-6 md:p-8 rounded-3xl border border-gray-100" x-data="{ expanded: false }">
                             <h2 class="text-2xl font-black text-primary mb-6">Description</h2>
                             <div class="prose prose-slate max-w-none text-gray-600">
                                 <div x-show="!expanded">
@@ -363,96 +447,24 @@
                             </div>
                         @endif
 
-                        <!-- Legal & Environmental Information -->
-                        @if($listing->flood_risk || $listing->listed_property || $listing->no_onward_chain || $listing->private_rights_of_way || $listing->public_rights_of_way || $listing->restrictions || $listing->flood_history || $listing->flood_defenses)
-                            <div class="bg-white p-8 rounded-3xl border border-gray-100">
-                                <h2 class="text-2xl font-black text-primary mb-6">Legal & Environmental Information</h2>
-                                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                                    @if($listing->listed_property)
-                                        <div class="flex justify-between py-3 border-b border-gray-100">
-                                            <span class="text-gray-600 font-medium">Listed Building</span>
-                                            <span class="px-3 py-1 bg-amber-500 text-white rounded-lg text-sm font-bold">{{ $listing->listed_property }}</span>
-                                        </div>
-                                    @endif
 
-                                    @if($listing->no_onward_chain)
-                                        <div class="flex justify-between py-3 border-b border-gray-100">
-                                            <span class="text-gray-600 font-medium">Chain Status</span>
-                                            <span class="px-3 py-1 bg-emerald-500 text-white rounded-lg text-sm font-bold">No Onward Chain</span>
-                                        </div>
-                                    @endif
-
-                                    @if($listing->flood_risk)
-                                        <div class="flex justify-between py-3 border-b border-gray-100">
-                                            <span class="text-gray-600 font-medium">Flood Risk</span>
-                                            @if($listing->flood_risk === 'Very Low' || $listing->flood_risk === 'Low')
-                                                <span class="px-3 py-1 bg-emerald-500 text-white rounded-lg text-sm font-bold">{{ $listing->flood_risk }}</span>
-                                            @elseif($listing->flood_risk === 'Medium')
-                                                <span class="px-3 py-1 bg-amber-500 text-white rounded-lg text-sm font-bold">{{ $listing->flood_risk }}</span>
-                                            @else
-                                                <span class="px-3 py-1 bg-red-500 text-white rounded-lg text-sm font-bold">{{ $listing->flood_risk }}</span>
-                                            @endif
-                                        </div>
-                                    @endif
-
-                                    @if($listing->flood_history)
-                                        <div class="flex justify-between py-3 border-b border-gray-100">
-                                            <span class="text-gray-600 font-medium">Flood History</span>
-                                            <span class="font-bold text-primary">{{ ucfirst($listing->flood_history) }}</span>
-                                        </div>
-                                    @endif
-
-                                    @if($listing->flood_defenses)
-                                        <div class="flex justify-between py-3 border-b border-gray-100">
-                                            <span class="text-gray-600 font-medium">Flood Defenses</span>
-                                            <span class="font-bold text-primary">{{ ucfirst($listing->flood_defenses) }}</span>
-                                        </div>
-                                    @endif
-
-                                    @if($listing->private_rights_of_way)
-                                        <div class="flex justify-between py-3 border-b border-gray-100">
-                                            <span class="text-gray-600 font-medium">Private Rights of Way</span>
-                                            <span class="font-bold text-primary">{{ $listing->private_rights_of_way }}</span>
-                                        </div>
-                                    @endif
-
-                                    @if($listing->public_rights_of_way)
-                                        <div class="flex justify-between py-3 border-b border-gray-100">
-                                            <span class="text-gray-600 font-medium">Public Rights of Way</span>
-                                            <span class="font-bold text-primary">{{ $listing->public_rights_of_way }}</span>
-                                        </div>
-                                    @endif
-
-                                    @if($listing->restrictions)
-                                        <div class="col-span-2 py-3 border-b border-gray-100">
-                                            <span class="text-gray-600 font-medium block mb-2">Restrictions</span>
-                                            <span class="font-bold text-primary">{{ $listing->restrictions }}</span>
-                                        </div>
-                                    @endif
-                                </div>
-
-                                @if($listing->flood_risk && in_array($listing->flood_risk, ['High', 'Medium']))
-                                    <div class="mt-6 p-4 bg-red-50 border-l-4 border-red-500 rounded-lg">
-                                        <div class="flex items-start gap-3">
-                                            <i class="fa-solid fa-exclamation-triangle text-red-500 text-xl mt-1"></i>
-                                            <div>
-                                                <h4 class="font-bold text-red-800 mb-1">Flood Risk Warning</h4>
-                                                <p class="text-sm text-red-700">This property is in a {{ $listing->flood_risk }} flood risk area. Please review flood defenses and insurance requirements carefully.</p>
-                                            </div>
-                                        </div>
-                                    </div>
-                                @endif
-                            </div>
-                        @endif
 
                         <!-- Video & Map -->
                         <div class="grid grid-cols-1 md:grid-cols-1 gap-6">
                             
 
                             @if($listing->latitude && $listing->longitude)
-                                <div class="bg-white p-6 rounded-3xl border border-gray-100">
-                                    <h3 class="text-lg font-black text-primary mb-4">Location</h3>
-                                    <div id="property-map" class="aspect-video rounded-2xl overflow-hidden bg-gray-100"></div>
+                                <div class="bg-white p-8 rounded-3xl border border-gray-100">
+                                    <div class="flex justify-between items-center mb-6">
+                                        <h3 class="text-xl font-black text-primary">Location</h3>
+                                        <a href="https://www.google.com/maps/dir/?api=1&destination={{ $listing->latitude }},{{ $listing->longitude }}" 
+                                           target="_blank" 
+                                           class="inline-flex items-center gap-2 bg-secondary/10 text-secondary px-4 py-2 rounded-xl text-sm font-bold hover:bg-secondary hover:text-white transition-all">
+                                            <i class="fa-solid fa-diamond-turn-right"></i>
+                                            Get Directions
+                                        </a>
+                                    </div>
+                                    <div id="property-map" class="aspect-video rounded-2xl overflow-hidden bg-gray-100 shadow-inner"></div>
                                 </div>
                             @endif
                         </div>

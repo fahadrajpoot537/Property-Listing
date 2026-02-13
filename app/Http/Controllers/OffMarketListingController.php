@@ -84,13 +84,17 @@ class OffMarketListingController extends Controller
             $query->where('area_size', '<=', $request->max_size);
         }
 
-        if ($request->filled('min_bedrooms') && $request->min_bedrooms !== 'any' && $request->min_bedrooms !== '') {
-            $val = (int) $request->min_bedrooms;
+        // Bedrooms - Handle both 'bedrooms' and 'min_bedrooms' consistently
+        $bedrooms = $request->input('bedrooms', $request->input('min_bedrooms'));
+        if ($bedrooms !== null && $bedrooms !== 'any' && $bedrooms !== '') {
+            $val = (int) $bedrooms;
             $query->where('bedrooms', '>=', $val);
         }
 
-        if ($request->filled('min_bathrooms') && $request->min_bathrooms !== 'any' && $request->min_bathrooms !== '') {
-            $val = (int) $request->min_bathrooms;
+        // Bathrooms - Handle both 'bathrooms' and 'min_bathrooms' consistently
+        $bathrooms = $request->input('bathrooms', $request->input('min_bathrooms'));
+        if ($bathrooms !== null && $bathrooms !== 'any' && $bathrooms !== '') {
+            $val = (int) $bathrooms;
             $query->where('bathrooms', '>=', $val);
         }
 

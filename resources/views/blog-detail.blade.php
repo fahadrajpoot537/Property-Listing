@@ -15,9 +15,11 @@
                 <img src="{{ asset('assets/img/all-images/hero/1.jpg') }}" class="w-full h-full object-cover opacity-10"
                     alt="Background">
             @endif
-            <!-- High Contrast Overlay -->
-            <div class="absolute inset-0 bg-gradient-to-t from-primary via-primary/90 to-primary/80"></div>
+
+            <!-- Softer Overlay -->
+            <div class="absolute inset-0" style="background-color: rgba(0,0,0,0.2);"></div>
         </div>
+
 
         <div class="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="max-w-4xl">
@@ -89,12 +91,12 @@
                         <!-- Content Body -->
                         <article
                             class="prose prose-lg max-w-none 
-                                                                                                                            prose-headings:text-primary prose-headings:font-bold prose-headings:tracking-tight
-                                                                                                                            prose-p:text-gray-600 prose-p:leading-relaxed prose-p:mb-6
-                                                                                                                            prose-li:text-gray-600
-                                                                                                                            prose-strong:text-primary prose-strong:font-bold
-                                                                                                                            prose-blockquote:border-l-4 prose-blockquote:border-secondary prose-blockquote:bg-gray-50 prose-blockquote:px-6 prose-blockquote:py-4 prose-blockquote:rounded-r-lg prose-blockquote:italic prose-blockquote:text-primary prose-blockquote:font-medium
-                                                                                                                            prose-img:rounded-xl prose-img:shadow-md prose-img:my-10">
+                                                                                                                                                                        prose-headings:text-primary prose-headings:font-bold prose-headings:tracking-tight
+                                                                                                                                                                        prose-p:text-gray-600 prose-p:leading-relaxed prose-p:mb-6
+                                                                                                                                                                        prose-li:text-gray-600
+                                                                                                                                                                        prose-strong:text-primary prose-strong:font-bold
+                                                                                                                                                                        prose-blockquote:border-l-4 prose-blockquote:border-secondary prose-blockquote:bg-gray-50 prose-blockquote:px-6 prose-blockquote:py-4 prose-blockquote:rounded-r-lg prose-blockquote:italic prose-blockquote:text-primary prose-blockquote:font-medium
+                                                                                                                                                                        prose-img:rounded-xl prose-img:shadow-md prose-img:my-10">
                             {!! $blog->content !!}
                         </article>
 
