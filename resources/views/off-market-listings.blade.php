@@ -334,7 +334,7 @@
   </div>
   <!--===== HERO AREA ENDS =======-->
   <!--===== PROPERTIES GRID STARTS =======-->
-  <div class="pb-24 bg-[#F9FAFB]">
+  <div class="pb-24 bg-[#F9FAFB] mt-4">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
       <div class="flex justify-between items-end mb-12">
         <div>
@@ -395,12 +395,18 @@
                   </div>
                 </div>
 
-                <div class="mt-4 flex items-center justify-between pt-4 border-t border-gray-50">
-                  <div class="flex items-center gap-2 text-[10px] font-black uppercase tracking-widest text-gray-400">
-                    <i class="fa-solid fa-lock text-red-500"></i> NDA Required
-                  </div>
-                  <a href="{{ route('off-market-listing.show', $listing->id) }}" class="text-secondary font-black text-xs uppercase tracking-widest flex items-center gap-2 group-hover:gap-3 transition-all">
-                    View Dossier <i class="fa-solid fa-arrow-right"></i>
+                <div class="mt-4 flex gap-2 pt-4 border-t border-gray-50">
+                  <a href="https://wa.me/{{ $listing->user?->phone_number }}?text=Interested%20in%20Of-Market%20{{ urlencode($listing->property_title) }}"
+                      class="flex-1 text-center py-2 px-2 bg-green-500 text-white rounded-lg text-xs font-bold hover:bg-green-600 transition-colors flex items-center justify-center gap-1" target="_blank">
+                      <i class="fab fa-whatsapp"></i> WhatsApp
+                  </a>
+                  <a href="mailto:{{ $listing->user?->email }}?subject=Enquiry%20about%20Off-Market%20{{ urlencode($listing->property_title) }}"
+                      class="flex-1 text-center py-2 px-2 bg-blue-500 text-white rounded-lg text-xs font-bold hover:bg-blue-600 transition-colors flex items-center justify-center gap-1">
+                      <i class="fa-regular fa-envelope"></i> Email
+                  </a>
+                  <a href="{{ route('off-market-listing.show', $listing->id) }}"
+                      class="flex-1 text-center py-2 px-2 border border-gray-200 text-gray-700 rounded-lg text-xs font-bold hover:bg-gray-50 transition-colors flex items-center justify-center gap-1">
+                      Details
                   </a>
                 </div>
               </div>

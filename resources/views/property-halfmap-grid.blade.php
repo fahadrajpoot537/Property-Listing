@@ -425,11 +425,16 @@
 
                                         <div class="mt-4 flex gap-2">
                                             <a href="https://wa.me/{{ $listing->user?->phone_number }}?text=Interested%20in%20{{ urlencode($listing->property_title) }}"
-                                                class="flex-1 text-center py-2 px-3 bg-green-500 text-white rounded-lg text-xs font-bold hover:bg-green-600 transition-colors">
-                                                <i class="fab fa-whatsapp"></i> Whatsapp
+                                                class="flex-1 text-center py-2 px-2 bg-green-500 text-white rounded-lg text-xs font-bold hover:bg-green-600 transition-colors flex items-center justify-center gap-1"
+                                                target="_blank">
+                                                <i class="fab fa-whatsapp"></i> WhatsApp
+                                            </a>
+                                            <a href="mailto:{{ $listing->user?->email }}?subject=Enquiry%20about%20{{ urlencode($listing->property_title) }}"
+                                                class="flex-1 text-center py-2 px-2 bg-blue-500 text-white rounded-lg text-xs font-bold hover:bg-blue-600 transition-colors flex items-center justify-center gap-1">
+                                                <i class="fa-regular fa-envelope"></i> Email
                                             </a>
                                             <a href="{{ route('listing.show', $listing->id) }}"
-                                                class="flex-1 text-center py-2 px-3 border border-gray-200 text-gray-700 rounded-lg text-xs font-bold hover:bg-gray-50 transition-colors">
+                                                class="flex-1 text-center py-2 px-2 border border-gray-200 text-gray-700 rounded-lg text-xs font-bold hover:bg-gray-50 transition-colors flex items-center justify-center gap-1">
                                                 Details
                                             </a>
                                         </div>
@@ -739,7 +744,7 @@
                 return;
             @endif
 
-                                                                                const data = {
+                                                                                    const data = {
                 _token: '{{ csrf_token() }}'
             };
             if (listingId) data.listing_id = listingId;

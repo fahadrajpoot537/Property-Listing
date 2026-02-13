@@ -256,8 +256,8 @@
                     </a>
                 </div>
 
-                @if(auth()->user()->hasAnyRole(['admin', 'manager', 'listing director', 'Q/A', 'Agency']))
-                    <!-- Access Management -->
+                <!-- Access Management -->
+                @canany(['user.view', 'role.view', 'partner.view'])
                     <div class="mb-2"
                         x-data="{ open: {{ request()->routeIs('admin.users.*', 'admin.roles.*', 'admin.affiliates.*') ? 'true' : 'false' }} }">
                         <button @click="open = !open"
@@ -270,156 +270,177 @@
                                 :class="open ? 'rotate-180' : ''"></i>
                         </button>
                         <div x-show="open" x-collapse x-cloak class="mt-1 space-y-1 ml-4 border-l border-white/10 pl-2">
-                            @if(auth()->user()->hasAnyRole(['admin', 'manager', 'listing director', 'Q/A']))
+                            @can('user.view')
                                 <a href="{{ route('admin.users.index') }}"
                                     class="flex items-center px-4 py-2.5 rounded-xl text-[11px] font-bold text-white/40 hover:text-white transition-all {{ request()->routeIs('admin.users.*') ? 'text-white bg-white/5' : '' }}">
                                     System Users
                                 </a>
+                            @endcan
+                            @can('role.view')
                                 <a href="{{ route('admin.roles.index') }}"
                                     class="flex items-center px-4 py-2.5 rounded-xl text-[11px] font-bold text-white/40 hover:text-white transition-all {{ request()->routeIs('admin.roles.*') ? 'text-white bg-white/5' : '' }}">
                                     Permissions & Roles
                                 </a>
-                            @elseif(auth()->user()->hasRole('Agency'))
-                                <a href="{{ route('admin.users.index') }}"
-                                    class="flex items-center px-4 py-2.5 rounded-xl text-[11px] font-bold text-white/40 hover:text-white transition-all {{ request()->routeIs('admin.users.*') ? 'text-white bg-white/5' : '' }}">
-                                    Team Management
+                            @endcan
+                            @can('partner.view')
+                                <a href="{{ route('admin.affiliates.index') }}"
+                                    class="flex items-center px-4 py-2.5 rounded-xl text-[11px] font-bold text-white/40 hover:text-white transition-all {{ request()->routeIs('admin.affiliates.*') ? 'text-white bg-white/5' : '' }}">
+                                    Partner Network
                                 </a>
-                            @endif
-                            <a href="{{ route('admin.affiliates.index') }}"
-                                class="flex items-center px-4 py-2.5 rounded-xl text-[11px] font-bold text-white/40 hover:text-white transition-all {{ request()->routeIs('admin.affiliates.*') ? 'text-white bg-white/5' : '' }}">
-                                Partner Network
+                            @endcan
+                        </div>
+                    </div>
+                @endcanany
+
+                <!-- Asset Setup -->
+                @can('asset.manage')
+                    <div class="mb-2"
+                        x-data="{ open: {{ request()->routeIs('admin.property-types.*', 'admin.unit-types.*', 'admin.features.*', 'admin.property-locations.*', 'admin.mortgage-settings.*', 'admin.ownership-statuses.*', 'admin.rent-frequencies.*', 'admin.cheques.*') ? 'true' : 'false' }} }">
+                        <button @click="open = !open"
+                            class="w-full flex items-center justify-between px-4 py-3 rounded-xl text-white/50 hover:text-white hover:bg-white/5 transition-all duration-300">
+                            <div class="flex items-center">
+                                <i class='bx bxs-cog mr-3 text-xl nav-icon'></i>
+                                <span class="text-[10px] font-black uppercase tracking-[0.15em]">Asset Setup</span>
+                            </div>
+                            <i class='bx bx-chevron-down transition-transform duration-300 text-white/30'
+                                :class="open ? 'rotate-180' : ''"></i>
+                        </button>
+                        <div x-show="open" x-collapse x-cloak class="mt-1 space-y-1 ml-4 border-l border-white/10 pl-2">
+                            <a href="{{ route('admin.property-types.index') }}"
+                                class="flex items-center px-4 py-2.5 rounded-xl text-[11px] font-bold text-white/40 hover:text-white transition-all {{ request()->routeIs('admin.property-types.*') ? 'text-white bg-white/5' : '' }}">
+                                Property Categories
+                            </a>
+                            <a href="{{ route('admin.mortgage-settings.index') }}"
+                                class="flex items-center px-4 py-2.5 rounded-xl text-[11px] font-bold text-white/40 hover:text-white transition-all {{ request()->routeIs('admin.mortgage-settings.*') ? 'text-white bg-white/5' : '' }}">
+                                Mortgage Setup
+                            </a>
+                            <a href="{{ route('admin.unit-types.index') }}"
+                                class="flex items-center px-4 py-2.5 rounded-xl text-[11px] font-bold text-white/40 hover:text-white transition-all {{ request()->routeIs('admin.unit-types.*') ? 'text-white bg-white/5' : '' }}">
+                                Unit Definitions
+                            </a>
+                            <a href="{{ route('admin.ownership-statuses.index') }}"
+                                class="flex items-center px-4 py-2.5 rounded-xl text-[11px] font-bold text-white/40 hover:text-white transition-all {{ request()->routeIs('admin.ownership-statuses.*') ? 'text-white bg-white/5' : '' }}">
+                                Ownership Status
+                            </a>
+                            <a href="{{ route('admin.rent-frequencies.index') }}"
+                                class="flex items-center px-4 py-2.5 rounded-xl text-[11px] font-bold text-white/40 hover:text-white transition-all {{ request()->routeIs('admin.rent-frequencies.*') ? 'text-white bg-white/5' : '' }}">
+                                Rent Frequencies
+                            </a>
+                            <a href="{{ route('admin.cheques.index') }}"
+                                class="flex items-center px-4 py-2.5 rounded-xl text-[11px] font-bold text-white/40 hover:text-white transition-all {{ request()->routeIs('admin.cheques.*') ? 'text-white bg-white/5' : '' }}">
+                                Cheque Definitions
+                            </a>
+                            <a href="{{ route('admin.features.index') }}"
+                                class="flex items-center px-4 py-2.5 rounded-xl text-[11px] font-bold text-white/40 hover:text-white transition-all {{ request()->routeIs('admin.features.*') ? 'text-white bg-white/5' : '' }}">
+                                Amenity Tags
+                            </a>
+                            <a href="{{ route('admin.property-locations.index') }}"
+                                class="flex items-center px-4 py-2.5 rounded-xl text-[11px] font-bold text-white/40 hover:text-white transition-all {{ request()->routeIs('admin.property-locations.*') ? 'text-white bg-white/5' : '' }}">
+                                Property Locations
                             </a>
                         </div>
                     </div>
-                @endif
+                @endcan
 
-                <!-- Asset Setup -->
-                <div class="mb-2"
-                    x-data="{ open: {{ request()->routeIs('admin.property-types.*', 'admin.unit-types.*', 'admin.features.*', 'admin.property-locations.*', 'admin.mortgage-settings.*', 'admin.ownership-statuses.*', 'admin.rent-frequencies.*', 'admin.cheques.*') ? 'true' : 'false' }} }">
-                    <button @click="open = !open"
-                        class="w-full flex items-center justify-between px-4 py-3 rounded-xl text-white/50 hover:text-white hover:bg-white/5 transition-all duration-300">
-                        <div class="flex items-center">
-                            <i class='bx bxs-cog mr-3 text-xl nav-icon'></i>
-                            <span class="text-[10px] font-black uppercase tracking-[0.15em]">Asset Setup</span>
-                        </div>
-                        <i class='bx bx-chevron-down transition-transform duration-300 text-white/30'
-                            :class="open ? 'rotate-180' : ''"></i>
-                    </button>
-                    <div x-show="open" x-collapse x-cloak class="mt-1 space-y-1 ml-4 border-l border-white/10 pl-2">
-                        <a href="{{ route('admin.property-types.index') }}"
-                            class="flex items-center px-4 py-2.5 rounded-xl text-[11px] font-bold text-white/40 hover:text-white transition-all {{ request()->routeIs('admin.property-types.*') ? 'text-white bg-white/5' : '' }}">
-                            Property Categories
-                        </a>
-                        <a href="{{ route('admin.mortgage-settings.index') }}"
-                            class="flex items-center px-4 py-2.5 rounded-xl text-[11px] font-bold text-white/40 hover:text-white transition-all {{ request()->routeIs('admin.mortgage-settings.*') ? 'text-white bg-white/5' : '' }}">
-                            Mortgage Setup
-                        </a>
-                        <a href="{{ route('admin.unit-types.index') }}"
-                            class="flex items-center px-4 py-2.5 rounded-xl text-[11px] font-bold text-white/40 hover:text-white transition-all {{ request()->routeIs('admin.unit-types.*') ? 'text-white bg-white/5' : '' }}">
-                            Unit Definitions
-                        </a>
-                        <a href="{{ route('admin.ownership-statuses.index') }}"
-                            class="flex items-center px-4 py-2.5 rounded-xl text-[11px] font-bold text-white/40 hover:text-white transition-all {{ request()->routeIs('admin.ownership-statuses.*') ? 'text-white bg-white/5' : '' }}">
-                            Ownership Status
-                        </a>
-                        <a href="{{ route('admin.rent-frequencies.index') }}"
-                            class="flex items-center px-4 py-2.5 rounded-xl text-[11px] font-bold text-white/40 hover:text-white transition-all {{ request()->routeIs('admin.rent-frequencies.*') ? 'text-white bg-white/5' : '' }}">
-                            Rent Frequencies
-                        </a>
-                        <a href="{{ route('admin.cheques.index') }}"
-                            class="flex items-center px-4 py-2.5 rounded-xl text-[11px] font-bold text-white/40 hover:text-white transition-all {{ request()->routeIs('admin.cheques.*') ? 'text-white bg-white/5' : '' }}">
-                            Cheque Definitions
-                        </a>
-                        <a href="{{ route('admin.features.index') }}"
-                            class="flex items-center px-4 py-2.5 rounded-xl text-[11px] font-bold text-white/40 hover:text-white transition-all {{ request()->routeIs('admin.features.*') ? 'text-white bg-white/5' : '' }}">
-                            Amenity Tags
-                        </a>
-                        <a href="{{ route('admin.property-locations.index') }}"
-                            class="flex items-center px-4 py-2.5 rounded-xl text-[11px] font-bold text-white/40 hover:text-white transition-all {{ request()->routeIs('admin.property-locations.*') ? 'text-white bg-white/5' : '' }}">
-                            Property Locations
-                        </a>
+                <!-- Strategic Operations -->
+                @canany(['listing.view', 'listing.create', 'off-market.view'])
+                    <div class="mb-6">
+                        <p class="px-4 text-[10px] font-black text-white/30 uppercase tracking-[0.2em] mb-3">Realty
+                            Operations</p>
+                        @can('listing.view')
+                            <a href="{{ route('admin.listings.index') }}"
+                                class="flex items-center px-4 py-3 rounded-xl text-white/70 font-bold hover:bg-white/5 transition-all duration-300 {{ (request()->routeIs('admin.listings.*') && !request()->routeIs('admin.listings.create') && !request()->routeIs('admin.listings.drafts')) ? 'active-link' : '' }}">
+                                <i class='bx bxs-building-house mr-3 text-xl nav-icon'></i>
+                                <span class="text-[11px] uppercase tracking-widest">Listings</span>
+                            </a>
+                        @endcan
+                        @can('listing.create')
+                            <a href="{{ route('admin.listings.create') }}"
+                                class="flex items-center px-4 py-3 rounded-xl text-white/70 font-bold hover:bg-white/5 transition-all duration-300 {{ request()->routeIs('admin.listings.create') ? 'active-link' : '' }}">
+                                <i class='bx bxs-plus-circle mr-3 text-xl nav-icon'></i>
+                                <span class="text-[11px] uppercase tracking-widest">Add Listing</span>
+                            </a>
+                        @endcan
+                        @can('off-market.view')
+                            <a href="{{ route('admin.off-market-listings.index') }}"
+                                class="flex items-center px-4 py-3 rounded-xl text-white/70 font-bold hover:bg-white/5 transition-all duration-300 {{ (request()->routeIs('admin.off-market-listings.*') && !request()->routeIs('admin.off-market-listings.drafts')) ? 'active-link' : '' }}">
+                                <i class='bx bxs-ghost mr-3 text-xl nav-icon'></i>
+                                <span class="text-[11px] uppercase tracking-widest">Off Market</span>
+                            </a>
+                        @endcan
                     </div>
-                </div>
-
-                <!-- Strategic Operations -->
-                <!-- Strategic Operations -->
-                <div class="mb-6">
-                    <p class="px-4 text-[10px] font-black text-white/30 uppercase tracking-[0.2em] mb-3">Realty Operations</p>
-                    <a href="{{ route('admin.listings.index') }}"
-                        class="flex items-center px-4 py-3 rounded-xl text-white/70 font-bold hover:bg-white/5 transition-all duration-300 {{ (request()->routeIs('admin.listings.*') && !request()->routeIs('admin.listings.create') && !request()->routeIs('admin.listings.drafts')) ? 'active-link' : '' }}">
-                        <i class='bx bxs-building-house mr-3 text-xl nav-icon'></i>
-                        <span class="text-[11px] uppercase tracking-widest">Listings</span>
-                    </a>
-                    <a href="{{ route('admin.listings.create') }}"
-                        class="flex items-center px-4 py-3 rounded-xl text-white/70 font-bold hover:bg-white/5 transition-all duration-300 {{ request()->routeIs('admin.listings.create') ? 'active-link' : '' }}">
-                        <i class='bx bxs-plus-circle mr-3 text-xl nav-icon'></i>
-                        <span class="text-[11px] uppercase tracking-widest">Add Listing</span>
-                    </a>
-                    <a href="{{ route('admin.off-market-listings.index') }}"
-                        class="flex items-center px-4 py-3 rounded-xl text-white/70 font-bold hover:bg-white/5 transition-all duration-300 {{ (request()->routeIs('admin.off-market-listings.*') && !request()->routeIs('admin.off-market-listings.drafts')) ? 'active-link' : '' }}">
-                        <i class='bx bxs-ghost mr-3 text-xl nav-icon'></i>
-                        <span class="text-[11px] uppercase tracking-widest">Off Market</span>
-                    </a>
-                </div>
+                @endcanany
 
                 <!-- Drafts Management -->
-                <div class="mb-2"
-                    x-data="{ open: {{ request()->routeIs('admin.listings.drafts', 'admin.off-market-listings.drafts') ? 'true' : 'false' }} }">
-                    <button @click="open = !open"
-                        class="w-full flex items-center justify-between px-4 py-3 rounded-xl text-white/50 hover:text-white hover:bg-white/5 transition-all duration-300">
-                        <div class="flex items-center">
-                            <i class='bx bxs-edit-alt mr-3 text-xl nav-icon'></i>
-                            <span class="text-[10px] font-black uppercase tracking-[0.15em]">Drafts</span>
+                @canany(['listing.create', 'listing.edit', 'off-market.create', 'off-market.edit'])
+                    <div class="mb-2"
+                        x-data="{ open: {{ request()->routeIs('admin.listings.drafts', 'admin.off-market-listings.drafts') ? 'true' : 'false' }} }">
+                        <button @click="open = !open"
+                            class="w-full flex items-center justify-between px-4 py-3 rounded-xl text-white/50 hover:text-white hover:bg-white/5 transition-all duration-300">
+                            <div class="flex items-center">
+                                <i class='bx bxs-edit-alt mr-3 text-xl nav-icon'></i>
+                                <span class="text-[10px] font-black uppercase tracking-[0.15em]">Drafts</span>
+                            </div>
+                            <i class='bx bx-chevron-down transition-transform duration-300 text-white/30'
+                                :class="open ? 'rotate-180' : ''"></i>
+                        </button>
+                        <div x-show="open" x-collapse x-cloak class="mt-1 space-y-1 ml-4 border-l border-white/10 pl-2">
+                            @canany(['listing.create', 'listing.edit'])
+                                <a href="{{ route('admin.listings.drafts') }}"
+                                    class="flex items-center px-4 py-2.5 rounded-xl text-[11px] font-bold text-white/40 hover:text-white transition-all {{ request()->routeIs('admin.listings.drafts') ? 'text-white bg-white/5' : '' }}">
+                                    Draft Listings
+                                </a>
+                            @endcanany
+                            @canany(['off-market.create', 'off-market.edit'])
+                                <a href="{{ route('admin.off-market-listings.drafts') }}"
+                                    class="flex items-center px-4 py-2.5 rounded-xl text-[11px] font-bold text-white/40 hover:text-white transition-all {{ request()->routeIs('admin.off-market-listings.drafts') ? 'text-white bg-white/5' : '' }}">
+                                    Draft Off-Market
+                                </a>
+                            @endcanany
                         </div>
-                        <i class='bx bx-chevron-down transition-transform duration-300 text-white/30'
-                            :class="open ? 'rotate-180' : ''"></i>
-                    </button>
-                    <div x-show="open" x-collapse x-cloak class="mt-1 space-y-1 ml-4 border-l border-white/10 pl-2">
-                        <a href="{{ route('admin.listings.drafts') }}"
-                            class="flex items-center px-4 py-2.5 rounded-xl text-[11px] font-bold text-white/40 hover:text-white transition-all {{ request()->routeIs('admin.listings.drafts') ? 'text-white bg-white/5' : '' }}">
-                            Draft Listings
-                        </a>
-                        <a href="{{ route('admin.off-market-listings.drafts') }}"
-                            class="flex items-center px-4 py-2.5 rounded-xl text-[11px] font-bold text-white/40 hover:text-white transition-all {{ request()->routeIs('admin.off-market-listings.drafts') ? 'text-white bg-white/5' : '' }}">
-                            Draft Off-Market
-                        </a>
                     </div>
-                </div>
+                @endcanany
 
                 <!-- Content Management -->
-                <div class="mb-2"
-                    x-data="{ open: {{ request()->routeIs('admin.blogs.*', 'admin.services.*', 'admin.contact.*') ? 'true' : 'false' }} }">
-                    <button @click="open = !open"
-                        class="w-full flex items-center justify-between px-4 py-3 rounded-xl text-white/50 hover:text-white hover:bg-white/5 transition-all duration-300">
-                        <div class="flex items-center">
-                            <i class='bx bxs-book-content mr-3 text-xl nav-icon'></i>
-                            <span class="text-[10px] font-black uppercase tracking-[0.15em]">Content Hub</span>
+                @canany(['blog.view', 'content.manage'])
+                    <div class="mb-2"
+                        x-data="{ open: {{ request()->routeIs('admin.blogs.*', 'admin.services.*', 'admin.contact.*') ? 'true' : 'false' }} }">
+                        <button @click="open = !open"
+                            class="w-full flex items-center justify-between px-4 py-3 rounded-xl text-white/50 hover:text-white hover:bg-white/5 transition-all duration-300">
+                            <div class="flex items-center">
+                                <i class='bx bxs-book-content mr-3 text-xl nav-icon'></i>
+                                <span class="text-[10px] font-black uppercase tracking-[0.15em]">Content Hub</span>
+                            </div>
+                            <i class='bx bx-chevron-down transition-transform duration-300 text-white/30'
+                                :class="open ? 'rotate-180' : ''"></i>
+                        </button>
+                        <div x-show="open" x-collapse x-cloak class="mt-1 space-y-1 ml-4 border-l border-white/10 pl-2">
+                            @can('blog.view')
+                                <a href="{{ route('admin.blogs.index') }}"
+                                    class="flex items-center px-4 py-2.5 rounded-xl text-[11px] font-bold text-white/40 hover:text-white transition-all {{ request()->routeIs('admin.blogs.*') ? 'text-white bg-white/5' : '' }}">
+                                    Blog Articles
+                                </a>
+                            @endcan
+                            @can('content.manage')
+                                <a href="{{ route('admin.services.index') }}"
+                                    class="flex items-center px-4 py-2.5 rounded-xl text-[11px] font-bold text-white/40 hover:text-white transition-all {{ request()->routeIs('admin.services.*') ? 'text-white bg-white/5' : '' }}">
+                                    Service Catalog
+                                </a>
+                                <a href="{{ route('admin.contact.index') }}"
+                                    class="flex items-center px-4 py-2.5 rounded-xl text-[11px] font-bold text-white/40 hover:text-white transition-all {{ request()->routeIs('admin.contact.*') ? 'text-white bg-white/5' : '' }}">
+                                    Contact Messages
+                                </a>
+                                <a href="{{ route('admin.email-templates.index') }}"
+                                    class="flex items-center px-4 py-2.5 rounded-xl text-[11px] font-bold text-white/40 hover:text-white transition-all {{ request()->routeIs('admin.email-templates.*') ? 'text-white bg-white/5' : '' }}">
+                                    Email Templates
+                                </a>
+                            @endcan
                         </div>
-                        <i class='bx bx-chevron-down transition-transform duration-300 text-white/30'
-                            :class="open ? 'rotate-180' : ''"></i>
-                    </button>
-                    <div x-show="open" x-collapse x-cloak class="mt-1 space-y-1 ml-4 border-l border-white/10 pl-2">
-                        <a href="{{ route('admin.blogs.index') }}"
-                            class="flex items-center px-4 py-2.5 rounded-xl text-[11px] font-bold text-white/40 hover:text-white transition-all {{ request()->routeIs('admin.blogs.*') ? 'text-white bg-white/5' : '' }}">
-                            Blog Articles
-                        </a>
-                        <a href="{{ route('admin.services.index') }}"
-                            class="flex items-center px-4 py-2.5 rounded-xl text-[11px] font-bold text-white/40 hover:text-white transition-all {{ request()->routeIs('admin.services.*') ? 'text-white bg-white/5' : '' }}">
-                            Service Catalog
-                        </a>
-                        <a href="{{ route('admin.contact.index') }}"
-                            class="flex items-center px-4 py-2.5 rounded-xl text-[11px] font-bold text-white/40 hover:text-white transition-all {{ request()->routeIs('admin.contact.*') ? 'text-white bg-white/5' : '' }}">
-                            Contact Messages
-                        </a>
-                        <a href="{{ route('admin.email-templates.index') }}"
-                            class="flex items-center px-4 py-2.5 rounded-xl text-[11px] font-bold text-white/40 hover:text-white transition-all {{ request()->routeIs('admin.email-templates.*') ? 'text-white bg-white/5' : '' }}">
-                            Email Templates
-                        </a>
                     </div>
-                </div>
+                @endcanany
 
                 @if(!auth()->user()->hasAnyRole(['admin', 'manager', 'listing director', 'Q/A']))
-                    <!-- Partner System -->
+                    <!-- Partner System: Visible for everyone except Internal Staff -->
                     <div class="mb-4">
                         <p class="px-2 text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] mb-3">Growth &
                             Rewards</p>

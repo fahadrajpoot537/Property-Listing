@@ -466,6 +466,60 @@
     </div>
   </section>
 
+  <!-- Location Explorer Section -->
+  <section class="py-20 bg-white border-b border-gray-100">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="mb-10 text-center">
+        <h2 class="text-3xl md:text-5xl font-black text-primary tracking-tight mb-4">Explore by Location</h2>
+        <p class="text-gray-500 text-lg max-w-2xl mx-auto">Discover properties in the UK's most sought-after neighborhoods
+        </p>
+      </div>
+
+      <div class="swiper location-swiper overflow-visible">
+        <div class="swiper-wrapper">
+          @foreach($propertyLocations as $location)
+            <div class="swiper-slide h-auto">
+              <a href="{{ route('listings.index', ['location' => $location->name]) }}"
+                class="group block relative rounded-3xl overflow-hidden shadow-sm hover:shadow-xl transition-all duration-300 border border-gray-100 bg-white h-full flex flex-col">
+
+                <!-- Background Image (Smaller fixed height) -->
+                <div class="h-[180px] overflow-hidden relative flex-shrink-0">
+                  <img
+                    src="{{ $location->image ? asset('storage/' . $location->image) : asset('assets/img/all-images/hero/1.jpg') }}"
+                    class="object-cover group-hover:scale-110 transition-transform duration-700" width="100%" height="50"
+                    alt="{{ $location->name }}">
+                </div>
+
+                <!-- Content (Bottom white area) -->
+                <div class="p-5 flex flex-col flex-grow bg-white">
+                  <h3
+                    class="text-lg font-black text-primary leading-tight group-hover:text-secondary transition-colors mb-2 line-clamp-1">
+                    {{ $location->name }}
+                  </h3>
+
+                  <div class="flex items-center justify-between mt-auto">
+                    <span
+                      class="inline-block bg-gray-100 text-gray-500 text-[10px] font-bold uppercase tracking-widest px-2 py-1 rounded-md">
+                      {{ $location->listing_count }} Properties
+                    </span>
+                    </p>
+                  </div>
+                </div>
+
+                <!-- Hover Action -->
+                <div
+                  class="absolute top-6 right-6 w-12 h-12 bg-white/10 backdrop-blur-md rounded-full flex items-center justify-center text-white opacity-0 group-hover:opacity-100 transform translate-y-4 group-hover:translate-y-0 transition-all duration-500 delay-100 group-hover:bg-white group-hover:text-primary">
+                  <i class="fa-solid fa-arrow-right"></i>
+                </div>
+              </a>
+            </div>
+          @endforeach
+        </div>
+        <div class="swiper-pagination mt-12"></div>
+      </div>
+    </div>
+  </section>
+
   <!-- Opportunity / Partner Section -->
   <!-- Opportunity / Partner Section -->
   <section class="py-16 bg-primary relative overflow-hidden">
@@ -716,6 +770,20 @@
         }
       });
 
+      // Initialize Location Swiper
+      new Swiper('.location-swiper', {
+        slidesPerView: 1,
+        spaceBetween: 24,
+        loop: true,
+        autoplay: { delay: 4500, disableOnInteraction: false },
+        pagination: { el: '.location-swiper .swiper-pagination', clickable: true },
+        breakpoints: {
+          640: { slidesPerView: 2, spaceBetween: 20 },
+          768: { slidesPerView: 3, spaceBetween: 30 },
+          1024: { slidesPerView: 4, spaceBetween: 30 }
+        }
+      });
+
       // Initialize Blog Swiper
       new Swiper('.blog-swiper', {
         slidesPerView: 1,
@@ -735,7 +803,7 @@
         return;
       @endif
 
-                                                                    const data = {
+                                                                                  const data = {
         _token: '{{ csrf_token() }}'
       };
       if (listingId) data.listing_id = listingId;
