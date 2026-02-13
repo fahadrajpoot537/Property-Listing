@@ -380,8 +380,14 @@
                             <div>
                                 <div
                                     class="property-card-results {{ request('view', 'list') == 'list' ? 'list-view-card' : '' }}">
+                                    @php
+                                        $isOffMarket = $listing instanceof \App\Models\OffMarketListing;
+                                        $favIds = $isOffMarket ? ($user_favorite_off_market_ids ?? []) : ($user_favorite_ids ?? []);
+                                        $isFavorited = in_array($listing->id, $favIds);
+                                    @endphp
                                     <div class="img-container">
-                                        <a href="{{ route('listing.show', $listing->id) }}">
+                                        <a
+                                            href="{{ $isOffMarket ? route('off-market-listing.show', $listing->id) : route('listing.show', $listing->id) }}">
                                             <img src="{{ $listing->thumbnail ? asset('storage/' . $listing->thumbnail) : asset('assets/img/all-images/hero/1.jpg') }}"
                                                 alt="Property">
                                         </a>
@@ -392,11 +398,7 @@
                                             @endif
                                             <span>£{{ number_format($listing->price) }}</span>
                                         </div>
-                                        @php
-                                            $isOffMarket = $listing instanceof \App\Models\OffMarketListing;
-                                            $favIds = $isOffMarket ? ($user_favorite_off_market_ids ?? []) : ($user_favorite_ids ?? []);
-                                            $isFavorited = in_array($listing->id, $favIds);
-                                        @endphp
+
                                         <button
                                             onclick="toggleFavorite({{ $isOffMarket ? 'null' : $listing->id }}, {{ $isOffMarket ? $listing->id : 'null' }}, this)"
                                             class="absolute top-4 right-4 w-10 h-10 bg-white/90 backdrop-blur-sm rounded-full flex items-center justify-center {{ $isFavorited ? 'text-red-500' : 'text-gray-400' }} hover:text-red-500 transition-colors shadow-sm">
@@ -409,7 +411,7 @@
                                             {{ $listing->purpose }}
                                         </div>
                                         <h3 class="property-title">
-                                            <a href="{{ route('listing.show', $listing->id) }}"
+                                            <a href="{{ $isOffMarket ? route('off-market-listing.show', $listing->id) : route('listing.show', $listing->id) }}"
                                                 class="hover:text-secondary transition-colors">{{ $listing->property_title }}</a>
                                         </h3>
                                         <p class="property-addr">
@@ -435,7 +437,7 @@
                                                 class="flex-1 text-center py-2 px-2 bg-blue-500 text-white rounded-lg text-xs font-bold hover:bg-blue-600 transition-colors flex items-center justify-center gap-1">
                                                 <i class="fa-regular fa-envelope"></i> Email
                                             </a>
-                                            <a href="{{ route('listing.show', $listing->id) }}"
+                                            <a href="{{ $isOffMarket ? route('off-market-listing.show', $listing->id) : route('listing.show', $listing->id) }}"
                                                 class="flex-1 text-center py-2 px-2 border border-gray-200 text-gray-700 rounded-lg text-xs font-bold hover:bg-gray-50 transition-colors flex items-center justify-center gap-1">
                                                 Details
                                             </a>
@@ -746,7 +748,7 @@
                 return;
             @endif
 
-                                                                                        const data = {
+                                                                                            const data = {
                 _token: '{{ csrf_token() }}'
             };
             if (listingId) data.listing_id = listingId;
