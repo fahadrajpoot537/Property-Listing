@@ -35,7 +35,7 @@ class HomeController extends Controller
             if ($location->latitude && $location->longitude) {
                 $lat = $location->latitude;
                 $lng = $location->longitude;
-                $radius = 10;
+                $radius = 50;
 
                 $count = Listing::where('status', 'approved')
                     ->whereRaw("( 3959 * acos( cos( radians(?) ) * cos( radians( latitude ) ) * cos( radians( longitude ) - radians(?) ) + sin( radians(?) ) * sin( radians( latitude ) ) ) ) < ?", [$lat, $lng, $lat, $radius])
