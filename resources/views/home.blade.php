@@ -256,7 +256,7 @@
   <!-- Browse by Category Section -->
   <section class="py-16 bg-white border-b border-gray-100">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-      <h2 class="text-2xl font-bold text-primary mb-8 tracking-tight">Browse properties</h2>
+      <h2 class="text-2xl font-bold text-primary mb-8 tracking-tight">Browse Properties</h2>
       <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-6">
         @php
           $allTypes = \App\Models\PropertyType::all();
@@ -327,7 +327,7 @@
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
       <div class="flex justify-between items-end mb-10">
         <div>
-          <h2 class="text-3xl font-extrabold text-primary tracking-tight">Featured properties</h2>
+          <h2 class="text-3xl font-extrabold text-primary tracking-tight">Featured Properties</h2>
           <p class="text-gray-500 mt-2 text-lg">Hand-picked homes from across the UK</p>
         </div>
         <a href="{{ route('listings.index') }}" class="text-secondary font-bold hover:underline flex items-center gap-2">
@@ -504,7 +504,7 @@
   <section class="py-20 bg-white border-b border-gray-100">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
       <div class="mb-10 text-center">
-        <h2 class="text-3xl md:text-5xl font-black text-primary tracking-tight mb-4">Explore by Location</h2>
+        <h2 class="text-3xl md:text-5xl font-black text-primary tracking-tight mb-4">Explore By Location</h2>
         <p class="text-gray-500 text-lg max-w-2xl mx-auto">Discover properties in the UK's most sought-after neighborhoods
         </p>
       </div>
@@ -513,7 +513,7 @@
         <div class="swiper-wrapper">
           @foreach($propertyLocations as $location)
             <div class="swiper-slide h-auto">
-              <a href="{{ route('listings.index', ['location' => $location->name]) }}"
+              <a href="{{ route('listings.index', ['location' => $location->name, 'lat' => $location->latitude, 'lng' => $location->longitude, 'radius' => 50]) }}"
                 class="group block relative rounded-3xl overflow-hidden shadow-sm hover:shadow-xl transition-all duration-300 border border-gray-100 bg-white h-full flex flex-col">
 
                 <!-- Background Image (Smaller fixed height) -->
@@ -573,7 +573,7 @@
           <span class="w-1.5 h-1.5 bg-secondary rounded-full animate-pulse"></span> Partnership
         </div>
         <h2 class="text-3xl md:text-5xl font-black text-white mb-4 tracking-tight">
-          Grow with <span class="text-secondary">PropertyFinda</span>
+          Grow With <span class="text-secondary">PropertyFinda</span>
         </h2>
         <p class="text-base text-white/50 font-medium max-w-xl mx-auto leading-relaxed">
           Join our affiliate network. Earn competitive commissions by referring users to the UK's fastest-growing property
@@ -667,7 +667,7 @@
   <!-- Trust Section -->
   <section class="py-24 bg-white">
     <div class="max-w-4xl mx-auto px-4 text-center">
-      <h2 class="text-4xl font-extrabold text-primary mb-16 tracking-tight">Everything you need to find a home</h2>
+      <h2 class="text-4xl font-extrabold text-primary mb-16 tracking-tight">Everything You Need To Find A Home</h2>
       <div class="grid md:grid-cols-3 gap-12">
         <div>
           <div class="text-secondary text-5xl mb-6"><i class="fa-solid fa-shield"></i></div>
@@ -838,7 +838,7 @@
         return;
       @endif
 
-                                                                                          const data = {
+                                                                                                        const data = {
         _token: '{{ csrf_token() }}'
       };
       if (listingId) data.listing_id = listingId;
