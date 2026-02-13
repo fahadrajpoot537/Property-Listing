@@ -17,7 +17,7 @@ class AdminUserSeeder extends Seeder
         // Data provided by the user
         $userData = [
             'name' => 'Super Admin',
-            'username' => 'Super Admin',
+            'username' => 'superadmin',
             'email' => 'info@propertyfinda.co.uk',
             'address' => '5-7 High St, London E13 0AD, UK',
             'latitude' => '51.5311527',
@@ -34,10 +34,8 @@ class AdminUserSeeder extends Seeder
             'slug' => null,
         ];
 
-        // Since the password hash provided was truncated, 
-        // we use a secure default password. Change this immediately!
-        // The original hash was: $2y$12$BU9x.qQFqpsHUY2Pn5Ewc.LykvaFYWIJntmIo94aa6n...
-        $userData['password'] = Hash::make('Admin@123');
+        // Setting a simple password for initial login
+        $userData['password'] = Hash::make('password');
 
         User::updateOrCreate(
             ['id' => 1],
