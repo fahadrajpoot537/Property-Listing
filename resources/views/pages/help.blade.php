@@ -24,7 +24,7 @@
                 </p>
 
                 <!-- Search Bar -->
-                <div class="relative max-w-2xl mx-auto">
+                <div class="relative max-w-2xl mx-auto" style="margin-top:2%">
                     <input type="text" id="helpSearch"
                         class="w-full px-6 py-4 pr-14 rounded-full text-lg border-0 shadow-2xl focus:ring-4 focus:ring-secondary/50 transition-all text-gray-900"
                         placeholder="Search for help articles...">
@@ -573,7 +573,7 @@
                         top: targetPosition,
                         behavior: 'smooth'
                     });
-                    
+
                     // Update URL without jump
                     history.pushState(null, null, targetId);
                 }

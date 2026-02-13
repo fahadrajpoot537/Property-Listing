@@ -96,21 +96,21 @@
   <div class="relative bg-primary overflow-visible">
     <!-- Background Pattern -->
     <div class="absolute inset-0 z-0">
-      <!-- Image with Overlay -->
-      <img src="{{ asset('assets/img/all-images/hero/1.jpg') }}"
-        class="w-full h-full object-cover opacity-40 mix-blend-overlay" alt="Background">
-      <div class="absolute inset-0 bg-primary/80 mix-blend-multiply"></div>
-    </div>
+    <img src="{{ asset('hero22.jpg') }}"
+         class="w-full h-full object-cover"
+         alt="Background">
+</div>
+
 
     <div class="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 md:py-24">
       <div class="text-center mb-10">
-        <div class="inline-flex items-center gap-2 px-4 py-2 bg-secondary/20 backdrop-blur-md rounded-full border border-secondary/30 text-secondary text-xs font-black uppercase tracking-[0.2em] mb-6">
-          <i class="fa-solid fa-lock"></i> Exclusive Portfolio
+        <div class="inline-flex items-center gap-2 px-4 py-2 bg-secondary/20 backdrop-blur-md rounded-full border border-secondary/30 text-white text-xs font-black uppercase tracking-[0.2em] mb-6">
+          <i class="fa-solid fa-lock "></i> Exclusive Portfolio
         </div>
         <h1 class="text-3xl md:text-6xl font-extrabold text-white mb-4 tracking-tight">
-          Off-Market <span class="text-secondary">Opportunities</span>
+          Off-Market <span class="text-white">Opportunities</span>
         </h1>
-        <p class="text-xl text-gray-300 font-medium max-w-3xl mx-auto">
+        <p class="text-xl text-white font-medium max-w-3xl mx-auto">
           Access strictly confidential deals across the UK. Exclusive properties that never hit the open market, available only to our verified network.
         </p>
       </div>
