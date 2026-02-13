@@ -85,30 +85,34 @@ class ListingController extends Controller
         }
 
         // Property Type
-        if ($request->filled('property_type_id')) {
+        if ($request->filled('property_type_id') && $request->property_type_id != '') {
             $query->where('property_type_id', $request->property_type_id);
             Log::info('Filtering by property_type_id: ' . $request->property_type_id);
-        } elseif ($request->filled('property_type')) {
+        } elseif ($request->filled('property_type') && $request->property_type != '') {
             $query->where('property_type_id', $request->property_type);
             Log::info('Filtering by property_type (alias): ' . $request->property_type);
         }
 
         // Bathrooms
-        if ($request->filled('bathrooms') && $request->bathrooms !== 'any' && $request->bathrooms != '') {
-            $query->where('bathrooms', '>=', (int) $request->bathrooms);
+        if ($request->filled('bathrooms') && $request->bathrooms !== 'any' && $request->bathrooms !== '') {
+            $val = (int) $request->bathrooms;
+            $query->where('bathrooms', $val >= 10 ? '>=' : '=', $val);
             Log::info('Filtering by bathrooms: ' . $request->bathrooms);
-        } elseif ($request->filled('min_bathrooms') && $request->min_bathrooms != '') {
-            $query->where('bathrooms', '>=', (int) $request->min_bathrooms);
+        } elseif ($request->filled('min_bathrooms') && $request->min_bathrooms !== 'any' && $request->min_bathrooms !== '') {
+            $val = (int) $request->min_bathrooms;
+            $query->where('bathrooms', $val >= 10 ? '>=' : '=', $val);
             Log::info('Filtering by min_bathrooms: ' . $request->min_bathrooms);
         }
 
         // Bedrooms
-        if ($request->filled('bedrooms') && $request->bedrooms !== 'any' && $request->bedrooms != '') {
-            $query->where('bedrooms', '>=', (int) $request->bedrooms);
+        if ($request->filled('bedrooms') && $request->bedrooms !== 'any' && $request->bedrooms !== '') {
+            $val = (int) $request->bedrooms;
+            $query->where('bedrooms', $val >= 10 ? '>=' : '=', $val);
             Log::info('Filtering by bedrooms: ' . $request->bedrooms);
-        } elseif ($request->filled('min_bedrooms') && $request->min_bedrooms != '') {
-            $query->where('bedrooms', '>=', (int) $request->min_bedrooms);
-            Log::info('Filtering by min_bedrooms (alias): ' . $request->min_bedrooms);
+        } elseif ($request->filled('min_bedrooms') && $request->min_bedrooms !== 'any' && $request->min_bedrooms !== '') {
+            $val = (int) $request->min_bedrooms;
+            $query->where('bedrooms', $val >= 10 ? '>=' : '=', $val);
+            Log::info('Filtering by min_bedrooms: ' . $request->min_bedrooms);
         }
 
         // Price

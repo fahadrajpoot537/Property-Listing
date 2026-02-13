@@ -56,8 +56,10 @@ class OffMarketListingController extends Controller
             $query->where('address', 'like', '%' . $request->location . '%');
         }
 
-        if ($request->filled('property_type_id')) {
+        if ($request->filled('property_type_id') && $request->property_type_id != '') {
             $query->where('property_type_id', $request->property_type_id);
+        } elseif ($request->filled('property_type') && $request->property_type != '') {
+            $query->where('property_type_id', $request->property_type);
         }
 
         if ($request->filled('unit_type_id')) {
@@ -82,12 +84,14 @@ class OffMarketListingController extends Controller
             $query->where('area_size', '<=', $request->max_size);
         }
 
-        if ($request->filled('min_bedrooms')) {
-            $query->where('bedrooms', '>=', $request->min_bedrooms);
+        if ($request->filled('min_bedrooms') && $request->min_bedrooms !== 'any' && $request->min_bedrooms !== '') {
+            $val = (int) $request->min_bedrooms;
+            $query->where('bedrooms', $val >= 10 ? '>=' : '=', $val);
         }
 
-        if ($request->filled('min_bathrooms')) {
-            $query->where('bathrooms', '>=', $request->min_bathrooms);
+        if ($request->filled('min_bathrooms') && $request->min_bathrooms !== 'any' && $request->min_bathrooms !== '') {
+            $val = (int) $request->min_bathrooms;
+            $query->where('bathrooms', $val >= 10 ? '>=' : '=', $val);
         }
 
         if ($request->filled('ownership_status_id')) {
