@@ -15,14 +15,14 @@ class HomeController extends Controller
         $features = Feature::all();
 
         // Fetch Buy and Rent listings separately for the home tabs
-        $buyListings = Listing::with('features', 'user')
+        $buyListings = Listing::with('features', 'user', 'unitType')
             ->where('status', 'approved')
             ->where('purpose', 'Buy')
             ->latest()
             ->take(6)
             ->get();
 
-        $rentListings = Listing::with('features', 'user')
+        $rentListings = Listing::with('features', 'user', 'unitType')
             ->where('status', 'approved')
             ->where('purpose', 'Rent')
             ->latest()
@@ -49,7 +49,7 @@ class HomeController extends Controller
             return $location;
         });
 
-        $featuredSellListings = Listing::with('features', 'user')
+        $featuredSellListings = Listing::with('features', 'user', 'unitType')
             ->whereIn('status', ['approved', 'pending'])
             ->where('purpose', 'Buy')
             ->whereNotNull('old_price')

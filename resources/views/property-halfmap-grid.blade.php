@@ -426,10 +426,16 @@
                                         </p>
 
                                         <div class="stats-row">
-                                            <div class="stat-item"><i class="fa-solid fa-bed"></i> {{ $listing->bedrooms }}
-                                            </div>
-                                            <div class="stat-item"><i class="fa-solid fa-bath"></i> {{ $listing->bathrooms }}
-                                            </div>
+                                            @if($listing->bedrooms > 0)
+                                                <div class="stat-item"><i class="fa-solid fa-bed"></i> {{ $listing->bedrooms }} Beds</div>
+                                            @elseif($listing->unitType)
+                                                <div class="stat-item"><i class="fa-solid fa-house-user"></i> {{ $listing->unitType->title }}</div>
+                                            @endif
+
+                                            @if($listing->bathrooms > 0)
+                                                <div class="stat-item"><i class="fa-solid fa-bath"></i> {{ $listing->bathrooms }} Baths</div>
+                                            @endif
+                                            
                                             <div class="stat-item"><i class="fa-solid fa-vector-square"></i>
                                                 {{ $listing->area_size ?? 'N/A' }} sqft</div>
                                         </div>
@@ -755,7 +761,7 @@
                 return;
             @endif
 
-                                                                                                    const data = {
+                                                                                                        const data = {
                 _token: '{{ csrf_token() }}'
             };
             if (listingId) data.listing_id = listingId;

@@ -385,12 +385,21 @@
                       </p>
                       <div class="mt-auto pt-6 border-t border-gray-100">
                         <div class="grid grid-cols-2 gap-4 mb-4">
-                          <div class="flex items-center gap-2 text-gray-700 font-bold text-sm">
-                            <i class="fa-solid fa-bed text-gray-400"></i> {{ $listing->bedrooms }} Beds
-                          </div>
-                          <div class="flex items-center gap-2 text-gray-700 font-bold text-sm text-right justify-end">
-                            <i class="fa-solid fa-bath text-gray-400"></i> {{ $listing->bathrooms }} Baths
-                          </div>
+                          @if($listing->bedrooms > 0)
+                            <div class="flex items-center gap-2 text-gray-700 font-bold text-sm">
+                              <i class="fa-solid fa-bed text-gray-400"></i> {{ $listing->bedrooms }} Beds
+                            </div>
+                          @elseif($listing->unitType)
+                            <div class="flex items-center gap-2 text-gray-700 font-bold text-sm">
+                              <i class="fa-solid fa-house-user text-gray-400"></i> {{ $listing->unitType->title }}
+                            </div>
+                          @endif
+
+                          @if($listing->bathrooms > 0)
+                            <div class="flex items-center gap-2 text-gray-700 font-bold text-sm text-right justify-end">
+                              <i class="fa-solid fa-bath text-gray-400"></i> {{ $listing->bathrooms }} Baths
+                            </div>
+                          @endif
                         </div>
                         <div class="flex gap-2">
                           <a href="https://wa.me/{{ $listing->user?->phone_number }}?text=Interested in {{ urlencode($listing->property_title) }}"
@@ -706,43 +715,45 @@
         <div class="swiper-wrapper">
           @foreach($blogs as $blog)
             <div class="swiper-slide h-auto">
-              <div
-                class="bg-white rounded-[2rem] border border-gray-100 overflow-hidden shadow-sm hover:shadow-2xl hover:-translate-y-2 transition-all duration-500 group h-full flex flex-col">
-                <div class="relative h-64 overflow-hidden">
-                  <img
-                    src="{{ $blog->image ? asset('storage/' . $blog->image) : asset('assets/img/all-images/hero/1.jpg') }}"
-                    class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
-                    alt="{{ $blog->title }}">
-                  <div class="absolute top-4 left-4">
-                    <span
-                      class="bg-white/95 backdrop-blur-md px-4 py-2 rounded-2xl text-[10px] font-black uppercase tracking-widest text-primary shadow-sm">
-                      {{ $blog->published_at ? $blog->published_at->format('M d, Y') : 'Recent' }}
-                    </span>
-                  </div>
-                </div>
-                <div class="p-8 flex flex-col flex-grow">
-                  <h3
-                    class="text-xl font-black text-primary mb-4 line-clamp-2 leading-tight group-hover:text-secondary transition-colors">
-                    <a href="{{ route('blog.show', $blog) }}">{{ $blog->title }}</a>
-                  </h3>
-                  <div class="text-gray-500 text-sm line-clamp-3 mb-6 font-medium leading-relaxed">
-                    {!! Str::limit(strip_tags($blog->content), 120) !!}
-                  </div>
-                  <div class="mt-auto flex items-center justify-between pt-6 border-t border-gray-100">
-                    <div class="flex items-center gap-3">
-                      <div class="w-8 h-8 rounded-full bg-secondary/10 flex items-center justify-center text-secondary">
-                        <i class="fa-solid fa-user text-[10px]"></i>
-                      </div>
+              <a href="{{ route('blog.show', $blog) }}" class="block h-full group">
+                <div
+                  class="bg-white rounded-[2rem] border border-gray-100 overflow-hidden shadow-sm hover:shadow-2xl hover:-translate-y-2 transition-all duration-500 h-full flex flex-col">
+                  <div class="relative h-64 overflow-hidden">
+                    <img
+                      src="{{ $blog->image ? asset('storage/' . $blog->image) : asset('assets/img/all-images/hero/1.jpg') }}"
+                      class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
+                      alt="{{ $blog->title }}">
+                    <div class="absolute top-4 left-4">
                       <span
-                        class="text-xs font-bold text-gray-400 uppercase tracking-wider">{{ $blog->author ?? 'Expert Team' }}</span>
+                        class="bg-white/95 backdrop-blur-md px-4 py-2 rounded-2xl text-[10px] font-black uppercase tracking-widest text-primary shadow-sm">
+                        {{ $blog->published_at ? $blog->published_at->format('M d, Y') : 'Recent' }}
+                      </span>
                     </div>
-                    <a href="{{ route('blog.show', $blog) }}"
-                      class="w-10 h-10 rounded-full bg-gray-50 flex items-center justify-center text-primary group-hover:bg-primary group-hover:text-white transition-all">
-                      <i class="fa-solid fa-arrow-right text-xs"></i>
-                    </a>
+                  </div>
+                  <div class="p-8 flex flex-col flex-grow">
+                    <h3
+                      class="text-xl font-black text-primary mb-4 line-clamp-2 leading-tight group-hover:text-secondary transition-colors">
+                      {{ $blog->title }}
+                    </h3>
+                    <div class="text-gray-500 text-sm line-clamp-3 mb-6 font-medium leading-relaxed">
+                      {!! Str::limit(strip_tags($blog->content), 120) !!}
+                    </div>
+                    <div class="mt-auto flex items-center justify-between pt-6 border-t border-gray-100">
+                      <div class="flex items-center gap-3">
+                        <div class="w-8 h-8 rounded-full bg-secondary/10 flex items-center justify-center text-secondary">
+                          <i class="fa-solid fa-user text-[10px]"></i>
+                        </div>
+                        <span
+                          class="text-xs font-bold text-gray-400 uppercase tracking-wider">{{ $blog->author ?? 'Expert Team' }}</span>
+                      </div>
+                      <div
+                        class="w-10 h-10 rounded-full bg-gray-50 flex items-center justify-center text-primary group-hover:bg-black group-hover:text-white transition-all">
+                        <i class="fa-solid fa-arrow-right text-xs"></i>
+                      </div>
+                    </div>
                   </div>
                 </div>
-              </div>
+              </a>
             </div>
           @endforeach
         </div>
@@ -838,7 +849,7 @@
         return;
       @endif
 
-                                                                                                        const data = {
+                                                                                                            const data = {
         _token: '{{ csrf_token() }}'
       };
       if (listingId) data.listing_id = listingId;

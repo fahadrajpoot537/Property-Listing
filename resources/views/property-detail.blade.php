@@ -103,7 +103,7 @@
 @endpush
 
 @section('content')
-    <div class="bg-gray-50 pt-32 pb-24">
+    <div class="bg-gray-50 pt-32 pb-24 mt-2">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
 
             <!-- Header -->
@@ -273,15 +273,23 @@
                         <!-- Quick Stats -->
                         <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
                             <div class="bg-white p-6 rounded-2xl border border-gray-100 text-center">
-                                <i class="fa-solid fa-bed text-2xl text-secondary mb-2"></i>
-                                <p class="text-2xl font-black text-primary">{{ $listing->bedrooms }}</p>
-                                <p class="text-xs text-gray-500 font-medium">Bedrooms</p>
+                                @if($listing->bedrooms > 0)
+                                    <i class="fa-solid fa-bed text-2xl text-secondary mb-2"></i>
+                                    <p class="text-2xl font-black text-primary">{{ $listing->bedrooms }}</p>
+                                    <p class="text-xs text-gray-500 font-medium">Bedrooms</p>
+                                @else
+                                    <i class="fa-solid fa-house-user text-2xl text-secondary mb-2"></i>
+                                    <p class="text-2xl font-black text-primary">{{ $listing->unitType->title ?? 'Property' }}</p>
+                                    <p class="text-xs text-gray-500 font-medium">Type</p>
+                                @endif
                             </div>
-                            <div class="bg-white p-6 rounded-2xl border border-gray-100 text-center">
-                                <i class="fa-solid fa-bath text-2xl text-secondary mb-2"></i>
-                                <p class="text-2xl font-black text-primary">{{ $listing->bathrooms }}</p>
-                                <p class="text-xs text-gray-500 font-medium">Bathrooms</p>
-                            </div>
+                            @if($listing->bathrooms > 0)
+                                <div class="bg-white p-6 rounded-2xl border border-gray-100 text-center">
+                                    <i class="fa-solid fa-bath text-2xl text-secondary mb-2"></i>
+                                    <p class="text-2xl font-black text-primary">{{ $listing->bathrooms }}</p>
+                                    <p class="text-xs text-gray-500 font-medium">Bathrooms</p>
+                                </div>
+                            @endif
                             <div class="bg-white p-6 rounded-2xl border border-gray-100 text-center">
                                 <i class="fa-solid fa-vector-square text-2xl text-secondary mb-2"></i>
                                 <p class="text-2xl font-black text-primary">{{ $listing->area_size ?? 'N/A' }}</p>

@@ -24,10 +24,10 @@
                 <!-- Breadcrumb & Badge -->
                 <div class="flex flex-wrap items-center gap-4 mb-8">
                     <span
-                        class="px-4 py-2 bg-secondary/20 border border-secondary/30 rounded-xl text-secondary text-xs font-bold uppercase tracking-widest">
+                        class="px-4 py-2 bg-secondary/20 border border-secondary/30 rounded-xl text-white text-xs font-bold uppercase tracking-widest">
                         Insights
                     </span>
-                    <span class="text-gray-400 text-sm font-medium">{{ $blog->created_at->format('d M Y') }}</span>
+                    <span class="text-white text-sm font-medium">{{ $blog->created_at->format('d M Y') }}</span>
                 </div>
 
                 <!-- Title -->
@@ -87,13 +87,14 @@
                 <div class="lg:w-2/3">
                     <div class="bg-white rounded-2xl p-6 md:p-10 shadow-sm border border-gray-100 mb-8">
                         <!-- Content Body -->
-                        <article class="prose prose-lg max-w-none 
-                                                                prose-headings:text-primary prose-headings:font-bold prose-headings:tracking-tight
-                                                                prose-p:text-gray-600 prose-p:leading-relaxed prose-p:mb-6
-                                                                prose-li:text-gray-600
-                                                                prose-strong:text-primary prose-strong:font-bold
-                                                                prose-blockquote:border-l-4 prose-blockquote:border-secondary prose-blockquote:bg-gray-50 prose-blockquote:px-6 prose-blockquote:py-4 prose-blockquote:rounded-r-lg prose-blockquote:italic prose-blockquote:text-primary prose-blockquote:font-medium
-                                                                prose-img:rounded-xl prose-img:shadow-md prose-img:my-10">
+                        <article
+                            class="prose prose-lg max-w-none 
+                                                                                                                            prose-headings:text-primary prose-headings:font-bold prose-headings:tracking-tight
+                                                                                                                            prose-p:text-gray-600 prose-p:leading-relaxed prose-p:mb-6
+                                                                                                                            prose-li:text-gray-600
+                                                                                                                            prose-strong:text-primary prose-strong:font-bold
+                                                                                                                            prose-blockquote:border-l-4 prose-blockquote:border-secondary prose-blockquote:bg-gray-50 prose-blockquote:px-6 prose-blockquote:py-4 prose-blockquote:rounded-r-lg prose-blockquote:italic prose-blockquote:text-primary prose-blockquote:font-medium
+                                                                                                                            prose-img:rounded-xl prose-img:shadow-md prose-img:my-10">
                             {!! $blog->content !!}
                         </article>
 
@@ -103,12 +104,22 @@
                                 <h4 class="text-sm font-bold text-primary uppercase tracking-widest">Share this insight:
                                 </h4>
                                 <div class="flex gap-3">
-                                    @foreach(['facebook-f', 'twitter', 'linkedin-in', 'whatsapp'] as $icon)
-                                        <button
-                                            class="w-10 h-10 bg-gray-50 rounded-lg flex items-center justify-center text-gray-500 hover:bg-secondary hover:text-white transition-all duration-300">
-                                            <i class="fa-brands fa-{{ $icon }}"></i>
-                                        </button>
-                                    @endforeach
+                                    <button style="color:#1877F2"
+                                        class="w-11 h-11 bg-white border border-gray-100 rounded-xl flex items-center justify-center text-[#1877F2] hover:bg-[#1877F2] hover:text-white transition-all duration-300 shadow-sm hover:shadow-lg">
+                                        <i class="fa-brands fa-facebook-f"></i>
+                                    </button>
+                                    <button style="color:#1DA1F2"
+                                        class="w-11 h-11 bg-white border border-gray-100 rounded-xl flex items-center justify-center text-[#1DA1F2] hover:bg-[#1DA1F2] hover:text-white transition-all duration-300 shadow-sm hover:shadow-lg">
+                                        <i class="fa-brands fa-twitter"></i>
+                                    </button>
+                                    <button style="color:#0A66C2"
+                                        class="w-11 h-11 bg-white border border-gray-100 rounded-xl flex items-center justify-center text-[#0A66C2] hover:bg-[#0A66C2] hover:text-white transition-all duration-300 shadow-sm hover:shadow-lg">
+                                        <i class="fa-brands fa-linkedin-in"></i>
+                                    </button>
+                                    <button style="color:#25D366"
+                                        class="w-11 h-11 bg-white border border-gray-100 rounded-xl flex items-center justify-center text-[#25D366] hover:bg-[#25D366] hover:text-white transition-all duration-300 shadow-sm hover:shadow-lg">
+                                        <i class="fa-brands fa-whatsapp"></i>
+                                    </button>
                                 </div>
                             </div>
                         </div>
@@ -125,12 +136,7 @@
                             <h3 class="text-lg font-bold mb-2">{{ $blog->author ?? 'Editorial Team' }}</h3>
                             <p class="text-gray-400 text-sm leading-relaxed mb-4">Expert analysis and reporting on the UK
                                 property market. Helping you make informed decisions with data-driven insights.</p>
-                            <div class="flex justify-center sm:justify-start gap-4">
-                                <a href="#" class="text-white/60 hover:text-white transition-colors"><i
-                                        class="fa-brands fa-twitter"></i></a>
-                                <a href="#" class="text-white/60 hover:text-white transition-colors"><i
-                                        class="fa-brands fa-linkedin"></i></a>
-                            </div>
+
                         </div>
                     </div>
                 </div>

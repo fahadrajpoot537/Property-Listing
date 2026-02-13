@@ -86,12 +86,12 @@ class OffMarketListingController extends Controller
 
         if ($request->filled('min_bedrooms') && $request->min_bedrooms !== 'any' && $request->min_bedrooms !== '') {
             $val = (int) $request->min_bedrooms;
-            $query->where('bedrooms', $val >= 10 ? '>=' : '=', $val);
+            $query->where('bedrooms', '>=', $val);
         }
 
         if ($request->filled('min_bathrooms') && $request->min_bathrooms !== 'any' && $request->min_bathrooms !== '') {
             $val = (int) $request->min_bathrooms;
-            $query->where('bathrooms', $val >= 10 ? '>=' : '=', $val);
+            $query->where('bathrooms', '>=', $val);
         }
 
         if ($request->filled('ownership_status_id')) {

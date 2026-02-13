@@ -221,10 +221,16 @@
                                                     class="font-weight-bold d-block mb-1">{{ $latest->property_title }}</a>
                                                 <div class="list mb-1">
                                                     <ul class="d-flex p-0 m-0" style="list-style: none; font-size: 12px;">
-                                                        <li class="mr-2"><img src="{{ asset('assets/img/icons/bed1.svg') }}"
-                                                                width="14" alt=""> x{{ $latest->bedrooms }}</li>
-                                                        <li class="mr-2"><img src="{{ asset('assets/img/icons/bath1.svg') }}"
-                                                                width="14" alt=""> x{{ $latest->bathrooms }}</li>
+                                                        @if($latest->bedrooms > 0)
+                                                            <li class="mr-2"><img src="{{ asset('assets/img/icons/bed1.svg') }}"
+                                                                    width="14" alt=""> x{{ $latest->bedrooms }}</li>
+                                                        @elseif($latest->unitType)
+                                                            <li class="mr-2" title="{{ $latest->unitType->title }}"><i class="fa-solid fa-house-user" style="font-size: 14px; margin-right: 4px;"></i> {{ $latest->unitType->title }}</li>
+                                                        @endif
+                                                        @if($latest->bathrooms > 0)
+                                                            <li class="mr-2"><img src="{{ asset('assets/img/icons/bath1.svg') }}"
+                                                                    width="14" alt=""> x{{ $latest->bathrooms }}</li>
+                                                        @endif
                                                         <li><img src="{{ asset('assets/img/icons/sqare1.svg') }}" width="14"
                                                                 alt=""> {{ $latest->area_size }} sq</li>
                                                     </ul>
@@ -401,8 +407,9 @@
                                         lng: {{ $listing->longitude }},
                                         address: '{{ addslashes($listing->address) }}',
                                         thumbnail: '{{ asset('storage/' . $listing->thumbnail) }}',
-                                        bedrooms: {{ $listing->bedrooms }},
-                                        bathrooms: {{ $listing->bathrooms }},
+                                        bedrooms: {{ $listing->bedrooms ?? 0 }},
+                                        bathrooms: {{ $listing->bathrooms ?? 0 }},
+                                        unit_type: '{{ $listing->unitType->title ?? 'Property' }}',
                                         area_size: '{{ $listing->area_size }}',
                                         purpose: '{{ $listing->purpose }}'
                                     },
@@ -467,8 +474,9 @@
                             lng: {{ $listing->longitude }},
                             address: '{{ addslashes($listing->address) }}',
                             thumbnail: '{{ asset('storage/' . $listing->thumbnail) }}',
-                            bedrooms: {{ $listing->bedrooms }},
-                            bathrooms: {{ $listing->bathrooms }},
+                            bedrooms: {{ $listing->bedrooms ?? 0 }},
+                            bathrooms: {{ $listing->bathrooms ?? 0 }},
+                            unit_type: '{{ $listing->unitType->title ?? 'Property' }}',
                             area_size: '{{ $listing->area_size }}',
                             purpose: '{{ $listing->purpose }}'
                         });
@@ -507,8 +515,8 @@
                             <div style="font-weight: bold; margin-top: 5px;">${property.title}</div>
                             <div style="color: #666; font-size: 12px; margin-top: 3px;">${property.address}</div>
                             <div style="margin-top: 8px; display: flex; gap: 10px;">
-                                <span style="font-size: 12px;"><i class="fa fa-bed"></i> ${property.bedrooms} beds</span>
-                                <span style="font-size: 12px;"><i class="fa fa-bath"></i> ${property.bathrooms} baths</span>
+                                ${property.bedrooms > 0 ? `<span style="font-size: 12px;"><i class="fa fa-bed"></i> ${property.bedrooms} beds</span>` : `<span style="font-size: 12px;"><i class="fa fa-building"></i> ${property.unit_type}</span>`}
+                                ${property.bathrooms > 0 ? `<span style="font-size: 12px;"><i class="fa fa-bath"></i> ${property.bathrooms} baths</span>` : ''}
                                 <span style="font-size: 12px;"><i class="fa fa-ruler-combined"></i> ${property.area_size} sqft</span>
                             </div>
                         </div>
@@ -545,7 +553,11 @@
                         <div class="price-item" style="padding: 8px 0; border-bottom: 1px solid #eee;">
                             <div style="font-weight: bold; color: #007bff;">£${property.price.toLocaleString()}</div>
                             <div style="font-size: 12px; color: #333;">${property.title}</div>
-                            <div style="font-size: 11px; color: #666;">${property.bedrooms} bed, ${property.bathrooms} bath</div>
+                            <div style="font-size: 11px; color: #666;">
+                                ${property.bedrooms > 0 ? property.bedrooms + ' bed' : property.unit_type}
+                                ${property.bedrooms > 0 && property.bathrooms > 0 ? ', ' : ''}
+                                ${property.bathrooms > 0 ? property.bathrooms + ' bath' : ''}
+                            </div>
                         </div>
                     `);
                     

@@ -96,22 +96,22 @@ class ListingController extends Controller
         // Bathrooms
         if ($request->filled('bathrooms') && $request->bathrooms !== 'any' && $request->bathrooms !== '') {
             $val = (int) $request->bathrooms;
-            $query->where('bathrooms', $val >= 10 ? '>=' : '=', $val);
+            $query->where('bathrooms', '>=', $val);
             Log::info('Filtering by bathrooms: ' . $request->bathrooms);
         } elseif ($request->filled('min_bathrooms') && $request->min_bathrooms !== 'any' && $request->min_bathrooms !== '') {
             $val = (int) $request->min_bathrooms;
-            $query->where('bathrooms', $val >= 10 ? '>=' : '=', $val);
+            $query->where('bathrooms', '>=', $val);
             Log::info('Filtering by min_bathrooms: ' . $request->min_bathrooms);
         }
 
         // Bedrooms
         if ($request->filled('bedrooms') && $request->bedrooms !== 'any' && $request->bedrooms !== '') {
             $val = (int) $request->bedrooms;
-            $query->where('bedrooms', $val >= 10 ? '>=' : '=', $val);
+            $query->where('bedrooms', '>=', $val);
             Log::info('Filtering by bedrooms: ' . $request->bedrooms);
         } elseif ($request->filled('min_bedrooms') && $request->min_bedrooms !== 'any' && $request->min_bedrooms !== '') {
             $val = (int) $request->min_bedrooms;
-            $query->where('bedrooms', $val >= 10 ? '>=' : '=', $val);
+            $query->where('bedrooms', '>=', $val);
             Log::info('Filtering by min_bedrooms: ' . $request->min_bedrooms);
         }
 
@@ -192,9 +192,9 @@ class ListingController extends Controller
             $query->latest();
         }
 
-        $listings = $query->with('features', 'user')->paginate(12)->withQueryString();
+        $listings = $query->with('features', 'user', 'unitType')->paginate(12)->withQueryString();
         $features_all = Feature::all();
-        $latest_listings = Listing::with('features')->where('status', 'approved')->latest()->take(4)->get();
+        $latest_listings = Listing::with('features', 'unitType')->where('status', 'approved')->latest()->take(4)->get();
 
         Log::info('Total listings found: ' . $listings->total());
 
@@ -241,7 +241,7 @@ class ListingController extends Controller
         $type = $request->input('type');
         $purpose = $request->input('purpose', 'Buy');
 
-        $query = Listing::with('features', 'user')
+        $query = Listing::with('features', 'user', 'unitType')
             ->where('status', 'approved')
             ->where('purpose', $purpose);
 
@@ -330,7 +330,7 @@ class ListingController extends Controller
     {
         $purpose = $request->input('purpose', 'Buy'); // Default to 'Buy' if not specified
 
-        $listings = Listing::with('features', 'user')
+        $listings = Listing::with('features', 'user', 'unitType')
             ->where('status', 'approved')
             ->where('purpose', $purpose)
             ->latest()
@@ -470,10 +470,11 @@ class ListingController extends Controller
             $query->latest();
         }
 
-        $listings = $query->with('features', 'user')->paginate(20)->withQueryString();
+        $listings = $query->with('features', 'user', 'unitType')->paginate(20)->withQueryString();
         $features_all = Feature::all();
+        $latest_listings = Listing::with('unitType')->where('status', 'approved')->latest()->take(3)->get();
 
-        return view('property-map', compact('listings', 'features_all'));
+        return view('property-map', compact('listings', 'features_all', 'latest_listings'));
     }
 
     private function geocodeAddress($address)

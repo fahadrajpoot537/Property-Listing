@@ -71,6 +71,69 @@
             background-color: #f1f5f9;
         }
 
+        /* CKEditor Heading Visibility & Content Styling */
+        .ck-content h2,
+        .ck-editor__editable h2 {
+            font-size: 1.875rem !important;
+            font-weight: 800 !important;
+            margin-top: 2rem !important;
+            margin-bottom: 1rem !important;
+            color: #1a202c !important;
+            display: block !important;
+            line-height: 1.25 !important;
+            border-bottom: 2px solid #edf2f7 !important;
+            padding-bottom: 0.5rem !important;
+        }
+
+        .ck-content h3,
+        .ck-editor__editable h3 {
+            font-size: 1.5rem !important;
+            font-weight: 700 !important;
+            margin-top: 1.5rem !important;
+            margin-bottom: 0.75rem !important;
+            color: #2d3748 !important;
+            display: block !important;
+            line-height: 1.3 !important;
+        }
+
+        .ck-content h4,
+        .ck-editor__editable h4 {
+            font-size: 1.25rem !important;
+            font-weight: 700 !important;
+            margin-top: 1.25rem !important;
+            margin-bottom: 0.5rem !important;
+            color: #4a5568 !important;
+            display: block !important;
+            line-height: 1.4 !important;
+        }
+
+        .ck-content p,
+        .ck-editor__editable p {
+            margin-bottom: 1.25rem !important;
+            line-height: 1.7 !important;
+            color: #4a5568 !important;
+        }
+
+        .ck-content ul,
+        .ck-editor__editable ul {
+            list-style-type: disc !important;
+            margin-left: 1.5rem !important;
+            margin-bottom: 1.25rem !important;
+        }
+
+        .ck-content ol,
+        .ck-editor__editable ol {
+            list-style-type: decimal !important;
+            margin-left: 1.5rem !important;
+            margin-bottom: 1.25rem !important;
+        }
+
+        /* Ensure the editor has a comfortable minimum height */
+        .ck-editor__editable {
+            min-height: 300px !important;
+            background: white !important;
+        }
+
         /* Sidebar Styling (Dark Theme) */
         aside {
             background-color: var(--brand-primary);

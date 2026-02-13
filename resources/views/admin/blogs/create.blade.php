@@ -26,7 +26,8 @@
                     id="author" name="author" required>
                     <option value="">Select Author</option>
                     @foreach($users as $user)
-                        <option value="{{ $user->name }}" {{ old('author') == $user->name ? 'selected' : '' }}>{{ $user->name }}</option>
+                        <option value="{{ $user->name }}" {{ old('author') == $user->name ? 'selected' : '' }}>{{ $user->name }}
+                        </option>
                     @endforeach
                 </select>
                 @error('author')
@@ -37,7 +38,9 @@
             <!-- Content Editor -->
             <div class="mb-4">
                 <label class="block text-gray-700 text-sm font-bold mb-2" for="content">Content</label>
-                <textarea id="content" name="content" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline @error('content') border-red-500 @enderror" rows="15">{{ old('content') }}</textarea>
+                <textarea id="content" name="content"
+                    class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline @error('content') border-red-500 @enderror"
+                    rows="15">{{ old('content') }}</textarea>
                 @error('content')
                     <p class="text-red-500 text-xs italic mt-2">{{ $message }}</p>
                 @enderror
@@ -60,43 +63,22 @@
                     type="submit">
                     Create Blog
                 </button>
-                <a href="{{ route('admin.blogs.index') }}" class="bg-gray-500 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline">
+                <a href="{{ route('admin.blogs.index') }}"
+                    class="bg-gray-500 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline">
                     Cancel
                 </a>
             </div>
         </form>
     </div>
 
-    <!-- Include CKEditor 5 -->
-    <script src="https://cdn.ckeditor.com/ckeditor5/39.0.1/classic/ckeditor.js"></script>
     <script>
         ClassicEditor
             .create(document.querySelector('#content'), {
                 toolbar: [
                     'heading', '|',
-                    'bold', 'italic', 'link', '|',
-                    'bulletedList', 'numberedList', '|',
-                    'outdent', 'indent', '|',
-                    'blockQuote', 'insertTable', '|',
+                    'bold', 'italic', 'link', 'bulletedList', 'numberedList', 'blockQuote', '|',
                     'undo', 'redo'
-                ],
-                language: 'en',
-                image: {
-                    toolbar: [
-                        'imageTextAlternative',
-                        'toggleImageCaption',
-                        'imageStyle:inline',
-                        'imageStyle:block',
-                        'imageStyle:side'
-                    ]
-                },
-                table: {
-                    contentToolbar: [
-                        'tableColumn',
-                        'tableRow',
-                        'mergeTableCells'
-                    ]
-                }
+                ]
             })
             .catch(error => {
                 console.error(error);

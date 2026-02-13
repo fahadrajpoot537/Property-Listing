@@ -396,12 +396,21 @@
                 </p>
                 
                 <div class="mt-auto grid grid-cols-2 gap-4 pt-6 border-t border-gray-50">
-                  <div class="flex items-center gap-2 text-gray-700 font-medium">
-                    <i class="fa-solid fa-bed text-gray-400"></i> {{ $listing->bedrooms }} Bedrooms
-                  </div>
-                  <div class="flex items-center gap-2 text-gray-700 font-medium text-right justify-end">
-                    <i class="fa-solid fa-bath text-gray-400"></i> {{ $listing->bathrooms }} Baths
-                  </div>
+                  @if($listing->bedrooms > 0)
+                    <div class="flex items-center gap-2 text-gray-700 font-medium">
+                      <i class="fa-solid fa-bed text-gray-400"></i> {{ $listing->bedrooms }} Bedrooms
+                    </div>
+                  @elseif($listing->unitType)
+                    <div class="flex items-center gap-2 text-gray-700 font-medium">
+                      <i class="fa-solid fa-house-user text-gray-400"></i> {{ $listing->unitType->title }}
+                    </div>
+                  @endif
+
+                  @if($listing->bathrooms > 0)
+                    <div class="flex items-center gap-2 text-gray-700 font-medium text-right justify-end">
+                      <i class="fa-solid fa-bath text-gray-400"></i> {{ $listing->bathrooms }} Baths
+                    </div>
+                  @endif
                 </div>
 
                 <div class="mt-4 flex gap-2 pt-4 border-t border-gray-50">
