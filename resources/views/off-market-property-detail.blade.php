@@ -406,11 +406,11 @@
                             </form>
 
                             <div class="mt-6 grid grid-cols-2 gap-3">
-                                <a href="https://wa.me/{{ auth()->check() && auth()->user()->phone_number ? auth()->user()->phone_number : ($listing->user->phone_number ?? '44') }}"
+                                <a href="https://wa.me/{{ $listing->user->phone_number ?? '' }}?text=Interested in {{ urlencode($listing->property_title) }}"
                                     class="py-3 bg-emerald-500 rounded-xl flex items-center justify-center gap-2 text-sm font-bold hover:bg-emerald-600 transition-all">
                                     <i class="fab fa-whatsapp"></i> WhatsApp
                                 </a>
-                                <a href="tel:{{ auth()->check() && auth()->user()->phone_number ? auth()->user()->phone_number : ($listing->user->phone_number ?? '') }}"
+                                <a href="tel:{{ $listing->user->phone_number ?? '' }}"
                                     class="py-3 bg-white/10 rounded-xl flex items-center justify-center gap-2 text-sm font-bold border border-white/20 hover:bg-white/20 transition-all">
                                     <i class="fa-solid fa-phone"></i> Call
                                 </a>

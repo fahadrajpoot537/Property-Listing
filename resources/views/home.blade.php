@@ -393,12 +393,12 @@
                           </div>
                         </div>
                         <div class="flex gap-2">
-                          <a href="https://wa.me/447743050478?text=Interested in {{ $listing->property_title }}"
+                          <a href="https://wa.me/{{ $listing->user?->phone_number }}?text=Interested in {{ urlencode($listing->property_title) }}"
                             target="_blank"
                             class="flex-1 bg-green-500 hover:bg-green-600 text-white text-xs font-bold py-2 px-3 rounded-lg flex items-center justify-center gap-1 transition-colors">
                             <i class="fab fa-whatsapp"></i> WhatsApp
                           </a>
-                          <a href="mailto:{{ $listing->user->email ?? 'info@findauk.com' }}?subject=Enquiry about {{ $listing->property_title }}"
+                          <a href="mailto:{{ $listing->user?->email }}?subject=Enquiry about {{ urlencode($listing->property_title) }}"
                             class="flex-1 bg-blue-500 hover:bg-blue-600 text-white text-xs font-bold py-2 px-3 rounded-lg flex items-center justify-center gap-1 transition-colors">
                             <i class="fa-regular fa-envelope"></i> Email
                           </a>
@@ -468,12 +468,12 @@
                             </div>
                           </div>
                           <div class="flex gap-2">
-                            <a href="https://wa.me/447743050478?text=Interested in {{ $listing->property_title }}"
+                            <a href="https://wa.me/{{ $listing->user?->phone_number }}?text=Interested in {{ urlencode($listing->property_title) }}"
                               target="_blank"
                               class="flex-1 bg-green-500 hover:bg-green-600 text-white text-xs font-bold py-2 px-3 rounded-lg flex items-center justify-center gap-1 transition-colors">
                               <i class="fab fa-whatsapp"></i> WhatsApp
                             </a>
-                            <a href="mailto:{{ $listing->user->email ?? 'info@findauk.com' }}?subject=Enquiry about {{ $listing->property_title }}"
+                            <a href="mailto:{{ $listing->user?->email }}?subject=Enquiry about {{ urlencode($listing->property_title) }}"
                               class="flex-1 bg-blue-500 hover:bg-blue-600 text-white text-xs font-bold py-2 px-3 rounded-lg flex items-center justify-center gap-1 transition-colors">
                               <i class="fa-regular fa-envelope"></i> Email
                             </a>
@@ -838,7 +838,7 @@
         return;
       @endif
 
-                                                                                        const data = {
+                                                                                          const data = {
         _token: '{{ csrf_token() }}'
       };
       if (listingId) data.listing_id = listingId;
