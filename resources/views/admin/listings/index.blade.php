@@ -145,6 +145,11 @@
             box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.1);
             border: 1px solid #f1f5f9;
         }
+
+        .dataTables_length,
+        .dataTables_filter {
+            margin-bottom: 0.5rem !important;
+        }
     </style>
 
     <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-6">
@@ -323,43 +328,43 @@
                         { data: 'id', orderable: false, className: 'text-center', render: d => `<input type="checkbox" class="row-checkbox rounded-md border-slate-300 text-[#02b8f2] focus:ring-0" value="${d}">` },
                         {
                             data: 'property_title', render: (d, t, r) => `
-                                                <div class="flex items-center py-2">
-                                                    <div class="relative group">
-                                                        ${r.thumbnail ? `<img src="/storage/${r.thumbnail}" class="w-12 h-12 rounded-xl object-cover border-2 border-white shadow-md">` : `<div class="w-12 h-12 bg-slate-100 rounded-xl flex items-center justify-center text-slate-400"><i class='bx bx-building-house text-2xl'></i></div>`}
-                                                    </div>
-                                                    <div class="ml-4">
-                                                        <a href="/admin/listings/${r.id}" class="font-extrabold text-slate-800 hover:text-[#02b8f2] transition-colors tracking-tight leading-tight block">${d}</a>
-                                                        <div class="text-[10px] font-bold text-slate-400 uppercase mt-1">#${r.property_reference_number}</div>
-                                                    </div>
-                                                </div>`
+                                                        <div class="flex items-center py-2">
+                                                            <div class="relative group">
+                                                                ${r.thumbnail ? `<img src="/storage/${r.thumbnail}" class="w-12 h-12 rounded-xl object-cover border-2 border-white shadow-md">` : `<div class="w-12 h-12 bg-slate-100 rounded-xl flex items-center justify-center text-slate-400"><i class='bx bx-building-house text-2xl'></i></div>`}
+                                                            </div>
+                                                            <div class="ml-4">
+                                                                <a href="/admin/listings/${r.id}" class="font-extrabold text-slate-800 hover:text-[#02b8f2] transition-colors tracking-tight leading-tight block">${d}</a>
+                                                                <div class="text-[10px] font-bold text-slate-400 uppercase mt-1">#${r.property_reference_number}</div>
+                                                            </div>
+                                                        </div>`
                         },
                         { data: 'user.name', render: d => `<span class="bg-indigo-50 text-indigo-700 px-3 py-1 rounded-lg text-[11px] font-black uppercase tracking-wide">${d || 'System'}</span>` },
                         {
                             data: 'property_type.title', render: (d, t, r) => `
-                                                <div class="flex flex-col">
-                                                    <span class="text-[10px] font-black text-slate-700 uppercase">${d || 'Other'}</span>
-                                                    <span class="text-[10px] font-bold text-slate-400 uppercase tracking-tighter">${r.unit_type ? r.unit_type.title : 'General'}</span>
-                                                </div>`
+                                                        <div class="flex flex-col">
+                                                            <span class="text-[10px] font-black text-slate-700 uppercase">${d || 'Other'}</span>
+                                                            <span class="text-[10px] font-bold text-slate-400 uppercase tracking-tighter">${r.unit_type ? r.unit_type.title : 'General'}</span>
+                                                        </div>`
                         },
                         { data: 'price', render: d => `<span class="font-black text-slate-800">£${numberWithCommas(d)}</span>` },
                         {
                             data: 'status', render: (d, t, r) => {
                                 let color = d === 'approved' ? 'emerald' : (d === 'rejected' ? 'rose' : (d === 'draft' ? 'slate' : 'amber'));
                                 return `
-                                                    <select onchange="updateStatus(${r.id}, this.value)" class="bg-${color}-50 text-${color}-600 border border-${color}-100 rounded-lg px-2 py-1 text-[10px] font-black uppercase tracking-wider focus:ring-0 cursor-pointer">
-                                                        <option value="pending" ${d === 'pending' ? 'selected' : ''}>Pending</option>
-                                                        <option value="approved" ${d === 'approved' ? 'selected' : ''}>Approved</option>
-                                                        <option value="rejected" ${d === 'rejected' ? 'selected' : ''}>Rejected</option>
-                                                        <option value="draft" ${d === 'draft' ? 'selected' : ''}>Draft</option>
-                                                    </select>`;
+                                                            <select onchange="updateStatus(${r.id}, this.value)" class="bg-${color}-50 text-${color}-600 border border-${color}-100 rounded-lg px-2 py-1 text-[10px] font-black uppercase tracking-wider focus:ring-0 cursor-pointer">
+                                                                <option value="pending" ${d === 'pending' ? 'selected' : ''}>Pending</option>
+                                                                <option value="approved" ${d === 'approved' ? 'selected' : ''}>Approved</option>
+                                                                <option value="rejected" ${d === 'rejected' ? 'selected' : ''}>Rejected</option>
+                                                                <option value="draft" ${d === 'draft' ? 'selected' : ''}>Draft</option>
+                                                            </select>`;
                             }
                         },
                         {
                             data: 'id', render: d => `
-                                                <div class="flex gap-2">
-                                                    <a href="/admin/listings/${d}/edit" class="w-8 h-8 rounded-lg bg-slate-50 text-slate-500 hover:bg-indigo-600 hover:text-white transition-all flex items-center justify-center"><i class='bx bxs-edit-alt text-lg'></i></a>
-                                                    <button onclick="deleteListing(${d})" class="w-8 h-8 rounded-lg bg-slate-50 text-slate-500 hover:bg-rose-600 hover:text-white transition-all flex items-center justify-center"><i class='bx bxs-trash text-lg'></i></button>
-                                                </div>`
+                                                        <div class="flex gap-2">
+                                                            <a href="/admin/listings/${d}/edit" class="w-8 h-8 rounded-lg bg-slate-50 text-slate-500 hover:bg-indigo-600 hover:text-white transition-all flex items-center justify-center"><i class='bx bxs-edit-alt text-lg'></i></a>
+                                                            <button onclick="deleteListing(${d})" class="w-8 h-8 rounded-lg bg-slate-50 text-slate-500 hover:bg-rose-600 hover:text-white transition-all flex items-center justify-center"><i class='bx bxs-trash text-lg'></i></button>
+                                                        </div>`
                         }
                     ],
                     drawCallback: function () { toggleBulkBar(); }
@@ -389,7 +394,7 @@
                 let action = $('#bulkActionType').val();
                 let ids = $('.row-checkbox:checked').map(function () { return $(this).val(); }).get();
                 if (!action || ids.length === 0) return;
-                
+
                 Swal.fire({
                     title: 'Confirm Action',
                     text: `Apply ${action} to ${ids.length} selected items?`,
@@ -405,7 +410,7 @@
                                 ids: ids,
                                 action: action
                             },
-                            success: function(response) {
+                            success: function (response) {
                                 if (response.redirect) {
                                     window.open(response.redirect, '_blank');
                                     table.ajax.reload();
@@ -418,7 +423,7 @@
                                     toggleBulkBar();
                                 }
                             },
-                            error: function(xhr) {
+                            error: function (xhr) {
                                 Swal.fire('Error', xhr.responseJSON.message || 'Action failed', 'error');
                             }
                         });
