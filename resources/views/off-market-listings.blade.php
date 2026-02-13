@@ -363,7 +363,16 @@
                 
                 <div class="absolute top-4 left-4 flex flex-col gap-2">
                   <div class="bg-white/95 backdrop-blur-sm px-3 py-1.5 rounded-xl text-primary font-bold shadow-sm whitespace-nowrap">
+                    @if($listing->old_price && $listing->old_price > $listing->price)
+                      <span class="text-xs text-gray-400 mr-1" style="text-decoration: line-through;">£{{ number_format($listing->old_price) }}</span>
+                    @endif
                     £{{ number_format($listing->price) }}
+                    @if($listing->old_price && $listing->old_price > $listing->price)
+                      @php
+                        $percentage = round((($listing->old_price - $listing->price) / $listing->old_price) * 100);
+                      @endphp
+                      <span class="ml-1 text-[10px] bg-red-100 text-red-600 px-1.5 py-0.5 rounded-md">-{{ $percentage }}%</span>
+                    @endif
                   </div>
                   <span class="px-3 py-1 bg-secondary text-white rounded-md text-[10px] font-black uppercase tracking-widest w-fit">Off-Market</span>
                 </div>

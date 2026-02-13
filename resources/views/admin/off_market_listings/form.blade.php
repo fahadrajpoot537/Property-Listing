@@ -96,6 +96,25 @@
                                 placeholder="0.00" required value="{{ $listing->price ?? '' }}">
                             <span class="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 font-bold">£</span>
                         </div>
+                        <div class="mt-2 flex items-center">
+                            <input type="checkbox" id="has_discount"
+                                class="rounded border-slate-300 text-[#02b8f2] focus:ring-0 mr-2"
+                                onchange="toggleDiscountField()" {{ (isset($listing) && $listing->old_price) ? 'checked' : '' }}>
+                            <label for="has_discount" class="text-xs font-bold text-slate-500 uppercase tracking-wider">Add
+                                Discount?</label>
+                        </div>
+                    </div>
+
+                    <div id="discount_field_container"
+                        class="{{ (isset($listing) && $listing->old_price) ? '' : 'hidden' }}">
+                        <label class="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">Old Price
+                            (£)</label>
+                        <div class="relative">
+                            <input type="number" step="0.01" name="old_price" id="old_price"
+                                class="w-full rounded-lg border-slate-100 bg-slate-50/50 text-xs p-3 pl-8 focus:ring-blue-100 focus:border-[#02b8f2] transition-all"
+                                placeholder="0.00" value="{{ $listing->old_price ?? '' }}">
+                            <span class="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 font-bold">£</span>
+                        </div>
                     </div>
 
                     <!-- Conditional Fields -->
@@ -690,13 +709,13 @@
                     const reader = new FileReader();
                     reader.onload = function (e) {
                         preview.removeClass('hidden').html(`
-                                                    <div class="relative group w-full h-32">
-                                                        <img src="${e.target.result}" class="w-full h-full object-cover rounded-lg shadow-lg">
-                                                        <button type="button" onclick="removeThumbnail()" class="absolute -top-2 -right-2 w-6 h-6 bg-rose-500 text-white rounded-full flex items-center justify-center hover:bg-rose-600 transition-all shadow-md">
-                                                            <i class='bx bx-x'></i>
-                                                        </button>
-                                                    </div>
-                                                `);
+                                                            <div class="relative group w-full h-32">
+                                                                <img src="${e.target.result}" class="w-full h-full object-cover rounded-lg shadow-lg">
+                                                                <button type="button" onclick="removeThumbnail()" class="absolute -top-2 -right-2 w-6 h-6 bg-rose-500 text-white rounded-full flex items-center justify-center hover:bg-rose-600 transition-all shadow-md">
+                                                                    <i class='bx bx-x'></i>
+                                                                </button>
+                                                            </div>
+                                                        `);
                     }
                     reader.readAsDataURL(input.files[0]);
                 }
@@ -716,13 +735,13 @@
                     const file = input.files[0];
                     const url = URL.createObjectURL(file);
                     preview.removeClass('hidden').html(`
-                                                <div class="relative group w-full h-48">
-                                                    <video controls src="${url}" class="w-full h-full rounded-2xl shadow-lg bg-black"></video>
-                                                    <button type="button" onclick="removeVideo()" class="absolute -top-2 -right-2 w-6 h-6 bg-rose-500 text-white rounded-full flex items-center justify-center hover:bg-rose-600 transition-all shadow-md z-10">
-                                                        <i class='bx bx-x'></i>
-                                                    </button>
-                                                </div>
-                                            `);
+                                                        <div class="relative group w-full h-48">
+                                                            <video controls src="${url}" class="w-full h-full rounded-2xl shadow-lg bg-black"></video>
+                                                            <button type="button" onclick="removeVideo()" class="absolute -top-2 -right-2 w-6 h-6 bg-rose-500 text-white rounded-full flex items-center justify-center hover:bg-rose-600 transition-all shadow-md z-10">
+                                                                <i class='bx bx-x'></i>
+                                                            </button>
+                                                        </div>
+                                                    `);
                 }
             }
 
@@ -751,13 +770,13 @@
                     const reader = new FileReader();
                     reader.onload = function (e) {
                         const div = $(`
-                                                    <div class="relative group w-16 h-12">
-                                                        <img src="${e.target.result}" class="w-full h-full object-cover rounded-xl border border-slate-100 shadow-sm">
-                                                        <button type="button" onclick="removeGalleryFile(${index})" class="absolute -top-2 -right-2 w-5 h-5 bg-rose-500 text-white rounded-full flex items-center justify-center text-xs hover:bg-rose-600 transition-all shadow-md">
-                                                            <i class='bx bx-x'></i>
-                                                        </button>
-                                                    </div>
-                                                `);
+                                                            <div class="relative group w-16 h-12">
+                                                                <img src="${e.target.result}" class="w-full h-full object-cover rounded-xl border border-slate-100 shadow-sm">
+                                                                <button type="button" onclick="removeGalleryFile(${index})" class="absolute -top-2 -right-2 w-5 h-5 bg-rose-500 text-white rounded-full flex items-center justify-center text-xs hover:bg-rose-600 transition-all shadow-md">
+                                                                    <i class='bx bx-x'></i>
+                                                                </button>
+                                                            </div>
+                                                        `);
                         container.append(div);
                     }
                     reader.readAsDataURL(file);
@@ -807,13 +826,13 @@
                     const reader = new FileReader();
                     reader.onload = function (e) {
                         const div = $(`
-                                                    <div class="relative group w-16 h-12">
-                                                        <img src="${e.target.result}" class="w-full h-full object-cover rounded-xl border border-slate-100 shadow-sm">
-                                                        <button type="button" onclick="removeFloorPlanFile(${index})" class="absolute -top-2 -right-2 w-5 h-5 bg-rose-500 text-white rounded-full flex items-center justify-center text-xs hover:bg-rose-600 transition-all shadow-md">
-                                                            <i class='bx bx-x'></i>
-                                                        </button>
-                                                    </div>
-                                                `);
+                                                            <div class="relative group w-16 h-12">
+                                                                <img src="${e.target.result}" class="w-full h-full object-cover rounded-xl border border-slate-100 shadow-sm">
+                                                                <button type="button" onclick="removeFloorPlanFile(${index})" class="absolute -top-2 -right-2 w-5 h-5 bg-rose-500 text-white rounded-full flex items-center justify-center text-xs hover:bg-rose-600 transition-all shadow-md">
+                                                                    <i class='bx bx-x'></i>
+                                                                </button>
+                                                            </div>
+                                                        `);
                         container.append(div);
                     }
                     reader.readAsDataURL(file);
@@ -844,6 +863,17 @@
                 const val = wrapper.find('input[name="existing_floor_plans[]"]').val();
                 $('#listingForm').append(`<input type="hidden" name="remove_floor_plans[]" value="${val}">`);
                 wrapper.remove();
+            }
+
+            function toggleDiscountField() {
+                const isChecked = $('#has_discount').is(':checked');
+                const container = $('#discount_field_container');
+                if (isChecked) {
+                    container.removeClass('hidden');
+                } else {
+                    container.addClass('hidden');
+                    $('#old_price').val('');
+                }
             }
 
         </script>

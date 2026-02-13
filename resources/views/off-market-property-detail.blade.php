@@ -141,8 +141,13 @@
                     <div class="flex items-center gap-4">
                         <div class="text-right">
                             @if($listing->old_price && $listing->old_price > $listing->price)
-                                <span
-                                    class="text-sm text-gray-400 line-through block mb-1">£{{ number_format($listing->old_price) }}</span>
+                                <div class="flex items-center justify-end gap-2 mb-1">
+                                    <span class="text-sm text-gray-400" style="text-decoration: line-through;">£{{ number_format($listing->old_price) }}</span>
+                                    @php
+                                        $percentage = round((($listing->old_price - $listing->price) / $listing->old_price) * 100);
+                                    @endphp
+                                    <span class="text-xs bg-red-100 text-red-600 px-2 py-0.5 rounded-md font-black">-{{ $percentage }}% OFF</span>
+                                </div>
                             @endif
                             <span class="text-4xl font-black text-primary">£{{ number_format($listing->price) }}</span>
                         </div>

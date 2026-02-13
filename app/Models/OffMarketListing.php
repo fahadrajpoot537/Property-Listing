@@ -16,6 +16,7 @@ class OffMarketListing extends Model
         'property_reference_number',
         'purpose',
         'price',
+        'old_price',
         'area_size',
         'bedrooms',
         'bathrooms',

@@ -393,8 +393,15 @@
                                         </a>
                                         <div class="price-badge flex flex-col items-end">
                                             @if($listing->old_price && $listing->old_price > 0 && $listing->old_price != $listing->price)
-                                                <span class="text-[10px] text-gray-500 font-bold"
-                                                    style="text-decoration: line-through; margin-bottom: -4px;">£{{ number_format($listing->old_price) }}</span>
+                                                <div class="flex items-center gap-2">
+                                                    <span class="text-[10px] text-gray-400 font-bold"
+                                                        style="text-decoration: line-through;">£{{ number_format($listing->old_price) }}</span>
+                                                    @php
+                                                        $percentage = round((($listing->old_price - $listing->price) / $listing->old_price) * 100);
+                                                    @endphp
+                                                    <span
+                                                        class="text-[10px] bg-red-100 text-red-600 px-1.5 py-0.5 rounded-md">-{{ $percentage }}%</span>
+                                                </div>
                                             @endif
                                             <span>£{{ number_format($listing->price) }}</span>
                                         </div>
@@ -748,7 +755,7 @@
                 return;
             @endif
 
-                                                                                            const data = {
+                                                                                                    const data = {
                 _token: '{{ csrf_token() }}'
             };
             if (listingId) data.listing_id = listingId;
