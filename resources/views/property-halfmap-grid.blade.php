@@ -326,8 +326,8 @@
                     <div class="flex flex-col md:flex-row justify-between items-center mb-8 gap-4 px-2">
                         <div>
                             <h1 class="text-3xl font-extrabold text-primary tracking-tighter">
-                                {{ $listings->total() }} results
-                                <span class="text-secondary opacity-80">found</span>
+                                {{ $listings->total() }} Results
+                                <span class="text-secondary opacity-80">Found</span>
                             </h1>
                             <p class="text-gray-400 text-sm font-medium mt-1">Properties for
                                 {{ request('purpose', 'Sale') }} in {{ request('location', 'United Kingdom') }}
@@ -717,8 +717,8 @@
             }
 
             // Auto-submit form when selects change
-            $('.select2-filter').on('change', function () {
-                if ($(this).attr('id') === 'sort-select') {
+            $('.select2-filter, #sort-select').on('change', function () {
+                if (this.id === 'sort-select') {
                     $('#sidebar-sort').val($(this).val());
                 }
                 $('#sidebar-filter-form').submit();

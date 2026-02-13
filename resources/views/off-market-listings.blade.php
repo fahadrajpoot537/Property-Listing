@@ -341,10 +341,20 @@
           <h2 class="text-4xl font-black text-primary mb-2">Available Opportunities</h2>
           <p class="text-gray-500 font-bold">Confidential off-market deals currently available.</p>
         </div>
-        <div class="hidden md:block">
-          <span class="px-4 py-2 bg-white border border-gray-200 rounded-lg text-xs font-black uppercase tracking-widest text-gray-400">
-            Sorted by: Exclusive First
-          </span>
+        <div class="flex items-center gap-3">
+          <div class="relative">
+            <select id="sort-select" onchange="applySort(this.value)"
+                class="appearance-none block w-full pl-3 pr-8 py-2 border border-blue-100 rounded-lg leading-tight focus:outline-none focus:bg-white focus:border-secondary text-sm h-[42px] shadow-sm font-bold text-gray-600 bg-white"
+                style="min-width: 150px;">
+                <option value="newest" {{ request('sort') == 'newest' ? 'selected' : '' }}>Newest listed</option>
+                <option value="oldest" {{ request('sort') == 'oldest' ? 'selected' : '' }}>Oldest listed</option>
+                <option value="price_low" {{ request('sort') == 'price_low' ? 'selected' : '' }}>Price (Lowest)</option>
+                <option value="price_high" {{ request('sort') == 'price_high' ? 'selected' : '' }}>Price (Highest)</option>
+            </select>
+            <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-700">
+                <i class="fa-solid fa-chevron-down text-[10px]"></i>
+            </div>
+          </div>
         </div>
       </div>
 
@@ -672,6 +682,11 @@
           alert('Something went wrong. Please try again.');
         }
       });
+    }
+    function applySort(sort) {
+      const params = new URLSearchParams(window.location.search);
+      params.set('sort', sort);
+      window.location.href = window.location.pathname + '?' + params.toString();
     }
   </script>
 

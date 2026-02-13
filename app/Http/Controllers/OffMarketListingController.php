@@ -118,6 +118,13 @@ class OffMarketListingController extends Controller
             $query->where('cheque_id', $request->cheque_id);
         }
 
+        // Discounted Properties Filter
+        if ($request->filled('discounted') && $request->discounted == '1') {
+            $query->whereNotNull('old_price')
+                ->where('old_price', '>', 0)
+                ->whereRaw('old_price != price');
+        }
+
         if ($request->filled('features')) {
             $featureIds = explode(',', $request->features);
             $query->whereHas('features', function ($q) use ($featureIds) {
@@ -144,7 +151,7 @@ class OffMarketListingController extends Controller
             $query->orderBy('created_at', 'desc');
         }
 
-        $listings = $query->paginate(9);
+        $listings = $query->paginate(12)->withQueryString();
 
         // Get filter data
         $propertyTypes = \App\Models\PropertyType::all();

@@ -188,8 +188,24 @@ class ListingController extends Controller
         }
 
         // Sorting
-        if ($request->sort == 'oldest') {
-            $query->oldest();
+        if ($request->filled('sort')) {
+            switch ($request->sort) {
+                case 'price_low':
+                    $query->orderBy('price', 'asc');
+                    break;
+                case 'price_high':
+                    $query->orderBy('price', 'desc');
+                    break;
+                case 'newest':
+                    $query->orderBy('created_at', 'desc');
+                    break;
+                case 'oldest':
+                    $query->orderBy('created_at', 'asc');
+                    break;
+                default:
+                    $query->latest();
+                    break;
+            }
         } else {
             $query->latest();
         }
