@@ -96,7 +96,7 @@
                                 placeholder="0.00" required value="{{ $listing->price ?? '' }}">
                             <span class="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 font-bold">£</span>
                         </div>
-                        <div class="mt-2 flex items-center">
+                        <div class="mt-2 flex items-center" id="discount_checkbox_container">
                             <input type="checkbox" id="has_discount"
                                 class="rounded border-slate-300 text-[#02b8f2] focus:ring-0 mr-2"
                                 onchange="toggleDiscountField()" {{ (isset($listing) && $listing->old_price) ? 'checked' : '' }}>
@@ -610,10 +610,15 @@
                 if (p === 'Buy') {
                     $('#for-sale-fields').removeClass('hidden');
                     $('#to-rent-fields').addClass('hidden');
+                    $('#discount_checkbox_container').removeClass('hidden');
                     $('#rent_frequency_id, #cheque_id').val('').trigger('change');
                 } else if (p === 'Rent') {
                     $('#to-rent-fields').removeClass('hidden');
                     $('#for-sale-fields').addClass('hidden');
+                    $('#discount_checkbox_container').addClass('hidden');
+                    $('#discount_field_container').addClass('hidden');
+                    $('#has_discount').prop('checked', false);
+                    $('#old_price').val('');
                     $('#ownership_status_id').val('').trigger('change');
                 } else {
                     $('#for-sale-fields, #to-rent-fields').addClass('hidden');
@@ -715,13 +720,13 @@
                     const reader = new FileReader();
                     reader.onload = function (e) {
                         preview.removeClass('hidden').html(`
-                                                                            <div class="relative group w-full h-32">
-                                                                                <img src="${e.target.result}" class="w-full h-full object-cover rounded-lg shadow-lg">
-                                                                                <button type="button" onclick="removeThumbnail()" class="absolute -top-2 -right-2 w-6 h-6 bg-rose-500 text-white rounded-full flex items-center justify-center hover:bg-rose-600 transition-all shadow-md">
-                                                                                    <i class='bx bx-x'></i>
-                                                                                </button>
-                                                                            </div>
-                                                                        `);
+                                                                                    <div class="relative group w-full h-32">
+                                                                                        <img src="${e.target.result}" class="w-full h-full object-cover rounded-lg shadow-lg">
+                                                                                        <button type="button" onclick="removeThumbnail()" class="absolute -top-2 -right-2 w-6 h-6 bg-rose-500 text-white rounded-full flex items-center justify-center hover:bg-rose-600 transition-all shadow-md">
+                                                                                            <i class='bx bx-x'></i>
+                                                                                        </button>
+                                                                                    </div>
+                                                                                `);
                     }
                     reader.readAsDataURL(input.files[0]);
                 }
@@ -741,13 +746,13 @@
                     const file = input.files[0];
                     const url = URL.createObjectURL(file);
                     preview.removeClass('hidden').html(`
-                                                                        <div class="relative group w-full h-48">
-                                                                            <video controls src="${url}" class="w-full h-full rounded-2xl shadow-lg bg-black"></video>
-                                                                            <button type="button" onclick="removeVideo()" class="absolute -top-2 -right-2 w-6 h-6 bg-rose-500 text-white rounded-full flex items-center justify-center hover:bg-rose-600 transition-all shadow-md z-10">
-                                                                                <i class='bx bx-x'></i>
-                                                                            </button>
-                                                                        </div>
-                                                                    `);
+                                                                                <div class="relative group w-full h-48">
+                                                                                    <video controls src="${url}" class="w-full h-full rounded-2xl shadow-lg bg-black"></video>
+                                                                                    <button type="button" onclick="removeVideo()" class="absolute -top-2 -right-2 w-6 h-6 bg-rose-500 text-white rounded-full flex items-center justify-center hover:bg-rose-600 transition-all shadow-md z-10">
+                                                                                        <i class='bx bx-x'></i>
+                                                                                    </button>
+                                                                                </div>
+                                                                            `);
                 }
             }
 
@@ -776,13 +781,13 @@
                     const reader = new FileReader();
                     reader.onload = function (e) {
                         const div = $(`
-                                                                            <div class="relative group w-16 h-12">
-                                                                                <img src="${e.target.result}" class="w-full h-full object-cover rounded-xl border border-slate-100 shadow-sm">
-                                                                                <button type="button" onclick="removeGalleryFile(${index})" class="absolute -top-2 -right-2 w-5 h-5 bg-rose-500 text-white rounded-full flex items-center justify-center text-xs hover:bg-rose-600 transition-all shadow-md">
-                                                                                    <i class='bx bx-x'></i>
-                                                                                </button>
-                                                                            </div>
-                                                                        `);
+                                                                                    <div class="relative group w-16 h-12">
+                                                                                        <img src="${e.target.result}" class="w-full h-full object-cover rounded-xl border border-slate-100 shadow-sm">
+                                                                                        <button type="button" onclick="removeGalleryFile(${index})" class="absolute -top-2 -right-2 w-5 h-5 bg-rose-500 text-white rounded-full flex items-center justify-center text-xs hover:bg-rose-600 transition-all shadow-md">
+                                                                                            <i class='bx bx-x'></i>
+                                                                                        </button>
+                                                                                    </div>
+                                                                                `);
                         container.append(div);
                     }
                     reader.readAsDataURL(file);
@@ -832,13 +837,13 @@
                     const reader = new FileReader();
                     reader.onload = function (e) {
                         const div = $(`
-                                                                            <div class="relative group w-16 h-12">
-                                                                                <img src="${e.target.result}" class="w-full h-full object-cover rounded-xl border border-slate-100 shadow-sm">
-                                                                                <button type="button" onclick="removeFloorPlanFile(${index})" class="absolute -top-2 -right-2 w-5 h-5 bg-rose-500 text-white rounded-full flex items-center justify-center text-xs hover:bg-rose-600 transition-all shadow-md">
-                                                                                    <i class='bx bx-x'></i>
-                                                                                </button>
-                                                                            </div>
-                                                                        `);
+                                                                                    <div class="relative group w-16 h-12">
+                                                                                        <img src="${e.target.result}" class="w-full h-full object-cover rounded-xl border border-slate-100 shadow-sm">
+                                                                                        <button type="button" onclick="removeFloorPlanFile(${index})" class="absolute -top-2 -right-2 w-5 h-5 bg-rose-500 text-white rounded-full flex items-center justify-center text-xs hover:bg-rose-600 transition-all shadow-md">
+                                                                                            <i class='bx bx-x'></i>
+                                                                                        </button>
+                                                                                    </div>
+                                                                                `);
                         container.append(div);
                     }
                     reader.readAsDataURL(file);

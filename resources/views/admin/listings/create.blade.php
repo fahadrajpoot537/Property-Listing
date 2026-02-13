@@ -105,12 +105,25 @@
                         <label class="form-label" for="price">Price (£)</label>
                         <input class="form-input" id="price" type="number" step="0.01" name="price" 
                             placeholder="0.00" value="{{ old('price') }}" required>
+                        
+                        <div class="mt-2 flex items-center" id="discount_checkbox_container">
+                            <input type="checkbox" id="has_discount" name="has_discount"
+                                class="rounded border-gray-300 text-indigo-600 focus:ring-indigo-500 mr-2"
+                                onchange="toggleDiscountField()" {{ old('has_discount') ? 'checked' : '' }}>
+                            <label for="has_discount" class="text-sm font-medium text-gray-700">Add Discount?</label>
+                        </div>
                     </div>
                     <div>
                         <label class="form-label" for="area_size">Area Size (sq ft)</label>
                         <input class="form-input" id="area_size" type="text" name="area_size" 
                             placeholder="e.g. 1,200" value="{{ old('area_size') }}" required>
                     </div>
+                </div>
+
+                <div id="discount_field_container" class="mt-6 {{ old('has_discount') ? '' : 'hidden' }}">
+                    <label class="form-label" for="old_price">Old Price (£) - Will be shown with strikethrough</label>
+                    <input class="form-input border-indigo-100 bg-indigo-50/10" id="old_price" type="number" 
+                        step="0.01" name="old_price" placeholder="0.00" value="{{ old('old_price') }}">
                 </div>
             </div>
 
@@ -253,6 +266,33 @@
                 }
                 $(this).closest('.flex').next('p').text(fileName).addClass('text-indigo-600 font-medium');
             });
+
+            $('#purpose').on('change', handlePurposeChange);
+            handlePurposeChange(); // Initialize
         });
+
+        function handlePurposeChange() {
+            const purpose = $('#purpose').val();
+            if (purpose === 'Rent') {
+                $('#discount_checkbox_container').addClass('hidden');
+                $('#discount_field_container').addClass('hidden');
+                $('#has_discount').prop('checked', false);
+                $('#old_price').val('');
+            } else {
+                $('#discount_checkbox_container').removeClass('hidden');
+                toggleDiscountField();
+            }
+        }
+
+        function toggleDiscountField() {
+            const isChecked = $('#has_discount').is(':checked');
+            const container = $('#discount_field_container');
+            if (isChecked) {
+                container.removeClass('hidden');
+            } else {
+                container.addClass('hidden');
+                $('#old_price').val('');
+            }
+        }
     </script>
 @endpush

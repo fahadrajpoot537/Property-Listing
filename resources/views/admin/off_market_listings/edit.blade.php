@@ -67,7 +67,7 @@
                         class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
                         id="price" type="number" step="0.01" name="price" value="{{ $listing->price }}" required>
 
-                    <div class="mt-2 flex items-center">
+                    <div class="mt-2 flex items-center" id="discount_checkbox_container">
                         <input type="checkbox" id="has_discount"
                             class="rounded border-gray-300 text-blue-600 focus:ring-0 mr-2" onchange="toggleDiscountField()"
                             {{ $listing->old_price ? 'checked' : '' }}>
@@ -187,17 +187,35 @@
         </form>
     </div>
     @push('scripts')
-    <script>
-        function toggleDiscountField() {
-            const isChecked = $('#has_discount').is(':checked');
-            const container = $('#discount_field_container');
-            if (isChecked) {
-                container.removeClass('hidden');
-            } else {
-                container.addClass('hidden');
-                $('#old_price').val('');
+        <script>
+            $(document).ready(function () {
+                $('#purpose').on('change', handlePurposeChange);
+                handlePurposeChange(); // Initialize
+            });
+
+            function handlePurposeChange() {
+                const purpose = $('#purpose').val();
+                if (purpose === 'Rent') {
+                    $('#discount_checkbox_container').addClass('hidden');
+                    $('#discount_field_container').addClass('hidden');
+                    $('#has_discount').prop('checked', false);
+                    $('#old_price').val('');
+                } else {
+                    $('#discount_checkbox_container').removeClass('hidden');
+                    toggleDiscountField(); // Re-evaluate based on checkbox
+                }
             }
-        }
-    </script>
+
+            function toggleDiscountField() {
+                const isChecked = $('#has_discount').is(':checked');
+                const container = $('#discount_field_container');
+                if (isChecked) {
+                    container.removeClass('hidden');
+                } else {
+                    container.addClass('hidden');
+                    $('#old_price').val('');
+                }
+            }
+        </script>
     @endpush
 @endsection

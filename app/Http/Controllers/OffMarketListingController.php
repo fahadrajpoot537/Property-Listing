@@ -84,18 +84,26 @@ class OffMarketListingController extends Controller
             $query->where('area_size', '<=', $request->max_size);
         }
 
-        // Bedrooms - Handle both 'bedrooms' and 'min_bedrooms' consistently
+        // Bedrooms - Exact match for 0-9, >= for 10+
         $bedrooms = $request->input('bedrooms', $request->input('min_bedrooms'));
         if ($bedrooms !== null && $bedrooms !== 'any' && $bedrooms !== '') {
             $val = (int) $bedrooms;
-            $query->where('bedrooms', '>=', $val);
+            if ($val >= 10) {
+                $query->where('bedrooms', '>=', 10);
+            } else {
+                $query->where('bedrooms', $val);
+            }
         }
 
-        // Bathrooms - Handle both 'bathrooms' and 'min_bathrooms' consistently
+        // Bathrooms - Exact match for 0-9, >= for 10+
         $bathrooms = $request->input('bathrooms', $request->input('min_bathrooms'));
         if ($bathrooms !== null && $bathrooms !== 'any' && $bathrooms !== '') {
             $val = (int) $bathrooms;
-            $query->where('bathrooms', '>=', $val);
+            if ($val >= 10) {
+                $query->where('bathrooms', '>=', 10);
+            } else {
+                $query->where('bathrooms', $val);
+            }
         }
 
         if ($request->filled('ownership_status_id')) {

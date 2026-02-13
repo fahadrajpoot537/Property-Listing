@@ -48,7 +48,7 @@ class ListingController extends Controller
 
             Log::info('COORDINATES DEBUG: Lat=' . $lat . ', Lng=' . $lng . ', Radius=' . $radius);
 
-            $query->whereRaw("( 3959 * acos( cos( radians(?) ) * cos( radians( latitude ) ) * cos( radians( longitude ) - radians(?) ) + sin( radians(?) ) * sin( radians( latitude ) ) ) ) <= ?", [$lat, $lng, $lat, $radius]);
+            $query->whereRaw("COALESCE(( 3959 * acos( LEAST(1, GREATEST(-1, cos( radians(?) ) * cos( radians( latitude ) ) * cos( radians( longitude ) - radians(?) ) + sin( radians(?) ) * sin( radians( latitude ) ) )) ) ), 0) <= ?", [$lat, $lng, $lat, (float) $radius]);
             Log::info('Filtering by radius: ' . $radius . ' miles from lat: ' . $lat . ', lng: ' . $lng);
         } elseif ($request->filled('location') && $request->location != '') {
             $location = $request->location;
@@ -68,7 +68,7 @@ class ListingController extends Controller
                     $lat = $coordinates['lat'];
                     $lng = $coordinates['lng'];
 
-                    $query->whereRaw("( 3959 * acos( cos( radians(?) ) * cos( radians( latitude ) ) * cos( radians( longitude ) - radians(?) ) + sin( radians(?) ) * sin( radians( latitude ) ) ) ) <= ?", [$lat, $lng, $lat, $radius]);
+                    $query->whereRaw("COALESCE(( 3959 * acos( LEAST(1, GREATEST(-1, cos( radians(?) ) * cos( radians( latitude ) ) * cos( radians( longitude ) - radians(?) ) + sin( radians(?) ) * sin( radians( latitude ) ) )) ) ), 0) <= ?", [$lat, $lng, $lat, $radius]);
                     Log::info('Filtering by radius: ' . $radius . ' miles from geocoded lat: ' . $lat . ', lng: ' . $lng);
                 } else {
                     // Fallback to basic location search if geocoding fails
@@ -93,19 +93,27 @@ class ListingController extends Controller
             Log::info('Filtering by property_type (alias): ' . $request->property_type);
         }
 
-        // Bedrooms - Handle both 'bedrooms' and 'min_bedrooms' consistently
+        // Bedrooms - Exact match for 0-9, >= for 10+
         $bedrooms = $request->input('bedrooms', $request->input('min_bedrooms'));
         if ($bedrooms !== null && $bedrooms !== 'any' && $bedrooms !== '') {
             $val = (int) $bedrooms;
-            $query->where('bedrooms', '>=', $val);
+            if ($val >= 10) {
+                $query->where('bedrooms', '>=', 10);
+            } else {
+                $query->where('bedrooms', $val);
+            }
             Log::info('Filtering by bedrooms: ' . $val);
         }
 
-        // Bathrooms - Handle both 'bathrooms' and 'min_bathrooms' consistently
+        // Bathrooms - Exact match for 0-9, >= for 10+
         $bathrooms = $request->input('bathrooms', $request->input('min_bathrooms'));
         if ($bathrooms !== null && $bathrooms !== 'any' && $bathrooms !== '') {
             $val = (int) $bathrooms;
-            $query->where('bathrooms', '>=', $val);
+            if ($val >= 10) {
+                $query->where('bathrooms', '>=', 10);
+            } else {
+                $query->where('bathrooms', $val);
+            }
             Log::info('Filtering by bathrooms: ' . $val);
         }
 
@@ -383,7 +391,7 @@ class ListingController extends Controller
             // Use provided radius or default to 2 miles if not specified (more precise for postal codes)
             $radius = $request->filled('radius') && $request->radius != '' ? $request->radius : 2;
 
-            $query->whereRaw("( 3959 * acos( cos( radians(?) ) * cos( radians( latitude ) ) * cos( radians( longitude ) - radians(?) ) + sin( radians(?) ) * sin( radians( latitude ) ) ) ) < ?", [$lat, $lng, $lat, $radius]);
+            $query->whereRaw("COALESCE(( 3959 * acos( LEAST(1, GREATEST(-1, cos( radians(?) ) * cos( radians( latitude ) ) * cos( radians( longitude ) - radians(?) ) + sin( radians(?) ) * sin( radians( latitude ) ) )) ) ), 0) <= ?", [$lat, $lng, $lat, (float) $radius]);
         } elseif ($request->filled('location') && $request->location != '') {
             $location = $request->location;
 
@@ -398,7 +406,7 @@ class ListingController extends Controller
                     $lat = $coordinates['lat'];
                     $lng = $coordinates['lng'];
 
-                    $query->whereRaw("( 3959 * acos( cos( radians(?) ) * cos( radians( latitude ) ) * cos( radians( longitude ) - radians(?) ) + sin( radians(?) ) * sin( radians( latitude ) ) ) ) < ?", [$lat, $lng, $lat, $radius]);
+                    $query->whereRaw("COALESCE(( 3959 * acos( LEAST(1, GREATEST(-1, cos( radians(?) ) * cos( radians( latitude ) ) * cos( radians( longitude ) - radians(?) ) + sin( radians(?) ) * sin( radians( latitude ) ) )) ) ), 0) <= ?", [$lat, $lng, $lat, (float) $radius]);
                 } else {
                     // Fallback to basic location search if geocoding fails
                     $query->where('address', 'like', '%' . $location . '%');
@@ -409,18 +417,26 @@ class ListingController extends Controller
             }
         }
 
-        // Bedrooms - Handle both 'bedrooms' and 'min_bedrooms' consistently
+        // Bedrooms - Exact match for 0-9, >= for 10+
         $bedrooms = $request->input('bedrooms', $request->input('min_bedrooms'));
         if ($bedrooms !== null && $bedrooms !== 'any' && $bedrooms !== '') {
             $val = (int) $bedrooms;
-            $query->where('bedrooms', '>=', $val);
+            if ($val >= 10) {
+                $query->where('bedrooms', '>=', 10);
+            } else {
+                $query->where('bedrooms', $val);
+            }
         }
 
-        // Bathrooms - Handle both 'bathrooms' and 'min_bathrooms' consistently
+        // Bathrooms - Exact match for 0-9, >= for 10+
         $bathrooms = $request->input('bathrooms', $request->input('min_bathrooms'));
         if ($bathrooms !== null && $bathrooms !== 'any' && $bathrooms !== '') {
             $val = (int) $bathrooms;
-            $query->where('bathrooms', '>=', $val);
+            if ($val >= 10) {
+                $query->where('bathrooms', '>=', 10);
+            } else {
+                $query->where('bathrooms', $val);
+            }
         }
 
         // Price

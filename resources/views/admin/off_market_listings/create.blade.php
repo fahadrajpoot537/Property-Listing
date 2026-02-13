@@ -52,7 +52,22 @@
                     <input
                         class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
                         id="price" type="number" step="0.01" name="price" required>
+
+                    <div class="mt-2 flex items-center" id="discount_checkbox_container">
+                        <input type="checkbox" id="has_discount"
+                            class="rounded border-gray-300 text-blue-600 focus:ring-0 mr-2"
+                            onchange="toggleDiscountField()">
+                        <label for="has_discount" class="text-sm font-bold text-gray-600">Add Discount?</label>
+                    </div>
                 </div>
+            </div>
+
+            <div id="discount_field_container" class="mb-6 hidden">
+                <label class="block text-gray-700 text-sm font-bold mb-2 text-rose-500" for="old_price">Old Price (£) - Will
+                    be shown with strikethrough</label>
+                <input
+                    class="shadow appearance-none border border-rose-100 rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline bg-rose-50/20"
+                    id="old_price" type="number" step="0.01" name="old_price" placeholder="0.00">
             </div>
 
             <div class="flex flex-wrap -mx-3 mb-6">
@@ -142,4 +157,36 @@
             </div>
         </form>
     </div>
+    @push('scripts')
+        <script>
+            $(document).ready(function () {
+                $('#purpose').on('change', handlePurposeChange);
+                handlePurposeChange(); // Initialize
+            });
+
+            function handlePurposeChange() {
+                const purpose = $('#purpose').val();
+                if (purpose === 'Rent') {
+                    $('#discount_checkbox_container').addClass('hidden');
+                    $('#discount_field_container').addClass('hidden');
+                    $('#has_discount').prop('checked', false);
+                    $('#old_price').val('');
+                } else {
+                    $('#discount_checkbox_container').removeClass('hidden');
+                    toggleDiscountField();
+                }
+            }
+
+            function toggleDiscountField() {
+                const isChecked = $('#has_discount').is(':checked');
+                const container = $('#discount_field_container');
+                if (isChecked) {
+                    container.removeClass('hidden');
+                } else {
+                    container.addClass('hidden');
+                    $('#old_price').val('');
+                }
+            }
+        </script>
+    @endpush
 @endsection
