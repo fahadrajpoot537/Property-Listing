@@ -163,14 +163,18 @@
                         <div class="space-y-2">
                             <label for="password"
                                 class="text-xs font-black uppercase tracking-widest text-gray-400 ml-1">Password*</label>
-                            <div class="relative group">
+                            <div class="relative group" x-data="{ show: false }">
                                 <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
                                     <i
                                         class="fa-solid fa-lock text-gray-300 group-focus-within:text-secondary transition-colors"></i>
                                 </div>
-                                <input type="password" id="password" name="password" required
-                                    class="w-full pl-11 pr-4 py-3.5 bg-gray-50 border border-gray-200 rounded-2xl focus:bg-white focus:ring-4 focus:ring-secondary/10 focus:border-secondary transition-all outline-none font-medium"
+                                <input :type="show ? 'text' : 'password'" id="password" name="password" required
+                                    class="w-full pl-11 pr-12 py-3.5 bg-gray-50 border border-gray-200 rounded-2xl focus:bg-white focus:ring-4 focus:ring-secondary/10 focus:border-secondary transition-all outline-none font-medium"
                                     placeholder="••••••••">
+                                <button type="button" @click="show = !show"
+                                    class="absolute inset-y-0 right-0 pr-4 flex items-center text-gray-400 hover:text-secondary transition-colors">
+                                    <i class="fa-solid" :class="show ? 'fa-eye-slash' : 'fa-eye'"></i>
+                                </button>
                             </div>
                             <x-input-error :messages="$errors->get('password')" class="mt-1" />
                         </div>
@@ -180,14 +184,19 @@
                             <label for="password_confirmation"
                                 class="text-xs font-black uppercase tracking-widest text-gray-400 ml-1">Confirm
                                 Password*</label>
-                            <div class="relative group">
+                            <div class="relative group" x-data="{ show: false }">
                                 <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
                                     <i
                                         class="fa-solid fa-lock text-gray-300 group-focus-within:text-secondary transition-colors"></i>
                                 </div>
-                                <input type="password" id="password_confirmation" name="password_confirmation" required
-                                    class="w-full pl-11 pr-4 py-3.5 bg-gray-50 border border-gray-200 rounded-2xl focus:bg-white focus:ring-4 focus:ring-secondary/10 focus:border-secondary transition-all outline-none font-medium"
+                                <input :type="show ? 'text' : 'password'" id="password_confirmation"
+                                    name="password_confirmation" required
+                                    class="w-full pl-11 pr-12 py-3.5 bg-gray-50 border border-gray-200 rounded-2xl focus:bg-white focus:ring-4 focus:ring-secondary/10 focus:border-secondary transition-all outline-none font-medium"
                                     placeholder="••••••••">
+                                <button type="button" @click="show = !show"
+                                    class="absolute inset-y-0 right-0 pr-4 flex items-center text-gray-400 hover:text-secondary transition-colors">
+                                    <i class="fa-solid" :class="show ? 'fa-eye-slash' : 'fa-eye'"></i>
+                                </button>
                             </div>
                             <x-input-error :messages="$errors->get('password_confirmation')" class="mt-1" />
                         </div>

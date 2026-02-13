@@ -94,11 +94,11 @@
                         {
                             data: 'id', name: 'actions', orderable: false, searchable: false, render: function (data) {
                                 return `
-                                    <div class="flex gap-2">
-                                        <button onclick="editUnit(${data})" class="w-8 h-8 rounded-full bg-slate-100 flex items-center justify-center text-slate-600 hover:bg-indigo-100 hover:text-indigo-600 transition-colors"><i class='bx bxs-edit'></i></button>
-                                        <button onclick="deleteUnit(${data})" class="w-8 h-8 rounded-full bg-slate-100 flex items-center justify-center text-slate-600 hover:bg-rose-100 hover:text-rose-600 transition-colors"><i class='bx bxs-trash'></i></button>
-                                    </div>
-                                `;
+                                            <div class="flex gap-2">
+                                                <button onclick="editUnit(${data})" class="w-8 h-8 rounded-full bg-slate-100 flex items-center justify-center text-slate-600 hover:bg-indigo-100 hover:text-indigo-600 transition-colors"><i class='bx bxs-edit'></i></button>
+                                                <button onclick="deleteUnit(${data})" class="w-8 h-8 rounded-full bg-slate-100 flex items-center justify-center text-slate-600 hover:bg-rose-100 hover:text-rose-600 transition-colors"><i class='bx bxs-trash'></i></button>
+                                            </div>
+                                        `;
                             }
                         }
                     ]
@@ -175,6 +175,10 @@
                             success: function (response) {
                                 $('#unitTable').DataTable().ajax.reload();
                                 Swal.fire('Deleted!', response.message, 'success');
+                            },
+                            error: function (xhr) {
+                                let message = xhr.responseJSON ? xhr.responseJSON.message : 'Something went wrong!';
+                                Swal.fire('Error!', message, 'error');
                             }
                         });
                     }

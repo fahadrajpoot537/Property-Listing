@@ -71,9 +71,21 @@ class AdminUnitTypeController extends Controller
 
     public function destroy(string $id)
     {
-        $unitType = \App\Models\UnitType::findOrFail($id);
-        $unitType->delete();
-
-        return response()->json(['success' => true, 'message' => 'Unit Type deleted successfully.']);
+        try {
+            $unitType = \App\Models\UnitType::findOrFail($id);
+            $unitType->delete();
+            return response()->json(['success' => true, 'message' => 'Unit Type deleted successfully.']);
+        } catch (\Illuminate\Database\QueryException $e) {
+            if ($e->getCode() == "23000") { // Integrity constraint violation
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Cannot delete this Unit Type because it is being used by existing listings.'
+                ], 422);
+            }
+            return response()->json([
+                'success' => false,
+                'message' => 'Something went wrong during deletion.'
+            ], 500);
+        }
     }
 }
