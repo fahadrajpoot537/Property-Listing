@@ -5,10 +5,18 @@
 @section('content')
     <div class="flex justify-between items-center mb-6">
         <h3 class="text-slate-600 font-black uppercase tracking-widest text-sm">Partner Network</h3>
-        <button onclick="openModal()"
-            class="bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-2.5 px-6 rounded-xl shadow-lg shadow-indigo-200 transition-all flex items-center gap-2">
-            <i class='bx bx-plus-circle'></i> Onboard New Partner
-        </button>
+        <div class="flex gap-2">
+            @can('partner.settings')
+                <button onclick="openSettingsModal()"
+                    class="bg-white hover:bg-slate-50 text-slate-600 font-bold py-2.5 px-6 rounded-xl shadow-sm border border-slate-200 transition-all flex items-center gap-2">
+                    <i class='bx bxs-cog'></i> Global Settings
+                </button>
+            @endcan
+            <button onclick="openModal()"
+                class="bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-2.5 px-6 rounded-xl shadow-lg shadow-indigo-200 transition-all flex items-center gap-2">
+                <i class='bx bx-plus-circle'></i> Onboard New Partner
+            </button>
+        </div>
     </div>
 
     <div class="bg-white shadow-sm rounded-xl border border-slate-100 p-6">
@@ -85,6 +93,58 @@
         </div>
     </div>
 
+    <!-- Settings Modal -->
+    <div id="settingsModal" class="fixed inset-0 z-50 hidden overflow-y-auto" aria-labelledby="modal-title" role="dialog"
+        aria-modal="true">
+        <div class="flex items-end justify-center min-h-screen px-4 pt-4 pb-20 text-center sm:block sm:p-0">
+            <div class="fixed inset-0 transition-opacity bg-gray-500 bg-opacity-75" aria-hidden="true"
+                onclick="closeSettingsModal()"></div>
+            <span class="hidden sm:inline-block sm:align-middle sm:h-screen" aria-hidden="true">&#8203;</span>
+            <div
+                class="inline-block overflow-hidden text-left align-bottom transition-all transform bg-white rounded-lg shadow-xl sm:my-8 sm:align-middle sm:max-w-lg sm:w-full">
+                <div class="px-4 pt-5 pb-4 bg-white sm:p-6 sm:pb-4">
+                    <h3 class="text-lg font-medium leading-6 text-gray-900">Affiliate Global Settings</h3>
+                    <form action="{{ route('admin.affiliates.update-settings') }}" method="POST" class="mt-4">
+                        @csrf
+                        <div class="mb-4">
+                            <label for="affiliate_rate" class="block text-sm font-medium text-gray-700">Payment Amount
+                                ($)</label>
+                            <div class="relative mt-1 rounded-md shadow-sm">
+                                <div class="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
+                                    <span class="text-gray-500 sm:text-sm">$</span>
+                                </div>
+                                <input type="number" name="affiliate_rate" id="affiliate_rate" step="0.01" min="0"
+                                    value="{{ $settings['rate'] }}"
+                                    class="block w-full rounded-md border-gray-300 pl-7 focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm border p-2"
+                                    required>
+                            </div>
+                            <p class="mt-1 text-xs text-gray-500">Amount to pay per batch of unique visitors.</p>
+                        </div>
+
+                        <div class="mb-4">
+                            <label for="affiliate_batch_size" class="block text-sm font-medium text-gray-700">Batch Size
+                                (Visitors)</label>
+                            <input type="number" name="affiliate_batch_size" id="affiliate_batch_size" step="1" min="1"
+                                value="{{ $settings['batch_size'] }}"
+                                class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm border p-2"
+                                required>
+                            <p class="mt-1 text-xs text-gray-500">Number of unique visitors required to trigger the payment
+                                amount.</p>
+                        </div>
+
+                        <div class="flex justify-end pt-4 border-t">
+                            <button type="button" onclick="closeSettingsModal()"
+                                class="mr-2 inline-flex justify-center rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2">Cancel</button>
+                            <button type="submit"
+                                class="inline-flex justify-center rounded-md border border-transparent bg-indigo-600 px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2">Save
+                                Settings</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
     @push('scripts')
         <script>
             $(document).ready(function () {
@@ -110,7 +170,9 @@
                         },
                         {
                             data: 'total_earnings', name: 'total_earnings', render: function (data, type, row) {
-                                let calculated = (row.visitor_analytics_count / 1000) * 50;
+                                let batchSize = {{ $settings['batch_size'] }};
+                                let rate = {{ $settings['rate'] }};
+                                let calculated = (row.visitor_analytics_count / batchSize) * rate;
                                 return `<span class="font-black text-emerald-600">£${calculated.toFixed(2)}</span>`;
                             }
                         },
@@ -123,12 +185,12 @@
                         {
                             data: 'id', name: 'actions', orderable: false, searchable: false, render: function (data, type, row) {
                                 return `
-                                            <div class="flex gap-2">
-                                                <a href="/admin/affiliates/${data}/visitors" class="w-10 h-10 rounded-xl bg-slate-50 flex items-center justify-center text-slate-400 hover:bg-blue-50 hover:text-blue-600 transition-all border border-transparent hover:border-blue-100" title="Analytics Tree"><i class='bx bx-search-alt text-xl'></i></a>
-                                                <button onclick="editAffiliate(${data})" class="w-10 h-10 rounded-xl bg-slate-50 flex items-center justify-center text-slate-400 hover:bg-indigo-50 hover:text-indigo-600 transition-all border border-transparent hover:border-indigo-100" title="Manage Status"><i class='bx bxs-edit-alt text-xl'></i></button>
-                                                <button onclick="deleteAffiliate(${data})" class="w-10 h-10 rounded-xl bg-slate-50 flex items-center justify-center text-slate-400 hover:bg-rose-50 hover:text-rose-600 transition-all border border-transparent hover:border-rose-100" title="Terminate"><i class='bx bxs-trash-alt text-xl'></i></button>
-                                            </div>
-                                        `;
+                                                                    <div class="flex gap-2">
+                                                                        <a href="/admin/affiliates/${data}/visitors" class="w-10 h-10 rounded-xl bg-slate-50 flex items-center justify-center text-slate-400 hover:bg-blue-50 hover:text-blue-600 transition-all border border-transparent hover:border-blue-100" title="Analytics Tree"><i class='bx bx-search-alt text-xl'></i></a>
+                                                                        <button onclick="editAffiliate(${data})" class="w-10 h-10 rounded-xl bg-slate-50 flex items-center justify-center text-slate-400 hover:bg-indigo-50 hover:text-indigo-600 transition-all border border-transparent hover:border-indigo-100" title="Manage Status"><i class='bx bxs-edit-alt text-xl'></i></button>
+                                                                        <button onclick="deleteAffiliate(${data})" class="w-10 h-10 rounded-xl bg-slate-50 flex items-center justify-center text-slate-400 hover:bg-rose-50 hover:text-rose-600 transition-all border border-transparent hover:border-rose-100" title="Terminate"><i class='bx bxs-trash-alt text-xl'></i></button>
+                                                                    </div>
+                                                                `;
                             }
                         }
                     ]
@@ -241,6 +303,14 @@
                         });
                     }
                 });
+            }
+
+            function openSettingsModal() {
+                $('#settingsModal').removeClass('hidden');
+            }
+
+            function closeSettingsModal() {
+                $('#settingsModal').addClass('hidden');
             }
         </script>
     @endpush

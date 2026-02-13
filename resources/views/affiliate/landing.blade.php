@@ -26,8 +26,9 @@
                         People
                     </h1>
                     <p class="text-xl text-white mb-8 leading-relaxed font-medium max-w-2xl mx-auto lg:mx-0">
-                        Join the PropertyFinda affiliate network. Earn <span class="text-white font-bold">£50</span> for
-                        every 1,000 unique visitors you refer. No limits, instant approval.
+                        Join the PropertyFinda affiliate network. Earn <span
+                            class="text-white font-bold">£{{ $rate }}</span> for
+                        every {{ number_format($batch_size) }} unique visitors you refer. No limits, instant approval.
                     </p>
 
                     <div class="flex flex-col sm:flex-row gap-4 justify-center lg:justify-start">
@@ -65,8 +66,9 @@
                                     class="w-12 h-12 bg-secondary/20 rounded-xl flex items-center justify-center text-secondary text-xl mb-4">
                                     <i class="fa-solid fa-sterling-sign"></i>
                                 </div>
-                                <div class="text-3xl font-black text-white mb-1">£50</div>
-                                <div class="text-xs text-white/50 uppercase font-bold tracking-wider">Per 1k Visitors</div>
+                                <div class="text-3xl font-black text-white mb-1">£{{ $rate }}</div>
+                                <div class="text-xs text-white/50 uppercase font-bold tracking-wider">Per
+                                    {{ number_format($batch_size / 1000, 1) }}k Visitors</div>
                             </div>
                             <div class="bg-primary/50 rounded-3xl p-6 border border-white/5">
                                 <div

@@ -23,7 +23,26 @@ class AdminAffiliateController extends Controller
             return response()->json(['data' => $affiliates]);
         }
         $users = \App\Models\User::doesntHave('affiliate')->get(); // For the create modal dropdown
-        return view('admin.affiliates.index', compact('users'));
+        $settings = [
+            'rate' => \App\Models\Setting::get('affiliate_rate', 5),
+            'batch_size' => \App\Models\Setting::get('affiliate_batch_size', 1000),
+        ];
+        return view('admin.affiliates.index', compact('users', 'settings'));
+    }
+
+    public function updateSettings(Request $request)
+    {
+        abort_unless(auth()->user()->can('partner.settings'), 403);
+
+        $validated = $request->validate([
+            'affiliate_rate' => 'required|numeric|min:0',
+            'affiliate_batch_size' => 'required|integer|min:1',
+        ]);
+
+        \App\Models\Setting::set('affiliate_rate', $validated['affiliate_rate'], 'affiliate');
+        \App\Models\Setting::set('affiliate_batch_size', $validated['affiliate_batch_size'], 'affiliate');
+
+        return redirect()->back()->with('success', 'Affiliate settings updated successfully.');
     }
 
     public function create()

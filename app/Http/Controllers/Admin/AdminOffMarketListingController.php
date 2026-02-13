@@ -135,17 +135,18 @@ class AdminOffMarketListingController extends Controller implements HasMiddlewar
             'purpose' => 'required|in:Rent,Buy',
             'price' => 'required|numeric',
             'area_size' => 'required|string',
-            'bedrooms' => 'required|integer|min:0|max:100',
-            'bathrooms' => 'required|integer|min:0|max:100',
+            'bedrooms' => 'nullable|integer|min:0|max:100',
+            'bathrooms' => 'nullable|integer|min:0|max:100',
             'property_type_id' => 'required|exists:property_types,id',
             'unit_type_id' => 'required|exists:unit_types,id',
             'address' => 'nullable|string|max:500',
             'latitude' => 'nullable|numeric',
             'longitude' => 'nullable|numeric',
-            'video' => 'nullable|file|mimetypes:video/mp4,video/quicktime|max:20480', // Max 20MB
+            'video' => 'nullable|file|mimetypes:video/mp4,video/quicktime|max:35840', // Max 35MB
             'features' => 'array',
-            'thumbnail' => 'required|image|max:2048',
-            'gallery.*' => 'image|mimes:jpeg,png,jpg,webp|max:2048',
+            'thumbnail' => 'required|image|max:10240', // Max 10MB
+            'gallery.*' => 'image|mimes:jpeg,png,jpg,webp|max:20480', // Max 20MB
+            'floor_plans.*' => 'image|mimes:jpeg,png,jpg,webp|max:20480', // Max 20MB
             'ownership_status_id' => 'nullable|exists:ownership_statuses,id',
             'rent_frequency_id' => 'nullable|exists:rent_frequencies,id',
             'cheque_id' => 'nullable|exists:cheques,id',
@@ -187,6 +188,14 @@ class AdminOffMarketListingController extends Controller implements HasMiddlewar
 
         if ($request->hasFile('brochure_pdf')) {
             $validated['brochure_pdf'] = $request->file('brochure_pdf')->store('brochures', 'public');
+        }
+
+        if ($request->hasFile('floor_plans')) {
+            $floorPlanPaths = [];
+            foreach ($request->file('floor_plans') as $file) {
+                $floorPlanPaths[] = $file->store('floor_plans', 'public');
+            }
+            $validated['floor_plans'] = $floorPlanPaths;
         }
 
         $listing = \App\Models\OffMarketListing::create($validated);
@@ -231,18 +240,19 @@ class AdminOffMarketListingController extends Controller implements HasMiddlewar
             'purpose' => 'required|in:Rent,Buy',
             'price' => 'required|numeric',
             'area_size' => 'required|string',
-            'bedrooms' => 'required|integer|min:0|max:100',
-            'bathrooms' => 'required|integer|min:0|max:100',
+            'bedrooms' => 'nullable|integer|min:0|max:100',
+            'bathrooms' => 'nullable|integer|min:0|max:100',
             'property_type_id' => 'required|exists:property_types,id',
             'unit_type_id' => 'required|exists:unit_types,id',
             'address' => 'nullable|string|max:500',
             'latitude' => 'nullable|numeric',
             'longitude' => 'nullable|numeric',
-            'video' => 'nullable|file|mimetypes:video/mp4,video/quicktime|max:20480',
+            'video' => 'nullable|file|mimetypes:video/mp4,video/quicktime|max:35840', // Max 35MB
             'status' => 'sometimes|in:pending,approved,rejected,draft',
             'features' => 'array',
-            'thumbnail' => 'image|nullable|max:2048',
-            'gallery.*' => 'image|mimes:jpeg,png,jpg,webp|max:2048',
+            'thumbnail' => 'image|nullable|max:10240', // Max 10MB
+            'gallery.*' => 'image|mimes:jpeg,png,jpg,webp|max:20480', // Max 20MB
+            'floor_plans.*' => 'image|mimes:jpeg,png,jpg,webp|max:20480', // Max 20MB
             'ownership_status_id' => 'nullable|exists:ownership_statuses,id',
             'rent_frequency_id' => 'nullable|exists:rent_frequencies,id',
             'cheque_id' => 'nullable|exists:cheques,id',
@@ -263,10 +273,14 @@ class AdminOffMarketListingController extends Controller implements HasMiddlewar
 
         if ($request->hasFile('thumbnail')) {
             $validated['thumbnail'] = $request->file('thumbnail')->store('thumbnails', 'public');
+        } elseif ($request->has('remove_thumbnail')) {
+            $validated['thumbnail'] = null;
         }
 
         if ($request->hasFile('video')) {
             $validated['video'] = $request->file('video')->store('videos', 'public');
+        } elseif ($request->has('remove_video')) {
+            $validated['video'] = null;
         }
 
         // Keep existing images (minus removed ones)
@@ -293,6 +307,20 @@ class AdminOffMarketListingController extends Controller implements HasMiddlewar
                 \Storage::disk('public')->delete($listing->brochure_pdf);
             $validated['brochure_pdf'] = $request->file('brochure_pdf')->store('brochures', 'public');
         }
+
+        // Handle Floor Plans
+        $floorPlanPaths = $listing->floor_plans ?? [];
+
+        if ($request->has('remove_floor_plans')) {
+            $floorPlanPaths = array_diff($floorPlanPaths, array_filter($request->remove_floor_plans));
+        }
+
+        if ($request->hasFile('floor_plans')) {
+            foreach ($request->file('floor_plans') as $file) {
+                $floorPlanPaths[] = $file->store('floor_plans', 'public');
+            }
+        }
+        $validated['floor_plans'] = array_values($floorPlanPaths);
 
         $listing->update($validated);
 
@@ -346,10 +374,112 @@ class AdminOffMarketListingController extends Controller implements HasMiddlewar
                 \App\Models\OffMarketListing::whereIn('id', $ids)->update(['status' => 'draft']);
                 $msg = "Selected deals moved to drafts.";
                 break;
+            case 'duplicate':
+                foreach ($ids as $id) {
+                    $original = \App\Models\OffMarketListing::with('features')->find($id);
+                    if ($original) {
+                        $new = $original->replicate();
+                        $new->property_title = $original->property_title . ' (Copy)';
+                        $new->slug = \Illuminate\Support\Str::slug($new->property_title) . '-' . time() . '-' . uniqid();
+                        $new->property_reference_number = 'OFF-REF-' . time() . uniqid();
+                        $new->status = 'pending';
+                        $new->created_at = now();
+                        $new->updated_at = now();
+                        $new->save();
+
+                        // Sync features
+                        if ($original->features->isNotEmpty()) {
+                            $new->features()->sync($original->features->pluck('id'));
+                        }
+                    }
+                }
+                $msg = "Selected deals duplicated successfully.";
+                break;
+            case 'export':
+                return response()->json(['success' => true, 'redirect' => route('admin.off-market-listings.export', ['ids' => implode(',', $ids)])]);
             default:
                 return response()->json(['success' => false, 'message' => 'Invalid action.'], 422);
         }
 
         return response()->json(['success' => true, 'message' => $msg]);
+    }
+
+    public function export(Request $request)
+    {
+        $ids = $request->ids ? explode(',', $request->ids) : null;
+
+        $query = \App\Models\OffMarketListing::with(['user', 'propertyType', 'unitType', 'features', 'ownershipStatus', 'rentFrequency', 'cheque']);
+
+        if ($ids) {
+            $query->whereIn('id', $ids);
+        }
+
+        $listings = $query->get();
+        $filename = "off_market_listings_export_" . date('Y-m-d_H-i-s') . ".csv";
+
+        $handle = fopen('php://memory', 'w');
+
+        // CSV Header
+        fputcsv($handle, [
+            'ID',
+            'Title',
+            'Reference',
+            'Purpose',
+            'Price',
+            'Address',
+            'Status',
+            'Bedrooms',
+            'Bathrooms',
+            'Area Size',
+            'Property Type',
+            'Unit Type',
+            'Ownership Status',
+            'Rent Frequency',
+            'Cheque',
+            'Availability Date',
+            'Council Tax Band',
+            'EPC Rating',
+            'Description',
+            'Created At'
+        ]);
+
+        foreach ($listings as $listing) {
+            fputcsv($handle, [
+                $listing->id,
+                $listing->property_title,
+                $listing->property_reference_number,
+                $listing->purpose,
+                $listing->price,
+                $listing->address,
+                $listing->status,
+                $listing->bedrooms,
+                $listing->bathrooms,
+                $listing->area_size,
+                $listing->propertyType->title ?? '',
+                $listing->unitType->title ?? '',
+                $listing->ownershipStatus->title ?? '',
+                $listing->rentFrequency->title ?? '',
+                $listing->cheque->title ?? '',
+                $listing->availability_date,
+                $listing->council_tax_band,
+                $listing->epc_rating,
+                strip_tags($listing->description),
+                $listing->created_at
+            ]);
+        }
+
+        fseek($handle, 0);
+
+        return response()->stream(
+            function () use ($handle) {
+                fpassthru($handle);
+                fclose($handle);
+            },
+            200,
+            [
+                'Content-Type' => 'text/csv',
+                'Content-Disposition' => 'attachment; filename="' . $filename . '"',
+            ]
+        );
     }
 }

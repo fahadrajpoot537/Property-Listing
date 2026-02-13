@@ -15,7 +15,7 @@
       <div class="text-center mb-10">
         <h1 class="text-3xl md:text-6xl font-extrabold text-white mb-4 tracking-tight"
           style="text-shadow: 2px 2px 4px rgba(0,0,0,0.7);">
-          Find your happy place
+          Find Your Perfect Home
         </h1>
         <p class="text-xl text-white font-medium" style="text-shadow: 1px 1px 3px rgba(0,0,0,0.6);">
           Search properties for sale and to rent in the UK
@@ -383,12 +383,29 @@
                       <p class="text-gray-500 mb-6 flex items-center gap-2 text-sm font-medium">
                         <i class="fa-solid fa-location-dot text-gray-300"></i> {{ Str::limit($listing->address, 40) }}
                       </p>
-                      <div class="mt-auto grid grid-cols-2 gap-4 pt-6 border-t border-gray-100">
-                        <div class="flex items-center gap-2 text-gray-700 font-bold text-sm">
-                          <i class="fa-solid fa-bed text-gray-400"></i> {{ $listing->bedrooms }} Beds
+                      <div class="mt-auto pt-6 border-t border-gray-100">
+                        <div class="grid grid-cols-2 gap-4 mb-4">
+                          <div class="flex items-center gap-2 text-gray-700 font-bold text-sm">
+                            <i class="fa-solid fa-bed text-gray-400"></i> {{ $listing->bedrooms }} Beds
+                          </div>
+                          <div class="flex items-center gap-2 text-gray-700 font-bold text-sm text-right justify-end">
+                            <i class="fa-solid fa-bath text-gray-400"></i> {{ $listing->bathrooms }} Baths
+                          </div>
                         </div>
-                        <div class="flex items-center gap-2 text-gray-700 font-bold text-sm text-right justify-end">
-                          <i class="fa-solid fa-bath text-gray-400"></i> {{ $listing->bathrooms }} Baths
+                        <div class="flex gap-2">
+                          <a href="https://wa.me/447743050478?text=Interested in {{ $listing->property_title }}"
+                            target="_blank"
+                            class="flex-1 bg-green-500 hover:bg-green-600 text-white text-xs font-bold py-2 px-3 rounded-lg flex items-center justify-center gap-1 transition-colors">
+                            <i class="fab fa-whatsapp"></i> WhatsApp
+                          </a>
+                          <a href="mailto:{{ $listing->user->email ?? 'info@findauk.com' }}?subject=Enquiry about {{ $listing->property_title }}"
+                            class="flex-1 bg-blue-500 hover:bg-blue-600 text-white text-xs font-bold py-2 px-3 rounded-lg flex items-center justify-center gap-1 transition-colors">
+                            <i class="fa-regular fa-envelope"></i> Email
+                          </a>
+                          <a href="{{ route('listing.show', $listing->id) }}"
+                            class="flex-1 border border-gray-200 hover:border-secondary hover:text-secondary text-gray-600 text-xs font-bold py-2 px-3 rounded-lg flex items-center justify-center transition-all">
+                            Details
+                          </a>
                         </div>
                       </div>
                     </div>
@@ -441,12 +458,29 @@
                         <p class="text-gray-500 mb-6 flex items-center gap-2 text-sm font-medium">
                           <i class="fa-solid fa-location-dot text-gray-300"></i> {{ Str::limit($listing->address, 40) }}
                         </p>
-                        <div class="mt-auto grid grid-cols-2 gap-4 pt-6 border-t border-gray-100">
-                          <div class="flex items-center gap-2 text-gray-700 font-bold text-sm">
-                            <i class="fa-solid fa-bed text-gray-400"></i> {{ $listing->bedrooms }} Beds
+                        <div class="mt-auto pt-6 border-t border-gray-100">
+                          <div class="grid grid-cols-2 gap-4 mb-4">
+                            <div class="flex items-center gap-2 text-gray-700 font-bold text-sm">
+                              <i class="fa-solid fa-bed text-gray-400"></i> {{ $listing->bedrooms }} Beds
+                            </div>
+                            <div class="flex items-center gap-2 text-gray-700 font-bold text-sm text-right justify-end">
+                              <i class="fa-solid fa-bath text-gray-400"></i> {{ $listing->bathrooms }} Baths
+                            </div>
                           </div>
-                          <div class="flex items-center gap-2 text-gray-700 font-bold text-sm text-right justify-end">
-                            <i class="fa-solid fa-bath text-gray-400"></i> {{ $listing->bathrooms }} Baths
+                          <div class="flex gap-2">
+                            <a href="https://wa.me/447743050478?text=Interested in {{ $listing->property_title }}"
+                              target="_blank"
+                              class="flex-1 bg-green-500 hover:bg-green-600 text-white text-xs font-bold py-2 px-3 rounded-lg flex items-center justify-center gap-1 transition-colors">
+                              <i class="fab fa-whatsapp"></i> WhatsApp
+                            </a>
+                            <a href="mailto:{{ $listing->user->email ?? 'info@findauk.com' }}?subject=Enquiry about {{ $listing->property_title }}"
+                              class="flex-1 bg-blue-500 hover:bg-blue-600 text-white text-xs font-bold py-2 px-3 rounded-lg flex items-center justify-center gap-1 transition-colors">
+                              <i class="fa-regular fa-envelope"></i> Email
+                            </a>
+                            <a href="{{ route('listing.show', $listing->id) }}"
+                              class="flex-1 border border-gray-200 hover:border-secondary hover:text-secondary text-gray-600 text-xs font-bold py-2 px-3 rounded-lg flex items-center justify-center transition-all">
+                              Details
+                            </a>
                           </div>
                         </div>
                       </div>
@@ -556,8 +590,9 @@
             class="w-10 h-10 rounded-xl bg-secondary/20 flex items-center justify-center text-white mb-4 group-hover:scale-110 transition-transform">
             <i class="fa-solid fa-sterling-sign text-lg"></i>
           </div>
-          <div class="text-3xl font-black text-white mb-1">£50</div>
-          <p class="text-white text-xs font-bold uppercase tracking-wide leading-relaxed">Per 1k visitors <br>referred
+          <div class="text-3xl font-black text-white mb-1">£{{ $affiliate_rate }}</div>
+          <p class="text-white text-xs font-bold uppercase tracking-wide leading-relaxed">Per
+            {{ number_format($affiliate_batch_size / 1000, 1) }}k visitors <br>referred
           </p>
         </div>
 
@@ -803,7 +838,7 @@
         return;
       @endif
 
-                                                                                  const data = {
+                                                                                        const data = {
         _token: '{{ csrf_token() }}'
       };
       if (listingId) data.listing_id = listingId;

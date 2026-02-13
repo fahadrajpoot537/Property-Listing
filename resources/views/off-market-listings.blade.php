@@ -375,7 +375,7 @@
               </div>
               
               <div class="p-6 flex flex-col flex-grow">
-                <h3 class="text-xl font-bold text-primary mb-2 line-clamp-1">
+                <h3 class="text-xl font-bold text-primary mb-2">
                   <a href="{{ route('off-market-listing.show', $listing->id) }}" class="hover:text-secondary transition-colors">
                     {{ $listing->property_title }}
                   </a>

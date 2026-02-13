@@ -66,7 +66,7 @@
                             Earnings</div>
                         <div class="text-5xl font-black text-emerald-600 mb-2 tracking-tight">
                             £{{ $stats['total_earnings'] }}</div>
-                        <p class="text-gray-400 text-sm font-medium">Based on $50 per 1,000 unique</p>
+                        <p class="text-gray-400 text-sm font-medium">Based on £{{ $stats['rate'] }} per {{ number_format($stats['batch_size']) }} unique</p>
                     </div>
                     <div
                         class="absolute -bottom-6 -right-6 text-emerald-50 text-7xl transform group-hover:-translate-y-2 transition-transform duration-500">

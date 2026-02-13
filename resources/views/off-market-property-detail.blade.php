@@ -171,63 +171,66 @@
 
             <!-- Gallery -->
             <div class="mb-12">
-                @php $gallery = is_array($listing->gallery) ? $listing->gallery : json_decode($listing->gallery, true) ?? []; @endphp
+                @php 
+                    $gallery = is_array($listing->gallery) ? $listing->gallery : json_decode($listing->gallery, true) ?? [];
+                    $floorPlans = is_array($listing->floor_plans) ? $listing->floor_plans : json_decode($listing->floor_plans, true) ?? [];
+                    
+                    $allMedia = [];
+                    if($listing->video) $allMedia[] = ['type' => 'video', 'src' => $listing->video];
+                    if($listing->thumbnail) $allMedia[] = ['type' => 'image', 'src' => asset('storage/' . $listing->thumbnail)];
+                    foreach($gallery as $img) $allMedia[] = ['type' => 'image', 'src' => asset('storage/' . $img)];
+                    foreach($floorPlans as $img) $allMedia[] = ['type' => 'image', 'src' => asset('storage/' . $img)];
+                @endphp
 
                 <div class="property-gallery-grid">
-                    <!-- Main Thumbnail (Left - Big) -->
-                    <div class="gallery-item row-span-2" style="grid-row: span 2;"
-                        onclick="openLightbox({{ $listing->video ? 1 : 0 }})">
-                        <img src="{{ $listing->thumbnail ? asset('storage/' . $listing->thumbnail) : asset('assets/img/all-images/hero/1.jpg') }}"
-                            alt="Main Property Image">
-                    </div>
-
-                    @if($listing->video)
-                        <!-- Video Slot (Right Top) -->
-                        <div class="gallery-item overflow-hidden bg-black" onclick="openLightbox(0)">
-                            @if(Str::startsWith($listing->video, ['http', 'https']))
-                                <iframe src="{{ $listing->video }}" class="w-full h-full pointer-events-none"
-                                    frameborder="0"></iframe>
-                            @else
-                                <video class="w-full h-full object-cover">
-                                    <source src="{{ asset('storage/' . $listing->video) }}" type="video/mp4">
-                                </video>
-                            @endif
-                            <div class="absolute inset-0 flex flex-col items-center justify-center bg-black/30 group">
-                                <i
-                                    class="fa-solid fa-circle-play text-5xl text-white opacity-90 group-hover:scale-110 transition-transform"></i>
-                                <span class="text-white font-bold mt-2 text-sm">Video Tour</span>
-                            </div>
-                        </div>
-
-                        <!-- Gallery 1 (Right Bottom) -->
-                        <div class="gallery-item" onclick="openLightbox(2)">
-                            <img src="{{ isset($gallery[0]) ? asset('storage/' . $gallery[0]) : asset('assets/img/all-images/hero/1.jpg') }}"
-                                alt="Gallery Image 1">
-                            @if(count($gallery) > 1)
-                                <div class="gallery-overlay">
-                                    <div class="gallery-overlay-text">
-                                        <i class="fa-solid fa-images"></i>
-                                        <p>+{{ count($gallery) - 1 }} More Photos</p>
+                    @if(isset($allMedia[0]))
+                        <div class="gallery-item row-span-2" style="grid-row: span 2;" onclick="openLightbox(0)">
+                            @if($allMedia[0]['type'] === 'video')
+                                <div class="w-full h-full bg-black relative">
+                                    @if(Str::startsWith($allMedia[0]['src'], ['http', 'https']))
+                                        <iframe src="{{ $allMedia[0]['src'] }}" class="w-full h-full pointer-events-none" frameborder="0"></iframe>
+                                    @else
+                                        <video class="w-full h-full object-cover">
+                                            <source src="{{ asset('storage/' . $allMedia[0]['src']) }}" type="video/mp4">
+                                        </video>
+                                    @endif
+                                    <div class="absolute inset-0 flex flex-col items-center justify-center bg-black/30">
+                                        <i class="fa-solid fa-circle-play text-5xl text-white opacity-90"></i>
+                                        <span class="text-white font-bold mt-2 text-sm">Video Tour</span>
                                     </div>
                                 </div>
+                            @else
+                                <img src="{{ $allMedia[0]['src'] }}" alt="Property Media">
                             @endif
                         </div>
-                    @else
-                        <!-- Gallery 1 (Right Top) -->
-                        <div class="gallery-item" onclick="openLightbox(1)">
-                            <img src="{{ isset($gallery[0]) ? asset('storage/' . $gallery[0]) : asset('assets/img/all-images/hero/1.jpg') }}"
-                                alt="Gallery Image 1">
-                        </div>
+                    @endif
 
-                        <!-- Gallery 2 (Right Bottom) -->
+                    @if(isset($allMedia[1]))
+                        <div class="gallery-item" onclick="openLightbox(1)">
+                            @if($allMedia[1]['type'] === 'video')
+                                <div class="w-full h-full bg-black relative">
+                                    <i class="fa-solid fa-circle-play text-3xl text-white opacity-90 absolute inset-0 m-auto"></i>
+                                </div>
+                            @else
+                                <img src="{{ $allMedia[1]['src'] }}" alt="Property Media">
+                            @endif
+                        </div>
+                    @endif
+
+                    @if(isset($allMedia[2]))
                         <div class="gallery-item" onclick="openLightbox(2)">
-                            <img src="{{ isset($gallery[1]) ? asset('storage/' . $gallery[1]) : asset('assets/img/all-images/hero/1.jpg') }}"
-                                alt="Gallery Image 2">
-                            @if(count($gallery) > 2)
+                            @if($allMedia[2]['type'] === 'video')
+                                <div class="w-full h-full bg-black relative">
+                                    <i class="fa-solid fa-circle-play text-3xl text-white opacity-90 absolute inset-0 m-auto"></i>
+                                </div>
+                            @else
+                                <img src="{{ $allMedia[2]['src'] }}" alt="Property Media">
+                            @endif
+                            @if(count($allMedia) > 3)
                                 <div class="gallery-overlay">
                                     <div class="gallery-overlay-text">
                                         <i class="fa-solid fa-images"></i>
-                                        <p>+{{ count($gallery) - 2 }} More Photos</p>
+                                        <p>+{{ count($allMedia) - 3 }} More</p>
                                     </div>
                                 </div>
                             @endif
@@ -238,25 +241,22 @@
                 <div class="mobile-gallery-slider rounded-3xl overflow-hidden shadow-lg">
                     <div class="swiper mobile-swiper h-full">
                         <div class="swiper-wrapper">
-                            <div class="swiper-slide"><img src="{{ asset('storage/' . $listing->thumbnail) }}"
-                                    class="w-full h-full object-cover"></div>
-                            @if($listing->video)
+                            @foreach($allMedia as $media)
                                 <div class="swiper-slide">
-                                    <div class="w-full h-full bg-black flex items-center justify-center">
-                                        @if(Str::startsWith($listing->video, ['http', 'https']))
-                                            <iframe src="{{ $listing->video }}" class="w-full h-full" frameborder="0"
-                                                allowfullscreen></iframe>
-                                        @else
-                                            <video controls class="w-full h-full">
-                                                <source src="{{ asset('storage/' . $listing->video) }}" type="video/mp4">
-                                            </video>
-                                        @endif
-                                    </div>
+                                    @if($media['type'] === 'video')
+                                        <div class="w-full h-full bg-black flex items-center justify-center">
+                                            @if(Str::startsWith($media['src'], ['http', 'https']))
+                                                <iframe src="{{ $media['src'] }}" class="w-full h-full" frameborder="0" allowfullscreen></iframe>
+                                            @else
+                                                <video controls class="w-full h-full">
+                                                    <source src="{{ asset('storage/' . $media['src']) }}" type="video/mp4">
+                                                </video>
+                                            @endif
+                                        </div>
+                                    @else
+                                        <img src="{{ $media['src'] }}" class="w-full h-full object-cover">
+                                    @endif
                                 </div>
-                            @endif
-                            @foreach($gallery as $img)
-                                <div class="swiper-slide"><img src="{{ asset('storage/' . $img) }}"
-                                        class="w-full h-full object-cover"></div>
                             @endforeach
                         </div>
                         <div class="swiper-pagination"></div>
@@ -456,27 +456,21 @@
         </button>
         <div class="swiper lightbox-swiper h-full">
             <div class="swiper-wrapper">
-                @if($listing->video)
+                @foreach($allMedia as $media)
                     <div class="swiper-slide h-full flex items-center justify-center p-4">
-                        <div class="w-full max-w-4xl aspect-video bg-black rounded-2xl overflow-hidden shadow-2xl">
-                            @if(Str::startsWith($listing->video, ['http', 'https']))
-                                <iframe src="{{ $listing->video }}" class="w-full h-full" frameborder="0" allowfullscreen></iframe>
-                            @else
-                                <video controls class="w-full h-full">
-                                    <source src="{{ asset('storage/' . $listing->video) }}" type="video/mp4">
-                                </video>
-                            @endif
-                        </div>
-                    </div>
-                @endif
-                <div class="swiper-slide flex items-center justify-center p-4 md:p-12">
-                    <img src="{{ $listing->thumbnail ? asset('storage/' . $listing->thumbnail) : asset('assets/img/all-images/hero/1.jpg') }}"
-                        class="max-h-full max-w-full object-contain rounded-2xl mx-auto block shadow-2xl">
-                </div>
-                @foreach($gallery as $img)
-                    <div class="swiper-slide flex items-center justify-center p-4 md:p-12">
-                        <img src="{{ asset('storage/' . $img) }}"
-                            class="max-h-full max-w-full object-contain rounded-2xl mx-auto block shadow-2xl">
+                        @if($media['type'] === 'video')
+                            <div class="w-full max-w-4xl aspect-video bg-black rounded-2xl overflow-hidden shadow-2xl mx-auto">
+                                @if(Str::startsWith($media['src'], ['http', 'https']))
+                                    <iframe src="{{ $media['src'] }}" class="w-full h-full" frameborder="0" allowfullscreen></iframe>
+                                @else
+                                    <video controls class="w-full h-full">
+                                        <source src="{{ asset('storage/' . $media['src']) }}" type="video/mp4">
+                                    </video>
+                                @endif
+                            </div>
+                        @else
+                            <img src="{{ $media['src'] }}" class="max-h-full max-w-full object-contain rounded-2xl mx-auto block shadow-2xl">
+                        @endif
                     </div>
                 @endforeach
             </div>

@@ -110,34 +110,25 @@ Route::middleware('auth')->group(function () {
         Route::resource('property-locations', \App\Http\Controllers\Admin\AdminPropertyLocationController::class);
 
         Route::get('listings/drafts', [\App\Http\Controllers\Admin\AdminListingController::class, 'drafts'])->name('listings.drafts');
+        Route::get('listings/export', [\App\Http\Controllers\Admin\AdminListingController::class, 'export'])->name('listings.export');
+        Route::post('listings/bulk-action', [\App\Http\Controllers\Admin\AdminListingController::class, 'bulkAction'])->name('listings.bulk-action');
         Route::resource('listings', \App\Http\Controllers\Admin\AdminListingController::class);
-        Route::post('listings/bulk-action', [
-            \App\Http\Controllers\Admin\AdminListingController::class,
-            'bulkAction'
-        ])->name('listings.bulk-action');
-        Route::post('listings/{listing}/status', [
-            \App\Http\Controllers\Admin\AdminListingController::class,
-            'updateStatus'
-        ])->name('listings.update-status');
+        Route::post('listings/{listing}/status', [\App\Http\Controllers\Admin\AdminListingController::class, 'updateStatus'])->name('listings.update-status');
 
         Route::get('off-market-listings/drafts', [\App\Http\Controllers\Admin\AdminOffMarketListingController::class, 'drafts'])->name('off-market-listings.drafts');
+        Route::get('off-market-listings/export', [\App\Http\Controllers\Admin\AdminOffMarketListingController::class, 'export'])->name('off-market-listings.export');
+        Route::post('off-market-listings/bulk-action', [\App\Http\Controllers\Admin\AdminOffMarketListingController::class, 'bulkAction'])->name('off-market-listings.bulk-action');
         Route::resource('off-market-listings', \App\Http\Controllers\Admin\AdminOffMarketListingController::class);
-        Route::post('off-market-listings/bulk-action', [
-            \App\Http\Controllers\Admin\AdminOffMarketListingController::class,
-            'bulkAction'
-        ])->name('off-market-listings.bulk-action');
-        Route::post(
-            'off-market-listings/{listing}/status',
-            [
-                \App\Http\Controllers\Admin\AdminOffMarketListingController::class,
-                'updateStatus'
-            ]
-        )->name('off-market-listings.update-status');
+        Route::post('off-market-listings/{listing}/status', [\App\Http\Controllers\Admin\AdminOffMarketListingController::class, 'updateStatus'])->name('off-market-listings.update-status');
 
         Route::get('affiliates/{id}/visitors', [
             \App\Http\Controllers\Admin\AdminAffiliateController::class,
             'visitors'
         ])->name('affiliates.visitors');
+        Route::post('affiliates/settings', [
+            \App\Http\Controllers\Admin\AdminAffiliateController::class,
+            'updateSettings'
+        ])->name('affiliates.update-settings');
         Route::resource('affiliates', \App\Http\Controllers\Admin\AdminAffiliateController::class);
         Route::resource('mortgage-settings', \App\Http\Controllers\Admin\MortgageSettingController::class)->only([
             'index',

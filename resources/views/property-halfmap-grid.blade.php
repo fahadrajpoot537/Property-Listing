@@ -196,12 +196,14 @@
         /* List View Specifics */
         .list-view-card {
             flex-direction: row;
-            height: 220px;
+            min-height: 220px;
+            height: auto;
         }
 
         .list-view-card .img-container {
             width: 300px;
-            height: 100%;
+            min-height: 100%;
+            height: auto;
             flex-shrink: 0;
         }
 
@@ -744,7 +746,7 @@
                 return;
             @endif
 
-                                                                                    const data = {
+                                                                                        const data = {
                 _token: '{{ csrf_token() }}'
             };
             if (listingId) data.listing_id = listingId;

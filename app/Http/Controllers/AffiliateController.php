@@ -11,7 +11,10 @@ class AffiliateController extends Controller
         if (auth()->check() && auth()->user()->affiliate) {
             return redirect()->route('affiliate.dashboard');
         }
-        return view('affiliate.landing');
+        return view('affiliate.landing', [
+            'rate' => \App\Models\Setting::get('affiliate_rate', 5),
+            'batch_size' => \App\Models\Setting::get('affiliate_batch_size', 1000)
+        ]);
     }
 
     public function dashboard()
@@ -29,14 +32,22 @@ class AffiliateController extends Controller
         $uniqueVisitorsCount = \App\Models\VisitorAnalytic::where('affiliate_id', $affiliate->id)->distinct('ip_address')->count();
         $totalVisitorsCount = \App\Models\VisitorAnalytic::where('affiliate_id', $affiliate->id)->count();
 
-        // $50 per 1000 unique visitors
-        $estimatedEarnings = ($uniqueVisitorsCount / 1000) * 50;
+        // Dynamic Earnings Calculation
+        $rate = \App\Models\Setting::get('affiliate_rate', 5);
+        $batchSize = \App\Models\Setting::get('affiliate_batch_size', 1000);
+
+        $estimatedEarnings = 0;
+        if ($batchSize > 0) {
+            $estimatedEarnings = ($uniqueVisitorsCount / $batchSize) * $rate;
+        }
 
         $stats = [
             'total_visitors' => $totalVisitorsCount,
             'unique_visitors' => $uniqueVisitorsCount,
             'total_earnings' => number_format($estimatedEarnings, 2),
-            'referral_link' => $link
+            'referral_link' => $link,
+            'rate' => $rate,
+            'batch_size' => $batchSize
         ];
 
         $recentVisitors = \App\Models\VisitorAnalytic::where('affiliate_id', $affiliate->id)

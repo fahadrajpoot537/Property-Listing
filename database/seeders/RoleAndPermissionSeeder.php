@@ -75,6 +75,7 @@ class RoleAndPermissionSeeder extends Seeder
             // Partner/Affiliate
             'partner.view',
             'partner.approve',
+            'partner.settings',
         ];
 
         foreach ($permissions as $permission) {

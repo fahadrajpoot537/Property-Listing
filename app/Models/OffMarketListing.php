@@ -46,10 +46,12 @@ class OffMarketListing extends Model
         'flood_risk',
         'flood_history',
         'flood_defenses',
+        'floor_plans',
     ];
 
     protected $casts = [
         'gallery' => 'array',
+        'floor_plans' => 'array',
         'price' => 'decimal:2',
     ];
 

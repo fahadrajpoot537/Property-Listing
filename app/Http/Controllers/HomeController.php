@@ -70,6 +70,9 @@ class HomeController extends Controller
                 ->toArray();
         }
 
+        $affiliateRate = \App\Models\Setting::get('affiliate_rate', 5);
+        $affiliateBatchSize = \App\Models\Setting::get('affiliate_batch_size', 1000);
+
         return view('home', [
             'features' => $features,
             'buyListings' => $buyListings,
@@ -77,7 +80,9 @@ class HomeController extends Controller
             'propertyLocations' => $propertyLocations,
             'featuredSellListings' => $featuredSellListings,
             'user_favorite_ids' => $user_favorite_ids,
-            'blogs' => $blogs
+            'blogs' => $blogs,
+            'affiliate_rate' => $affiliateRate,
+            'affiliate_batch_size' => $affiliateBatchSize
         ]);
     }
 }
