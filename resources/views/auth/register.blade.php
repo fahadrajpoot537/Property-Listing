@@ -3,14 +3,15 @@
 @section('title', 'Join PropertyFinda - Register Your Account')
 
 @section('content')
-    <div class="min-h-screen pt-24 pb-12 flex flex-col items-center justify-center px-4 sm:px-6 lg:px-8 bg-gray-50">
+    <div
+        class="min-h-screen pt-20 md:pt-32 pb-12 flex flex-col items-center justify-center px-4 sm:px-6 lg:px-8 bg-gray-50">
         <div class="max-w-2xl w-full space-y-8 animate-fadeInUp">
             <div class="text-center">
-                <h2 class="text-4xl font-extrabold text-primary tracking-tight">Register</h2>
-                <p class="mt-2 text-lg text-gray-500 font-medium">Create your account to get started.</p>
+                <h2 class="text-3xl md:text-4xl font-extrabold text-primary tracking-tight">Register</h2>
+                <p class="mt-2 text-base md:text-lg text-gray-500 font-medium">Create your account to get started.</p>
             </div>
 
-            <div class="bg-white rounded-3xl shadow-2xl p-8 md:p-10 border border-gray-100">
+            <div class="bg-white rounded-[2rem] md:rounded-3xl shadow-2xl p-5 sm:p-8 md:p-10 border border-gray-100">
                 <form method="POST" action="{{ route('register') }}" class="space-y-6"
                     x-data="{ role: '{{ old('role', 'buyer') }}' }">
                     @csrf
@@ -23,56 +24,56 @@
                             <label class="relative cursor-pointer group">
                                 <input type="radio" name="role" value="agent" x-model="role" class="sr-only" required>
                                 <div :class="role === 'agent' ? 'border-secondary bg-secondary/5' : 'border-gray-100'"
-                                    class="p-4 border-2 rounded-2xl text-center transition-all group-hover:border-secondary/30">
+                                    class="p-2 sm:p-4 border-2 rounded-2xl text-center transition-all group-hover:border-secondary/30">
                                     <div :class="role === 'agent' ? 'bg-secondary/10' : 'bg-gray-50'"
-                                        class="w-10 h-10 rounded-xl flex items-center justify-center mx-auto mb-2">
+                                        class="w-8 h-8 md:w-10 md:h-10 rounded-xl flex items-center justify-center mx-auto mb-2">
                                         <i :class="role === 'agent' ? 'text-secondary' : 'text-gray-400'"
-                                            class="fa-solid fa-user-tie group-hover:text-secondary"></i>
+                                            class="fa-solid fa-user-tie group-hover:text-secondary text-sm md:text-base"></i>
                                     </div>
                                     <span :class="role === 'agent' ? 'text-secondary' : 'text-gray-600'"
-                                        class="text-sm font-bold">Agent</span>
+                                        class="text-xs md:text-sm font-bold">Agent</span>
                                 </div>
                             </label>
 
                             <label class="relative cursor-pointer group">
                                 <input type="radio" name="role" value="agency" x-model="role" class="sr-only">
                                 <div :class="role === 'agency' ? 'border-secondary bg-secondary/5' : 'border-gray-100'"
-                                    class="p-4 border-2 rounded-2xl text-center transition-all group-hover:border-secondary/30">
+                                    class="p-2 sm:p-4 border-2 rounded-2xl text-center transition-all group-hover:border-secondary/30">
                                     <div :class="role === 'agency' ? 'bg-secondary/10' : 'bg-gray-50'"
-                                        class="w-10 h-10 rounded-xl flex items-center justify-center mx-auto mb-2">
+                                        class="w-8 h-8 md:w-10 md:h-10 rounded-xl flex items-center justify-center mx-auto mb-2">
                                         <i :class="role === 'agency' ? 'text-secondary' : 'text-gray-400'"
-                                            class="fa-solid fa-building group-hover:text-secondary"></i>
+                                            class="fa-solid fa-building group-hover:text-secondary text-sm md:text-base"></i>
                                     </div>
                                     <span :class="role === 'agency' ? 'text-secondary' : 'text-gray-600'"
-                                        class="text-sm font-bold">Agency</span>
+                                        class="text-xs md:text-sm font-bold">Agency</span>
                                 </div>
                             </label>
 
                             <label class="relative cursor-pointer group">
                                 <input type="radio" name="role" value="landlord" x-model="role" class="sr-only">
                                 <div :class="role === 'landlord' ? 'border-secondary bg-secondary/5' : 'border-gray-100'"
-                                    class="p-4 border-2 rounded-2xl text-center transition-all group-hover:border-secondary/30">
+                                    class="p-2 sm:p-4 border-2 rounded-2xl text-center transition-all group-hover:border-secondary/30">
                                     <div :class="role === 'landlord' ? 'bg-secondary/10' : 'bg-gray-50'"
-                                        class="w-10 h-10 rounded-xl flex items-center justify-center mx-auto mb-2">
+                                        class="w-8 h-8 md:w-10 md:h-10 rounded-xl flex items-center justify-center mx-auto mb-2">
                                         <i :class="role === 'landlord' ? 'text-secondary' : 'text-gray-400'"
-                                            class="fa-solid fa-house-chimney group-hover:text-secondary"></i>
+                                            class="fa-solid fa-house-chimney group-hover:text-secondary text-sm md:text-base"></i>
                                     </div>
                                     <span :class="role === 'landlord' ? 'text-secondary' : 'text-gray-600'"
-                                        class="text-sm font-bold">Landlord</span>
+                                        class="text-xs md:text-sm font-bold">Landlord</span>
                                 </div>
                             </label>
 
                             <label class="relative cursor-pointer group">
                                 <input type="radio" name="role" value="buyer" x-model="role" class="sr-only">
                                 <div :class="role === 'buyer' ? 'border-secondary bg-secondary/5' : 'border-gray-100'"
-                                    class="p-4 border-2 rounded-2xl text-center transition-all group-hover:border-secondary/30">
+                                    class="p-2 sm:p-4 border-2 rounded-2xl text-center transition-all group-hover:border-secondary/30">
                                     <div :class="role === 'buyer' ? 'bg-secondary/10' : 'bg-gray-50'"
-                                        class="w-10 h-10 rounded-xl flex items-center justify-center mx-auto mb-2">
+                                        class="w-8 h-8 md:w-10 md:h-10 rounded-xl flex items-center justify-center mx-auto mb-2">
                                         <i :class="role === 'buyer' ? 'text-secondary' : 'text-gray-400'"
-                                            class="fa-solid fa-cart-shopping group-hover:text-secondary"></i>
+                                            class="fa-solid fa-cart-shopping group-hover:text-secondary text-sm md:text-base"></i>
                                     </div>
                                     <span :class="role === 'buyer' ? 'text-secondary' : 'text-gray-600'"
-                                        class="text-sm font-bold">Buyer</span>
+                                        class="text-xs md:text-sm font-bold">Buyer</span>
                                 </div>
                             </label>
                         </div>

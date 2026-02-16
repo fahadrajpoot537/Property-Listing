@@ -3,9 +3,9 @@
 @section('title', 'Sign In - PropertyFinda')
 
 @section('content')
-    <div class="min-h-screen pt-28 pb-20 flex items-center justify-center px-4 bg-gray-50">
+    <div class="min-h-screen pt-24 md:pt-32 pb-12 md:pb-20 flex items-center justify-center px-4 bg-gray-50">
         <div
-            class="max-w-5xl w-full bg-white rounded-[2.5rem] shadow-2xl overflow-hidden flex flex-col md:flex-row shadow-primary/5 border border-gray-100 animate-fadeInUp">
+            class="max-w-5xl w-full bg-white rounded-3xl md:rounded-[2.5rem] shadow-2xl overflow-hidden flex flex-col md:flex-row shadow-primary/5 border border-gray-100 animate-fadeInUp">
 
             <!-- Left Side (Visual/Brand) -->
             <div class="hidden md:flex w-1/2 bg-primary relative flex-col justify-between p-16 overflow-hidden group">
@@ -56,10 +56,10 @@
             </div>
 
             <!-- Right Side (Form) -->
-            <div class="w-full md:w-1/2 p-12 md:p-16 lg:p-20 flex flex-col justify-center bg-white">
-                <div class="mb-10">
-                    <h2 class="text-3xl font-black text-primary mb-2">Sign In</h2>
-                    <p class="text-gray-500 font-medium">Please login to access your dashboard.</p>
+            <div class="w-full md:w-1/2 p-6 sm:p-10 md:p-16 lg:p-20 flex flex-col justify-center bg-white">
+                <div class="mb-8 md:mb-10 text-center md:text-left">
+                    <h2 class="text-2xl md:text-3xl font-black text-primary mb-2">Sign In</h2>
+                    <p class="text-sm md:text-base text-gray-500 font-medium">Please login to access your dashboard.</p>
                 </div>
 
                 <!-- Session Status -->
@@ -135,7 +135,7 @@
 
                     <!-- No Social Buttons Here -->
 
-                    <p class="mt-8 text-center text-gray-500 font-medium">
+                    <p class="mt-8 text-center text-gray-500 font-medium text-sm md:text-base">
                         New to PropertyFinda?
                         <a href="{{ route('register') }}" class="text-secondary font-black hover:underline ml-1">Create
                             Account</a>
