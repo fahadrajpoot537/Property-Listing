@@ -230,6 +230,102 @@ class OffMarketListingController extends Controller
         return view('off-market-property-detail', compact('listing', 'similarProperties', 'user_favorite_off_market_ids'));
     }
 
+    public function getSoldPrices($id)
+    {
+        $listing = \App\Models\OffMarketListing::findOrFail($id);
+        $postcode = $listing->postcode;
+
+        if (!$postcode) {
+            return response()->json(['error' => 'No valid postcode found for this property.'], 404);
+        }
+
+        $apiKey = '3f5f396290a1e9c3be70b679210c188d3562a0d9';
+        // Using PaTMa API as per user's latest information
+        // We use radius 0.5 to catch properties in the immediate area
+        $apiUrl = "https://app.patma.co.uk/api/prospector/v1/list-property/?postcode=" . urlencode($postcode) . "&radius=0.5&require_sold_price=true&include_sold_history=true&include_listing_data=true&token=" . $apiKey;
+
+        try {
+            $response = \Illuminate\Support\Facades\Http::timeout(30)->get($apiUrl);
+
+            if ($response->successful()) {
+                $data = $response->json();
+
+                if (!isset($data['status']) || $data['status'] !== 'success') {
+                    return response()->json([
+                        'error' => 'PaTMa API returned an error.',
+                        'message' => $data['errors'] ?? 'Unknown error'
+                    ], 400);
+                }
+
+                $formattedPrices = [];
+                if (isset($data['data']['available_results'])) {
+                    foreach ($data['data']['available_results'] as $property) {
+                        if (isset($property['sold_history']) && is_array($property['sold_history'])) {
+                            // Check if this property exists in our database
+                            $internalListing = \App\Models\Listing::where(function ($q) use ($property) {
+                                $addr = $property['address'] ?? $property['label'] ?? '';
+                                $pc = $property['postcode'] ?? '';
+                                if ($addr) {
+                                    $q->where('address', 'LIKE', '%' . $addr . '%')
+                                        ->orWhere('property_title', 'LIKE', '%' . $addr . '%');
+                                }
+                                if ($pc) {
+                                    $q->orWhere('address', 'LIKE', '%' . $pc . '%');
+                                }
+                            })->first();
+
+                            $internalUrl = $internalListing ? route('listing.show', $internalListing->slug) : null;
+
+                            foreach ($property['sold_history'] as $sale) {
+                                $formattedPrices[] = [
+                                    'date' => $sale['date'],
+                                    'price' => $sale['amount'],
+                                    'type' => $property['property_type'] ?? 'Residential',
+                                    'name' => $property['address'] ?? $property['label'] ?? 'N/A',
+                                    'location' => $property['postcode'] ?? $listing->postcode ?? 'N/A',
+                                    'search_postcode' => $listing->postcode,
+                                    'url' => $internalUrl ?? $property['url'] ?? '#',
+                                    'is_internal' => (bool) $internalListing,
+                                    'description' => $property['description_text'] ?? 'No additional description available.',
+                                    'images' => $property['site_images'] ?? [],
+                                    'tenure' => $property['tenure'] ?? 'N/A',
+                                    'bedrooms' => $internalListing->bedrooms ?? $property['bedrooms'] ?? 'N/A',
+                                    'bathrooms' => $internalListing->bathrooms ?? 'N/A',
+                                    'habitable_rooms' => $property['habitable_rooms'] ?? 'N/A',
+                                    'floor_area' => $internalListing ? ($internalListing->area_size ? number_format($internalListing->area_size) . ' sq ft' : 'N/A') : (isset($property['floor_area_sqft']) ? number_format($property['floor_area_sqft']) . ' sq ft' : 'N/A'),
+                                    'built_form' => $property['built_form'] ?? 'N/A',
+                                    'council_tax' => $internalListing->council_tax_band ?? 'N/A',
+                                    'epc' => $internalListing->epc_rating ?? 'N/A',
+                                    'flood_risk' => $internalListing->flood_risk ?? 'N/A'
+                                ];
+                            }
+                        }
+                    }
+                }
+
+                // Sort by date descending
+                usort($formattedPrices, function ($a, $b) {
+                    return strcmp($b['date'], $a['date']);
+                });
+
+                return response()->json([
+                    'status' => 'success',
+                    'prices' => $formattedPrices
+                ]);
+            }
+
+            return response()->json([
+                'error' => 'Failed to fetch sold prices from PaTMa API.',
+                'message' => $response->body()
+            ], $response->status());
+        } catch (\Exception $e) {
+            return response()->json([
+                'error' => 'API connection error.',
+                'message' => $e->getMessage()
+            ], 500);
+        }
+    }
+
     public function sendInquiry(Request $request, $id)
     {
         $listing = \App\Models\OffMarketListing::findOrFail($id);

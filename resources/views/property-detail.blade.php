@@ -413,6 +413,31 @@
                             </div>
                         </div>
 
+                        <!-- Sold Price History Dropdown -->
+                        <div class="bg-white rounded-3xl border border-gray-100 shadow-sm overflow-hidden" x-data="{ isOpen: false, loaded: false }">
+                            <button @click="isOpen = !isOpen; if(isOpen && !loaded) { fetchSoldPrices(); loaded = true; }" 
+                                    class="w-full flex items-center justify-between p-6 md:p-8 text-left focus:outline-none group hover:bg-gray-50/50 transition-colors">
+                                <h2 class="text-2xl font-black text-primary">Sold Price History</h2>
+                                <i class="fa-solid fa-chevron-down transition-transform duration-300 text-secondary text-xl" :class="{ 'rotate-180': isOpen }"></i>
+                            </button>
+                            
+                            <div x-show="isOpen" 
+                                 x-transition:enter="transition ease-out duration-300"
+                                 x-transition:enter-start="opacity-0 max-h-0"
+                                 x-transition:enter-end="opacity-100 max-h-[1000px]"
+                                 x-transition:leave="transition ease-in duration-200"
+                                 x-transition:leave-start="opacity-100 max-h-[1000px]"
+                                 x-transition:leave-end="opacity-0 max-h-0"
+                                 class="px-6 md:px-8 pb-8" x-cloak>
+                                <div id="sold-price-history">
+                                    <div class="flex items-center justify-center py-8">
+                                        <div class="animate-spin rounded-full h-8 w-8 border-b-2 border-secondary"></div>
+                                        <span class="ml-3 text-gray-500 font-medium">Fetching historical data...</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
                         <!-- Description -->
                         <div class="bg-white p-6 md:p-8 rounded-3xl border border-gray-100" x-data="{ expanded: false }">
                             <h2 class="text-2xl font-black text-primary mb-6">Description</h2>
@@ -580,6 +605,107 @@
                 <div class="swiper-pagination !text-white"></div>
             </div>
         </div>
+
+@push('modals')
+    <!-- External Property Detail Modal -->
+    <div x-data="{ open: false, property: {} }" 
+         @open-external-detail.window="open = true; property = $event.detail"
+         x-show="open" 
+         class="fixed inset-0 z-[100000] flex items-center justify-center p-4" 
+         style="display: none; z-index: 100000 !important;"
+         x-cloak>
+        <!-- Overlay -->
+        <div class="absolute inset-0 bg-primary/80 backdrop-blur-[2px]" @click="open = false"></div>
+        
+        <!-- Modal Content -->
+        <div class="bg-white w-full max-w-5xl rounded-[2rem] shadow-2xl overflow-hidden relative z-10 flex flex-col md:flex-row max-h-[90vh]">
+            <button @click="open = false" class="absolute top-4 right-4 w-10 h-10 bg-white shadow-lg rounded-full flex items-center justify-center text-primary z-50 hover:bg-gray-50 transition-colors">
+                <i class="fa-solid fa-xmark"></i>
+            </button>
+            
+            <!-- Left: Image Section -->
+            <div class="md:w-1/2 bg-gray-100 relative min-h-[300px]">
+                <template x-if="property.images && property.images.length > 0">
+                    <img :src="property.images[0].url" class="absolute inset-0 w-full h-full object-cover">
+                </template>
+                <template x-if="!property.images || property.images.length === 0">
+                    <div class="absolute inset-0 flex flex-col items-center justify-center text-gray-400 gap-4">
+                        <i class="fa-solid fa-image text-6xl"></i>
+                        <span class="text-xs font-bold uppercase tracking-widest">No Images Available</span>
+                    </div>
+                </template>
+            </div>
+            
+            <!-- Right: Content -->
+            <div class="md:w-1/2 p-8 md:p-12 overflow-y-auto">
+                <div class="flex items-center gap-2 mb-6">
+                    <span class="bg-secondary text-white px-3 py-1 rounded-lg text-[10px] font-black uppercase tracking-wider" x-text="property.type"></span>
+                    <span class="bg-gray-100 text-gray-600 px-3 py-1 rounded-lg text-[10px] font-black uppercase tracking-wider" x-text="property.date"></span>
+                </div>
+                
+                <h2 class="text-3xl font-black text-primary mb-2" x-text="property.name"></h2>
+                <p class="text-gray-500 font-bold mb-8 flex items-center gap-2">
+                    <i class="fa-solid fa-location-dot text-secondary"></i> <span x-text="property.location"></span>
+                </p>
+                
+                <!-- Property Grid Stats -->
+                <div class="grid grid-cols-2 lg:grid-cols-3 gap-4 mb-8">
+                    <div class="bg-gray-50 p-4 rounded-2xl border border-gray-100">
+                        <p class="text-[10px] font-black text-gray-400 uppercase tracking-widest mb-1">Price Paid</p>
+                        <p class="text-xl font-black text-secondary">£<span x-text="new Intl.NumberFormat('en-GB').format(property.price)"></span></p>
+                    </div>
+                    <div class="bg-gray-50 p-4 rounded-2xl border border-gray-100">
+                        <p class="text-[10px] font-black text-gray-400 uppercase tracking-widest mb-1">Tenure</p>
+                        <p class="text-xl font-black text-primary" x-text="property.tenure"></p>
+                    </div>
+                    <div class="bg-gray-50 p-4 rounded-2xl border border-gray-100">
+                        <p class="text-[10px] font-black text-gray-400 uppercase tracking-widest mb-1">Bedrooms</p>
+                        <p class="text-xl font-black text-primary" x-text="property.bedrooms"></p>
+                    </div>
+                    <div class="bg-gray-50 p-4 rounded-2xl border border-gray-100">
+                        <p class="text-[10px] font-black text-gray-400 uppercase tracking-widest mb-1">Bathrooms</p>
+                        <p class="text-xl font-black text-primary" x-text="property.bathrooms"></p>
+                    </div>
+                    <div class="bg-gray-50 p-4 rounded-2xl border border-gray-100">
+                        <p class="text-[10px] font-black text-gray-400 uppercase tracking-widest mb-1">Floor Area</p>
+                        <p class="text-xl font-black text-primary" x-text="property.floor_area"></p>
+                    </div>
+                    <template x-if="property.council_tax && property.council_tax !== 'N/A'">
+                        <div class="bg-gray-50 p-4 rounded-2xl border border-gray-100">
+                            <p class="text-[10px] font-black text-gray-400 uppercase tracking-widest mb-1">Council Tax</p>
+                            <p class="text-xl font-black text-primary" x-text="property.council_tax"></p>
+                        </div>
+                    </template>
+                    <template x-if="property.epc && property.epc !== 'N/A'">
+                        <div class="bg-gray-50 p-4 rounded-2xl border border-gray-100">
+                            <p class="text-[10px] font-black text-gray-400 uppercase tracking-widest mb-1">EPC Rating</p>
+                            <p class="text-xl font-black text-primary" x-text="property.epc"></p>
+                        </div>
+                    </template>
+                    <template x-if="property.flood_risk && property.flood_risk !== 'N/A'">
+                        <div class="bg-gray-50 p-4 rounded-2xl border border-gray-100">
+                            <p class="text-[10px] font-black text-gray-400 uppercase tracking-widest mb-1">Flood Risk</p>
+                            <p class="text-xl font-black text-primary" x-text="property.flood_risk"></p>
+                        </div>
+                    </template>
+                </div>
+                
+                <div class="mb-8">
+                    <h3 class="text-sm font-black text-primary uppercase tracking-widest mb-4 border-b border-gray-100 pb-2">Description</h3>
+                    <div class="text-gray-600 leading-relaxed text-sm whitespace-pre-line" x-text="property.description"></div>
+                </div>
+                
+                <div class="flex flex-col gap-3">
+                    <a :href="`{{ route('property.external-details') }}?postcode=${encodeURIComponent(property.location)}&address=${encodeURIComponent(property.name)}&search_postcode=${encodeURIComponent(property.search_postcode)}`" class="w-full py-4 bg-primary text-white font-bold rounded-2xl flex items-center justify-center gap-3 hover:bg-primary/90 transition-all shadow-xl shadow-primary/20">
+                        <span>View Full Property Details</span>
+                        <i class="fa-solid fa-arrow-right"></i>
+                    </a>
+                    <p class="text-[10px] text-gray-400 text-center font-medium italic">Data fetched in real-time from PaTMa Property Prospector</p>
+                </div>
+            </div>
+        </div>
+    </div>
+@endpush
 @endsection
 
 @push('scripts')
@@ -691,5 +817,77 @@
                 console.error('Error:', error);
             }
         }
+
+        async function fetchSoldPrices() {
+            const container = document.getElementById('sold-price-history');
+            if (!container) return;
+
+            try {
+                const response = await fetch('{{ route('listing.sold-prices', $listing->id) }}');
+                const data = await response.json();
+
+                if (data.error) {
+                    container.innerHTML = `<div class="p-4 bg-red-50 text-red-600 rounded-xl text-sm font-medium"><i class="fas fa-exclamation-circle mr-2"></i> ${data.error}</div>`;
+                    return;
+                }
+
+                const prices = data.prices || data.data || (Array.isArray(data) ? data : null);
+
+                if (!prices || prices.length === 0) {
+                    container.innerHTML = '<div class="p-4 bg-gray-50 text-gray-500 rounded-xl text-sm font-medium text-center">No sold price history found for this postcode.</div>';
+                    return;
+                }
+
+                window.soldPriceData = prices;
+
+                let html = `
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-left min-w-[600px]">
+                            <thead>
+                                <tr class="border-b border-gray-100">
+                                    <th class="py-3 text-xs font-black text-gray-400 uppercase tracking-wider">Property</th>
+                                    <th class="py-3 text-xs font-black text-gray-400 uppercase tracking-wider">Location</th>
+                                    <th class="py-3 text-xs font-black text-gray-400 uppercase tracking-wider">Date</th>
+                                    <th class="py-3 text-xs font-black text-gray-400 uppercase tracking-wider">Price</th>
+                                    <th class="py-3 text-xs font-black text-gray-400 uppercase tracking-wider">Type</th>
+                                    <th class="py-3 text-xs font-black text-gray-400 uppercase tracking-wider whitespace-nowrap">Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody class="divide-y divide-gray-50">
+                `;
+
+                prices.forEach((item, index) => {
+                    const date = item.date || 'N/A';
+                    const price = item.price || 0;
+                    const type = item.type || 'Residential';
+                    const name = item.name || 'N/A';
+                    const location = item.location || 'N/A';
+
+                    html += `
+                        <tr>
+                            <td class="py-4 text-sm font-bold text-primary">${name}</td>
+                            <td class="py-4 text-sm text-gray-600">${location}</td>
+                            <td class="py-4 text-sm font-bold text-primary">${date}</td>
+                            <td class="py-4 text-sm font-black text-secondary">£${new Intl.NumberFormat('en-GB').format(price)}</td>
+                            <td class="py-4 text-sm font-medium text-gray-600">${type}</td>
+                            <td class="py-4 text-sm">
+                                <button onclick="window.dispatchEvent(new CustomEvent('open-external-detail', { detail: window.soldPriceData[${index}] }))" class="inline-flex items-center gap-1 text-secondary font-bold hover:underline whitespace-nowrap">
+                                    Details <i class="fa-solid fa-eye text-[10px]"></i>
+                                </button>
+                            </td>
+                        </tr>
+                    `;
+                });
+
+                html += '</tbody></table></div>';
+                container.innerHTML = html;
+
+            } catch (error) {
+                console.error('Error fetching sold prices:', error);
+                container.innerHTML = '<div class="p-4 bg-red-50 text-red-600 rounded-xl text-sm font-medium"><i class="fas fa-exclamation-circle mr-2"></i> Failed to connect to property data service.</div>';
+            }
+        }
+
+        // Removed automatic DOMContentLoaded fetch to trigger on dropdown click
     </script>
 @endpush

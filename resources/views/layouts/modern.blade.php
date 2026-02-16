@@ -29,10 +29,10 @@
 <body class="font-sans antialiased bg-gray-50 text-gray-900">
 
     <!-- Top Bar -->
-    <div style="background-color: #40e0d0;" class="py-2.5 border-b border-primary/20 relative z-[60]">
+    <div style="background-color: #2596be;" class="py-2.5 border-b border-primary/20 relative z-[60]">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col md:flex-row justify-between items-center gap-2">
             <div class="flex items-center gap-4 text-sm font-medium text-white/90">
-                 <a href="mailto:info@propertyfinda.co.uk" class="text-black transition-colors flex items-center gap-2"><i class="fa-solid fa-envelope text-white text-sm"></i> info@propertyfinda.co.uk</a>
+                 <a href="mailto:info@propertyfinda.co.uk" class="text-white transition-colors flex items-center gap-2"><i class="fa-solid fa-envelope text-white text-sm"></i> info@propertyfinda.co.uk</a>
             </div>
             <div class="flex items-center gap-4">
                  <a href="https://www.facebook.com/profile.php?id=61587630383066" target="_blank" class="bg-white w-8 h-8 flex items-center justify-center rounded-full shadow-sm hover:scale-110 transition-transform">
@@ -339,6 +339,7 @@
         });
     </script>
 
+    @stack('modals')
     @stack('scripts')
 </body>
 

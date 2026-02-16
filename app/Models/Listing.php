@@ -90,4 +90,13 @@ class Listing extends Model
     {
         return $this->belongsTo(Cheque::class);
     }
+
+    public function getPostcodeAttribute()
+    {
+        $pattern = '/([A-Z]{1,2}[0-9][A-Z0-9]?\s?[0-9][A-Z]{2})/i';
+        if (preg_match($pattern, $this->address, $matches)) {
+            return strtoupper($matches[1]);
+        }
+        return null;
+    }
 }

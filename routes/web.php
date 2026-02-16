@@ -18,6 +18,7 @@ Route::get('/off-market-property/{id}', [
     \App\Http\Controllers\OffMarketListingController::class,
     'show'
 ])->name('off-market-listing.show');
+Route::get('/off-market-property/{id}/sold-prices', [App\Http\Controllers\OffMarketListingController::class, 'getSoldPrices'])->name('off-market-listing.sold-prices');
 Route::post('/off-market-property/{id}/inquiry', [
     \App\Http\Controllers\OffMarketListingController::class,
     'sendInquiry'
@@ -33,8 +34,10 @@ Route::get('/property-halfmap-grid', [
 ])->name('listings.index');
 Route::get('/property-map', [\App\Http\Controllers\ListingController::class, 'map'])->name('listings.map');
 Route::get('/property/{id}', [App\Http\Controllers\ListingController::class, 'show'])->name('listing.show');
+Route::get('/property/{id}/sold-prices', [App\Http\Controllers\ListingController::class, 'getSoldPrices'])->name('listing.sold-prices');
 Route::post('/property/{id}/inquiry', [App\Http\Controllers\PropertyInquiryController::class, 'store'])->name('listing.inquiry');
 Route::get('/property/{id}/brochure', [App\Http\Controllers\BrochureController::class, 'download'])->name('listing.brochure');
+Route::get('/property-external-details', [App\Http\Controllers\ListingController::class, 'showExternalDetails'])->name('property.external-details');
 
 // Agents
 Route::get('/agents', [App\Http\Controllers\AgentController::class, 'index'])->name('agents.index');

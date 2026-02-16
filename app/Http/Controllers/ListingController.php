@@ -254,6 +254,102 @@ class ListingController extends Controller
         return view('property-detail', compact('listing', 'similar_listings', 'user_favorite_ids'));
     }
 
+    public function getSoldPrices($id)
+    {
+        $listing = Listing::findOrFail($id);
+        $postcode = $listing->postcode;
+
+        if (!$postcode) {
+            return response()->json(['error' => 'No valid postcode found for this property.'], 404);
+        }
+
+        $apiKey = '3f5f396290a1e9c3be70b679210c188d3562a0d9';
+        // Using PaTMa API as per user's latest information
+        // We use radius 0.5 to catch properties in the immediate area
+        $apiUrl = "https://app.patma.co.uk/api/prospector/v1/list-property/?postcode=" . urlencode($postcode) . "&radius=0.5&require_sold_price=true&include_sold_history=true&include_listing_data=true&token=" . $apiKey;
+
+        try {
+            $response = \Illuminate\Support\Facades\Http::timeout(30)->get($apiUrl);
+
+            if ($response->successful()) {
+                $data = $response->json();
+
+                if (!isset($data['status']) || $data['status'] !== 'success') {
+                    return response()->json([
+                        'error' => 'PaTMa API returned an error.',
+                        'message' => $data['errors'] ?? 'Unknown error'
+                    ], 400);
+                }
+
+                $formattedPrices = [];
+                if (isset($data['data']['available_results'])) {
+                    foreach ($data['data']['available_results'] as $property) {
+                        if (isset($property['sold_history']) && is_array($property['sold_history'])) {
+                            // Check if this property exists in our database
+                            $internalListing = \App\Models\Listing::where(function ($q) use ($property) {
+                                $addr = $property['address'] ?? $property['label'] ?? '';
+                                $pc = $property['postcode'] ?? '';
+                                if ($addr) {
+                                    $q->where('address', 'LIKE', '%' . $addr . '%')
+                                        ->orWhere('property_title', 'LIKE', '%' . $addr . '%');
+                                }
+                                if ($pc) {
+                                    $q->orWhere('address', 'LIKE', '%' . $pc . '%');
+                                }
+                            })->first();
+
+                            $internalUrl = $internalListing ? route('listing.show', $internalListing->slug) : null;
+
+                            foreach ($property['sold_history'] as $sale) {
+                                $formattedPrices[] = [
+                                    'date' => $sale['date'],
+                                    'price' => $sale['amount'],
+                                    'type' => $property['property_type'] ?? 'Residential',
+                                    'name' => $property['address'] ?? $property['label'] ?? 'N/A',
+                                    'location' => $property['postcode'] ?? $listing->postcode ?? 'N/A',
+                                    'search_postcode' => $listing->postcode,
+                                    'url' => $internalUrl ?? $property['url'] ?? '#',
+                                    'is_internal' => (bool) $internalListing,
+                                    'description' => $property['description_text'] ?? 'No additional description available.',
+                                    'images' => $property['site_images'] ?? [],
+                                    'tenure' => $property['tenure'] ?? 'N/A',
+                                    'bedrooms' => $internalListing->bedrooms ?? $property['bedrooms'] ?? 'N/A',
+                                    'bathrooms' => $internalListing->bathrooms ?? 'N/A',
+                                    'habitable_rooms' => $property['habitable_rooms'] ?? 'N/A',
+                                    'floor_area' => $internalListing ? ($internalListing->area_size ? number_format($internalListing->area_size) . ' sq ft' : 'N/A') : (isset($property['floor_area_sqft']) ? number_format($property['floor_area_sqft']) . ' sq ft' : 'N/A'),
+                                    'built_form' => $property['built_form'] ?? 'N/A',
+                                    'council_tax' => $internalListing->council_tax_band ?? 'N/A',
+                                    'epc' => $internalListing->epc_rating ?? 'N/A',
+                                    'flood_risk' => $internalListing->flood_risk ?? 'N/A'
+                                ];
+                            }
+                        }
+                    }
+                }
+
+                // Sort by date descending
+                usort($formattedPrices, function ($a, $b) {
+                    return strcmp($b['date'], $a['date']);
+                });
+
+                return response()->json([
+                    'status' => 'success',
+                    'prices' => $formattedPrices
+                ]);
+            }
+
+            return response()->json([
+                'error' => 'Failed to fetch sold prices from PaTMa API.',
+                'message' => $response->body()
+            ], $response->status());
+        } catch (\Exception $e) {
+            return response()->json([
+                'error' => 'API connection error.',
+                'message' => $e->getMessage()
+            ], 500);
+        }
+    }
+
     public function getPropertyTypeListings(Request $request)
     {
         $type = $request->input('type');
@@ -356,7 +452,7 @@ class ListingController extends Controller
             ->get();
 
         // Process listings to add images array
-        $processedListings = $listings->map(function ($listing) {
+        $processedListings = $listings->map(function (\App\Models\Listing $listing) {
             $images = [];
 
             // Handle gallery field (could be JSON string or array)
@@ -542,5 +638,80 @@ class ListingController extends Controller
             \Illuminate\Support\Facades\Log::error('Geocoding error: ' . $e->getMessage());
             return null;
         }
+    }
+
+    public function showExternalDetails(Request $request)
+    {
+        $postcode = $request->query('postcode');
+        $searchPostcode = $request->query('search_postcode'); // New parameter
+        $address = $request->query('address');
+
+        // Prefer search_postcode for the API call to replicate the original successful search
+        $apiPostcode = $searchPostcode ?: $postcode;
+
+        if (!$apiPostcode) {
+            return redirect()->route('home')->with('error', 'Postcode is required');
+        }
+
+        // Use the EXACT same API configuration as getSoldPrices
+        $apiKey = '3f5f396290a1e9c3be70b679210c188d3562a0d9';
+        $url = "https://app.patma.co.uk/api/prospector/v1/list-property/?postcode=" . urlencode($apiPostcode) . "&radius=0.5&require_sold_price=true&include_listing_data=true&include_sold_history=true&token=" . $apiKey;
+
+        \Illuminate\Support\Facades\Log::info("External Details API Call: {$url}");
+
+        try {
+            $response = \Illuminate\Support\Facades\Http::timeout(30)->get($url);
+
+            if ($response->successful()) {
+                $data = $response->json();
+                $property = null;
+
+                \Illuminate\Support\Facades\Log::info("External Details Search: Postcode={$postcode}, Address={$address}");
+
+                if (isset($data['data']['available_results'])) {
+                    // Try to find exact or fuzzy match
+                    foreach ($data['data']['available_results'] as $res) {
+                        $resAddr = $res['address'] ?? $res['label'] ?? '';
+
+                        // Normalize addresses for comparison (lowercase, remove punctuation/spaces)
+                        $normResAddr = strtolower(preg_replace('/[^a-zA-Z0-9]/', '', $resAddr));
+                        $normInputAddr = strtolower(preg_replace('/[^a-zA-Z0-9]/', '', $address));
+
+                        // Check exact match after normalization
+                        if ($normResAddr === $normInputAddr) {
+                            $property = $res;
+                            break;
+                        }
+
+                        // Check if one contains the other
+                        if (strpos($normResAddr, $normInputAddr) !== false || strpos($normInputAddr, $normResAddr) !== false) {
+                            $property = $res;
+                            break; // Prioritize first substring match
+                        }
+                    }
+
+                    // Fallback to first result ONLY if there is only 1 result (likely the correct one)
+                    if (!$property && count($data['data']['available_results']) === 1) {
+                        $property = $data['data']['available_results'][0];
+                    }
+                }
+
+                if ($property) {
+                    // Ensure postcode is present, falling back to the requested postcode if API doesn't provide it
+                    if (empty($property['postcode'])) {
+                        $property['postcode'] = $postcode ?: $searchPostcode;
+                    }
+                    return view('external-property-detail', compact('property'));
+                } else {
+                    \Illuminate\Support\Facades\Log::warning("External Details: Property not found for {$address}. Available results count: " . (isset($data['data']['available_results']) ? count($data['data']['available_results']) : 0));
+                    // Return a "not found" view or redirect with error, don't just fail silently
+                    return redirect()->back()->with('error', 'Could not find details for the selected property.');
+                }
+            }
+        } catch (\Exception $e) {
+            \Illuminate\Support\Facades\Log::error('External Property Details Error: ' . $e->getMessage());
+        }
+
+        return redirect()->route('home')->with('error', 'Could not fetch external property details');
     }
 }
