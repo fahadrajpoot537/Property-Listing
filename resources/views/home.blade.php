@@ -7,7 +7,7 @@
     <!-- Background Pattern -->
     <div class="absolute inset-0 z-0">
       <!-- Image with Overlay -->
-      <img src="{{ asset('assets/img/2.jpg') }}" class="w-full h-full object-cover" alt="Background">
+      <img src="{{ asset('1.jpg') }}" class="w-full h-full object-cover" alt="Background">
       <!-- <div class="absolute inset-0 bg-primary/80 mix-blend-multiply"></div> -->
     </div>
 
@@ -849,7 +849,7 @@
         return;
       @endif
 
-                                                                                                                        const data = {
+                                                                                                                                const data = {
         _token: '{{ csrf_token() }}'
       };
       if (listingId) data.listing_id = listingId;

@@ -35,7 +35,8 @@
                         <div class="text-gray-400 text-[10px] font-black uppercase tracking-[0.2em] mb-3">Total Traffic Hits
                         </div>
                         <div class="text-5xl font-black text-primary mb-2 tracking-tight">
-                            {{ number_format($stats['total_visitors']) }}</div>
+                            {{ number_format($stats['total_visitors']) }}
+                        </div>
                         <p class="text-gray-400 text-sm font-medium">Total clicks on your link</p>
                     </div>
                     <div
@@ -50,7 +51,8 @@
                         <div class="text-blue-500 text-[10px] font-black uppercase tracking-[0.2em] mb-3">Unique Visitors
                             (Verified)</div>
                         <div class="text-5xl font-black text-blue-600 mb-2 tracking-tight">
-                            {{ number_format($stats['unique_visitors']) }}</div>
+                            {{ number_format($stats['unique_visitors']) }}
+                        </div>
                         <p class="text-gray-400 text-sm font-medium">Distinct IPs that visited listings</p>
                     </div>
                     <div
@@ -66,7 +68,8 @@
                             Earnings</div>
                         <div class="text-5xl font-black text-emerald-600 mb-2 tracking-tight">
                             £{{ $stats['total_earnings'] }}</div>
-                        <p class="text-gray-400 text-sm font-medium">Based on £{{ $stats['rate'] }} per {{ number_format($stats['batch_size']) }} unique</p>
+                        <p class="text-gray-400 text-sm font-medium">Based on £{{ $stats['rate'] }} per
+                            {{ number_format($stats['batch_size']) }} unique</p>
                     </div>
                     <div
                         class="absolute -bottom-6 -right-6 text-emerald-50 text-7xl transform group-hover:-translate-y-2 transition-transform duration-500">
@@ -86,10 +89,9 @@
                         </p>
                     </div>
                     <div class="w-full lg:w-auto">
-                        <div
-                            class="bg-white/5 border border-white/10 rounded-3xl p-4 backdrop-blur-md flex flex-col sm:flex-row items-center gap-4">
+                        <div class="bg-white rounded-3xl p-2 md:p-4 flex flex-col sm:flex-row items-center gap-4">
                             <input type="text" value="{{ $stats['referral_link'] }}" id="referralLink" readonly
-                                class="bg-transparent border-none text-white font-black text-xl px-4 py-2 w-full sm:w-[400px] outline-none">
+                                class="bg-transparent border-none text-black font-black text-xl px-4 py-2 w-full sm:w-[400px] outline-none">
                             <button onclick="copyLink()"
                                 class="w-full sm:w-auto bg-secondary text-white px-10 py-5 rounded-2xl font-black hover:bg-secondary/90 shadow-xl shadow-secondary/20 transition-all flex items-center justify-center gap-3">
                                 <i class="fa-solid fa-copy"></i> Copy Link
@@ -135,7 +137,8 @@
                                         <div class="text-primary font-black text-sm">{{ $visitor->created_at->format('H:i:s') }}
                                         </div>
                                         <div class="text-gray-400 text-xs font-bold">
-                                            {{ $visitor->created_at->format('M d, Y') }}</div>
+                                            {{ $visitor->created_at->format('M d, Y') }}
+                                        </div>
                                     </td>
                                     <td class="px-10 py-6">
                                         <div class="flex items-center gap-3">
