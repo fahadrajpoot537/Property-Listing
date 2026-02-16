@@ -14,7 +14,7 @@ class AdminListingController extends Controller implements HasMiddleware
     public static function middleware(): array
     {
         return [
-            new Middleware('document.approved', only: ['create', 'store']),
+            // new Middleware('document.approved', only: ['create', 'store']),
         ];
     }
 
@@ -325,6 +325,15 @@ class AdminListingController extends Controller implements HasMiddleware
         }
         $validated['floor_plans'] = array_values($floorPlanPaths);
 
+        // Enforce verification check for 'approved' status
+        if ($request->status === 'approved' && $listing->user->status !== 'document_approved') {
+            return response()->json([
+                'success' => false,
+                'message' => 'Verification Required: You must verify your account before approving listings.',
+                'redirect' => route('profile.edit')
+            ], 403);
+        }
+
         $listing->update($validated);
 
         if ($request->is_draft == "1") {
@@ -349,6 +358,16 @@ class AdminListingController extends Controller implements HasMiddleware
     public function updateStatus(Request $request, $id)
     {
         $listing = \App\Models\Listing::findOrFail($id);
+
+        // If trying to set to approved, check if listing owner is verified
+        if ($request->status === 'approved' && $listing->user->status !== 'document_approved') {
+            return response()->json([
+                'success' => false,
+                'message' => 'Verification Required: You must verify your account before approving listings.',
+                'redirect' => route('profile.edit')
+            ], 403);
+        }
+
         $listing->update(['status' => $request->status]);
         return response()->json(['success' => true, 'message' => 'Status updated to ' . $request->status]);
     }
@@ -364,6 +383,23 @@ class AdminListingController extends Controller implements HasMiddleware
 
         switch ($action) {
             case 'approved':
+                // Filter IDs where owners are verified
+                $validIds = \App\Models\Listing::whereIn('id', $ids)
+                    ->whereHas('user', function ($q) {
+                        $q->where('status', 'document_approved');
+                    })->pluck('id')->toArray();
+
+                $invalidCount = count($ids) - count($validIds);
+
+                if (empty($validIds)) {
+                    return response()->json(['success' => false, 'message' => 'None of the selected listings can be approved because their owners are not verified.'], 403);
+                }
+
+                \App\Models\Listing::whereIn('id', $validIds)->update(['status' => 'approved']);
+                $msg = count($validIds) . " listings approved.";
+                if ($invalidCount > 0)
+                    $msg .= " ($invalidCount skipped due to unverified owners)";
+                break;
             case 'pending':
             case 'rejected':
                 \App\Models\Listing::whereIn('id', $ids)->update(['status' => $action]);

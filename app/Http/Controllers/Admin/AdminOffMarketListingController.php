@@ -14,7 +14,7 @@ class AdminOffMarketListingController extends Controller implements HasMiddlewar
     public static function middleware(): array
     {
         return [
-            new Middleware('document.approved', only: ['create', 'store']),
+            // new Middleware('document.approved', only: ['create', 'store']),
         ];
     }
 
@@ -324,6 +324,15 @@ class AdminOffMarketListingController extends Controller implements HasMiddlewar
         }
         $validated['floor_plans'] = array_values($floorPlanPaths);
 
+        // Enforce verification check for 'approved' status
+        if ($request->status === 'approved' && $listing->user->status !== 'document_approved') {
+            return response()->json([
+                'success' => false,
+                'message' => 'Verification Required: You must verify your account before approving listings.',
+                'redirect' => route('profile.edit')
+            ], 403);
+        }
+
         $listing->update($validated);
 
         if ($request->is_draft == "1") {
@@ -348,6 +357,16 @@ class AdminOffMarketListingController extends Controller implements HasMiddlewar
     public function updateStatus(Request $request, $id)
     {
         $listing = \App\Models\OffMarketListing::findOrFail($id);
+
+        // If trying to set to approved, check if listing owner is verified
+        if ($request->status === 'approved' && $listing->user->status !== 'document_approved') {
+            return response()->json([
+                'success' => false,
+                'message' => 'Verification Required: You must verify your account before approving listings.',
+                'redirect' => route('profile.edit')
+            ], 403);
+        }
+
         $listing->update(['status' => $request->status]);
         return response()->json(['success' => true, 'message' => 'Status updated to ' . $request->status]);
     }
@@ -363,6 +382,23 @@ class AdminOffMarketListingController extends Controller implements HasMiddlewar
 
         switch ($action) {
             case 'approved':
+                // Filter IDs where owners are verified
+                $validIds = \App\Models\OffMarketListing::whereIn('id', $ids)
+                    ->whereHas('user', function ($q) {
+                        $q->where('status', 'document_approved');
+                    })->pluck('id')->toArray();
+
+                $invalidCount = count($ids) - count($validIds);
+
+                if (empty($validIds)) {
+                    return response()->json(['success' => false, 'message' => 'None of the selected deals can be approved because their owners are not verified.'], 403);
+                }
+
+                \App\Models\OffMarketListing::whereIn('id', $validIds)->update(['status' => 'approved']);
+                $msg = count($validIds) . " deals approved.";
+                if ($invalidCount > 0)
+                    $msg .= " ($invalidCount skipped due to unverified owners)";
+                break;
             case 'pending':
             case 'rejected':
                 \App\Models\OffMarketListing::whereIn('id', $ids)->update(['status' => $action]);

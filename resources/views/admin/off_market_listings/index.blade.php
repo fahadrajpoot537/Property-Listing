@@ -162,47 +162,47 @@
                         { data: 'id', orderable: false, className: 'text-center', render: d => `<input type="checkbox" class="row-checkbox rounded-md border-slate-300 text-[#02b8f2] focus:ring-0" value="${d}">` },
                         {
                             data: 'property_title', render: (d, t, r) => `
-                                                                        <div class="flex items-center py-2">
-                                                                            ${r.thumbnail ? `<img src="/storage/${r.thumbnail}" class="w-12 h-12 rounded-xl object-cover border-2 border-white shadow-md">` : `<div class="w-12 h-12 bg-slate-100 rounded-xl flex items-center justify-center text-slate-400"><i class='bx bx-landscape text-2xl'></i></div>`}
-                                                                            <div class="ml-4">
-                                                                                <a href="/admin/off-market-listings/${r.id}" class="font-extrabold text-slate-800 hover:text-[#02b8f2] transition-colors tracking-tight leading-tight block">${d}</a>
-                                                                                <div class="text-[10px] font-bold text-slate-400 uppercase mt-1">Ref: ${r.property_reference_number}</div>
-                                                                            </div>
-                                                                        </div>`
+                                                                                <div class="flex items-center py-2">
+                                                                                    ${r.thumbnail ? `<img src="/storage/${r.thumbnail}" class="w-12 h-12 rounded-xl object-cover border-2 border-white shadow-md">` : `<div class="w-12 h-12 bg-slate-100 rounded-xl flex items-center justify-center text-slate-400"><i class='bx bx-landscape text-2xl'></i></div>`}
+                                                                                    <div class="ml-4">
+                                                                                        <a href="/admin/off-market-listings/${r.id}" class="font-extrabold text-slate-800 hover:text-[#02b8f2] transition-colors tracking-tight leading-tight block">${d}</a>
+                                                                                        <div class="text-[10px] font-bold text-slate-400 uppercase mt-1">Ref: ${r.property_reference_number}</div>
+                                                                                    </div>
+                                                                                </div>`
                         },
                         { data: 'user.name', render: d => `<span class="bg-slate-100 text-slate-700 px-3 py-1 rounded-lg text-[10px] font-black uppercase">${d || 'Admin'}</span>` },
                         {
                             data: 'property_type.title', render: (d, t, r) => `
-                                                                        <div class="flex flex-col">
-                                                                            <span class="text-[10px] font-black text-[#02b8f2] uppercase tracked-widest">${d || 'Deal'}</span>
-                                                                            <span class="text-[10px] font-bold text-slate-400 uppercase tracking-tighter">${r.unit_type ? r.unit_type.title : 'Premium'}</span>
-                                                                        </div>`
+                                                                                <div class="flex flex-col">
+                                                                                    <span class="text-[10px] font-black text-[#02b8f2] uppercase tracked-widest">${d || 'Deal'}</span>
+                                                                                    <span class="text-[10px] font-bold text-slate-400 uppercase tracking-tighter">${r.unit_type ? r.unit_type.title : 'Premium'}</span>
+                                                                                </div>`
                         },
                         {
                             data: 'price', render: (d, t, r) => `
-                                                <div class="flex flex-col">
-                                                    ${r.old_price && r.old_price > d ? `<span class="text-[10px] text-slate-400" style="text-decoration: line-through;">£${numberWithCommas(r.old_price)}</span>` : ''}
-                                                    <span class="font-black text-slate-800">£${numberWithCommas(d)}</span>
-                                                </div>`
+                                                        <div class="flex flex-col">
+                                                            ${r.old_price && r.old_price > d ? `<span class="text-[10px] text-slate-400" style="text-decoration: line-through;">£${numberWithCommas(r.old_price)}</span>` : ''}
+                                                            <span class="font-black text-slate-800">£${numberWithCommas(d)}</span>
+                                                        </div>`
                         },
                         {
                             data: 'status', render: (d, t, r) => {
                                 let color = d === 'approved' ? 'emerald' : (d === 'rejected' ? 'rose' : (d === 'draft' ? 'slate' : 'amber'));
                                 return `
-                                                                            <select onchange="updateStatus(${r.id}, this.value)" class="bg-${color}-50 text-${color}-600 border border-${color}-100 rounded-lg px-2 py-1 text-[10px] font-black uppercase focus:ring-0 cursor-pointer">
-                                                                                <option value="pending" ${d === 'pending' ? 'selected' : ''}>Pending</option>
-                                                                                <option value="approved" ${d === 'approved' ? 'selected' : ''}>Approved</option>
-                                                                                <option value="rejected" ${d === 'rejected' ? 'selected' : ''}>Rejected</option>
-                                                                                <option value="draft" ${d === 'draft' ? 'selected' : ''}>Draft</option>
-                                                                            </select>`;
+                                                                                    <select onchange="updateStatus(${r.id}, this.value)" class="bg-${color}-50 text-${color}-600 border border-${color}-100 rounded-lg px-2 py-1 text-[10px] font-black uppercase focus:ring-0 cursor-pointer">
+                                                                                        <option value="pending" ${d === 'pending' ? 'selected' : ''}>Pending</option>
+                                                                                        <option value="approved" ${d === 'approved' ? 'selected' : ''}>Approved</option>
+                                                                                        <option value="rejected" ${d === 'rejected' ? 'selected' : ''}>Rejected</option>
+                                                                                        <option value="draft" ${d === 'draft' ? 'selected' : ''}>Draft</option>
+                                                                                    </select>`;
                             }
                         },
                         {
                             data: 'id', render: d => `
-                                                                        <div class="flex gap-2">
-                                                                            <a href="/admin/off-market-listings/${d}/edit" class="w-8 h-8 rounded-lg bg-slate-50 text-slate-500 hover:bg-slate-900 hover:text-white transition-all flex items-center justify-center"><i class='bx bxs-edit-alt text-lg'></i></a>
-                                                                            <button onclick="deleteListing(${d})" class="w-8 h-8 rounded-lg bg-slate-50 text-slate-500 hover:bg-rose-600 hover:text-white transition-all flex items-center justify-center"><i class='bx bxs-trash text-lg'></i></button>
-                                                                        </div>`
+                                                                                <div class="flex gap-2">
+                                                                                    <a href="/admin/off-market-listings/${d}/edit" class="w-8 h-8 rounded-lg bg-slate-50 text-slate-500 hover:bg-slate-900 hover:text-white transition-all flex items-center justify-center"><i class='bx bxs-edit-alt text-lg'></i></a>
+                                                                                    <button onclick="deleteListing(${d})" class="w-8 h-8 rounded-lg bg-slate-50 text-slate-500 hover:bg-rose-600 hover:text-white transition-all flex items-center justify-center"><i class='bx bxs-trash text-lg'></i></button>
+                                                                                </div>`
                         }
                     ],
                     drawCallback: function () { toggleBulkBar(); }
@@ -222,9 +222,29 @@
             }
 
             function updateStatus(id, status) {
-                $.post(`/admin/off-market-listings/${id}/status`, { _token: '{{ csrf_token() }}', status: status }, res => {
-                    table.ajax.reload(null, false);
-                    Swal.mixin({ toast: true, position: 'top-end', showConfirmButton: false, timer: 3000 }).fire({ icon: 'success', title: 'Deal status synced!' });
+                $.ajax({
+                    url: `/admin/off-market-listings/${id}/status`,
+                    type: 'POST',
+                    data: { _token: '{{ csrf_token() }}', status: status },
+                    success: function (res) {
+                        table.ajax.reload(null, false);
+                        Swal.mixin({ toast: true, position: 'top-end', showConfirmButton: false, timer: 3000 }).fire({ icon: 'success', title: 'Deal status synced!' });
+                    },
+                    error: function (xhr) {
+                        if (xhr.status === 403 && xhr.responseJSON && xhr.responseJSON.redirect) {
+                            Swal.fire({
+                                icon: 'warning',
+                                title: 'Verification Required',
+                                text: xhr.responseJSON.message,
+                                confirmButtonText: 'Verify Now'
+                            }).then(() => {
+                                window.location.href = xhr.responseJSON.redirect;
+                            });
+                        } else {
+                            Swal.fire('Error', xhr.responseJSON ? xhr.responseJSON.message : 'Action failed', 'error');
+                            table.ajax.reload(null, false);
+                        }
+                    }
                 });
             }
 

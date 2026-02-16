@@ -579,8 +579,23 @@
                                 });
                             }
                         },
-                        error: function (err) {
-                            Swal.fire({ icon: 'error', title: 'Error', text: err.responseJSON?.message || 'Something went wrong' });
+                        error: function (xhr) {
+                            if (xhr.status === 403 && xhr.responseJSON && xhr.responseJSON.redirect) {
+                                Swal.fire({
+                                    icon: 'warning',
+                                    title: 'Verification Required',
+                                    text: xhr.responseJSON.message,
+                                    confirmButtonText: 'Verify Now'
+                                }).then(() => {
+                                    window.location.href = xhr.responseJSON.redirect;
+                                });
+                            } else {
+                                Swal.fire({
+                                    icon: 'error',
+                                    title: 'Error',
+                                    text: xhr.responseJSON?.message || 'Something went wrong'
+                                });
+                            }
                         }
                     });
                 });
@@ -720,13 +735,13 @@
                     const reader = new FileReader();
                     reader.onload = function (e) {
                         preview.removeClass('hidden').html(`
-                                                                                    <div class="relative group w-full h-32">
-                                                                                        <img src="${e.target.result}" class="w-full h-full object-cover rounded-lg shadow-lg">
-                                                                                        <button type="button" onclick="removeThumbnail()" class="absolute -top-2 -right-2 w-6 h-6 bg-rose-500 text-white rounded-full flex items-center justify-center hover:bg-rose-600 transition-all shadow-md">
-                                                                                            <i class='bx bx-x'></i>
-                                                                                        </button>
-                                                                                    </div>
-                                                                                `);
+                                                                                            <div class="relative group w-full h-32">
+                                                                                                <img src="${e.target.result}" class="w-full h-full object-cover rounded-lg shadow-lg">
+                                                                                                <button type="button" onclick="removeThumbnail()" class="absolute -top-2 -right-2 w-6 h-6 bg-rose-500 text-white rounded-full flex items-center justify-center hover:bg-rose-600 transition-all shadow-md">
+                                                                                                    <i class='bx bx-x'></i>
+                                                                                                </button>
+                                                                                            </div>
+                                                                                        `);
                     }
                     reader.readAsDataURL(input.files[0]);
                 }
@@ -746,13 +761,13 @@
                     const file = input.files[0];
                     const url = URL.createObjectURL(file);
                     preview.removeClass('hidden').html(`
-                                                                                <div class="relative group w-full h-48">
-                                                                                    <video controls src="${url}" class="w-full h-full rounded-2xl shadow-lg bg-black"></video>
-                                                                                    <button type="button" onclick="removeVideo()" class="absolute -top-2 -right-2 w-6 h-6 bg-rose-500 text-white rounded-full flex items-center justify-center hover:bg-rose-600 transition-all shadow-md z-10">
-                                                                                        <i class='bx bx-x'></i>
-                                                                                    </button>
-                                                                                </div>
-                                                                            `);
+                                                                                        <div class="relative group w-full h-48">
+                                                                                            <video controls src="${url}" class="w-full h-full rounded-2xl shadow-lg bg-black"></video>
+                                                                                            <button type="button" onclick="removeVideo()" class="absolute -top-2 -right-2 w-6 h-6 bg-rose-500 text-white rounded-full flex items-center justify-center hover:bg-rose-600 transition-all shadow-md z-10">
+                                                                                                <i class='bx bx-x'></i>
+                                                                                            </button>
+                                                                                        </div>
+                                                                                    `);
                 }
             }
 
@@ -781,13 +796,13 @@
                     const reader = new FileReader();
                     reader.onload = function (e) {
                         const div = $(`
-                                                                                    <div class="relative group w-16 h-12">
-                                                                                        <img src="${e.target.result}" class="w-full h-full object-cover rounded-xl border border-slate-100 shadow-sm">
-                                                                                        <button type="button" onclick="removeGalleryFile(${index})" class="absolute -top-2 -right-2 w-5 h-5 bg-rose-500 text-white rounded-full flex items-center justify-center text-xs hover:bg-rose-600 transition-all shadow-md">
-                                                                                            <i class='bx bx-x'></i>
-                                                                                        </button>
-                                                                                    </div>
-                                                                                `);
+                                                                                            <div class="relative group w-16 h-12">
+                                                                                                <img src="${e.target.result}" class="w-full h-full object-cover rounded-xl border border-slate-100 shadow-sm">
+                                                                                                <button type="button" onclick="removeGalleryFile(${index})" class="absolute -top-2 -right-2 w-5 h-5 bg-rose-500 text-white rounded-full flex items-center justify-center text-xs hover:bg-rose-600 transition-all shadow-md">
+                                                                                                    <i class='bx bx-x'></i>
+                                                                                                </button>
+                                                                                            </div>
+                                                                                        `);
                         container.append(div);
                     }
                     reader.readAsDataURL(file);
@@ -837,13 +852,13 @@
                     const reader = new FileReader();
                     reader.onload = function (e) {
                         const div = $(`
-                                                                                    <div class="relative group w-16 h-12">
-                                                                                        <img src="${e.target.result}" class="w-full h-full object-cover rounded-xl border border-slate-100 shadow-sm">
-                                                                                        <button type="button" onclick="removeFloorPlanFile(${index})" class="absolute -top-2 -right-2 w-5 h-5 bg-rose-500 text-white rounded-full flex items-center justify-center text-xs hover:bg-rose-600 transition-all shadow-md">
-                                                                                            <i class='bx bx-x'></i>
-                                                                                        </button>
-                                                                                    </div>
-                                                                                `);
+                                                                                            <div class="relative group w-16 h-12">
+                                                                                                <img src="${e.target.result}" class="w-full h-full object-cover rounded-xl border border-slate-100 shadow-sm">
+                                                                                                <button type="button" onclick="removeFloorPlanFile(${index})" class="absolute -top-2 -right-2 w-5 h-5 bg-rose-500 text-white rounded-full flex items-center justify-center text-xs hover:bg-rose-600 transition-all shadow-md">
+                                                                                                    <i class='bx bx-x'></i>
+                                                                                                </button>
+                                                                                            </div>
+                                                                                        `);
                         container.append(div);
                     }
                     reader.readAsDataURL(file);
