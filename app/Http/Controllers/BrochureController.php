@@ -13,7 +13,10 @@ class BrochureController extends Controller
     public function download($id)
     {
         $listing = Listing::with(['features', 'user', 'propertyType', 'unitType', 'ownershipStatus', 'rentFrequency', 'cheque'])
-            ->findOrFail($id);
+            ->where(function ($query) use ($id) {
+                $query->where('slug', $id)->orWhere('id', $id);
+            })
+            ->firstOrFail();
 
         $this->prepareBrochureData($listing, $gallery, $contactPerson, $mortgageDetails, $mapImage);
 
@@ -39,7 +42,10 @@ class BrochureController extends Controller
         }
 
         $listing = OffMarketListing::with(['features', 'user', 'propertyType', 'unitType', 'ownershipStatus', 'rentFrequency', 'cheque'])
-            ->findOrFail($id);
+            ->where(function ($query) use ($id) {
+                $query->where('slug', $id)->orWhere('id', $id);
+            })
+            ->firstOrFail();
 
         $this->prepareBrochureData($listing, $gallery, $contactPerson, $mortgageDetails, $mapImage);
 

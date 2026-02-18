@@ -13,7 +13,11 @@ class PropertyInquiryController extends Controller
 {
     public function store(Request $request, $id)
     {
-        $listing = Listing::with('user')->findOrFail($id);
+        $listing = Listing::with('user')
+            ->where(function ($query) use ($id) {
+                $query->where('slug', $id)->orWhere('id', $id);
+            })
+            ->firstOrFail();
 
         $request->validate([
             'name' => 'required|string|max:255',

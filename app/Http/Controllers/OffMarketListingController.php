@@ -334,7 +334,9 @@ class OffMarketListingController extends Controller
 
     public function sendInquiry(Request $request, $id)
     {
-        $listing = \App\Models\OffMarketListing::findOrFail($id);
+        $listing = \App\Models\OffMarketListing::where(function ($query) use ($id) {
+            $query->where('slug', $id)->orWhere('id', $id);
+        })->firstOrFail();
 
         $request->validate([
             'name' => 'required|string|max:255',
