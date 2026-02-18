@@ -29,7 +29,7 @@
 <body class="font-sans antialiased bg-gray-50 text-gray-900">
 
     <!-- Top Bar -->
-    <div style="background-color: #2596be;" class="py-2.5 border-b border-primary/20 relative z-[60]">
+    <div style="background-color: #0299b0;" class="py-2.5 border-b border-primary/20 relative z-[60]">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col md:flex-row justify-between items-center gap-2">
             <div class="flex items-center gap-4 text-sm font-medium text-white/90">
                  <a href="mailto:info@propertyfinda.co.uk" class="text-white transition-colors flex items-center gap-2"><i class="fa-solid fa-envelope text-white text-sm"></i> info@propertyfinda.co.uk</a>
@@ -64,8 +64,35 @@
                     <div class="hidden md:ml-10 md:flex space-x-8">
                         <a href="{{ route('home') }}"
                             class="inline-flex items-center px-1 pt-1 border-b-2 {{ request()->routeIs('home') ? 'border-secondary text-primary' : 'border-transparent text-gray-500' }} text-sm font-medium leading-5 hover:text-primary hover:border-secondary transition duration-150 ease-in-out">Home</a>
-                        <a href="{{ route('listings.index') }}"
-                            class="inline-flex items-center px-1 pt-1 border-b-2 {{ request()->routeIs('listings.index') ? 'border-secondary text-primary' : 'border-transparent text-gray-500' }} text-sm font-medium leading-5 hover:text-primary hover:border-secondary transition duration-150 ease-in-out">Properties</a>
+                        <!-- Properties Dropdown -->
+                        <div class="relative flex items-center h-20" x-data="{ open: false }" @mouseenter="open = true" @mouseleave="open = false">
+                            <button @click="open = !open" 
+                                class="inline-flex items-center gap-1 px-1 pt-1 border-b-2 {{ request()->routeIs('listings.index') || request()->routeIs('sold-properties.search') ? 'border-secondary text-primary' : 'border-transparent text-gray-500' }} text-sm font-medium leading-5 hover:text-primary hover:border-secondary transition duration-150 ease-in-out h-full focus:outline-none">
+                                Properties
+                                <i class="fa-solid fa-chevron-down text-[10px] ml-1 transition-transform duration-200" :class="open ? 'rotate-180' : ''"></i>
+                            </button>
+                            
+                            <div x-show="open" x-cloak
+                                x-transition:enter="transition ease-out duration-200"
+                                x-transition:enter-start="opacity-0 translate-y-1"
+                                x-transition:enter-end="opacity-100 translate-y-0"
+                                x-transition:leave="transition ease-in duration-150"
+                                x-transition:leave-start="opacity-100 translate-y-0"
+                                x-transition:leave-end="opacity-0 translate-y-1"
+                                class="absolute left-1/2 -translate-x-1/2 top-full mt-14 w-64 bg-white rounded-2xl shadow-xl shadow-primary/10 border border-gray-100 py-2 z-50" style="margin-top:200%">
+                                
+                                <div class="absolute -top-2 left-1/2 -translate-x-1/2 w-4 h-4 bg-white transform rotate-45 border-t border-l border-gray-100"></div>
+
+                                <a href="{{ route('listings.index') }}" class="relative flex items-center gap-3 px-4 py-3 text-sm font-bold text-gray-600 hover:text-primary hover:bg-gray-50 transition-all">
+                                    <i class="fa-solid fa-house text-secondary w-5"></i>
+                                    Properties For Sale/Rent
+                                </a>
+                                <a href="{{ route('sold-properties.search') }}" class="relative flex items-center gap-3 px-4 py-3 text-sm font-bold text-gray-600 hover:text-primary hover:bg-gray-50 transition-all">
+                                    <i class="fa-solid fa-pound-sign text-secondary w-5"></i>
+                                    Sold Properties
+                                </a>
+                            </div>
+                        </div>
                         <a href="{{ route('off-market-listings.index') }}"
                             class="inline-flex items-center px-1 pt-1 border-b-2 {{ request()->routeIs('off-market-listings.index') ? 'border-secondary text-primary' : 'border-transparent text-gray-500' }} text-sm font-medium leading-5 hover:text-primary hover:border-secondary transition duration-150 ease-in-out">Off
                             Market</a>
@@ -239,7 +266,7 @@
     </main>
 
     <!-- Footer -->
-    <footer class="bg-primary text-white pt-16 pb-8">
+    <footer class="bg-white text-dark pt-16 pb-8">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="grid grid-cols-1 md:grid-cols-4 gap-12 mb-12">
                 <div class="col-span-1 md:col-span-1">
@@ -247,7 +274,7 @@
                         <!-- Icon -->
                         <img src="{{ asset('logoor.png') }}" alt="PropertyFinda" class="h-14 w-auto">
                     </div>
-                    <p class="text-gray-300 text-sm leading-relaxed mb-6">
+                    <p class="text-dark text-sm leading-relaxed mb-6">
                         Reimagining the property market with a premium, transparent, and seamless experience. Find your
                         dream home today.
                     </p>
@@ -265,34 +292,34 @@
                 </div>
                 <div>
                     <h3 class="text-lg font-serif font-semibold mb-6 flex items-center">Quick Links <span
-                            class="h-px w-8 bg-secondary ml-3 text-secondary block"></span></h3>
-                    <ul class="space-y-3 text-sm text-gray-300">
-                        <li><a href="{{ route('home') }}" class="hover:text-secondary transition duration-200">Home</a>
+                            class="h-px w-8 bg-secondary ml-3 text-black block"></span></h3>
+                    <ul class="space-y-3 text-sm text-black">
+                        <li><a href="{{ route('home') }}" class="hover:text-black transition duration-200">Home</a>
                         </li>
                         <li><a href="{{ route('listings.index') }}"
-                                class="hover:text-secondary transition duration-200">Browse Properties</a></li>
+                                class="hover:text-black transition duration-200">Browse Properties</a></li>
                         <li><a href="{{ route('off-market-listings.index') }}"
-                                class="hover:text-secondary transition duration-200">Off Market</a></li>
+                                class="hover:text-black transition duration-200">Off Market</a></li>
                         <li><a href="{{ route('contact.create') }}"
-                                class="hover:text-secondary transition duration-200">Contact Us</a></li>
+                                class="hover:text-black transition duration-200">Contact Us</a></li>
                     </ul>
                 </div>
                 <div>
                     <h3 class="text-lg font-serif font-semibold mb-6 flex items-center">Legal <span
-                            class="h-px w-8 bg-secondary ml-3 text-secondary block"></span></h3>
-                    <ul class="space-y-3 text-sm text-gray-300">
-                        <li><a href="{{ route('privacy') }}" class="hover:text-secondary transition duration-200">Privacy Policy</a></li>
-                        <li><a href="{{ route('terms') }}" class="hover:text-secondary transition duration-200">Terms of Service</a></li>
-                        <li><a href="{{ route('cookies') }}" class="hover:text-secondary transition duration-200">Cookie Policy</a></li>
-                        <li><a href="{{ route('gdpr') }}" class="hover:text-secondary transition duration-200">GDPR Compliance</a></li>
+                            class="h-px w-8 bg-secondary ml-3 text-black block"></span></h3>
+                    <ul class="space-y-3 text-sm text-black">
+                        <li><a href="{{ route('privacy') }}" class="hover:text-black transition duration-200">Privacy Policy</a></li>
+                        <li><a href="{{ route('terms') }}" class="hover:text-black transition duration-200">Terms of Service</a></li>
+                        <li><a href="{{ route('cookies') }}" class="hover:text-black transition duration-200">Cookie Policy</a></li>
+                        <li><a href="{{ route('gdpr') }}" class="hover:text-black transition duration-200">GDPR Compliance</a></li>
                     </ul>
                 </div>
                 <div>
                     <h3 class="text-lg font-serif font-semibold mb-6 flex items-center">Contact <span
-                            class="h-px w-8 bg-secondary ml-3 text-secondary block"></span></h3>
+                            class="h-px w-8 bg-secondary ml-3 text-black block"></span></h3>
                     <ul class="space-y-4 text-sm text-gray-300">
                         <li class="flex items-start gap-3">
-                            <svg class="w-5 h-5 text-secondary mt-0.5" fill="none" stroke="currentColor"
+                            <svg class="w-5 h-5 text-black mt-0.5" fill="none" stroke="currentColor"
                                 viewBox="0 0 24 24">
                                     d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z">
                                 </path>
@@ -300,16 +327,16 @@
                                     d="M15 11a3 3 0 11-6 0 3 3 0 016 0z">
                                 </path>
                             </svg>
-                            <span>5-7 High Street London United Kingdom. E13 0AD</span>
+                            <span class="text-black">5-7 High Street London United Kingdom. E13 0AD</span>
                         </li>
                         <li class="flex items-center gap-3">
-                            <svg class="w-5 h-5 text-secondary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <svg class="w-5 h-5 text-black" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                     d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z">
                                 </path>
                             </svg>
                             <a href="mailto:info@propertyfinda.co.uk"
-                                class="hover:text-secondary transition">info@propertyfinda.co.uk</a>
+                                class="hover:text-secondary transition text-black">info@propertyfinda.co.uk</a>
                         </li>
                         
                     </ul>

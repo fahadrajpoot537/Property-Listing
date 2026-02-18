@@ -37,6 +37,7 @@ Route::get('/property/{id}', [App\Http\Controllers\ListingController::class, 'sh
 Route::get('/property/{id}/sold-prices', [App\Http\Controllers\ListingController::class, 'getSoldPrices'])->name('listing.sold-prices');
 Route::post('/property/{id}/inquiry', [App\Http\Controllers\PropertyInquiryController::class, 'store'])->name('listing.inquiry');
 Route::get('/property/{id}/brochure', [App\Http\Controllers\BrochureController::class, 'download'])->name('listing.brochure');
+Route::get('/sold-properties', [\App\Http\Controllers\ListingController::class, 'soldPropertiesSearch'])->name('sold-properties.search');
 Route::get('/property-external-details', [App\Http\Controllers\ListingController::class, 'showExternalDetails'])->name('property.external-details');
 
 // Agents
