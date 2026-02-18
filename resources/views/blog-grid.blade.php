@@ -6,6 +6,7 @@
     <!-- Header Section -->
     <div class="relative bg-slate-900 py-20 md:py-28 overflow-hidden">
         <div class="absolute inset-0 z-0">
+            <img src="{{ asset('2.jpg') }}" class="w-full h-full object-cover" alt="Blog Hero">
             <div class="absolute inset-0 bg-primary/90 opacity-95"></div>
         </div>
 

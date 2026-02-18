@@ -4,22 +4,18 @@
 
 @section('content')
     <!-- Hero Section -->
-    <div class="relative bg-gradient-to-br from-primary via-primary-light to-secondary overflow-hidden">
-        <div class="absolute inset-0 opacity-10">
-            <div
-                class="absolute top-0 right-0 w-96 h-96 bg-white rounded-full blur-3xl transform translate-x-1/2 -translate-y-1/2">
-            </div>
-            <div
-                class="absolute bottom-0 left-0 w-96 h-96 bg-secondary rounded-full blur-3xl transform -translate-x-1/2 translate-y-1/2">
-            </div>
+    <div class="relative bg-gray-900 overflow-hidden">
+        <div class="absolute inset-0">
+            <img src="{{ asset('3.jpg') }}" class="w-full h-full object-cover" alt="Help Center Hero">
+            <div class="absolute inset-0 bg-black/70"></div>
         </div>
 
         <div class="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20 lg:py-32">
             <div class="text-center max-w-4xl mx-auto">
-                <h1 class="text-4xl sm:text-5xl lg:text-6xl font-black text-black mb-6">
-                    How Can We <span class="text-secondary-light">Help You?</span>
+                <h1 class="text-4xl sm:text-5xl lg:text-6xl font-black text-white mb-6">
+                    How Can We <span class="text-secondary">Help You?</span>
                 </h1>
-                <p class="text-lg sm:text-xl text-whitemb-8 max-w-2xl mx-auto font-medium">
+                <p class="text-lg sm:text-xl text-white mb-8 max-w-2xl mx-auto font-medium">
                     Find answers to your questions and learn how to make the most of PropertyFinda
                 </p>
 

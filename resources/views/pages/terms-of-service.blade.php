@@ -3,10 +3,22 @@
 @section('title', 'Terms of Service | PropertyFinda')
 
 @section('content')
-    <div class="bg-gray-50 py-16 md:py-24">
+    <!-- Hero Section -->
+    <div class="relative py-20 md:py-28 bg-primary overflow-hidden">
+        <div class="absolute inset-0">
+            <img src="{{ asset('4.jpg') }}" class="w-full h-full object-cover opacity-40 mix-blend-overlay"
+                alt="Terms Hero">
+            <div class="absolute inset-0 bg-gradient-to-b from-primary/80 to-primary"></div>
+        </div>
+        <div class="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+            <h1 class="text-4xl md:text-6xl font-black text-white tracking-tight mb-4">Terms of Service</h1>
+            <p class="text-xl text-white max-w-2xl mx-auto">Rules and guidelines for using our platform</p>
+        </div>
+    </div>
+
+    <div class="bg-gray-50 pb-16 md:pb-24 pt-12">
         <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="bg-white rounded-3xl shadow-sm border border-gray-100 p-8 md:p-12">
-                <h1 class="text-3xl md:text-4xl font-black text-primary mb-8 tracking-tight">Terms of Service</h1>
+            <div class="bg-white rounded-3xl shadow-xl border border-gray-100 p-8 md:p-12 relative -mt-24 z-20">
                 <p class="text-gray-500 mb-8 text-sm uppercase tracking-widest font-bold">Effective Date: {{ date('F Y') }}
                 </p>
 

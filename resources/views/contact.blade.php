@@ -6,8 +6,8 @@
     <!-- Portal Hero Search Section (Reused Style) -->
     <div class="relative bg-primary overflow-visible">
         <div class="absolute inset-0 z-0">
-            <img src="{{ asset('assets/img/all-images/hero/1.jpg') }}"
-                class="w-full h-full object-cover opacity-40 mix-blend-overlay" alt="Background">
+            <img src="{{ asset('1.jpg') }}" class="w-full h-full object-cover opacity-40 mix-blend-overlay"
+                alt="Background">
             <div class="absolute inset-0 bg-primary/80 mix-blend-multiply"></div>
         </div>
 
@@ -47,11 +47,11 @@
                             13 0AD</span>
                     </div>
                     <div id="map" style="
-                                            width:100%;
-                                            height:165px;
-                                            border-radius:15px;
-                                            box-shadow: 0 8px 25px rgba(128, 70, 241, 0.45);
-                                        ">
+                                                width:100%;
+                                                height:165px;
+                                                border-radius:15px;
+                                                box-shadow: 0 8px 25px rgba(128, 70, 241, 0.45);
+                                            ">
                     </div>
 
                 </div>
