@@ -351,7 +351,7 @@
                   <div
                     class="bg-white rounded-[2rem] overflow-hidden shadow-sm hover:shadow-2xl hover:-translate-y-2 transition-all duration-500 border border-gray-100 h-full flex flex-col group">
                     <div class="relative h-64 overflow-hidden">
-                      <a href="{{ route('listing.show', $listing->id) }}">
+                      <a href="{{ route('listing.show', $listing->slug ?? $listing->id) }}">
                         <img
                           src="{{ $listing->thumbnail ? asset('storage/' . $listing->thumbnail) : asset('assets/img/all-images/hero/1.jpg') }}"
                           class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
@@ -378,7 +378,8 @@
                       </div>
                       <h3
                         class="font-black text-xl text-primary mb-3 line-clamp-1 group-hover:text-secondary transition-colors leading-tight">
-                        <a href="{{ route('listing.show', $listing->id) }}">{{ $listing->property_title }}</a>
+                        <a
+                          href="{{ route('listing.show', $listing->slug ?? $listing->id) }}">{{ $listing->property_title }}</a>
                       </h3>
                       <p class="text-gray-500 mb-6 flex items-center gap-2 text-sm font-medium">
                         <i class="fa-solid fa-location-dot text-gray-300"></i> {{ Str::limit($listing->address, 40) }}
@@ -411,7 +412,7 @@
                             class="flex-1 bg-blue-500 hover:bg-blue-600 text-white text-xs font-bold py-2 px-3 rounded-lg flex items-center justify-center gap-1 transition-colors">
                             <i class="fa-regular fa-envelope"></i> Email
                           </a>
-                          <a href="{{ route('listing.show', $listing->id) }}"
+                          <a href="{{ route('listing.show', $listing->slug ?? $listing->id) }}"
                             class="flex-1 border border-gray-200 hover:border-secondary hover:text-secondary text-gray-600 text-xs font-bold py-2 px-3 rounded-lg flex items-center justify-center transition-all">
                             Details
                           </a>
@@ -435,7 +436,7 @@
                     <div
                       class="bg-white rounded-[2rem] overflow-hidden shadow-sm hover:shadow-2xl hover:-translate-y-2 transition-all duration-500 border border-gray-100 h-full flex flex-col group">
                       <div class="relative h-64 overflow-hidden">
-                        <a href="{{ route('listing.show', $listing->id) }}">
+                        <a href="{{ route('listing.show', $listing->slug ?? $listing->id) }}">
                           <img
                             src="{{ $listing->thumbnail ? asset('storage/' . $listing->thumbnail) : asset('assets/img/all-images/hero/1.jpg') }}"
                             class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
@@ -462,7 +463,8 @@
                         </div>
                         <h3
                           class="font-black text-xl text-primary mb-3 line-clamp-1 group-hover:text-secondary transition-colors leading-tight">
-                          <a href="{{ route('listing.show', $listing->id) }}">{{ $listing->property_title }}</a>
+                          <a
+                            href="{{ route('listing.show', $listing->slug ?? $listing->id) }}">{{ $listing->property_title }}</a>
                         </h3>
                         <p class="text-gray-500 mb-6 flex items-center gap-2 text-sm font-medium">
                           <i class="fa-solid fa-location-dot text-gray-300"></i> {{ Str::limit($listing->address, 40) }}
@@ -486,7 +488,7 @@
                               class="flex-1 bg-blue-500 hover:bg-blue-600 text-white text-xs font-bold py-2 px-3 rounded-lg flex items-center justify-center gap-1 transition-colors">
                               <i class="fa-regular fa-envelope"></i> Email
                             </a>
-                            <a href="{{ route('listing.show', $listing->id) }}"
+                            <a href="{{ route('listing.show', $listing->slug ?? $listing->id) }}"
                               class="flex-1 border border-gray-200 hover:border-secondary hover:text-secondary text-gray-600 text-xs font-bold py-2 px-3 rounded-lg flex items-center justify-center transition-all">
                               Details
                             </a>
@@ -849,7 +851,7 @@
         return;
       @endif
 
-                                                                                                                                const data = {
+                                                                                                                                    const data = {
         _token: '{{ csrf_token() }}'
       };
       if (listingId) data.listing_id = listingId;

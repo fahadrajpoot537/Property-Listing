@@ -22,7 +22,9 @@
     <!-- Custom Styles Stack -->
     @stack('styles')
     <style>
-        [x-cloak] { display: none !important; }
+        [x-cloak] {
+            display: none !important;
+        }
     </style>
 </head>
 
@@ -30,21 +32,27 @@
 
     <!-- Top Bar -->
     <div style="background-color: #1F98AD;" class="py-2.5 border-b border-primary/20 relative z-[60]">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col md:flex-row justify-between items-center gap-2">
+        <div
+            class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col md:flex-row justify-between items-center gap-2">
             <div class="flex items-center gap-4 text-sm font-medium text-white/90">
-                 <a href="mailto:info@propertyfinda.co.uk" class="text-white transition-colors flex items-center gap-2"><i class="fa-solid fa-envelope text-white text-sm"></i> info@propertyfinda.co.uk</a>
+                <a href="mailto:info@propertyfinda.co.uk"
+                    class="text-white transition-colors flex items-center gap-2"><i
+                        class="fa-solid fa-envelope text-white text-sm"></i> info@propertyfinda.co.uk</a>
             </div>
             <div class="flex items-center gap-4">
-                 <a href="https://www.facebook.com/profile.php?id=61587630383066" target="_blank" class="bg-white w-8 h-8 flex items-center justify-center rounded-full shadow-sm hover:scale-110 transition-transform">
+                <a href="https://www.facebook.com/profile.php?id=61587630383066" target="_blank"
+                    class="bg-white w-8 h-8 flex items-center justify-center rounded-full shadow-sm hover:scale-110 transition-transform">
                     <i class="fa-brands fa-facebook-f text-sm" style="color: #1877F2;"></i>
-                 </a>
-                 <a href="#" class="bg-white w-8 h-8 flex items-center justify-center rounded-full shadow-sm hover:scale-110 transition-transform">
+                </a>
+                <a href="#"
+                    class="bg-white w-8 h-8 flex items-center justify-center rounded-full shadow-sm hover:scale-110 transition-transform">
                     <i class="fa-brands fa-instagram text-sm" style="color: #E4405F;"></i>
-                 </a>
+                </a>
 
-                 <a href="#" class="bg-white w-8 h-8 flex items-center justify-center rounded-full shadow-sm hover:scale-110 transition-transform">
+                <a href="#"
+                    class="bg-white w-8 h-8 flex items-center justify-center rounded-full shadow-sm hover:scale-110 transition-transform">
                     <i class="fa-brands fa-linkedin-in text-sm" style="color: #0A66C2;"></i>
-                 </a>
+                </a>
             </div>
         </div>
     </div>
@@ -65,34 +73,11 @@
                         <a href="{{ route('home') }}"
                             class="inline-flex items-center px-1 pt-1 border-b-2 {{ request()->routeIs('home') ? 'border-secondary text-primary' : 'border-transparent text-gray-500' }} text-sm font-medium leading-5 hover:text-primary hover:border-secondary transition duration-150 ease-in-out">Home</a>
                         <!-- Properties Dropdown -->
-                        <div class="relative flex items-center h-20" x-data="{ open: false }" @mouseenter="open = true" @mouseleave="open = false">
-                            <button @click="open = !open" 
-                                class="inline-flex items-center gap-1 px-1 pt-1 border-b-2 {{ request()->routeIs('listings.index') || request()->routeIs('sold-properties.search') ? 'border-secondary text-primary' : 'border-transparent text-gray-500' }} text-sm font-medium leading-5 hover:text-primary hover:border-secondary transition duration-150 ease-in-out h-full focus:outline-none">
-                                Properties
-                                <i class="fa-solid fa-chevron-down text-[10px] ml-1 transition-transform duration-200" :class="open ? 'rotate-180' : ''"></i>
-                            </button>
-                            
-                            <div x-show="open" x-cloak
-                                x-transition:enter="transition ease-out duration-200"
-                                x-transition:enter-start="opacity-0 translate-y-1"
-                                x-transition:enter-end="opacity-100 translate-y-0"
-                                x-transition:leave="transition ease-in duration-150"
-                                x-transition:leave-start="opacity-100 translate-y-0"
-                                x-transition:leave-end="opacity-0 translate-y-1"
-                                class="absolute left-1/2 -translate-x-1/2 top-full mt-14 w-64 bg-white rounded-2xl shadow-xl shadow-primary/10 border border-gray-100 py-2 z-50" style="margin-top:200%">
-                                
-                                <div class="absolute -top-2 left-1/2 -translate-x-1/2 w-4 h-4 bg-white transform rotate-45 border-t border-l border-gray-100"></div>
-
-                                <a href="{{ route('listings.index') }}" class="relative flex items-center gap-3 px-4 py-3 text-sm font-bold text-gray-600 hover:text-primary hover:bg-gray-50 transition-all">
-                                    <i class="fa-solid fa-house text-secondary w-5"></i>
-                                    Properties For Sale/Rent
-                                </a>
-                                <a href="{{ route('sold-properties.search') }}" class="relative flex items-center gap-3 px-4 py-3 text-sm font-bold text-gray-600 hover:text-primary hover:bg-gray-50 transition-all">
-                                    <i class="fa-solid fa-pound-sign text-secondary w-5"></i>
-                                    Sold Properties
-                                </a>
-                            </div>
-                        </div>
+                        <a href="{{ route('listings.index') }}"
+                            class="inline-flex items-center px-1 pt-1 border-b-2 {{ request()->routeIs('listings.index') ? 'border-secondary text-primary' : 'border-transparent text-gray-500' }} text-sm font-medium leading-5 hover:text-primary hover:border-secondary transition duration-150 ease-in-out">Properties</a>
+                        <a href="{{ route('sold-properties.search') }}"
+                            class="inline-flex items-center px-1 pt-1 border-b-2 {{ request()->routeIs('sold-properties.search') ? 'border-secondary text-primary' : 'border-transparent text-gray-500' }} text-sm font-medium leading-5 hover:text-primary hover:border-secondary transition duration-150 ease-in-out">Sold
+                            Properties</a>
                         <a href="{{ route('off-market-listings.index') }}"
                             class="inline-flex items-center px-1 pt-1 border-b-2 {{ request()->routeIs('off-market-listings.index') ? 'border-secondary text-primary' : 'border-transparent text-gray-500' }} text-sm font-medium leading-5 hover:text-primary hover:border-secondary transition duration-150 ease-in-out">Off
                             Market</a>
@@ -100,31 +85,37 @@
                             class="inline-flex items-center px-1 pt-1 border-b-2 {{ request()->routeIs('agents.*') ? 'border-secondary text-primary' : 'border-transparent text-gray-500' }} text-sm font-medium leading-5 hover:text-primary hover:border-secondary transition duration-150 ease-in-out">Agents</a>
                         <a href="{{ route('blog.list') }}"
                             class="inline-flex items-center px-1 pt-1 border-b-2 {{ request()->routeIs('blog.*') ? 'border-secondary text-primary' : 'border-transparent text-gray-500' }} text-sm font-medium leading-5 hover:text-primary hover:border-secondary transition duration-150 ease-in-out">News</a>
-                        
+
                         <!-- Contact Dropdown -->
-                        <div class="relative flex items-center h-20" x-data="{ open: false }" @mouseenter="open = true" @mouseleave="open = false">
-                            <button @click="open = !open" 
+                        <div class="relative flex items-center h-20" x-data="{ open: false }" @mouseenter="open = true"
+                            @mouseleave="open = false">
+                            <button @click="open = !open"
                                 class="inline-flex items-center gap-1 px-1 pt-1 border-b-2 {{ request()->routeIs('help') || request()->routeIs('contact.create') ? 'border-secondary text-primary' : 'border-transparent text-gray-500' }} text-sm font-medium leading-5 hover:text-primary hover:border-secondary transition duration-150 ease-in-out h-full focus:outline-none">
                                 Support
-                                <i class="fa-solid fa-chevron-down text-[10px] ml-1 transition-transform duration-200" :class="open ? 'rotate-180' : ''"></i>
+                                <i class="fa-solid fa-chevron-down text-[10px] ml-1 transition-transform duration-200"
+                                    :class="open ? 'rotate-180' : ''"></i>
                             </button>
-                            
-                            <div x-show="open" x-cloak
-                                x-transition:enter="transition ease-out duration-200"
+
+                            <div x-show="open" x-cloak x-transition:enter="transition ease-out duration-200"
                                 x-transition:enter-start="opacity-0 translate-y-1"
                                 x-transition:enter-end="opacity-100 translate-y-0"
                                 x-transition:leave="transition ease-in duration-150"
                                 x-transition:leave-start="opacity-100 translate-y-0"
                                 x-transition:leave-end="opacity-0 translate-y-1"
-                                class="absolute left-1/2 -translate-x-1/2 top-full mt-14 w-64 bg-white rounded-2xl shadow-xl shadow-primary/10 border border-gray-100 py-2 z-50" style="margin-top:230%">
-                                
-                                <div class="absolute -top-2 left-1/2 -translate-x-1/2 w-4 h-4 bg-white transform rotate-45 border-t border-l border-gray-100"></div>
+                                class="absolute left-1/2 -translate-x-1/2 top-full mt-14 w-64 bg-white rounded-2xl shadow-xl shadow-primary/10 border border-gray-100 py-2 z-50"
+                                style="margin-top:230%">
 
-                                <a href="{{ route('contact.create') }}" class="relative flex items-center gap-3 px-4 py-3 text-sm font-bold text-gray-600 hover:text-primary hover:bg-gray-50 transition-all">
+                                <div
+                                    class="absolute -top-2 left-1/2 -translate-x-1/2 w-4 h-4 bg-white transform rotate-45 border-t border-l border-gray-100">
+                                </div>
+
+                                <a href="{{ route('contact.create') }}"
+                                    class="relative flex items-center gap-3 px-4 py-3 text-sm font-bold text-gray-600 hover:text-primary hover:bg-gray-50 transition-all">
                                     <i class="fa-solid fa-envelope text-secondary w-5"></i>
                                     Contact Us
                                 </a>
-                                <a href="{{ route('help') }}" class="relative flex items-center gap-3 px-4 py-3 text-sm font-bold text-gray-600 hover:text-primary hover:bg-gray-50 transition-all">
+                                <a href="{{ route('help') }}"
+                                    class="relative flex items-center gap-3 px-4 py-3 text-sm font-bold text-gray-600 hover:text-primary hover:bg-gray-50 transition-all">
                                     <i class="fa-solid fa-circle-question text-secondary w-5"></i>
                                     Help Center
                                 </a>
@@ -138,40 +129,46 @@
                             <div class="relative" x-data="{ userDropdownOpen: false }">
                                 <button @click="userDropdownOpen = !userDropdownOpen" @click.away="userDropdownOpen = false"
                                     class="flex items-center gap-3 px-3 py-2 rounded-xl hover:bg-gray-50 transition-all duration-200">
-                                    <div class="w-10 h-10 rounded-full bg-secondary/10 flex items-center justify-center text-secondary">
+                                    <div
+                                        class="w-10 h-10 rounded-full bg-secondary/10 flex items-center justify-center text-secondary">
                                         <i class="fa-solid fa-user-circle text-xl"></i>
                                     </div>
                                     <div class="hidden lg:block text-left">
-                                        <p class="text-xs font-bold text-gray-400 uppercase tracking-widest leading-none mb-1">Signed in as</p>
+                                        <p
+                                            class="text-xs font-bold text-gray-400 uppercase tracking-widest leading-none mb-1">
+                                            Signed in as</p>
                                         <p class="text-sm font-black text-primary leading-none">{{ Auth::user()->name }}</p>
                                     </div>
-                                    <i class="fa-solid fa-chevron-down text-[10px] text-gray-400 transition-transform duration-200" :class="userDropdownOpen ? 'rotate-180' : ''"></i>
+                                    <i class="fa-solid fa-chevron-down text-[10px] text-gray-400 transition-transform duration-200"
+                                        :class="userDropdownOpen ? 'rotate-180' : ''"></i>
                                 </button>
 
-                                <div x-show="userDropdownOpen" x-cloak
-                                    x-transition:enter="transition ease-out duration-100"
+                                <div x-show="userDropdownOpen" x-cloak x-transition:enter="transition ease-out duration-100"
                                     x-transition:enter-start="transform opacity-0 scale-95"
                                     x-transition:enter-end="transform opacity-100 scale-100"
                                     x-transition:leave="transition ease-in duration-75"
                                     x-transition:leave-start="transform opacity-100 scale-100"
                                     x-transition:leave-end="transform opacity-0 scale-95"
                                     class="absolute right-0 mt-2 w-56 bg-white rounded-2xl shadow-xl shadow-primary/10 border border-gray-100 py-2 z-50">
-                                    
-                                    <a href="{{ route('dashboard') }}" class="flex items-center gap-3 px-4 py-3 text-sm font-bold text-gray-600 hover:text-primary hover:bg-gray-50 transition-all">
+
+                                    <a href="{{ route('dashboard') }}"
+                                        class="flex items-center gap-3 px-4 py-3 text-sm font-bold text-gray-600 hover:text-primary hover:bg-gray-50 transition-all">
                                         <i class="fa-solid fa-gauge-high text-gray-400 w-5"></i>
                                         Dashboard
                                     </a>
-                                    
-                                    <a href="{{ route('favorites.index') }}" class="flex items-center gap-3 px-4 py-3 text-sm font-bold text-gray-600 hover:text-secondary hover:bg-gray-50 transition-all">
+
+                                    <a href="{{ route('favorites.index') }}"
+                                        class="flex items-center gap-3 px-4 py-3 text-sm font-bold text-gray-600 hover:text-secondary hover:bg-gray-50 transition-all">
                                         <i class="fa-solid fa-heart text-gray-400 w-5"></i>
                                         My Favorites
                                     </a>
 
                                     <hr class="my-1 border-gray-100">
-                                    
+
                                     <form method="POST" action="{{ route('logout') }}">
                                         @csrf
-                                        <button type="submit" class="w-full flex items-center gap-3 px-4 py-3 text-sm font-bold text-rose-500 hover:bg-rose-50 transition-all">
+                                        <button type="submit"
+                                            class="w-full flex items-center gap-3 px-4 py-3 text-sm font-bold text-rose-500 hover:bg-rose-50 transition-all">
                                             <i class="fa-solid fa-right-from-bracket w-5"></i>
                                             Sign Out
                                         </button>
@@ -212,6 +209,8 @@
                     class="block pl-3 pr-4 py-3 rounded-lg text-base font-medium {{ request()->routeIs('home') ? 'text-primary bg-gray-50 border-secondary' : 'text-gray-600 border-transparent' }} hover:text-primary hover:bg-gray-50 transition duration-150 ease-in-out border-l-4">Home</a>
                 <a href="{{ route('listings.index') }}"
                     class="block pl-3 pr-4 py-3 rounded-lg text-base font-medium {{ request()->routeIs('listings.index') ? 'text-primary bg-gray-50 border-secondary' : 'text-gray-600 border-transparent' }} hover:text-primary hover:bg-gray-50 transition duration-150 ease-in-out border-l-4">Properties</a>
+                <a href="{{ route('sold-properties.search') }}"
+                    class="block pl-3 pr-4 py-3 rounded-lg text-base font-medium {{ request()->routeIs('sold-properties.search') ? 'text-primary bg-gray-50 border-secondary' : 'text-gray-600 border-transparent' }} hover:text-primary hover:bg-gray-50 transition duration-150 ease-in-out border-l-4">Sold Properties</a>
                 <a href="{{ route('off-market-listings.index') }}"
                     class="block pl-3 pr-4 py-3 rounded-lg text-base font-medium {{ request()->routeIs('off-market-listings.index') ? 'text-primary bg-gray-50 border-secondary' : 'text-gray-600 border-transparent' }} hover:text-primary hover:bg-gray-50 transition duration-150 ease-in-out border-l-4">Off
                     Market</a>
@@ -220,9 +219,11 @@
                 <a href="{{ route('blog.list') }}"
                     class="block pl-3 pr-4 py-3 rounded-lg text-base font-medium {{ request()->routeIs('blog.list') ? 'text-primary bg-gray-50 border-secondary' : 'text-gray-600 border-transparent' }} hover:text-primary hover:bg-gray-50 transition duration-150 ease-in-out border-l-4">News</a>
                 <a href="{{ route('contact.create') }}"
-                    class="block pl-3 pr-4 py-3 rounded-lg text-base font-medium {{ request()->routeIs('contact.create') ? 'text-primary bg-gray-50 border-secondary' : 'text-gray-600 border-transparent' }} hover:text-primary hover:bg-gray-50 transition duration-150 ease-in-out border-l-4">Contact Us</a>
+                    class="block pl-3 pr-4 py-3 rounded-lg text-base font-medium {{ request()->routeIs('contact.create') ? 'text-primary bg-gray-50 border-secondary' : 'text-gray-600 border-transparent' }} hover:text-primary hover:bg-gray-50 transition duration-150 ease-in-out border-l-4">Contact
+                    Us</a>
                 <a href="{{ route('help') }}"
-                    class="block pl-3 pr-4 py-3 rounded-lg text-base font-medium {{ request()->routeIs('help') ? 'text-primary bg-gray-50 border-secondary' : 'text-gray-600 border-transparent' }} hover:text-primary hover:bg-gray-50 transition duration-150 ease-in-out border-l-4">Help Center (A-Z)</a>
+                    class="block pl-3 pr-4 py-3 rounded-lg text-base font-medium {{ request()->routeIs('help') ? 'text-primary bg-gray-50 border-secondary' : 'text-gray-600 border-transparent' }} hover:text-primary hover:bg-gray-50 transition duration-150 ease-in-out border-l-4">Help
+                    Center (A-Z)</a>
                 {{-- Removed from primary mobile menu as it goes into bottom section --}}
             </div>
             <div class="pt-4 pb-6 border-t border-gray-200 px-4">
@@ -237,23 +238,30 @@
                         </div>
                     </div>
                     <div class="space-y-1">
-                        <a href="{{ route('dashboard') }}" class="block px-4 py-3 rounded-xl text-base font-bold text-gray-600 hover:bg-gray-50">
+                        <a href="{{ route('dashboard') }}"
+                            class="block px-4 py-3 rounded-xl text-base font-bold text-gray-600 hover:bg-gray-50">
                             <i class="fa-solid fa-gauge-high mr-2 text-gray-400"></i>Dashboard
                         </a>
-                        <a href="{{ route('favorites.index') }}" class="block px-4 py-3 rounded-xl text-base font-bold text-gray-600 hover:bg-gray-50">
+                        <a href="{{ route('favorites.index') }}"
+                            class="block px-4 py-3 rounded-xl text-base font-bold text-gray-600 hover:bg-gray-50">
                             <i class="fa-solid fa-heart mr-2 text-gray-400"></i>My Favorites
                         </a>
                         <form method="POST" action="{{ route('logout') }}">
                             @csrf
-                            <button type="submit" class="w-full text-left px-4 py-3 rounded-xl text-base font-bold text-rose-500 hover:bg-rose-50">
+                            <button type="submit"
+                                class="w-full text-left px-4 py-3 rounded-xl text-base font-bold text-rose-500 hover:bg-rose-50">
                                 <i class="fa-solid fa-right-from-bracket mr-2"></i>Sign Out
                             </button>
                         </form>
                     </div>
                 @else
                     <div class="grid grid-cols-2 gap-3">
-                        <a href="{{ route('login') }}" class="w-full flex items-center justify-center px-4 py-3 rounded-xl border border-gray-200 text-base font-bold text-gray-600">Log in</a>
-                        <a href="{{ route('register') }}" class="w-full flex items-center justify-center px-4 py-3 rounded-xl bg-primary text-white text-base font-bold">Sign up</a>
+                        <a href="{{ route('login') }}"
+                            class="w-full flex items-center justify-center px-4 py-3 rounded-xl border border-gray-200 text-base font-bold text-gray-600">Log
+                            in</a>
+                        <a href="{{ route('register') }}"
+                            class="w-full flex items-center justify-center px-4 py-3 rounded-xl bg-primary text-white text-base font-bold">Sign
+                            up</a>
                     </div>
                 @endauth
             </div>
@@ -279,13 +287,16 @@
                         dream home today.
                     </p>
                     <div class="flex space-x-4 mt-6">
-                        <a href="https://www.facebook.com/profile.php?id=61587630383066" target="_blank" class="bg-white w-10 h-10 flex items-center justify-center rounded-full shadow-lg hover:-translate-y-1 transition-all">
+                        <a href="https://www.facebook.com/profile.php?id=61587630383066" target="_blank"
+                            class="bg-white w-10 h-10 flex items-center justify-center rounded-full shadow-lg hover:-translate-y-1 transition-all">
                             <i class="fa-brands fa-facebook-f text-lg" style="color: #1877F2;"></i>
                         </a>
-                        <a href="#" class="bg-white w-10 h-10 flex items-center justify-center rounded-full shadow-lg hover:-translate-y-1 transition-all">
+                        <a href="#"
+                            class="bg-white w-10 h-10 flex items-center justify-center rounded-full shadow-lg hover:-translate-y-1 transition-all">
                             <i class="fa-brands fa-instagram text-lg" style="color: #E4405F;"></i>
                         </a>
-                        <a href="#" class="bg-white w-10 h-10 flex items-center justify-center rounded-full shadow-lg hover:-translate-y-1 transition-all">
+                        <a href="#"
+                            class="bg-white w-10 h-10 flex items-center justify-center rounded-full shadow-lg hover:-translate-y-1 transition-all">
                             <i class="fa-brands fa-linkedin-in text-lg" style="color: #1DA1F2;"></i>
                         </a>
                     </div>
@@ -308,10 +319,14 @@
                     <h3 class="text-lg font-serif font-semibold mb-6 flex items-center">Legal <span
                             class="h-px w-8 bg-secondary ml-3 text-black block"></span></h3>
                     <ul class="space-y-3 text-sm text-black">
-                        <li><a href="{{ route('privacy') }}" class="hover:text-black transition duration-200">Privacy Policy</a></li>
-                        <li><a href="{{ route('terms') }}" class="hover:text-black transition duration-200">Terms of Service</a></li>
-                        <li><a href="{{ route('cookies') }}" class="hover:text-black transition duration-200">Cookie Policy</a></li>
-                        <li><a href="{{ route('gdpr') }}" class="hover:text-black transition duration-200">GDPR Compliance</a></li>
+                        <li><a href="{{ route('privacy') }}" class="hover:text-black transition duration-200">Privacy
+                                Policy</a></li>
+                        <li><a href="{{ route('terms') }}" class="hover:text-black transition duration-200">Terms of
+                                Service</a></li>
+                        <li><a href="{{ route('cookies') }}" class="hover:text-black transition duration-200">Cookie
+                                Policy</a></li>
+                        <li><a href="{{ route('gdpr') }}" class="hover:text-black transition duration-200">GDPR
+                                Compliance</a></li>
                     </ul>
                 </div>
                 <div>
@@ -321,7 +336,7 @@
                         <li class="flex items-start gap-3">
                             <svg class="w-5 h-5 text-black mt-0.5" fill="none" stroke="currentColor"
                                 viewBox="0 0 24 24">
-                                    d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z">
+                                d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z">
                                 </path>
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                     d="M15 11a3 3 0 11-6 0 3 3 0 016 0z">
@@ -338,14 +353,15 @@
                             <a href="mailto:info@propertyfinda.co.uk"
                                 class="hover:text-secondary transition text-black">info@propertyfinda.co.uk</a>
                         </li>
-                        
+
                     </ul>
                 </div>
             </div>
             <div
                 class="border-t border-primary-light pt-8 flex flex-col md:flex-row justify-between items-center text-sm text-gray-400">
                 <p>&copy; {{ date('Y') }} PropertyFinda. All Rights Reserved.</p>
-                <p>Designed with <span class="text-secondary">&hearts;</span> by <a href="https://mediajunkie.co.uk" target="_blank">Media Junkie</a></p>
+                <p>Designed with <span class="text-secondary">&hearts;</span> by <a href="https://mediajunkie.co.uk"
+                        target="_blank">Media Junkie</a></p>
             </div>
         </div>
     </footer>

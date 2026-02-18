@@ -203,7 +203,7 @@
                         </div>
 
                         @if(auth()->check())
-                            <a href="{{ route('off-market-listing.brochure', $listing->id) }}"
+                            <a href="{{ route('off-market-listing.brochure', $listing->slug ?? $listing->id) }}"
                                 class="w-14 h-14 rounded-2xl border-2 border-secondary bg-secondary/10 flex items-center justify-center hover:bg-secondary hover:text-white text-secondary transition-all group"
                                 title="Download Brochure">
                                 <i class="fa-solid fa-download text-xl group-hover:scale-110 transition-transform"></i>
@@ -520,7 +520,7 @@
                                 </div>
                             </div>
 
-                            <form action="{{ route('off-market-listing.inquiry', $listing->id) }}" method="POST"
+                            <form action="{{ route('off-market-listing.inquiry', $listing->slug ?? $listing->id) }}" method="POST"
                                 class="space-y-4">
                                 @csrf
                                 <input type="text" name="name" placeholder="Your Name" required
@@ -559,7 +559,7 @@
                                 <h3 class="text-lg font-black text-primary mb-4">Similar Opportunities</h3>
                                 <div class="space-y-4">
                                     @foreach($similarProperties as $s)
-                                        <a href="{{ url('/off-market-property/' . $s->id) }}" class="flex gap-4 group">
+                                        <a href="{{ url('/off-market-property/' . ($s->slug ?? $s->id)) }}" class="flex gap-4 group">
                                             <div class="w-20 h-20 rounded-xl overflow-hidden flex-shrink-0">
                                                 <img src="{{ $s->thumbnail ? asset('storage/' . $s->thumbnail) : asset('assets/img/all-images/hero/1.jpg') }}"
                                                     class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500">
@@ -835,7 +835,7 @@
             if (!container) return;
 
             try {
-                const response = await fetch('{{ route('off-market-listing.sold-prices', $listing->id) }}');
+                const response = await fetch('{{ route('off-market-listing.sold-prices', $listing->slug ?? $listing->id) }}');
                 const data = await response.json();
 
                 if (data.error) {

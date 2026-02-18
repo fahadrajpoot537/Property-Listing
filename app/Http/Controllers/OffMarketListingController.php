@@ -209,7 +209,10 @@ class OffMarketListingController extends Controller
             'ownershipStatus',
             'rentFrequency',
             'cheque'
-        ])->where('status', 'approved')->findOrFail($id);
+        ])->where('status', 'approved')
+            ->where(function ($query) use ($id) {
+                $query->where('slug', $id)->orWhere('id', $id);
+            })->firstOrFail();
 
         // Get similar properties
         $similarProperties = \App\Models\OffMarketListing::with(['propertyType', 'unitType'])
@@ -232,7 +235,10 @@ class OffMarketListingController extends Controller
 
     public function getSoldPrices($id)
     {
-        $listing = \App\Models\OffMarketListing::findOrFail($id);
+        $listing = \App\Models\OffMarketListing::where('status', 'approved')
+            ->where(function ($query) use ($id) {
+                $query->where('slug', $id)->orWhere('id', $id);
+            })->firstOrFail();
         $postcode = $listing->postcode;
 
         if (!$postcode) {
@@ -274,7 +280,7 @@ class OffMarketListingController extends Controller
                                 }
                             })->first();
 
-                            $internalUrl = $internalListing ? route('listing.show', $internalListing->slug) : null;
+                            $internalUrl = $internalListing ? route('listing.show', $internalListing->slug ?? $internalListing->id) : null;
 
                             foreach ($property['sold_history'] as $sale) {
                                 $formattedPrices[] = [

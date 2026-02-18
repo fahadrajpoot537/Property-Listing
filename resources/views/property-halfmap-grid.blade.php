@@ -387,7 +387,7 @@
                                     @endphp
                                     <div class="img-container">
                                         <a
-                                            href="{{ $isOffMarket ? route('off-market-listing.show', $listing->id) : route('listing.show', $listing->id) }}">
+                                            href="{{ $isOffMarket ? route('off-market-listing.show', $listing->slug ?? $listing->id) : route('listing.show', $listing->slug ?? $listing->id) }}">
                                             <img src="{{ $listing->thumbnail ? asset('storage/' . $listing->thumbnail) : asset('assets/img/all-images/hero/1.jpg') }}"
                                                 alt="Property">
                                         </a>
@@ -418,7 +418,7 @@
                                             {{ $listing->purpose }}
                                         </div>
                                         <h3 class="property-title">
-                                            <a href="{{ $isOffMarket ? route('off-market-listing.show', $listing->id) : route('listing.show', $listing->id) }}"
+                                            <a href="{{ $isOffMarket ? route('off-market-listing.show', $listing->slug ?? $listing->id) : route('listing.show', $listing->slug ?? $listing->id) }}"
                                                 class="hover:text-secondary transition-colors">{{ $listing->property_title }}</a>
                                         </h3>
                                         <p class="property-addr">
@@ -450,7 +450,7 @@
                                                 class="flex-1 text-center py-2 px-2 bg-blue-500 text-white rounded-lg text-xs font-bold hover:bg-blue-600 transition-colors flex items-center justify-center gap-1">
                                                 <i class="fa-regular fa-envelope"></i> Email
                                             </a>
-                                            <a href="{{ $isOffMarket ? route('off-market-listing.show', $listing->id) : route('listing.show', $listing->id) }}"
+                                            <a href="{{ $isOffMarket ? route('off-market-listing.show', $listing->slug ?? $listing->id) : route('listing.show', $listing->slug ?? $listing->id) }}"
                                                 class="flex-1 text-center py-2 px-2 border border-gray-200 text-gray-700 rounded-lg text-xs font-bold hover:bg-gray-50 transition-colors flex items-center justify-center gap-1">
                                                 Details
                                             </a>

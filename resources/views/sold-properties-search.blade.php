@@ -8,7 +8,7 @@
             <h1 class="text-4xl md:text-5xl font-black text-white mb-6">
                 Check Sold House Prices
             </h1>
-            <p class="text-xl text-white/80 max-w-2xl mx-auto mb-10">
+            <p class="text-xl text-white max-w-2xl mx-auto mb-10">
                 Search recent property sales in your area instantly.
             </p>
 

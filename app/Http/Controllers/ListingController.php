@@ -233,11 +233,16 @@ class ListingController extends Controller
 
     public function show($id)
     {
-        $listing = Listing::with(['features', 'user', 'propertyType', 'unitType'])->findOrFail($id);
+        $listing = Listing::with(['features', 'user', 'propertyType', 'unitType'])
+            ->where('status', 'approved')
+            ->where(function ($query) use ($id) {
+                $query->where('slug', $id)->orWhere('id', $id);
+            })
+            ->firstOrFail();
 
         // Get similar properties
         $similar_listings = Listing::with('features')->where('status', 'approved')
-            ->where('id', '!=', $id)
+            ->where('id', '!=', $listing->id)
             ->where('purpose', $listing->purpose)
             ->latest()
             ->take(3)
@@ -256,7 +261,10 @@ class ListingController extends Controller
 
     public function getSoldPrices($id)
     {
-        $listing = Listing::findOrFail($id);
+        $listing = Listing::where('status', 'approved')
+            ->where(function ($query) use ($id) {
+                $query->where('slug', $id)->orWhere('id', $id);
+            })->firstOrFail();
         $postcode = $listing->postcode;
 
         if (!$postcode) {
@@ -298,7 +306,7 @@ class ListingController extends Controller
                                 }
                             })->first();
 
-                            $internalUrl = $internalListing ? route('listing.show', $internalListing->slug) : null;
+                            $internalUrl = $internalListing ? route('listing.show', $internalListing->slug ?? $internalListing->id) : null;
 
                             foreach ($property['sold_history'] as $sale) {
                                 $formattedPrices[] = [
@@ -407,12 +415,12 @@ class ListingController extends Controller
                 $html .= '        </div>';
                 $html .= '        <div class="category-list">';
                 $html .= '            <ul>';
-                $html .= '                <li><a href="/property/' . $listing->id . '">Featured</a></li>';
-                $html .= '                <li><a href="/property/' . $listing->id . '">' . htmlspecialchars($listing->purpose) . '</a></li>';
+                $html .= '                <li><a href="/property/' . ($listing->slug ?? $listing->id) . '">Featured</a></li>';
+                $html .= '                <li><a href="/property/' . ($listing->slug ?? $listing->id) . '">' . htmlspecialchars($listing->purpose) . '</a></li>';
                 $html .= '            </ul>';
                 $html .= '        </div>';
                 $html .= '        <div class="content-area">';
-                $html .= '            <a href="/property/' . $listing->id . '">' . htmlspecialchars($listing->title) . '</a>';
+                $html .= '            <a href="/property/' . ($listing->slug ?? $listing->id) . '">' . htmlspecialchars($listing->title) . '</a>';
                 $html .= '            <div class="space18"></div>';
                 $html .= '            <p>' . htmlspecialchars($listing->location ?? $listing->city) . ', ' . htmlspecialchars($listing->state ?? 'UK') . '</p>';
                 $html .= '            <div class="space24"></div>';
@@ -422,7 +430,7 @@ class ListingController extends Controller
                 $html .= '                <li><a href="#"><img src="' . asset('assets/img/icons/sqare1.svg') . '" alt="housebox">' . ($listing->area_size ?? 'N/A') . ' sq</a></li>';
                 $html .= '            </ul>';
                 $html .= '            <div class="btn-area">';
-                $html .= '                <a href="#" class="nm-btn">£' . number_format($listing->price) . '</a>';
+                $html .= '                <a href="/property/' . ($listing->slug ?? $listing->id) . '" class="nm-btn">£' . number_format($listing->price) . '</a>';
                 $html .= '                <a href="javascript:void(0)" class="heart">';
                 $html .= '                    <img src="' . asset('assets/img/icons/heart1.svg') . '" alt="housebox" class="heart1">';
                 $html .= '                    <img src="' . asset('assets/img/icons/heart2.svg') . '" alt="housebox" class="heart2">';
@@ -802,7 +810,7 @@ class ListingController extends Controller
                                         }
                                     })->first();
 
-                                    $internalUrl = $internalListing ? route('listing.show', $internalListing->slug) : null;
+                                    $internalUrl = $internalListing ? route('listing.show', $internalListing->slug ?? $internalListing->id) : null;
 
                                     foreach ($property['sold_history'] as $sale) {
                                         $results[] = [

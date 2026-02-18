@@ -363,7 +363,7 @@
           <div class="h-full">
             <div class="bg-white rounded-3xl overflow-hidden shadow-sm hover:shadow-2xl hover:-translate-y-2 transition-all duration-300 border border-gray-100 h-full flex flex-col group">
               <div class="relative h-64 overflow-hidden shrink-0">
-                <a href="{{ route('off-market-listing.show', $listing->id) }}">
+                <a href="{{ route('off-market-listing.show', $listing->slug ?? $listing->id) }}">
                   @php 
                     $gallery = is_array($listing->gallery) ? $listing->gallery : json_decode($listing->gallery, true) ?? []; 
                   @endphp
@@ -395,7 +395,7 @@
               
               <div class="p-6 flex flex-col flex-grow">
                 <h3 class="text-xl font-bold text-primary mb-2">
-                  <a href="{{ route('off-market-listing.show', $listing->id) }}" class="hover:text-secondary transition-colors">
+                  <a href="{{ route('off-market-listing.show', $listing->slug ?? $listing->id) }}" class="hover:text-secondary transition-colors">
                     {{ $listing->property_title }}
                   </a>
                 </h3>
@@ -432,7 +432,7 @@
                       class="flex-1 text-center py-2 px-2 bg-blue-500 text-white rounded-lg text-xs font-bold hover:bg-blue-600 transition-colors flex items-center justify-center gap-1">
                       <i class="fa-regular fa-envelope"></i> Email
                   </a>
-                  <a href="{{ route('off-market-listing.show', $listing->id) }}"
+                  <a href="{{ route('off-market-listing.show', $listing->slug ?? $listing->id) }}"
                       class="flex-1 text-center py-2 px-2 border border-gray-200 text-gray-700 rounded-lg text-xs font-bold hover:bg-gray-50 transition-colors flex items-center justify-center gap-1">
                       Details
                   </a>
