@@ -3,9 +3,9 @@
 @section('title', 'Sold Properties Search - PropertyFinda')
 
 @section('content')
-    <div class="relative py-20 md:py-28 bg-cover bg-center bg-no-repeat"
+    <div class="relative py-32 md:py-48 bg-cover bg-center bg-no-repeat"
         style="background-image: url('{{ asset('row-terraced-stone-houses-with-multiple-chimneys-harrogate-uk_233859-7040.jpg') }}');">
-        <div class="absolute inset-0 bg-primary/90"></div>
+        <div class="absolute inset-0 bg-black/60"></div>
         <div class="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
             <h1 class="text-4xl md:text-5xl font-black text-white mb-6">
                 Check Sold House Prices
