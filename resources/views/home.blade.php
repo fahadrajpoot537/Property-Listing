@@ -29,9 +29,24 @@
               <span style="color:#00b67a" class="text-white font-bold text-base tracking-wide">Trustpilot</span>
             </div>
             <div class="flex items-center gap-1">
-              @for($i = 0; $i < 5; $i++)
-                <div style="color:#00b67a" class="w-6 h-6 bg-[#00b67a] flex items-center justify-center">
-                  <i style="color:#00b67a" class="fa-solid fa-star text-white text-[12px]"></i>
+              @php
+                  // Ensure rating is treated as a number
+                  $ratingVal = (float) $trustpilotReview->rating;
+              @endphp
+              @for($i = 1; $i <= 5; $i++)
+                  @php
+                      // Calculate fill percentage for this specific star
+                      if ($ratingVal >= $i) {
+                          $fill = 100;
+                      } elseif ($ratingVal < $i - 1) {
+                          $fill = 0;
+                      } else {
+                          $fill = ($ratingVal - ($i - 1)) * 100;
+                      }
+                  @endphp
+                <div class="flex items-center justify-center p-1" 
+                     style="background: linear-gradient(to right, #00b67a {{ $fill }}%, #dcdce6 {{ $fill }}%); width: 24px; height: 24px;">
+                  <i class="fa-solid fa-star" style="color: #ffffff; font-size: 12px;"></i>
                 </div>
               @endfor
             </div>
@@ -880,7 +895,7 @@
         return;
       @endif
 
-                                                                                                                                                                              const data = {
+                                                                                                                                                                                const data = {
         _token: '{{ csrf_token() }}'
       };
       if (listingId) data.listing_id = listingId;
