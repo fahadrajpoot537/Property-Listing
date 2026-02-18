@@ -513,6 +513,10 @@
                                     class="flex items-center px-4 py-2.5 rounded-xl text-[13px] font-bold text-white/40 hover:text-white transition-all {{ request()->routeIs('admin.email-templates.*') ? 'text-white bg-white/5' : '' }}">
                                     Email Templates
                                 </a>
+                                <a href="{{ route('admin.trustpilot-reviews.index') }}"
+                                    class="flex items-center px-4 py-2.5 rounded-xl text-[13px] font-bold text-white/40 hover:text-white transition-all {{ request()->routeIs('admin.trustpilot-reviews.*') ? 'text-white bg-white/5' : '' }}">
+                                    Trustpilot Review
+                                </a>
                             @endcan
                         </div>
                     </div>

@@ -73,6 +73,8 @@ class HomeController extends Controller
         $affiliateRate = \App\Models\Setting::get('affiliate_rate', 5);
         $affiliateBatchSize = \App\Models\Setting::get('affiliate_batch_size', 1000);
 
+        $trustpilotReview = \App\Models\TrustpilotReview::where('is_active', true)->first();
+
         return view('home', [
             'features' => $features,
             'buyListings' => $buyListings,
@@ -82,7 +84,8 @@ class HomeController extends Controller
             'user_favorite_ids' => $user_favorite_ids,
             'blogs' => $blogs,
             'affiliate_rate' => $affiliateRate,
-            'affiliate_batch_size' => $affiliateBatchSize
+            'affiliate_batch_size' => $affiliateBatchSize,
+            'trustpilotReview' => $trustpilotReview,
         ]);
     }
 }

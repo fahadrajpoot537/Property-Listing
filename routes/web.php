@@ -147,6 +147,8 @@ Route::middleware('auth')->group(function () {
         Route::delete('/contact/{submission}', [ContactController::class, 'destroy'])->name('contact.destroy');
 
         Route::resource('email-templates', \App\Http\Controllers\Admin\AdminEmailTemplateController::class);
+        Route::resource('trustpilot-reviews', \App\Http\Controllers\Admin\TrustpilotReviewController::class)
+            ->only(['index', 'store']);
     });
 });
 

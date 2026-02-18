@@ -17,9 +17,38 @@
           style="text-shadow: 2px 2px 4px rgba(0,0,0,0.7);">
           Find Your Perfect Home
         </h1>
-        <p class="text-xl text-white font-medium" style="text-shadow: 1px 1px 3px rgba(0,0,0,0.6);">
+        <p class="text-xl text-white font-medium mb-6" style="text-shadow: 1px 1px 3px rgba(0,0,0,0.6);">
           Search properties for sale and to rent in the UK
         </p>
+
+        @if(isset($trustpilotReview) && $trustpilotReview->is_active)
+          <div
+            class="flex flex-wrap items-center justify-center gap-3 bg-white backdrop-blur-md py-3 px-5 rounded-full w-fit max-w-[95%] mx-auto border border-white/20 mb-8 shadow-lg hover:bg-white/15 transition-all duration-300">
+            <div class="flex items-center gap-2">
+              <i style="color:#00b67a" class="fa-solid fa-star text-[#00b67a] text-xl"></i>
+              <span style="color:#00b67a" class="text-white font-bold text-base tracking-wide">Trustpilot</span>
+            </div>
+            <div class="flex items-center gap-1">
+              @for($i = 0; $i < 5; $i++)
+                <div style="color:#00b67a" class="w-6 h-6 bg-[#00b67a] flex items-center justify-center">
+                  <i style="color:#00b67a" class="fa-solid fa-star text-white text-[12px]"></i>
+                </div>
+              @endfor
+            </div>
+            <div class="text-white text-sm ms-2">
+              <span style="color:#00b67a" class="font-black text-lg">{{ $trustpilotReview->rating }}</span>
+              <span style="color:#00b67a" class="text-white/60 mx-1">|</span>
+              <span style="color:#00b67a"
+                class="font-medium hover:underline cursor-pointer opacity-90 hover:opacity-100 transition-opacity">{{ $trustpilotReview->review_count }}
+                Reviews</span>
+            </div>
+            <a href="https://uk.trustpilot.com/review/propertyfinda.co.uk" target="_blank"
+              class="flex items-center justify-center transition-transform hover:scale-110 ml-2"
+              style="width: 24px; height: 24px;">
+              <i class="fa-solid fa-arrow-up-right-from-square text-black" style="font-size: 1rem; color: #000000;"></i>
+            </a>
+          </div>
+        @endif
       </div>
 
       <!-- Main Portal Search Box (Rightmove-meets-Zoopla Mixture) -->
@@ -851,7 +880,7 @@
         return;
       @endif
 
-                                                                                                                                    const data = {
+                                                                                                                                                                              const data = {
         _token: '{{ csrf_token() }}'
       };
       if (listingId) data.listing_id = listingId;
