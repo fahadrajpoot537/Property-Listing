@@ -3,7 +3,7 @@
 @section('title', 'Sold Properties Search - PropertyFinda')
 
 @section('content')
-    <div class="bg-primary pt-12 pb-24">
+    <div class="bg-primary pt-5 pb-24">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
             <h1 class="text-4xl md:text-5xl font-black text-white mb-6">
                 Check Sold House Prices

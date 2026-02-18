@@ -41,7 +41,7 @@
 @section('content')
     <div class="bg-gray-50 min-h-screen">
         <!-- Hero Section with Search -->
-        <div class="search-container pt-32 pb-16">
+        <div class="search-container pt-5 pb-16">
             <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                 <div class="text-center mb-10">
                     <h1 class="text-4xl md:text-5xl font-black text-white mb-2">Find Estate Agents Near You</h1>
