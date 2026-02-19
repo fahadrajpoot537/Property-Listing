@@ -60,6 +60,7 @@ Route::get('/map/api/properties', [
     \App\Http\Controllers\MapController::class,
     'getProperties'
 ])->name('map.getProperties.get');
+Route::post('/chatbot/chat', [\App\Http\Controllers\ChatbotController::class, 'chat'])->name('chatbot.chat');
 
 // New routes for Contact, Blog, and Services
 Route::get('/contact', [ContactController::class, 'create'])->name('contact.create');

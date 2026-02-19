@@ -383,6 +383,7 @@
         });
     </script>
 
+    @include('partials.chatbot-widget')
     @stack('modals')
     @stack('scripts')
 </body>
