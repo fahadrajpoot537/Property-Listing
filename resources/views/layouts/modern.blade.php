@@ -210,7 +210,8 @@
                 <a href="{{ route('listings.index') }}"
                     class="block pl-3 pr-4 py-3 rounded-lg text-base font-medium {{ request()->routeIs('listings.index') ? 'text-primary bg-gray-50 border-secondary' : 'text-gray-600 border-transparent' }} hover:text-primary hover:bg-gray-50 transition duration-150 ease-in-out border-l-4">Properties</a>
                 <a href="{{ route('sold-properties.search') }}"
-                    class="block pl-3 pr-4 py-3 rounded-lg text-base font-medium {{ request()->routeIs('sold-properties.search') ? 'text-primary bg-gray-50 border-secondary' : 'text-gray-600 border-transparent' }} hover:text-primary hover:bg-gray-50 transition duration-150 ease-in-out border-l-4">Sold Properties</a>
+                    class="block pl-3 pr-4 py-3 rounded-lg text-base font-medium {{ request()->routeIs('sold-properties.search') ? 'text-primary bg-gray-50 border-secondary' : 'text-gray-600 border-transparent' }} hover:text-primary hover:bg-gray-50 transition duration-150 ease-in-out border-l-4">Sold
+                    Properties</a>
                 <a href="{{ route('off-market-listings.index') }}"
                     class="block pl-3 pr-4 py-3 rounded-lg text-base font-medium {{ request()->routeIs('off-market-listings.index') ? 'text-primary bg-gray-50 border-secondary' : 'text-gray-600 border-transparent' }} hover:text-primary hover:bg-gray-50 transition duration-150 ease-in-out border-l-4">Off
                     Market</a>

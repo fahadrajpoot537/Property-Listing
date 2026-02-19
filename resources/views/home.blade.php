@@ -30,22 +30,22 @@
             </div>
             <div class="flex items-center gap-1">
               @php
-                  // Ensure rating is treated as a number
-                  $ratingVal = (float) $trustpilotReview->rating;
+                // Ensure rating is treated as a number
+                $ratingVal = (float) $trustpilotReview->rating;
               @endphp
               @for($i = 1; $i <= 5; $i++)
-                  @php
-                      // Calculate fill percentage for this specific star
-                      if ($ratingVal >= $i) {
-                          $fill = 100;
-                      } elseif ($ratingVal < $i - 1) {
-                          $fill = 0;
-                      } else {
-                          $fill = ($ratingVal - ($i - 1)) * 100;
-                      }
-                  @endphp
-                <div class="flex items-center justify-center p-1" 
-                     style="background: linear-gradient(to right, #00b67a {{ $fill }}%, #dcdce6 {{ $fill }}%); width: 24px; height: 24px;">
+                @php
+                  // Calculate fill percentage for this specific star
+                  if ($ratingVal >= $i) {
+                    $fill = 100;
+                  } elseif ($ratingVal < $i - 1) {
+                    $fill = 0;
+                  } else {
+                    $fill = ($ratingVal - ($i - 1)) * 100;
+                  }
+                @endphp
+                <div class="flex items-center justify-center p-1"
+                  style="background: linear-gradient(to right, #00b67a {{ $fill }}%, #dcdce6 {{ $fill }}%); width: 24px; height: 24px;">
                   <i class="fa-solid fa-star" style="color: #ffffff; font-size: 12px;"></i>
                 </div>
               @endfor
@@ -238,22 +238,13 @@
 
                 <div class="relative">
                   <div class="filter-icon-wrapper"><i class="fa-solid fa-sterling-sign"></i></div>
-                  <select name="min_price" class="select2-filter w-full" data-placeholder="Min price">
-                    <option value="">No Min</option>
-                    <option value="100000">£100,000</option>
-                    <option value="250000">£250,000</option>
-                    <option value="500000">£500,000</option>
-                    <option value="1000000">£1,000,000</option>
-                  </select>
+                  <input type="number" name="min_price" placeholder="Min Price"
+                    class="w-full pl-12 pr-4 py-4 text-base font-medium text-gray-900 bg-gray-50 border border-gray-200 rounded-xl focus:bg-white focus:ring-4 focus:ring-secondary/10 focus:border-secondary transition-all h-[56px] placeholder-gray-400 outline-none">
                 </div>
                 <div class="relative">
                   <div class="filter-icon-wrapper"><i class="fa-solid fa-sterling-sign"></i></div>
-                  <select name="max_price" class="select2-filter w-full" data-placeholder="Max price">
-                    <option value="">No Max</option>
-                    <option value="500000">£500,000</option>
-                    <option value="1000000">£1,000,000</option>
-                    <option value="5000000">£5,000,000</option>
-                  </select>
+                  <input type="number" name="max_price" placeholder="Max Price"
+                    class="w-full pl-12 pr-4 py-4 text-base font-medium text-gray-900 bg-gray-50 border border-gray-200 rounded-xl focus:bg-white focus:ring-4 focus:ring-secondary/10 focus:border-secondary transition-all h-[56px] placeholder-gray-400 outline-none">
                 </div>
                 <div class="relative">
                   <div class="filter-icon-wrapper"><i class="fa-solid fa-bed"></i></div>
@@ -895,7 +886,7 @@
         return;
       @endif
 
-                                                                                                                                                                                const data = {
+                                                                                                                                                                                  const data = {
         _token: '{{ csrf_token() }}'
       };
       if (listingId) data.listing_id = listingId;

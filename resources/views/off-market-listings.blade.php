@@ -188,22 +188,13 @@
                 </div>
                 <div class="relative">
                   <div class="filter-icon-wrapper"><i class="fa-solid fa-sterling-sign text-secondary"></i></div>
-                  <select id="min-price-sale" class="select2-filter w-full" data-placeholder="Min Price">
-                    <option value="">No Min</option>
-                    <option value="100000">£100,000</option>
-                    <option value="250000">£250,000</option>
-                    <option value="500000">£500,000</option>
-                    <option value="1000000">£1,000,000</option>
-                  </select>
+                  <input type="number" id="min-price-sale" placeholder="Min Price"
+                    class="w-full pl-12 pr-4 py-4 text-base font-medium text-gray-900 bg-gray-50 border border-gray-200 rounded-xl focus:bg-white focus:ring-4 focus:ring-secondary/10 focus:border-secondary transition-all h-[56px] placeholder-gray-400 outline-none">
                 </div>
                 <div class="relative">
                   <div class="filter-icon-wrapper"><i class="fa-solid fa-sterling-sign text-secondary"></i></div>
-                  <select id="max-price-sale" class="select2-filter w-full" data-placeholder="Max Price">
-                    <option value="">No Max</option>
-                    <option value="500000">£500,000</option>
-                    <option value="1000000">£1,000,000</option>
-                    <option value="5000000">£5,000,000</option>
-                  </select>
+                  <input type="number" id="max-price-sale" placeholder="Max Price"
+                    class="w-full pl-12 pr-4 py-4 text-base font-medium text-gray-900 bg-gray-50 border border-gray-200 rounded-xl focus:bg-white focus:ring-4 focus:ring-secondary/10 focus:border-secondary transition-all h-[56px] placeholder-gray-400 outline-none">
                 </div>
                 <div class="relative">
                   <div class="filter-icon-wrapper"><i class="fa-solid fa-bed text-secondary"></i></div>
@@ -286,22 +277,13 @@
                 </div>
                 <div class="relative">
                   <div class="filter-icon-wrapper"><i class="fa-solid fa-sterling-sign text-secondary"></i></div>
-                  <select id="min-price-rent" class="select2-filter w-full" data-placeholder="Min Price">
-                    <option value="">No Min</option>
-                    <option value="500">£500 pcm</option>
-                    <option value="1000">£1,000 pcm</option>
-                    <option value="1500">£1,500 pcm</option>
-                    <option value="2000">£2,000 pcm</option>
-                  </select>
+                  <input type="number" id="min-price-rent" placeholder="Min Price"
+                    class="w-full pl-12 pr-4 py-4 text-base font-medium text-gray-900 bg-gray-50 border border-gray-200 rounded-xl focus:bg-white focus:ring-4 focus:ring-secondary/10 focus:border-secondary transition-all h-[56px] placeholder-gray-400 outline-none">
                 </div>
                 <div class="relative">
                   <div class="filter-icon-wrapper"><i class="fa-solid fa-sterling-sign text-secondary"></i></div>
-                  <select id="max-price-rent" class="select2-filter w-full" data-placeholder="Max Price">
-                    <option value="">No Max</option>
-                    <option value="1000">£1,000 pcm</option>
-                    <option value="2000">£2,000 pcm</option>
-                    <option value="5000">£5,000 pcm</option>
-                  </select>
+                  <input type="number" id="max-price-rent" placeholder="Max Price"
+                    class="w-full pl-12 pr-4 py-4 text-base font-medium text-gray-900 bg-gray-50 border border-gray-200 rounded-xl focus:bg-white focus:ring-4 focus:ring-secondary/10 focus:border-secondary transition-all h-[56px] placeholder-gray-400 outline-none">
                 </div>
                 <div class="relative">
                   <div class="filter-icon-wrapper"><i class="fa-solid fa-bed text-secondary"></i></div>

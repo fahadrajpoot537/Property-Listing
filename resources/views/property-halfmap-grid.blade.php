@@ -617,27 +617,17 @@
                                 <div class="grid grid-cols-2 gap-2">
                                     <div>
                                         <label class="form-label-custom">Min Price</label>
-                                        <select name="min_price" class="select2-filter">
-                                            <option value="">No Min</option>
-                                            <option value="100000" {{ request('min_price') == '100000' ? 'selected' : '' }}>
-                                                £100k</option>
-                                            <option value="250000" {{ request('min_price') == '250000' ? 'selected' : '' }}>
-                                                £250k</option>
-                                            <option value="500000" {{ request('min_price') == '500000' ? 'selected' : '' }}>
-                                                £500k</option>
-                                        </select>
+                                        <div class="relative">
+                                            <i class="fa-solid fa-sterling-sign absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 text-xs z-10"></i>
+                                            <input type="number" name="min_price" value="{{ request('min_price') }}" class="sidebar-input" placeholder="No Min">
+                                        </div>
                                     </div>
                                     <div>
                                         <label class="form-label-custom">Max Price</label>
-                                        <select name="max_price" class="select2-filter">
-                                            <option value="">No Max</option>
-                                            <option value="500000" {{ request('max_price') == '500000' ? 'selected' : '' }}>
-                                                £500k</option>
-                                            <option value="1000000" {{ request('max_price') == '1000000' ? 'selected' : '' }}>
-                                                £1m</option>
-                                            <option value="5000000" {{ request('max_price') == '5000000' ? 'selected' : '' }}>
-                                                £5m</option>
-                                        </select>
+                                        <div class="relative">
+                                            <i class="fa-solid fa-sterling-sign absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 text-xs z-10"></i>
+                                            <input type="number" name="max_price" value="{{ request('max_price') }}" class="sidebar-input" placeholder="No Max">
+                                        </div>
                                     </div>
                                 </div>
 
