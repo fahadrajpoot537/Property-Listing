@@ -90,7 +90,7 @@ class RoleAndPermissionSeeder extends Seeder
             'Q/A',
             'Agency',
             'Freelance',
-            'landlords',
+            'landlord',
         ];
 
         foreach ($roles as $roleName) {
