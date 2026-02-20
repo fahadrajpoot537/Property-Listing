@@ -29,9 +29,10 @@
             <x-input-label for="type" :value="__('Document Type')" />
             <select id="type" name="type"
                 class="mt-1 block w-full border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm">
-                <option value="passport">Passport</option>
-                <option value="id_card">ID Card</option>
-                <option value="driving_license">Driving License</option>
+                <option value="passport">{{ __('Passport') }}</option>
+                <option value="id_card">{{ __('ID Card') }}</option>
+                <option value="driving_license">{{ __('Driving License') }}</option>
+                <option value="company_license">{{ __('Company License') }}</option>
             </select>
             <x-input-error :messages="$errors->get('type')" class="mt-2" />
         </div>
