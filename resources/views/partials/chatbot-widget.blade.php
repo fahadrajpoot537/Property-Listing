@@ -9,10 +9,10 @@
             right: 30px; 
             width: 60px; 
             height: 60px; 
-            background: #1F98AD; 
+            background: #107f80; 
             border-radius: 50%; 
             border: none;
-            box-shadow: 0 10px 25px #1F98AD; 
+            box-shadow: 0 10px 25px #107f80; 
             cursor: pointer; 
             z-index: 99999;
             display: flex;

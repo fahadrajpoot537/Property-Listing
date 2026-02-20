@@ -31,7 +31,7 @@
 <body class="font-sans antialiased bg-white text-gray-900">
 
     <!-- Top Bar -->
-    <div style="background-color: #1897ad;" class="py-2.5 border-b border-primary/20 relative z-[60]">
+    <div style="background-color: #107f80;" class="py-2.5 border-b border-primary/20 relative z-[60]">
         <div
             class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col md:flex-row justify-between items-center gap-2">
             <div class="flex items-center gap-4 text-sm font-medium text-white/90">
