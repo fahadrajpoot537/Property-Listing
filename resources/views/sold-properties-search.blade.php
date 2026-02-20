@@ -29,6 +29,7 @@
                 <div class="w-full md:w-48 relative border-t md:border-t-0 md:border-l border-gray-100">
                     <select name="radius"
                         class="block w-full pl-4 pr-10 py-4 rounded-full border-0 focus:ring-0 text-gray-900 font-bold bg-transparent">
+                        <option value="0" {{ request('radius') == '0' ? 'selected' : '' }}>Exactly this location</option>
                         <option value="0.1" {{ request('radius') == '0.1' ? 'selected' : '' }}>0.1 miles</option>
                         <option value="0.25" {{ request('radius') == '0.25' ? 'selected' : '' }}>0.25 miles</option>
                         <option value="0.5" {{ request('radius', 0.5) == '0.5' ? 'selected' : '' }}>0.5 miles</option>
@@ -77,10 +78,34 @@
                             @elseif(!empty($property['images']) && isset($property['images'][0]['url']))
                                 <img src="{{ $property['images'][0]['url'] }}" alt="{{ $property['address'] }}"
                                     class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500">
+                            @elseif(!empty($property['latitude']) && !empty($property['longitude']))
+                                <div class="w-full h-full">
+                                    <iframe width="100%" height="100%" frameborder="0" style="border:0"
+                                        src="https://www.google.com/maps/embed/v1/place?key={{ config('services.google.maps_api_key') }}&q={{ $property['latitude'] }},{{ $property['longitude'] }}"
+                                        allowfullscreen>
+                                    </iframe>
+                                    <div class="absolute inset-0 bg-black/5 pointer-events-none"></div>
+                                    <div
+                                        class="absolute top-2 right-2 bg-white/90 backdrop-blur px-2 py-1 rounded-md text-[8px] font-black uppercase tracking-widest text-primary shadow-sm">
+                                        Location Map
+                                    </div>
+                                </div>
+                            @elseif(!empty($property['address']) || !empty($property['postcode']))
+                                <div class="w-full h-full">
+                                    <iframe width="100%" height="100%" frameborder="0" style="border:0"
+                                        src="https://www.google.com/maps/embed/v1/place?key={{ config('services.google.maps_api_key') }}&q={{ urlencode(($property['address'] ?? '') . ' ' . ($property['postcode'] ?? '')) }}"
+                                        allowfullscreen>
+                                    </iframe>
+                                    <div class="absolute inset-0 bg-black/5 pointer-events-none"></div>
+                                    <div
+                                        class="absolute top-2 right-2 bg-white/90 backdrop-blur px-2 py-1 rounded-md text-[8px] font-black uppercase tracking-widest text-primary shadow-sm">
+                                        Location Map
+                                    </div>
+                                </div>
                             @else
                                 <div class="absolute inset-0 flex flex-col items-center justify-center text-gray-300">
-                                    <i class="fa-solid fa-image text-4xl mb-2"></i>
-                                    <span class="text-xs font-black uppercase tracking-widest">No Image</span>
+                                    <i class="fa-solid fa-map-location-dot text-4xl mb-2"></i>
+                                    <span class="text-xs font-black uppercase tracking-widest">No Image or Map</span>
                                 </div>
                             @endif
 
@@ -142,7 +167,7 @@
                                     View Full Listing
                                 </a>
                             @else
-                                <a href="{{ route('property.external-details') }}?postcode={{ urlencode($property['postcode']) }}&address={{ urlencode($property['address']) }}&search_postcode={{ urlencode($property['search_postcode']) }}"
+                                <a href="{{ route('property.external-details') }}?postcode={{ urlencode($property['postcode']) }}&address={{ urlencode($property['address']) }}&search_postcode={{ urlencode($property['search_postcode']) }}&lat={{ $property['latitude'] ?? '' }}&lng={{ $property['longitude'] ?? '' }}"
                                     class="block w-full py-3 bg-gray-50 text-gray-900 font-bold rounded-xl text-center hover:bg-primary hover:text-white transition-colors">
                                     View Details
                                 </a>

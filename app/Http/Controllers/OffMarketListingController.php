@@ -246,9 +246,8 @@ class OffMarketListingController extends Controller
         }
 
         $apiKey = '3f5f396290a1e9c3be70b679210c188d3562a0d9';
-        // Using PaTMa API as per user's latest information
-        // We use radius 0.5 to catch properties in the immediate area
-        $apiUrl = "https://app.patma.co.uk/api/prospector/v1/list-property/?postcode=" . urlencode($postcode) . "&radius=0.5&require_sold_price=true&include_sold_history=true&include_listing_data=true&token=" . $apiKey;
+        // Using radius=0.2 (API minimum) and exact address filtering to only show history for this specific property
+        $apiUrl = "https://app.patma.co.uk/api/prospector/v1/list-property/?postcode=" . urlencode($postcode) . "&radius=0.2&require_sold_price=true&include_sold_history=true&include_listing_data=true&token=" . $apiKey;
 
         try {
             $response = \Illuminate\Support\Facades\Http::timeout(30)->get($apiUrl);
@@ -265,18 +264,65 @@ class OffMarketListingController extends Controller
 
                 $formattedPrices = [];
                 if (isset($data['data']['available_results'])) {
+                    // Prepare target information for matching
+                    $inputAddress = $listing->address ?: $listing->property_title;
+                    $inputAddrClean = strtolower(preg_replace('/[^a-z0-9 ]/', ' ', $inputAddress));
+                    $inputWords = array_filter(explode(' ', $inputAddrClean));
+                    preg_match_all('/\d+/', $inputAddress, $inputNumbers);
+                    $targetNumbers = $inputNumbers[0] ?? [];
+
+                    // Remove postcode-like patterns for a cleaner comparison
+                    $inputAddrNoPc = preg_replace('/\b[A-Z]{1,2}\d[A-Z\d]?\s*\d[A-Z]{2}\b/i', '', $inputAddress);
+                    $normInputNoPc = strtolower(preg_replace('/[^a-z0-9]/', '', $inputAddrNoPc));
+
                     foreach ($data['data']['available_results'] as $property) {
+                        $score = 0;
+                        $resAddr = $property['address'] ?? $property['label'] ?? '';
+                        $resAddrClean = strtolower(preg_replace('/[^a-z0-9 ]/', ' ', $resAddr));
+                        $normRes = strtolower(preg_replace('/[^a-z0-9]/', '', $resAddr));
+
+                        // 1. Check Full Normalized Match
+                        if ($normRes === strtolower(preg_replace('/[^a-z0-9]/', '', $inputAddress)) || $normRes === $normInputNoPc) {
+                            $score += 500;
+                        }
+
+                        // 2. Check Number Matches (Fundamental for identifying correct flat/house)
+                        foreach ($targetNumbers as $num) {
+                            if (preg_match('/\b' . $num . '\b/', $resAddr)) {
+                                $score += 150;
+                            }
+                        }
+
+                        // 3. Check Word Matches (Heavier weight for longer words)
+                        foreach ($inputWords as $word) {
+                            if (strlen($word) > 3 && strpos($resAddrClean, $word) !== false) {
+                                $score += 50;
+                            } elseif (strlen($word) > 2 && strpos($resAddrClean, $word) !== false) {
+                                $score += 20;
+                            }
+                        }
+
+                        // 4. Substring Match
+                        if ($normInputNoPc && strlen($normInputNoPc) > 5 && strpos($normRes, $normInputNoPc) !== false) {
+                            $score += 200;
+                        }
+
+                        // Bonus: If it starts with the same house number
+                        if (!empty($targetNumbers) && preg_match('/^' . $targetNumbers[0] . '\b/', $resAddr)) {
+                            $score += 100;
+                        }
+
+                        // Threshold for a valid match
+                        if ($score < 120)
+                            continue;
+
                         if (isset($property['sold_history']) && is_array($property['sold_history'])) {
                             // Check if this property exists in our database
                             $internalListing = \App\Models\Listing::where(function ($q) use ($property) {
                                 $addr = $property['address'] ?? $property['label'] ?? '';
-                                $pc = $property['postcode'] ?? '';
                                 if ($addr) {
                                     $q->where('address', 'LIKE', '%' . $addr . '%')
                                         ->orWhere('property_title', 'LIKE', '%' . $addr . '%');
-                                }
-                                if ($pc) {
-                                    $q->orWhere('address', 'LIKE', '%' . $pc . '%');
                                 }
                             })->first();
 

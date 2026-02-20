@@ -272,9 +272,8 @@ class ListingController extends Controller
         }
 
         $apiKey = '3f5f396290a1e9c3be70b679210c188d3562a0d9';
-        // Using PaTMa API as per user's latest information
-        // We use radius 0.5 to catch properties in the immediate area
-        $apiUrl = "https://app.patma.co.uk/api/prospector/v1/list-property/?postcode=" . urlencode($postcode) . "&radius=0.5&require_sold_price=true&include_sold_history=true&include_listing_data=true&token=" . $apiKey;
+        // Using radius=0.2 (API minimum) and exact address filtering to only show history for this specific property
+        $apiUrl = "https://app.patma.co.uk/api/prospector/v1/list-property/?postcode=" . urlencode($postcode) . "&radius=0.2&require_sold_price=true&include_sold_history=true&include_listing_data=true&token=" . $apiKey;
 
         try {
             $response = \Illuminate\Support\Facades\Http::timeout(30)->get($apiUrl);
@@ -291,18 +290,66 @@ class ListingController extends Controller
 
                 $formattedPrices = [];
                 if (isset($data['data']['available_results'])) {
+                    // Prepare target information for matching
+                    $inputAddress = $listing->address ?: $listing->property_title;
+                    $inputAddrClean = strtolower(preg_replace('/[^a-z0-9 ]/', ' ', $inputAddress));
+                    $inputWords = array_filter(explode(' ', $inputAddrClean));
+                    preg_match_all('/\d+/', $inputAddress, $inputNumbers);
+                    $targetNumbers = $inputNumbers[0] ?? [];
+
+                    // Remove postcode-like patterns for a cleaner comparison
+                    $inputAddrNoPc = preg_replace('/\b[A-Z]{1,2}\d[A-Z\d]?\s*\d[A-Z]{2}\b/i', '', $inputAddress);
+                    $normInputNoPc = strtolower(preg_replace('/[^a-z0-9]/', '', $inputAddrNoPc));
+
                     foreach ($data['data']['available_results'] as $property) {
+                        $score = 0;
+                        $resAddr = $property['address'] ?? $property['label'] ?? '';
+                        $resAddrClean = strtolower(preg_replace('/[^a-z0-9 ]/', ' ', $resAddr));
+                        $normRes = strtolower(preg_replace('/[^a-z0-9]/', '', $resAddr));
+
+                        // 1. Check Full Normalized Match
+                        if ($normRes === strtolower(preg_replace('/[^a-z0-9]/', '', $inputAddress)) || $normRes === $normInputNoPc) {
+                            $score += 500;
+                        }
+
+                        // 2. Check Number Matches (Fundamental for identifying correct flat/house)
+                        foreach ($targetNumbers as $num) {
+                            if (preg_match('/\b' . $num . '\b/', $resAddr)) {
+                                $score += 150;
+                            }
+                        }
+
+                        // 3. Check Word Matches (Heavier weight for longer words)
+                        foreach ($inputWords as $word) {
+                            if (strlen($word) > 3 && strpos($resAddrClean, $word) !== false) {
+                                $score += 50;
+                            } elseif (strlen($word) > 2 && strpos($resAddrClean, $word) !== false) {
+                                $score += 20;
+                            }
+                        }
+
+                        // 4. Substring Match
+                        if ($normInputNoPc && strlen($normInputNoPc) > 5 && strpos($normRes, $normInputNoPc) !== false) {
+                            $score += 200;
+                        }
+
+                        // Bonus: If the first number (usually house/flat number) matches exactly at the start
+                        if (!empty($targetNumbers) && preg_match('/^' . $targetNumbers[0] . '\b/', $resAddr)) {
+                            $score += 100;
+                        }
+
+                        // Threshold for a valid match (e.g., matching a house number + some address details)
+                        // Lowered to 120 to be even more inclusive while relying on API postcode filter
+                        if ($score < 120)
+                            continue;
+
                         if (isset($property['sold_history']) && is_array($property['sold_history'])) {
                             // Check if this property exists in our database
                             $internalListing = \App\Models\Listing::where(function ($q) use ($property) {
                                 $addr = $property['address'] ?? $property['label'] ?? '';
-                                $pc = $property['postcode'] ?? '';
                                 if ($addr) {
                                     $q->where('address', 'LIKE', '%' . $addr . '%')
                                         ->orWhere('property_title', 'LIKE', '%' . $addr . '%');
-                                }
-                                if ($pc) {
-                                    $q->orWhere('address', 'LIKE', '%' . $pc . '%');
                                 }
                             })->first();
 
@@ -315,6 +362,8 @@ class ListingController extends Controller
                                     'type' => $property['property_type'] ?? 'Residential',
                                     'name' => $property['address'] ?? $property['label'] ?? 'N/A',
                                     'location' => $property['postcode'] ?? $listing->postcode ?? 'N/A',
+                                    'latitude' => $property['latitude'] ?? null,
+                                    'longitude' => $property['longitude'] ?? null,
                                     'search_postcode' => $listing->postcode,
                                     'url' => $internalUrl ?? $property['url'] ?? '#',
                                     'is_internal' => (bool) $internalListing,
@@ -322,7 +371,7 @@ class ListingController extends Controller
                                     'images' => $property['site_images'] ?? [],
                                     'tenure' => $property['tenure'] ?? 'N/A',
                                     'bedrooms' => $internalListing->bedrooms ?? $property['bedrooms'] ?? 'N/A',
-                                    'bathrooms' => $internalListing->bathrooms ?? 'N/A',
+                                    'bathrooms' => $internalListing->bathrooms ?? $property['bathrooms'] ?? $property['baths'] ?? 'N/A',
                                     'habitable_rooms' => $property['habitable_rooms'] ?? 'N/A',
                                     'floor_area' => $internalListing ? ($internalListing->area_size ? number_format($internalListing->area_size) . ' sq ft' : 'N/A') : (isset($property['floor_area_sqft']) ? number_format($property['floor_area_sqft']) . ' sq ft' : 'N/A'),
                                     'built_form' => $property['built_form'] ?? 'N/A',
@@ -677,28 +726,79 @@ class ListingController extends Controller
                 \Illuminate\Support\Facades\Log::info("External Details Search: Postcode={$postcode}, Address={$address}");
 
                 if (isset($data['data']['available_results'])) {
-                    // Try to find exact or fuzzy match
-                    foreach ($data['data']['available_results'] as $res) {
-                        $resAddr = $res['address'] ?? $res['label'] ?? '';
+                    $lat = $request->query('lat');
+                    $lng = $request->query('lng');
 
-                        // Normalize addresses for comparison (lowercase, remove punctuation/spaces)
+                    $bestScore = -1;
+                    $bestMatch = null;
+
+                    // Prepare input for matching
+                    $inputAddrClean = strtolower(preg_replace('/[^a-z0-9 ]/', ' ', $address));
+                    // Remove postcode-like patterns from the end of input for better partial matching
+                    $inputAddrNoPc = preg_replace('/\b[A-Z]{1,2}\d[A-Z\d]?\s*\d[A-Z]{2}\b/i', '', $address);
+                    $normInputAddrNoPc = strtolower(preg_replace('/[^a-z0-9]/', '', $inputAddrNoPc));
+
+                    $inputWords = array_filter(explode(' ', $inputAddrClean));
+                    preg_match_all('/\d+/', $address, $inputNumbers);
+                    $targetNumbers = $inputNumbers[0] ?? [];
+
+                    foreach ($data['data']['available_results'] as $res) {
+                        $score = 0;
+                        $resAddr = $res['address'] ?? $res['label'] ?? '';
+                        $resAddrClean = strtolower(preg_replace('/[^a-z0-9 ]/', ' ', $resAddr));
                         $normResAddr = strtolower(preg_replace('/[^a-zA-Z0-9]/', '', $resAddr));
                         $normInputAddr = strtolower(preg_replace('/[^a-zA-Z0-9]/', '', $address));
 
-                        // Check exact match after normalization
-                        if ($normResAddr === $normInputAddr) {
-                            $property = $res;
-                            break;
+                        // Priority 1: Exact coordinate match
+                        if ($lat && $lng && isset($res['latitude'], $res['longitude'])) {
+                            if (abs((float) $res['latitude'] - (float) $lat) < 0.0001 && abs((float) $res['longitude'] - (float) $lng) < 0.0001) {
+                                $score += 100;
+                            }
                         }
 
-                        // Check if one contains the other
-                        if (strpos($normResAddr, $normInputAddr) !== false || strpos($normInputAddr, $normResAddr) !== false) {
-                            $property = $res;
-                            break; // Prioritize first substring match
+                        // Priority 2: Full Address Match
+                        if ($normResAddr === $normInputAddr) {
+                            $score += 500;
+                        }
+
+                        // Priority 3: Word & Number Match
+                        $matchCount = 0;
+                        foreach ($inputWords as $word) {
+                            if (strlen($word) > 1 && strpos($resAddrClean, $word) !== false) {
+                                $matchCount++;
+                                $score += 10;
+                            }
+                        }
+
+                        // Number matching - CRITICAL for distinguishing flats
+                        foreach ($targetNumbers as $num) {
+                            if (preg_match('/\b' . $num . '\b/', $resAddr)) {
+                                $score += 100;
+                            }
+                        }
+
+                        // Substring match ignoring postcodes
+                        if ($normResAddr && $normInputAddrNoPc && (strpos($normResAddr, $normInputAddrNoPc) !== false)) {
+                            $score += 150;
+                        }
+
+                        // Priority 4: Data Quality (Prefer results with images/descriptions)
+                        if (!empty($res['site_images']) || !empty($res['images'])) {
+                            $score += 50;
+                        }
+                        if (!empty($res['description_text']) || !empty($res['description'])) {
+                            $score += 30;
+                        }
+
+                        if ($score > $bestScore && $score > 0) {
+                            $bestScore = $score;
+                            $bestMatch = $res;
                         }
                     }
 
-                    // Fallback to first result ONLY if there is only 1 result (likely the correct one)
+                    $property = $bestMatch;
+
+                    // Fallback to first result ONLY if there is only 1 result and no best match found
                     if (!$property && count($data['data']['available_results']) === 1) {
                         $property = $data['data']['available_results'][0];
                     }
@@ -709,6 +809,13 @@ class ListingController extends Controller
                     if (empty($property['postcode'])) {
                         $property['postcode'] = $postcode ?: $searchPostcode;
                     }
+
+                    // Fallback for coordinates from request if missing in API result
+                    if (empty($property['latitude']))
+                        $property['latitude'] = $request->query('lat');
+                    if (empty($property['longitude']))
+                        $property['longitude'] = $request->query('lng');
+
                     return view('external-property-detail', compact('property'));
                 } else {
                     \Illuminate\Support\Facades\Log::warning("External Details: Property not found for {$address}. Available results count: " . (isset($data['data']['available_results']) ? count($data['data']['available_results']) : 0));
@@ -726,23 +833,29 @@ class ListingController extends Controller
     public function soldPropertiesSearch(Request $request)
     {
         $location = $request->input('location');
-        $radius = $request->input('radius', 0.5); // Default 0.5 miles
+        $radius = $request->input('radius', 0.5);
+        // If "Exactly this location" (0) is selected, we use 0.25 miles as a safe bet for UK postcode centers
+        if ($radius == 0)
+            $radius = 0.25;
+
         $results = [];
         $searchPerformed = false;
         $error = null;
 
         if ($request->filled('location')) {
             $searchPerformed = true;
+            $locationInput = $request->input('location');
             $postcode = null;
 
-            // Try to extract postcode from input
-            if (preg_match('/([A-Z]{1,2}[0-9][0-9A-Z]?\s?[0-9][A-Z]{2})/i', $location, $matches)) {
-                $postcode = $matches[0];
+            // Strict UK Postcode Regex
+            $pcRegex = '/([Gg][Ii][Rr] 0[Aa]{2})|((([A-Za-z][0-9]{1,2})|(([A-Za-z][A-Ha-hJ-Yj-y][0-9]{1,2})|(([A-Za-z][0-9][A-Za-z])|([A-Za-z][A-Ha-hJ-Yj-y][0-9][A-Za-z]?))))\s?[0-9][A-Za-z]{2})/i';
+
+            if (preg_match($pcRegex, $locationInput, $matches)) {
+                $postcode = strtoupper(str_replace(' ', '', $matches[0]));
             } else {
-                // Try to reverse geocode the location string to get a postcode
-                $coord = $this->geocodeAddress($location);
+                // FALLBACK: Only use Google if no postcode is found in the string
+                $coord = $this->geocodeAddress($locationInput);
                 if ($coord) {
-                    // Reverse geocode to get postcode from lat/lng
                     $apiKey = config('services.google.maps_api_key');
                     if ($apiKey) {
                         $geoUrl = "https://maps.googleapis.com/maps/api/geocode/json?latlng=" . $coord['lat'] . "," . $coord['lng'] . "&key=" . $apiKey;
@@ -750,112 +863,123 @@ class ListingController extends Controller
                             $geoResp = \Illuminate\Support\Facades\Http::get($geoUrl);
                             if ($geoResp->successful()) {
                                 $geoData = $geoResp->json();
-                                if (isset($geoData['results'][0]['address_components'])) {
-                                    foreach ($geoData['results'][0]['address_components'] as $comp) {
-                                        if (in_array('postal_code', $comp['types'])) {
-                                            $postcode = $comp['long_name'];
-                                            break;
-                                        }
-                                    }
-                                    // Fallback: search general text for postcode pattern in formatted address
-                                    if (!$postcode && isset($geoData['results'][0]['formatted_address'])) {
-                                        if (preg_match('/([A-Z]{1,2}[0-9][0-9A-Z]?\s?[0-9][A-Z]{2})/i', $geoData['results'][0]['formatted_address'], $m)) {
-                                            $postcode = $m[0];
-                                        }
+                                foreach ($geoData['results'][0]['address_components'] ?? [] as $comp) {
+                                    if (in_array('postal_code', $comp['types'])) {
+                                        $postcode = strtoupper(str_replace(' ', '', $comp['long_name']));
+                                        break;
                                     }
                                 }
                             }
                         } catch (\Exception $e) {
-                            \Illuminate\Support\Facades\Log::error('Reverse Geocoding Error: ' . $e->getMessage());
+                            Log::error('Reverse Geocoding Error: ' . $e->getMessage());
                         }
                     }
                 }
-            }
-
-            // Clean up postcode if found (partial match from google autocomplete often includes just outcode e.g. "E14")
-            if (!$postcode && preg_match('/London\s+([A-Z0-9]+)/i', $location, $m)) {
-                // Sometimes google sends "London E14, UK". The "E14" is a valid outcode but not full postcode.
-                // The PaTMa API might accept outcodes, let's try.
-                $postcode = $m[1];
             }
 
             if ($postcode) {
-                // Format postcode
-                $postcode = strtoupper(str_replace(' ', '', $postcode));
-                // Standard format X(X)N(N) NXX
-                if (strlen($postcode) > 4) {
-                    $postcode = substr($postcode, 0, -3) . ' ' . substr($postcode, -3);
+                // If the user typed a specific address (more than just a postcode), 
+                // we force a slightly larger radius to ensure we don't miss the exact house
+                if (strlen($locationInput) > strlen($postcode) + 5) {
+                    $searchRadius = max($radius, 0.5);
+                } else {
+                    $searchRadius = $radius;
                 }
 
+                $postcodeFormatted = (strlen($postcode) > 4) ? substr($postcode, 0, -3) . ' ' . substr($postcode, -3) : $postcode;
                 $apiKey = '3f5f396290a1e9c3be70b679210c188d3562a0d9';
-                $url = "https://app.patma.co.uk/api/prospector/v1/list-property/?postcode=" . urlencode($postcode) . "&radius=" . $radius . "&require_sold_price=true&include_sold_history=true&include_listing_data=true&token=" . $apiKey;
+
+                // PaTMa list-property API call
+                $url = "https://app.patma.co.uk/api/prospector/v1/list-property/?postcode=" . urlencode($postcodeFormatted) . "&radius=" . $searchRadius . "&require_sold_price=true&include_sold_history=true&include_listing_data=true&limit=100&token=" . $apiKey;
 
                 try {
-                    $response = \Illuminate\Support\Facades\Http::timeout(30)->get($url);
-                    if ($response->successful()) {
-                        $data = $response->json();
-                        if (isset($data['data']['available_results'])) {
-                            foreach ($data['data']['available_results'] as $property) {
-                                if (isset($property['sold_history']) && is_array($property['sold_history'])) {
-                                    // Check if this property exists in our database
-                                    $internalListing = \App\Models\Listing::where(function ($q) use ($property) {
-                                        $addr = $property['address'] ?? $property['label'] ?? '';
-                                        $pc = $property['postcode'] ?? '';
-                                        if ($addr) {
-                                            $q->where('address', 'LIKE', '%' . $addr . '%')
-                                                ->orWhere('property_title', 'LIKE', '%' . $addr . '%');
-                                        }
-                                        if ($pc) {
-                                            $q->orWhere('address', 'LIKE', '%' . $pc . '%');
-                                        }
-                                    })->first();
+                    $response = \Illuminate\Support\Facades\Http::timeout(90)->get($url);
+                    $data = $response->json();
 
-                                    $internalUrl = $internalListing ? route('listing.show', $internalListing->slug ?? $internalListing->id) : null;
+                    if ($response->successful() && isset($data['data']['available_results'])) {
+                        foreach ($data['data']['available_results'] as $property) {
+                            if (!empty($property['sold_history'])) {
+                                $internalListing = \App\Models\Listing::where('address', 'LIKE', '%' . ($property['address'] ?? '') . '%')
+                                    ->orWhere('property_title', 'LIKE', '%' . ($property['address'] ?? '') . '%')
+                                    ->first();
 
-                                    foreach ($property['sold_history'] as $sale) {
-                                        $results[] = [
-                                            'date' => $sale['date'],
-                                            'price' => $sale['amount'],
-                                            'type' => $property['property_type'] ?? 'Residential',
-                                            'name' => $property['address'] ?? $property['label'] ?? 'N/A', // Mapped to name for consistency with snippet
-                                            'address' => $property['address'] ?? $property['label'] ?? 'N/A', // Mapped to address for view
-                                            'postcode' => $property['postcode'] ?? $postcode ?? 'N/A',
-                                            'location' => $property['postcode'] ?? $postcode ?? 'N/A',
-                                            'search_postcode' => $postcode,
-                                            'url' => $internalUrl ?? $property['url'] ?? '#',
-                                            'is_internal' => (bool) $internalListing,
-                                            'description' => $property['description_text'] ?? 'No additional description available.',
-                                            'site_images' => $property['site_images'] ?? [], // For view
-                                            'images' => $property['site_images'] ?? [], // For snippet consistency
-                                            'tenure' => $property['tenure'] ?? 'N/A',
-                                            'bedrooms' => $internalListing->bedrooms ?? $property['bedrooms'] ?? 'N/A',
-                                            'bathrooms' => $internalListing->bathrooms ?? 'N/A',
-                                            'habitable_rooms' => $property['habitable_rooms'] ?? 'N/A',
-                                            'floor_area' => $internalListing ? ($internalListing->area_size ? number_format($internalListing->area_size) . ' sq ft' : 'N/A') : (isset($property['floor_area_sqft']) ? number_format($property['floor_area_sqft']) . ' sq ft' : 'N/A'),
-                                            'built_form' => $property['built_form'] ?? 'N/A',
-                                            'council_tax' => $internalListing->council_tax_band ?? 'N/A',
-                                            'epc' => $internalListing->epc_rating ?? 'N/A',
-                                            'flood_risk' => $internalListing->flood_risk ?? 'N/A'
-                                        ];
-                                    }
+                                $internalUrl = $internalListing ? route('listing.show', $internalListing->slug ?? $internalListing->id) : null;
+
+                                foreach ($property['sold_history'] as $sale) {
+                                    $results[] = [
+                                        'date' => $sale['date'],
+                                        'price' => $sale['amount'],
+                                        'type' => $property['property_type'] ?? 'Residential',
+                                        'address' => $property['address'] ?? $property['label'] ?? 'N/A',
+                                        'postcode' => $property['postcode'] ?? $postcodeFormatted,
+                                        'search_postcode' => $postcodeFormatted,
+                                        'latitude' => $property['latitude'] ?? null,
+                                        'longitude' => $property['longitude'] ?? null,
+                                        'url' => $internalUrl ?? $property['url'] ?? '#',
+                                        'is_internal' => (bool) $internalListing,
+                                        'site_images' => $property['site_images'] ?? [],
+                                        'images' => $property['site_images'] ?? [],
+                                        'bedrooms' => $internalListing ? ($internalListing->bedrooms ?? 'N/A') : ($property['bedrooms'] ?? 'N/A'),
+                                        'bathrooms' => $internalListing ? ($internalListing->bathrooms ?? 'N/A') : ($property['bathrooms'] ?? ($property['baths'] ?? 'N/A')),
+                                        'floor_area' => isset($property['floor_area_sqft']) ? number_format($property['floor_area_sqft']) . ' sq ft' : 'N/A',
+                                        'tenure' => $property['tenure'] ?? 'N/A'
+                                    ];
                                 }
                             }
+                        }
 
-                            // Sort by date descending
-                            usort($results, function ($a, $b) {
-                                return strcmp($b['date'], $a['date']);
+                        if (!empty($results)) {
+                            // 1. Get numbers from the address part only (exclude postcode)
+                            $cleanPostcode = str_replace(' ', '', $postcodeFormatted);
+                            $addressOnlySearch = trim(str_ireplace([$postcodeFormatted, $cleanPostcode, $postcode], '', $locationInput));
+                            preg_match_all('/\d+/', $addressOnlySearch, $targetNumberMatch);
+                            $targetNumbers = $targetNumberMatch[0] ?? [];
+
+                            $searchQueryClean = strtolower(preg_replace('/[^a-z0-9 ]/', ' ', $addressOnlySearch));
+                            $searchWords = array_filter(explode(' ', $searchQueryClean));
+
+                            usort($results, function ($a, $b) use ($searchWords, $targetNumbers, $searchQueryClean) {
+                                $scoreA = 0;
+                                $scoreB = 0;
+                                $addrA = strtolower($a['address']);
+                                $addrB = strtolower($b['address']);
+
+                                // Rule 1: Exact Number Match (Priority #1)
+                                foreach ($targetNumbers as $num) {
+                                    if (preg_match('/\b' . $num . '\b/', $addrA))
+                                        $scoreA += 5000;
+                                    if (preg_match('/\b' . $num . '\b/', $addrB))
+                                        $scoreB += 5000;
+                                }
+
+                                // Rule 2: Substring Match
+                                if ($searchQueryClean && strpos($addrA, $searchQueryClean) !== false)
+                                    $scoreA += 500;
+                                if ($searchQueryClean && strpos($addrB, $searchQueryClean) !== false)
+                                    $scoreB += 500;
+
+                                // Rule 3: Keyword matches
+                                foreach ($searchWords as $word) {
+                                    if (strlen($word) < 3)
+                                        continue;
+                                    if (strpos($addrA, $word) !== false)
+                                        $scoreA += 50;
+                                    if (strpos($addrB, $word) !== false)
+                                        $scoreB += 50;
+                                }
+
+                                return ($scoreA !== $scoreB) ? ($scoreB <=> $scoreA) : strcmp($b['date'], $a['date']);
                             });
                         }
                     } else {
-                        \Illuminate\Support\Facades\Log::warning('Sold Property Search Failed: ' . $response->body());
-                        $error = 'Could not fetch data. Please try again.';
+                        Log::warning('PaTMa API Error or No Results: ' . json_encode($data));
                     }
                 } catch (\Exception $e) {
-                    $error = 'Error connecting to external provider.';
-                    \Illuminate\Support\Facades\Log::error('Sold Property Search Error: ' . $e->getMessage());
+                    Log::error('Sold Property Search Exception: ' . $e->getMessage());
+                    $error = 'Search timed out. We showed what we found, please refresh if images or maps are missing.';
                 }
             } else {
-                $error = 'Please enter a location with a valid UK Postcode (e.g. ME1 1AA).';
+                $error = 'Please include a UK Postcode (e.g. E14 9GR) for an accurate search.';
             }
         }
 

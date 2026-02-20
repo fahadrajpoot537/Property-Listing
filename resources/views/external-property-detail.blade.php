@@ -39,10 +39,35 @@
                     @if(!empty($property['site_images']) && count($property['site_images']) > 0)
                         <img src="{{ $property['site_images'][0]['url'] }}" alt="Property Image"
                             class="w-full h-full object-cover">
+                    @elseif(!empty($property['images']) && count($property['images']) > 0)
+                        <img src="{{ is_array($property['images'][0]) ? $property['images'][0]['url'] : $property['images'][0] }}" alt="Property Image"
+                            class="w-full h-full object-cover">
+                    @elseif(!empty($property['latitude']) && !empty($property['longitude']))
+                        <div class="w-full h-full">
+                            <iframe 
+                                width="100%" 
+                                height="100%" 
+                                frameborder="0" 
+                                style="border:0"
+                                src="https://www.google.com/maps/embed/v1/place?key={{ config('services.google.maps_api_key') }}&q={{ $property['latitude'] }},{{ $property['longitude'] }}" 
+                                allowfullscreen>
+                            </iframe>
+                        </div>
+                    @elseif(!empty($property['address']) || !empty($property['postcode']))
+                        <div class="w-full h-full">
+                            <iframe 
+                                width="100%" 
+                                height="100%" 
+                                frameborder="0" 
+                                style="border:0"
+                                src="https://www.google.com/maps/embed/v1/place?key={{ config('services.google.maps_api_key') }}&q={{ urlencode(($property['address'] ?? '') . ' ' . ($property['postcode'] ?? '')) }}" 
+                                allowfullscreen>
+                            </iframe>
+                        </div>
                     @else
                         <div class="absolute inset-0 flex flex-col items-center justify-center text-gray-400 gap-4">
-                            <i class="fa-solid fa-image text-8xl"></i>
-                            <span class="text-sm font-bold uppercase tracking-widest">No Images Available</span>
+                            <i class="fa-solid fa-map-location-dot text-8xl"></i>
+                            <span class="text-sm font-bold uppercase tracking-widest">No Image or Map Available</span>
                         </div>
                     @endif
                 </div>
@@ -57,7 +82,7 @@
                     <div class="bg-white p-6 rounded-3xl shadow-sm border border-gray-100">
                         <i class="fa-solid fa-bath text-secondary text-xl mb-4"></i>
                         <p class="text-[10px] font-black text-gray-400 uppercase tracking-widest mb-1">Bathrooms</p>
-                        <p class="text-lg font-black text-primary">{{ $property['habitable_rooms'] ?? 'N/A' }}</p>
+                        <p class="text-lg font-black text-primary">{{ $property['bathrooms'] ?? ($property['baths'] ?? ($property['habitable_rooms'] ?? 'N/A')) }}</p>
                     </div>
                     <div class="bg-white p-6 rounded-3xl shadow-sm border border-gray-100">
                         <i class="fa-solid fa-ruler-combined text-secondary text-xl mb-4"></i>
@@ -80,7 +105,7 @@
                         Property Description
                     </h3>
                     <div class="text-gray-600 leading-relaxed space-y-4 whitespace-pre-line text-lg">
-                        {!! nl2br(e($property['description_text'] ?? 'No additional description available for this property.')) !!}
+                        {!! nl2br(e($property['description_text'] ?? ($property['description'] ?? 'No additional description available for this property.'))) !!}
                     </div>
                 </div>
             </div>

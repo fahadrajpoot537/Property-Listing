@@ -839,6 +839,44 @@
                 }
 
                 window.soldPriceData = prices;
+                
+                // Enhance page with external data if internal data is missing/sparse
+                const bestResult = prices[0];
+                if (bestResult) {
+                    // Update description if external is much longer
+                    const externalDesc = bestResult.description;
+                    const internalDesc = `{!! addslashes(strip_tags($listing->description)) !!}`;
+                    
+                    if (externalDesc && externalDesc.length > internalDesc.length + 50) {
+                        const descContainer = document.querySelector('[x-data="{ expanded: false }"] .prose');
+                        if (descContainer) {
+                            const enhancedHtml = `
+                                <div class="mb-4 bg-secondary/5 border border-secondary/20 p-4 rounded-xl flex items-center gap-3">
+                                    <i class="fa-solid fa-wand-magic-sparkles text-secondary"></i>
+                                    <span class="text-xs font-bold text-secondary uppercase tracking-wider text-wrap">Enhanced description found via PaTMa API</span>
+                                </div>
+                                <div class="whitespace-pre-line">${externalDesc}</div>
+                            `;
+                            // Replace the internal description logic with the enhanced one
+                            descContainer.innerHTML = enhancedHtml;
+                            // Hide the "See More" button since we showed the full enhanced desc
+                            const seeMoreBtn = descContainer.closest('div').querySelector('button');
+                            if(seeMoreBtn) seeMoreBtn.style.display = 'none';
+                        }
+                    }
+
+                    // If internal gallery is empty but external has images
+                    const internalGalleryCount = {{ count($allMedia) }};
+                    if (internalGalleryCount <= 1 && bestResult.images && bestResult.images.length > 0) {
+                         const galleryNotification = document.createElement('div');
+                         galleryNotification.className = "mt-4 bg-secondary/5 border border-secondary/20 p-4 rounded-xl flex items-center gap-3";
+                         galleryNotification.innerHTML = `
+                            <i class="fa-solid fa-images text-secondary"></i>
+                            <span class="text-xs font-bold text-secondary uppercase tracking-wider">Additional images available in the history gallery below</span>
+                         `;
+                         document.querySelector('.property-gallery-grid')?.after(galleryNotification);
+                    }
+                }
 
                 let html = `
                     <div class="overflow-x-auto">
