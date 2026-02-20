@@ -93,7 +93,8 @@
                         <div class="text-center">
                             <h2 class="text-xl font-black text-slate-800 tracking-tight">{{ $user->name }}</h2>
                             <p class="text-sm font-bold text-slate-400 mt-1 uppercase tracking-widest">
-                                {{ $user->roles->first()->name ?? 'No Role' }}</p>
+                                {{ $user->roles->first()->name ?? 'No Role' }}
+                            </p>
                         </div>
 
                         <div class="mt-8 space-y-4">
@@ -119,7 +120,23 @@
                                     <p class="text-[10px] font-black text-slate-400 uppercase tracking-widest">Phone Number
                                     </p>
                                     <p class="text-sm font-bold text-slate-700 truncate">
-                                        {{ $user->phone_number ?? 'Not Provided' }}</p>
+                                        {{ $user->phone_number ?? 'Not Provided' }}
+                                    </p>
+                                </div>
+                            </div>
+                            <div
+                                class="flex items-center gap-4 p-4 bg-slate-50 rounded-2xl border border-slate-100 hover:border-indigo-100 transition-colors group">
+                                <div
+                                    class="w-10 h-10 rounded-xl bg-white flex items-center justify-center text-indigo-600 shadow-sm border border-slate-200 group-hover:scale-110 transition-transform">
+                                    <i class='bx bx-map text-xl'></i>
+                                </div>
+                                <div class="flex-1 min-w-0">
+                                    <p class="text-[10px] font-black text-slate-400 uppercase tracking-widest">Physical
+                                        Address</p>
+                                    <p class="text-sm font-bold text-slate-700 truncate"
+                                        title="{{ $user->address ?? 'Not Provided' }}">
+                                        {{ $user->address ?? 'Not Provided' }}
+                                    </p>
                                 </div>
                             </div>
                             <div
@@ -131,7 +148,8 @@
                                 <div class="flex-1 min-w-0">
                                     <p class="text-[10px] font-black text-slate-400 uppercase tracking-widest">Joined On</p>
                                     <p class="text-sm font-bold text-slate-700 truncate">
-                                        {{ $user->created_at->format('M d, Y') }}</p>
+                                        {{ $user->created_at->format('M d, Y') }}
+                                    </p>
                                 </div>
                             </div>
                         </div>
@@ -191,9 +209,11 @@
                                             </span>
                                         </div>
                                         <h4 class="text-sm font-black text-slate-800 uppercase tracking-tight">
-                                            {{ str_replace('_', ' ', $doc->type) }}</h4>
+                                            {{ str_replace('_', ' ', $doc->type) }}
+                                        </h4>
                                         <p class="text-[10px] font-bold text-slate-400 mt-1 uppercase tracking-widest">Uploaded
-                                            {{ $doc->created_at->diffForHumans() }}</p>
+                                            {{ $doc->created_at->diffForHumans() }}
+                                        </p>
 
                                         <div class="mt-6 pt-6 border-t border-slate-100 flex items-center justify-between">
                                             <a href="{{ asset('storage/' . $doc->file_path) }}" target="_blank"
@@ -224,6 +244,49 @@
                         @endif
                     </div>
                 </div>
+
+                <!-- Location & Mapping Section -->
+                @if($user->latitude && $user->longitude)
+                    <div class="bg-white rounded-3xl border border-slate-100 shadow-sm overflow-hidden mb-8">
+                        <div class="px-8 py-6 border-b border-slate-100 bg-slate-50/50 flex items-center justify-between">
+                            <div>
+                                <h3 class="text-lg font-black text-slate-800 tracking-tight">Geographic Location</h3>
+                                <p class="text-xs font-bold text-slate-400 uppercase tracking-widest mt-1">Precise Pinpoint on
+                                    Global Map</p>
+                            </div>
+                            <div
+                                class="flex items-center gap-2 px-4 py-2 bg-white rounded-full border border-slate-200 shadow-sm text-indigo-600">
+                                <i class='bx bxs-map-pin animate-bounce'></i>
+                                <span class="text-[10px] font-black uppercase tracking-widest">Active Marker</span>
+                            </div>
+                        </div>
+                        <div class="p-8">
+                            <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-6">
+                                <div class="bg-slate-50 p-4 rounded-2xl border border-slate-100">
+                                    <p class="text-[9px] font-black text-slate-400 uppercase tracking-widest mb-1">Latitude</p>
+                                    <p class="text-sm font-bold text-slate-800">{{ $user->latitude }}</p>
+                                </div>
+                                <div class="bg-slate-50 p-4 rounded-2xl border border-slate-100">
+                                    <p class="text-[9px] font-black text-slate-400 uppercase tracking-widest mb-1">Longitude</p>
+                                    <p class="text-sm font-bold text-slate-800">{{ $user->longitude }}</p>
+                                </div>
+                                <div class="md:col-span-2 bg-indigo-50 p-4 rounded-2xl border border-indigo-100">
+                                    <p class="text-[9px] font-black text-indigo-400 uppercase tracking-widest mb-1">Formatted
+                                        Coordinates</p>
+                                    <p class="text-sm font-bold text-indigo-700">{{ $user->latitude }}, {{ $user->longitude }}
+                                    </p>
+                                </div>
+                            </div>
+
+                            <div class="w-full h-[350px] rounded-2xl overflow-hidden border border-slate-200 shadow-inner">
+                                <iframe width="100%" height="100%" frameborder="0" scrolling="no" marginheight="0"
+                                    marginwidth="0"
+                                    src="https://maps.google.com/maps?q={{ $user->latitude }},{{ $user->longitude }}&hl=en&z=14&amp;output=embed">
+                                </iframe>
+                            </div>
+                        </div>
+                    </div>
+                @endif
 
                 <!-- Activity / Properties Impact (Optional) -->
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
