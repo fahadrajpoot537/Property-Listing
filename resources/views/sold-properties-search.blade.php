@@ -3,14 +3,14 @@
 @section('title', 'Sold Properties Search - PropertyFinda')
 
 @section('content')
-    <div class="relative py-32 md:py-60 bg-cover bg-no-repeat bg-center md:bg-fixed"
-        style="background-image: url('{{ asset('row-terraced-stone-houses-with-multiple-chimneys-harrogate-uk_233859-7040.jpg') }}'); background-position: center 40%;">
-        <div class="absolute inset-0 bg-gradient-to-b from-black/80 via-black/40 to-black/20"></div>
-        <div class="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-            <h1 class="text-4xl md:text-5xl font-black text-white mb-6">
-                Check Sold House Prices
+    <div class="relative min-h-[90vh] flex items-center bg-cover bg-no-repeat bg-center md:bg-fixed"
+        style="background-image: url('{{ asset('row-terraced-stone-houses-with-multiple-chimneys-harrogate-uk_233859-7040.jpg') }}'); background-position: center 50%;">
+        <div class="absolute inset-0 bg-gradient-to-b from-black/90 via-black/40 to-black/20"></div>
+        <div class="relative z-10 w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center py-20">
+            <h1 class="text-5xl md:text-7xl font-black text-white mb-6 tracking-tighter">
+                Check Sold <span class="text-white">House Prices</span>
             </h1>
-            <p class="text-xl text-black max-w-2xl mx-auto mb-10">
+            <p class="text-xl md:text-2xl text-white max-w-2xl mx-auto mb-12 font-medium">
                 Search recent property sales in your area instantly.
             </p>
 
