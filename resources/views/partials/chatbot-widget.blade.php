@@ -9,10 +9,10 @@
             right: 30px; 
             width: 60px; 
             height: 60px; 
-            background: #107f80; 
+            background: #16a2a3; 
             border-radius: 50%; 
             border: none;
-            box-shadow: 0 10px 25px #107f80; 
+            box-shadow: 0 10px 25px #16a2a3; 
             cursor: pointer; 
             z-index: 99999;
             display: flex;
@@ -49,7 +49,7 @@
 
         <!-- Custom Header -->
         <div
-            style="background: #1F98AD; padding: 20px; color: white; display: flex; align-items: center; justify-content: space-between;">
+            style="background: #16a2a3; padding: 20px; color: white; display: flex; align-items: center; justify-content: space-between;">
             <div style="display: flex; align-items: center; gap: 12px;">
                 <div
                     style="width: 40px; height: 40px; background: rgba(255,255,255,0.2); border-radius: 12px; display: flex; align-items: center; justify-content: center; backdrop-filter: blur(5px);">
@@ -87,10 +87,10 @@
                     Try searching:
                     <div style="margin-top: 8px; display: flex; flex-direction: column; gap: 6px;">
                         <span onclick="quickSearch('Rent a 2 bed flat in London')"
-                            style="cursor: pointer; color: #1F98AD; font-weight: 500; font-size: 13px;">➔ Rent a 2 bed
+                            style="cursor: pointer; color: #16a2a3; font-weight: 500; font-size: 13px;">➔ Rent a 2 bed
                             flat in London</span>
                         <span onclick="quickSearch('Buy a 3 bed house in E14')"
-                            style="cursor: pointer; color: #1F98AD; font-weight: 500; font-size: 13px;">➔ Buy a 3 bed
+                            style="cursor: pointer; color: #16a2a3; font-weight: 500; font-size: 13px;">➔ Buy a 3 bed
                             house in E14</span>
                     </div>
                 </div>
@@ -102,12 +102,12 @@
             <form onsubmit="handleChat(event)" style="display: flex; gap: 10px; position: relative;">
                 <input type="text" id="ai-input" placeholder="Type specific requirements..." required
                     style="flex: 1; padding: 12px 16px; padding-right: 45px; border-radius: 25px; border: 1px solid #e2e8f0; outline: none; font-size: 14px; background: #f8fafc; transition: all 0.2s;"
-                    onfocus="this.style.borderColor='#1F98AD'; this.style.background='white';"
+                    onfocus="this.style.borderColor='#16a2a3'; this.style.background='white';"
                     onblur="this.style.borderColor='#e2e8f0'; this.style.background='#f8fafc';">
                 <button type="submit"
-                    style="position: absolute; right: 6px; top: 50%; transform: translateY(-50%); width: 32px; height: 32px; background: #1F98AD; border: none; border-radius: 50%; color: white; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: background 0.2s;"
-                    onmouseover="this.style.backgroundColor='#1F98AD'"
-                    onmouseout="this.style.backgroundColor='#1F98AD'">
+                    style="position: absolute; right: 6px; top: 50%; transform: translateY(-50%); width: 32px; height: 32px; background: #16a2a3; border: none; border-radius: 50%; color: white; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: background 0.2s;"
+                    onmouseover="this.style.backgroundColor='#16a2a3'"
+                    onmouseout="this.style.backgroundColor='#16a2a3'">
                     <i class="fa-solid fa-paper-plane" style="font-size: 12px;"></i>
                 </button>
             </form>
@@ -186,7 +186,7 @@
         div.style.display = 'flex'; div.style.marginBottom = '15px'; div.style.alignItems = 'flex-end';
         if (sender === 'user') {
             div.style.justifyContent = 'flex-end';
-            div.innerHTML = `<div style="background: #1F98AD; color: white; padding: 12px 16px; border-radius: 18px; border-bottom-right-radius: 4px; font-size: 14px; max-width: 85%; line-height: 1.5; box-shadow: 0 4px 12px rgba(29, 161, 242, 0.2);">${text}</div>`;
+            div.innerHTML = `<div style="background: #16a2a3; color: white; padding: 12px 16px; border-radius: 18px; border-bottom-right-radius: 4px; font-size: 14px; max-width: 85%; line-height: 1.5; box-shadow: 0 4px 12px rgba(29, 161, 242, 0.2);">${text}</div>`;
         } else {
             div.innerHTML = `<div style="width: 30px; height: 30px; border-radius: 50%; background: #e0f2fe; display: flex; align-items: center; justify-content: center; color: #0284c7; font-size: 12px; flex-shrink: 0; margin-right: 10px;"><i class="fa-solid fa-robot"></i></div><div style="background: white; padding: 12px 16px; border-radius: 18px; border-bottom-left-radius: 4px; font-size: 14px; color: #334155; line-height: 1.5; box-shadow: 0 2px 4px rgba(0,0,0,0.02); border: 1px solid #e2e8f0; max-width: 85%;">${text}</div>`;
         }
@@ -219,7 +219,7 @@
                 <a href="${prop.url}" target="_blank" style="min-width: 200px; background: white; border-radius: 12px; overflow: hidden; box-shadow: 0 4px 6px rgba(0,0,0,0.05); border: 1px solid #e2e8f0; text-decoration: none; display: block; transition: transform 0.2s;" onmouseover="this.style.transform='translateY(-5px)'" onmouseout="this.style.transform='translateY(0)'">
                     <div style="height: 110px; position: relative;">
                         <img src="${img}" style="width: 100%; height: 100%; object-fit: cover;">
-                        <span style="position: absolute; top: 8px; left: 8px; background: rgba(255,255,255,0.9); padding: 2px 6px; border-radius: 4px; font-size: 10px; font-weight: bold; color: #1F98AD;">${prop.type}</span>
+                        <span style="position: absolute; top: 8px; left: 8px; background: rgba(255,255,255,0.9); padding: 2px 6px; border-radius: 4px; font-size: 10px; font-weight: bold; color: #16a2a3;">${prop.type}</span>
                         <div style="position: absolute; bottom: 8px; left: 8px; background: rgba(0,0,0,0.6); color: white; padding: 2px 6px; border-radius: 4px; font-size: 10px; font-weight: bold;">£${parseInt(prop.price).toLocaleString()}</div>
                     </div>
                     <div style="padding: 10px;">
