@@ -4,12 +4,51 @@
 
 @section('content')
     <div class="flex justify-between items-center mb-6">
-        <h3 class="text-slate-600">{{ auth()->user()->hasRole('Agency') ? 'My Team' : 'User Management' }}</h3>
+        <h3 class="text-slate-600 font-bold text-2xl">
+            {{ auth()->user()->hasRole('Agency') ? 'My Team' : 'User Management' }}
+        </h3>
         <button onclick="openModal()"
             class="bg-[#8046F1] hover:bg-[#6D28D9] text-white font-black py-2.5 px-6 rounded-xl shadow-lg shadow-purple-100 transition-all flex items-center gap-2 active:scale-95 text-sm uppercase tracking-wider">
             <i class='bx bx-plus-circle text-lg'></i>
             {{ auth()->user()->hasRole('Agency') ? 'Add Team Member' : 'Create New User' }}
         </button>
+    </div>
+
+    <!-- Filters Section -->
+    <div class="bg-white shadow-sm rounded-xl border border-slate-100 p-5 mb-8">
+        <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+            <div class="col-span-1 md:col-span-2">
+                <label class="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-2">Search User</label>
+                <div class="relative">
+                    <input type="text" id="customSearch" placeholder="Search by name, email or phone..."
+                        class="w-full pl-10 pr-4 py-2.5 rounded-xl border-slate-200 focus:border-indigo-500 focus:ring-indigo-500 text-sm transition-all">
+                    <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-slate-400">
+                        <i class='bx bx-search text-lg'></i>
+                    </div>
+                </div>
+            </div>
+            <div>
+                <label class="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-2">Filter by Role</label>
+                <select id="roleFilter"
+                    class="w-full rounded-xl border-slate-200 focus:border-indigo-500 focus:ring-indigo-500 text-sm py-2.5">
+                    <option value="">All Roles</option>
+                    @foreach($roles as $role)
+                        <option value="{{ $role->name }}">{{ ucfirst($role->name) }}</option>
+                    @endforeach
+                </select>
+            </div>
+            <div>
+                <label class="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-2">Filter by Status</label>
+                <select id="statusFilter"
+                    class="w-full rounded-xl border-slate-200 focus:border-indigo-500 focus:ring-indigo-500 text-sm py-2.5">
+                    <option value="">All Statuses</option>
+                    <option value="approved">Approved</option>
+                    <option value="document_approved">Document Approved</option>
+                    <option value="pending">Pending</option>
+                    <option value="rejected">Rejected</option>
+                </select>
+            </div>
+        </div>
     </div>
 
     <div class="bg-white shadow-sm rounded-xl border border-slate-100 p-6">
@@ -90,192 +129,362 @@
                 </div>
             </div>
         </div>
-    </div>
+        <!-- View User Detail Modal -->
+        <div id="userViewModal" class="fixed inset-0 z-50 hidden overflow-y-auto" aria-labelledby="modal-title"
+            role="dialog" aria-modal="true">
+            <div class="flex items-end justify-center min-h-screen px-4 pt-4 pb-20 text-center sm:block sm:p-0">
+                <div class="fixed inset-0 transition-opacity bg-gray-500 bg-opacity-75" aria-hidden="true"
+                    onclick="closeViewModal()"></div>
+                <span class="hidden sm:inline-block sm:align-middle sm:h-screen" aria-hidden="true">&#8203;</span>
+                <div
+                    class="inline-block overflow-hidden text-left align-bottom transition-all transform bg-white rounded-2xl shadow-xl sm:my-8 sm:align-middle sm:max-w-2xl sm:w-full border border-slate-100">
+                    <div class="bg-white">
+                        <!-- Modal Header -->
+                        <div class="px-6 py-4 border-b border-slate-100 flex items-center justify-between bg-slate-50/50">
+                            <div class="flex items-center gap-3">
+                                <div class="p-2 bg-indigo-50 rounded-lg text-indigo-600">
+                                    <i class='bx bx-user text-xl'></i>
+                                </div>
+                                <div>
+                                    <h3 class="font-bold text-slate-800" id="viewUserName">User Details</h3>
+                                    <p class="text-xs text-slate-500 font-medium">Complete profile information</p>
+                                </div>
+                            </div>
+                            <button onclick="closeViewModal()"
+                                class="text-slate-400 hover:text-slate-600 transition-colors">
+                                <i class='bx bx-x text-2xl'></i>
+                            </button>
+                        </div>
 
-    @push('scripts')
-        <script>
-            $(document).ready(function () {
-                var table = $('#usersTable').DataTable({
-                    processing: true,
-                    serverSide: false, // Client-side handling for now as controller returns all data
-                    ajax: "{{ route('admin.users.index') }}",
-                    columns: [
-                        { data: 'id', name: 'id' },
-                        {
-                            data: 'name', name: 'name', render: function (data, type, row) {
-                                return `<div class="flex items-center">
-                                                                    <div class="w-8 h-8 rounded-full bg-slate-200 flex items-center justify-center text-slate-600 font-bold mr-3">${data.charAt(0)}</div>
-                                                                    <div><div class="font-medium text-slate-800">${data}</div></div>
-                                                                </div>`;
-                            }
-                        },
-                        { data: 'email', name: 'email' },
-                        {
-                            data: 'roles', name: 'roles', render: function (data) {
-                                return data.map(role => `<span class="bg-indigo-100 text-indigo-700 rounded-full px-3 py-1 text-xs font-semibold mr-1">${role.name}</span>`).join('');
-                            }
-                        },
-                        {
-                            data: 'status', name: 'status', render: function (data) {
-                                let color = 'bg-slate-100 text-slate-700';
-                                if (data === 'approved') color = 'bg-emerald-100 text-emerald-700';
-                                if (data === 'rejected') color = 'bg-rose-100 text-rose-700';
-                                if (data === 'pending') color = 'bg-amber-100 text-amber-700';
-                                return `<span class="${color} rounded-full px-3 py-1 text-xs font-semibold uppercase">${data || 'pending'}</span>`;
-                            }
-                        },
-                        {
-                            data: 'id', name: 'actions', orderable: false, searchable: false, render: function (data, type, row) {
-                                let approvalBtn = '';
-                                if (row.status === 'pending' || row.status === 'rejected') {
-                                    approvalBtn = `<button onclick="updateUserStatus(${data}, 'approved')" class="w-8 h-8 rounded-full bg-slate-100 flex items-center justify-center text-emerald-600 hover:bg-emerald-100 transition-colors" title="Approve"><i class='bx bx-check'></i></button>`;
-                                } else if (row.status === 'approved') {
-                                    approvalBtn = `<button onclick="updateUserStatus(${data}, 'rejected')" class="w-8 h-8 rounded-full bg-slate-100 flex items-center justify-center text-rose-600 hover:bg-rose-100 transition-colors" title="Reject"><i class='bx bx-x'></i></button>`;
-                                }
+                        <!-- Modal Body -->
+                        <div class="p-6 space-y-6">
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                <!-- Basic Info -->
+                                <div class="space-y-4">
+                                    <div>
+                                        <label
+                                            class="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-1">Email
+                                            Address</label>
+                                        <p class="text-slate-800 font-medium flex items-center gap-2" id="viewUserEmail">
+                                        </p>
+                                    </div>
+                                    <div>
+                                        <label
+                                            class="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-1">Phone
+                                            Number</label>
+                                        <p class="text-slate-800 font-medium flex items-center gap-2" id="viewUserPhone">
+                                        </p>
+                                    </div>
+                                    <div>
+                                        <label
+                                            class="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-1">Account
+                                            Role</label>
+                                        <div id="viewUserRoles" class="flex flex-wrap gap-2"></div>
+                                    </div>
+                                    <div>
+                                        <label
+                                            class="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-1">Status</label>
+                                        <span id="viewUserStatus" class="inline-block"></span>
+                                    </div>
+                                </div>
 
-                                return `
-                                                            <div class="flex gap-2">
-                                                                ${approvalBtn}
-                                                                <button onclick="editUser(${data})" class="w-8 h-8 rounded-full bg-slate-100 flex items-center justify-center text-slate-600 hover:bg-indigo-100 hover:text-indigo-600 transition-colors" title="Edit"><i class='bx bxs-edit'></i></button>
-                                                                <button onclick="deleteUser(${data})" class="w-8 h-8 rounded-full bg-slate-100 flex items-center justify-center text-slate-600 hover:bg-rose-100 hover:text-rose-600 transition-colors" title="Delete"><i class='bx bxs-trash'></i></button>
-                                                            </div>
-                                                        `;
-                            }
+                                <!-- Agency/Team Info -->
+                                <div class="space-y-4">
+                                    <div id="agencySection" class="hidden">
+                                        <label
+                                            class="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-1">Affiliated
+                                            Agency</label>
+                                        <p class="text-indigo-600 font-bold flex items-center gap-2">
+                                            <i class='bx bxs-business'></i>
+                                            <span id="viewUserAgency"></span>
+                                        </p>
+                                    </div>
+                                    <div>
+                                        <label
+                                            class="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-1">Member
+                                            Since</label>
+                                        <p class="text-slate-800 font-medium" id="viewUserJoined"></p>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Documents Section -->
+                            <div class="mt-8">
+                                <label
+                                    class="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-3">Verification
+                                    Documents</label>
+                                <div id="viewUserDocuments" class="grid grid-cols-1 gap-3">
+                                    <!-- Documents will be injected here -->
+                                </div>
+                                <div id="noDocuments" class="bg-slate-50 rounded-xl p-8 text-center text-slate-400 hidden">
+                                    <i class='bx bx-file-blank text-4xl mb-2 block'></i>
+                                    <span class="text-sm font-medium">No verification documents uploaded yet.</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Modal Footer -->
+                        <div class="px-6 py-4 bg-slate-50 border-t border-slate-100 flex justify-end">
+                            <button onclick="closeViewModal()"
+                                class="px-6 py-2 bg-white border border-slate-200 text-slate-600 font-bold rounded-xl hover:bg-slate-100 transition-all active:scale-95 text-sm">
+                                Close
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        @push('scripts')
+            <script>
+                // Global Modal Functions
+                function openModal() {
+                    $('#userForm')[0].reset();
+                    $('#userId').val('');
+                    $('#modalTitle').text('Create New User');
+                    $('#passwordHint').text('(Required)');
+                    $('#userModal').removeClass('hidden');
+                }
+
+                function closeModal() {
+                    $('#userModal').addClass('hidden');
+                }
+
+                function viewUser(id) {
+                    $.get(`/admin/users/${id}`, function (user) {
+                        $('#viewUserName').text(user.name);
+                        $('#viewUserEmail').html(`<i class='bx bx-envelope text-slate-400'></i> ${user.email}`);
+                        $('#viewUserPhone').html(`<i class='bx bx-phone text-slate-400'></i> ${user.phone_number || 'N/A'}`);
+                        $('#viewUserJoined').text(new Date(user.created_at).toLocaleDateString(undefined, { year: 'numeric', month: 'long', day: 'numeric' }));
+
+                        // Roles
+                        let rolesHtml = user.roles.map(role => `<span class="bg-indigo-100 text-indigo-700 rounded-lg px-3 py-1 text-xs font-bold uppercase tracking-wider">${role.name}</span>`).join('');
+                        $('#viewUserRoles').html(rolesHtml);
+
+                        // Status
+                        let statusColor = 'bg-slate-100 text-slate-700';
+                        if (user.status === 'approved' || user.status === 'document_approved') statusColor = 'bg-emerald-100 text-emerald-700';
+                        else if (user.status === 'rejected') statusColor = 'bg-rose-100 text-rose-700';
+                        else if (user.status === 'pending') statusColor = 'bg-amber-100 text-amber-700';
+                        $('#viewUserStatus').html(`<span class="${statusColor} rounded-lg px-3 py-1 text-xs font-bold uppercase tracking-wider">${(user.status || 'pending').replace(/_/g, ' ')}</span>`);
+
+                        // Agency
+                        if (user.agency) {
+                            $('#viewUserAgency').text(user.agency.name);
+                            $('#agencySection').removeClass('hidden');
+                        } else {
+                            $('#agencySection').addClass('hidden');
                         }
-                    ]
-                });
 
-                // Form Submit
-                $('#userForm').submit(function (e) {
-                    e.preventDefault();
-                    var id = $('#userId').val();
-                    var url = id ? `/admin/users/${id}` : "{{ route('admin.users.store') }}";
-                    var method = id ? 'PUT' : 'POST';
+                        // Documents
+                        let docsHtml = '';
+                        if (user.documents && user.documents.length > 0) {
+                            $('#noDocuments').addClass('hidden');
+                            user.documents.forEach(doc => {
+                                let typeLabel = doc.type.replace(/_/g, ' ').toUpperCase();
+                                let statusClass = doc.status === 'approved' ? 'text-emerald-500' : 'text-amber-500';
+                                docsHtml += `
+                                                                    <div class="flex items-center justify-between p-4 bg-slate-50 rounded-xl border border-slate-100">
+                                                                        <div class="flex items-center gap-4">
+                                                                            <div class="h-10 w-10 flex items-center justify-center bg-white rounded-lg border border-slate-200">
+                                                                                <i class='bx bxs-file-pdf text-xl text-rose-500'></i>
+                                                                            </div>
+                                                                            <div>
+                                                                                <p class="text-sm font-bold text-slate-800">${typeLabel}</p>
+                                                                                <p class="text-xs font-medium ${statusClass}">${doc.status.toUpperCase()}</p>
+                                                                            </div>
+                                                                        </div>
+                                                                        <a href="/storage/${doc.file_path}" target="_blank" class="flex items-center gap-2 px-4 py-2 bg-white border border-slate-200 text-indigo-600 text-xs font-bold rounded-lg hover:bg-indigo-50 transition-all">
+                                                                            <i class='bx bx-show'></i> VIEW DOCUMENT
+                                                                        </a>
+                                                                    </div>
+                                                                `;
+                            });
+                            $('#viewUserDocuments').html(docsHtml).removeClass('hidden');
+                        } else {
+                            $('#viewUserDocuments').addClass('hidden');
+                            $('#noDocuments').removeClass('hidden');
+                        }
 
+                        $('#userViewModal').removeClass('hidden');
+                    });
+                }
+
+                function closeViewModal() {
+                    $('#userViewModal').addClass('hidden');
+                }
+
+                function editUser(id) {
+                    $.get(`/admin/users/${id}/edit`, function (data) {
+                        $('#userId').val(data.id);
+                        $('#name').val(data.name);
+                        $('#email').val(data.email);
+                        $('#phone_number').val(data.phone_number);
+                        if (data.roles && data.roles.length > 0) {
+                            $('#role').val(data.roles[0].name);
+                        }
+                        $('#modalTitle').text('Edit User');
+                        $('#passwordHint').text('(Leave blank to keep current)');
+                        $('#userModal').removeClass('hidden');
+                    });
+                }
+
+                function updateUserStatus(id, status) {
                     $.ajax({
-                        url: url,
-                        type: method,
-                        data: $(this).serialize(),
+                        url: `/admin/users-status/${id}`,
+                        type: 'POST',
+                        data: {
+                            _token: '{{ csrf_token() }}',
+                            status: status
+                        },
                         success: function (response) {
-                            closeModal();
-                            table.ajax.reload();
+                            $('#usersTable').DataTable().ajax.reload();
                             Swal.fire({
                                 icon: 'success',
-                                title: 'Success!',
+                                title: 'Updated!',
                                 text: response.message,
                                 timer: 1500,
                                 showConfirmButton: false
                             });
                         },
                         error: function (xhr) {
-                            var errors = xhr.responseJSON.errors;
-                            var errorMessage = '';
-                            $.each(errors, function (key, value) {
-                                errorMessage += value[0] + '\n';
-                            });
                             Swal.fire({
                                 icon: 'error',
                                 title: 'Error!',
-                                text: errorMessage || 'Something went wrong!',
+                                text: 'Something went wrong while updating status.'
                             });
                         }
                     });
-                });
-            });
+                }
 
-            function openModal() {
-                $('#userForm')[0].reset();
-                $('#userId').val('');
-                $('#modalTitle').text('Create New User');
-                $('#passwordHint').text('(Required)');
-                $('#userModal').removeClass('hidden');
-            }
+                function deleteUser(id) {
+                    Swal.fire({
+                        title: 'Are you sure?',
+                        text: "You won't be able to revert this!",
+                        icon: 'warning',
+                        showCancelButton: true,
+                        confirmButtonColor: '#3085d6',
+                        cancelButtonColor: '#d33',
+                        confirmButtonText: 'Yes, delete it!'
+                    }).then((result) => {
+                        if (result.isConfirmed) {
+                            $.ajax({
+                                url: `/admin/users/${id}`,
+                                type: 'DELETE',
+                                data: {
+                                    _token: '{{ csrf_token() }}'
+                                },
+                                success: function (response) {
+                                    $('#usersTable').DataTable().ajax.reload();
+                                    Swal.fire('Deleted!', response.message, 'success');
+                                },
+                                error: function (xhr) {
+                                    Swal.fire('Error!', 'Something went wrong.', 'error');
+                                }
+                            });
+                        }
+                    });
+                }
 
-            function closeModal() {
-                $('#userModal').addClass('hidden');
-            }
-
-            function editUser(id) {
-                $.get(`/admin/users/${id}/edit`, function (data) {
-                    $('#userId').val(data.id);
-                    $('#name').val(data.name);
-                    $('#email').val(data.email);
-                    $('#phone_number').val(data.phone_number);
-                    // Handle role selection - simpler if single role, if multiple needs adjustment
-                    if (data.roles && data.roles.length > 0) {
-                        $('#role').val(data.roles[0].name);
-                    }
-
-                    $('#modalTitle').text('Edit User');
-                    $('#passwordHint').text('(Leave blank to keep current)');
-                    $('#userModal').removeClass('hidden');
-                });
-            }
-
-            function updateUserStatus(id, status) {
-                $.ajax({
-                    url: `/admin/users-status/${id}`,
-                    type: 'POST',
-                    data: {
-                        _token: '{{ csrf_token() }}',
-                        status: status
-                    },
-                    success: function (response) {
-                        $('#usersTable').DataTable().ajax.reload();
-                        Swal.fire({
-                            icon: 'success',
-                            title: 'Updated!',
-                            text: response.message,
-                            timer: 1500,
-                            showConfirmButton: false
-                        });
-                    },
-                    error: function (xhr) {
-                        Swal.fire({
-                            icon: 'error',
-                            title: 'Error!',
-                            text: 'Something went wrong while updating status.'
-                        });
-                    }
-                });
-            }
-
-            function deleteUser(id) {
-                Swal.fire({
-                    title: 'Are you sure?',
-                    text: "You won't be able to revert this!",
-                    icon: 'warning',
-                    showCancelButton: true,
-                    confirmButtonColor: '#3085d6',
-                    cancelButtonColor: '#d33',
-                    confirmButtonText: 'Yes, delete it!'
-                }).then((result) => {
-                    if (result.isConfirmed) {
-                        $.ajax({
-                            url: `/admin/users/${id}`,
-                            type: 'DELETE',
-                            data: {
-                                _token: '{{ csrf_token() }}'
+                $(document).ready(function () {
+                    var table = $('#usersTable').DataTable({
+                        processing: true,
+                        serverSide: false,
+                        ajax: "{{ route('admin.users.index') }}",
+                        columns: [
+                            { data: 'id', name: 'id' },
+                            {
+                                data: 'name', name: 'name', render: function (data, type, row) {
+                                    return `<div class="flex items-center group cursor-pointer" onclick="window.location.href='/admin/users/${row.id}'">
+                                                                        <div class="w-10 h-10 rounded-xl bg-indigo-50 flex items-center justify-center text-indigo-600 font-bold mr-3 group-hover:bg-indigo-600 group-hover:text-white transition-all shadow-sm">${data.charAt(0)}</div>
+                                                                        <div>
+                                                                            <div class="font-bold text-slate-800 group-hover:text-indigo-600 transition-colors uppercase text-[11px] tracking-wider">${data}</div>
+                                                                            <div class="text-[9px] text-slate-400 font-bold uppercase tracking-tight">Click for full profile</div>
+                                                                        </div>
+                                                                    </div>`;
+                                }
                             },
+                            { data: 'email', name: 'email' },
+                            {
+                                data: 'roles', name: 'roles', render: function (data) {
+                                    return data.map(role => `<span class="bg-indigo-50 text-indigo-600 rounded-lg px-3 py-1 text-[10px] font-bold uppercase tracking-widest mr-1 shadow-sm border border-indigo-100">${role.name}</span>`).join('');
+                                }
+                            },
+                            {
+                                data: 'status', name: 'status', render: function (data) {
+                                    let color = 'bg-slate-50 text-slate-600 border-slate-200';
+                                    if (data === 'approved' || data === 'document_approved') color = 'bg-emerald-50 text-emerald-600 border-emerald-100';
+                                    else if (data === 'rejected') color = 'bg-rose-50 text-rose-600 border-rose-100';
+                                    else if (data === 'pending') color = 'bg-amber-50 text-amber-600 border-amber-100';
+                                    return `<span class="${color} rounded-lg px-3 py-1 text-[10px] font-bold border uppercase tracking-widest shadow-sm">${(data || 'pending').replace(/_/g, ' ')}</span>`;
+                                }
+                            },
+                            {
+                                data: 'id', name: 'actions', orderable: false, searchable: false, render: function (data, type, row) {
+                                    let approvalBtn = '';
+                                    if (row.status === 'pending' || row.status === 'rejected') {
+                                        approvalBtn = `<button onclick="updateUserStatus(${data}, 'approved')" class="w-9 h-9 rounded-xl bg-white border border-slate-200 flex items-center justify-center text-emerald-600 hover:bg-emerald-50 hover:border-emerald-200 transition-all shadow-sm" title="Approve"><i class='bx bx-check text-xl'></i></button>`;
+                                    } else if (row.status === 'approved' || row.status === 'document_approved') {
+                                        approvalBtn = `<button onclick="updateUserStatus(${data}, 'rejected')" class="w-9 h-9 rounded-xl bg-white border border-slate-200 flex items-center justify-center text-rose-600 hover:bg-rose-50 hover:border-rose-200 transition-all shadow-sm" title="Reject"><i class='bx bx-x text-xl'></i></button>`;
+                                    }
+
+                                    return `
+                                                                        <div class="flex gap-2">
+                                                                            ${approvalBtn}
+                                                                            <button onclick="editUser(${data})" class="w-9 h-9 rounded-xl bg-white border border-slate-200 flex items-center justify-center text-slate-600 hover:bg-indigo-50 hover:border-indigo-200 hover:text-indigo-600 transition-all shadow-sm" title="Edit"><i class='bx bxs-edit text-lg'></i></button>
+                                                                            <button onclick="deleteUser(${data})" class="w-9 h-9 rounded-xl bg-white border border-slate-200 flex items-center justify-center text-slate-600 hover:bg-rose-50 hover:border-rose-200 hover:text-rose-600 transition-all shadow-sm" title="Delete"><i class='bx bxs-trash text-lg'></i></button>
+                                                                        </div>
+                                                                    `;
+                                }
+                            }
+                        ],
+                        dom: 'rtip',
+                        pageLength: 25,
+                        language: { emptyTable: "No users found matching your criteria" }
+                    });
+
+                    // Exact Search and Filter Listeners
+                    $('#customSearch').on('keyup', function () { table.search(this.value).draw(); });
+
+                    $('#roleFilter').on('change', function () {
+                        const val = $(this).val();
+                        table.column(3).search(val ? '^' + $.fn.dataTable.util.escapeRegex(val) + '$' : '', true, false).draw();
+                    });
+
+                    $('#statusFilter').on('change', function () {
+                        const val = $(this).val();
+                        // Support exact match with regex. Status in table has underscores replaced by spaces.
+                        const searchVal = val ? '^' + $.fn.dataTable.util.escapeRegex(val.replace(/_/g, ' ')) + '$' : '';
+                        table.column(4).search(searchVal, true, false).draw();
+                    });
+
+                    // Form Submission
+                    $('#userForm').submit(function (e) {
+                        e.preventDefault();
+                        var id = $('#userId').val();
+                        var url = id ? `/admin/users/${id}` : "{{ route('admin.users.store') }}";
+                        var method = id ? 'PUT' : 'POST';
+
+                        $.ajax({
+                            url: url,
+                            type: method,
+                            data: $(this).serialize(),
                             success: function (response) {
-                                $('#usersTable').DataTable().ajax.reload();
-                                Swal.fire(
-                                    'Deleted!',
-                                    response.message,
-                                    'success'
-                                );
+                                closeModal();
+                                table.ajax.reload();
+                                Swal.fire({ icon: 'success', title: 'Success!', text: response.message, timer: 1500, showConfirmButton: false });
                             },
                             error: function (xhr) {
-                                Swal.fire(
-                                    'Error!',
-                                    'Something went wrong.',
-                                    'error'
-                                );
+                                var errors = xhr.responseJSON.errors;
+                                var errorMessage = '';
+                                if (errors) {
+                                    $.each(errors, function (key, value) { errorMessage += value[0] + '\n'; });
+                                }
+                                Swal.fire({ icon: 'error', title: 'Error!', text: errorMessage || 'Something went wrong!', });
                             }
                         });
-                    }
+                    });
                 });
-            }
-        </script>
-    @endpush
+            </script>
+        @endpush
 @endsection

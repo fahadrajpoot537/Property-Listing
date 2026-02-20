@@ -83,14 +83,25 @@ class AdminUserController extends Controller
 
     public function show(string $id)
     {
-        $user = \App\Models\User::with('roles')->findOrFail($id);
-        return response()->json($user);
+        $user = \App\Models\User::with(['roles', 'documents', 'agency'])->findOrFail($id);
+
+        if (request()->ajax()) {
+            return response()->json($user);
+        }
+
+        return view('admin.users.show', compact('user'));
     }
 
     public function edit(string $id)
     {
         $user = \App\Models\User::with('roles')->findOrFail($id);
-        return response()->json($user);
+        $roles = \Spatie\Permission\Models\Role::all();
+
+        if (request()->ajax()) {
+            return response()->json($user);
+        }
+
+        return view('admin.users.edit', compact('user', 'roles'));
     }
 
     public function update(Request $request, string $id)
@@ -119,7 +130,11 @@ class AdminUserController extends Controller
 
         $user->syncRoles([$validated['role']]);
 
-        return response()->json(['success' => true, 'message' => 'User updated successfully.']);
+        if ($request->ajax()) {
+            return response()->json(['success' => true, 'message' => 'User updated successfully.']);
+        }
+
+        return redirect()->route('admin.users.show', $id)->with('success', 'User updated successfully.');
     }
 
     public function destroy(string $id)
@@ -134,14 +149,18 @@ class AdminUserController extends Controller
     {
         $user = \App\Models\User::findOrFail($id);
         $validated = $request->validate([
-            'status' => 'required|string|in:approved,rejected,pending',
+            'status' => 'required|string|in:approved,rejected,pending,document_approved',
         ]);
 
         $user->update(['status' => $validated['status']]);
 
-        return response()->json([
-            'success' => true,
-            'message' => 'User status updated to ' . $validated['status'] . ' successfully.'
-        ]);
+        if ($request->ajax()) {
+            return response()->json([
+                'success' => true,
+                'message' => 'User status updated to ' . $validated['status'] . ' successfully.'
+            ]);
+        }
+
+        return back()->with('success', 'User status updated to ' . $validated['status'] . ' successfully.');
     }
 }
