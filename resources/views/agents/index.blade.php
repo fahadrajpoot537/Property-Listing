@@ -41,13 +41,17 @@
 @section('content')
     <div class="bg-gray-50 min-h-screen">
         <!-- Hero Section with Search -->
-        <div class="relative py-20 md:py-28 bg-cover bg-center" style="background-image: url('{{ asset('agent.jpg') }}');">
-            <div class="absolute inset-0 bg-black/70"></div>
-            <div class="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-                <div class="text-center mb-10">
-                    <h1 class="text-4xl md:text-5xl font-black text-white mb-2">Find Estate Agents Near You</h1>
-                    <p class="text-xl text-gray-300 font-medium">Search by location and radius to find the best agents in
-                        your area</p>
+        <div class="relative min-h-[80vh] flex items-center bg-center bg-no-repeat bg-fixed"
+            style="background-image: url('{{ asset('agent.jpg') }}'); background-size: cover; background-position: center 20%;">
+            <div class="absolute inset-0 bg-gradient-to-b from-black/80 via-black/30 to-black/10"></div>
+            <div class="relative z-10 w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20">
+                <div class="text-center mb-12">
+                    <h1 class="text-5xl md:text-7xl font-black text-white mb-6 tracking-tighter">
+                        Find Estate <span class="text-white">Agents Near You</span>
+                    </h1>
+                    <p class="text-xl md:text-2xl text-white max-w-2xl mx-auto mb-1 font-medium">
+                        Search by location and radius to find the best agents in your area
+                    </p>
                 </div>
 
                 <!-- Search Form -->

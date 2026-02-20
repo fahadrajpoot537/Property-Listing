@@ -3,9 +3,9 @@
 @section('title', 'Sold Properties Search - PropertyFinda')
 
 @section('content')
-    <div class="relative min-h-[90vh] flex items-center bg-cover bg-no-repeat bg-center md:bg-fixed"
-        style="background-image: url('{{ asset('row-terraced-stone-houses-with-multiple-chimneys-harrogate-uk_233859-7040.jpg') }}'); background-position: center 50%;">
-        <div class="absolute inset-0 bg-gradient-to-b from-black/90 via-black/40 to-black/20"></div>
+    <div class="relative min-h-[80vh] flex items-center bg-center bg-no-repeat bg-fixed"
+        style="background-image: url('{{ asset('wide-shot-houses-buildings-city-copenhagen-denmark (1).jpg') }}'); background-size: cover; background-position: center 50%;">
+        <div class="absolute inset-0 bg-gradient-to-b from-black/80 via-black/40 to-transparent"></div>
         <div class="relative z-10 w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center py-20">
             <h1 class="text-5xl md:text-7xl font-black text-white mb-6 tracking-tighter">
                 Check Sold <span class="text-white">House Prices</span>
