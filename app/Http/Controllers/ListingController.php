@@ -290,16 +290,16 @@ class ListingController extends Controller
 
                 $formattedPrices = [];
                 if (isset($data['data']['available_results'])) {
-                    // Prepare target information for matching
-                    $inputAddress = $listing->address ?: $listing->property_title;
+                    // Combine address and title to ensure we capture specifically mentioned flat/house numbers
+                    $inputAddress = trim(($listing->address ?? '') . ' ' . ($listing->property_title ?? ''));
                     $inputAddrClean = strtolower(preg_replace('/[^a-z0-9 ]/', ' ', $inputAddress));
                     $inputWords = array_filter(explode(' ', $inputAddrClean));
-                    preg_match_all('/\d+/', $inputAddress, $inputNumbers);
-                    $targetNumbers = $inputNumbers[0] ?? [];
+                    // Remove postcode-like patterns before extracting numbers to avoid matching postcode digits
+                    $addrNoPc = preg_replace('/\b[A-Z]{1,2}\d[A-Z\d]?\s*\d[A-Z]{2}\b/i', '', $inputAddress);
+                    $inputAddrNoPcNorm = strtolower(preg_replace('/[^a-z0-9]/', '', $addrNoPc));
 
-                    // Remove postcode-like patterns for a cleaner comparison
-                    $inputAddrNoPc = preg_replace('/\b[A-Z]{1,2}\d[A-Z\d]?\s*\d[A-Z]{2}\b/i', '', $inputAddress);
-                    $normInputNoPc = strtolower(preg_replace('/[^a-z0-9]/', '', $inputAddrNoPc));
+                    preg_match_all('/\d+/', $addrNoPc, $inputNumbers);
+                    $targetNumbers = array_unique($inputNumbers[0] ?? []);
 
                     foreach ($data['data']['available_results'] as $property) {
                         $score = 0;
@@ -308,42 +308,98 @@ class ListingController extends Controller
                         $normRes = strtolower(preg_replace('/[^a-z0-9]/', '', $resAddr));
 
                         // 1. Check Full Normalized Match
-                        if ($normRes === strtolower(preg_replace('/[^a-z0-9]/', '', $inputAddress)) || $normRes === $normInputNoPc) {
+                        if ($normRes === strtolower(preg_replace('/[^a-z0-9]/', '', $inputAddress)) || $normRes === $inputAddrNoPcNorm) {
                             $score += 500;
                         }
 
-                        // 2. Check Number Matches (Fundamental for identifying correct flat/house)
-                        foreach ($targetNumbers as $num) {
-                            if (preg_match('/\b' . $num . '\b/', $resAddr)) {
-                                $score += 150;
+                        // 2. Advanced Match Type Detection
+                        // Remove postcode from result address for clean number extraction
+                        $resAddrNoPc = preg_replace('/\b[A-Z]{1,2}\d[A-Z\d]?\s*\d[A-Z]{2}\b/i', '', $resAddr);
+                        preg_match_all('/\d+/', $resAddrNoPc, $resMatches);
+                        $resNumbers = array_unique($resMatches[0] ?? []);
+
+                        $isUnitMatch = false;
+                        $isBuildingMatch = false;
+
+                        if (!empty($targetNumbers)) {
+                            $missing = array_diff($targetNumbers, $resNumbers);
+                            $extra = array_diff($resNumbers, $targetNumbers);
+
+                            if (empty($missing) && empty($extra)) {
+                                $isUnitMatch = true;
+                                $score += 250;
+                            } elseif (!empty($extra)) {
+                                // Explicitly a different unit (e.g., viewing 26, result is 28)
+                                continue;
+                            } elseif (empty($resNumbers)) {
+                                // Result has no unit numbers (Building/Street level)
+                                $isBuildingMatch = true;
+                                $score += 100;
+                            } else {
+                                // Missing some target numbers or other mismatch
+                                continue;
                             }
+                        } else {
+                            // No numbers in target (rare for UK addresses)
+                            $isBuildingMatch = true;
+                            $score += 100;
                         }
 
                         // 3. Check Word Matches (Heavier weight for longer words)
                         foreach ($inputWords as $word) {
+                            $word = trim($word);
                             if (strlen($word) > 3 && strpos($resAddrClean, $word) !== false) {
-                                $score += 50;
+                                $score += 60;
                             } elseif (strlen($word) > 2 && strpos($resAddrClean, $word) !== false) {
                                 $score += 20;
                             }
                         }
 
                         // 4. Substring Match
-                        if ($normInputNoPc && strlen($normInputNoPc) > 5 && strpos($normRes, $normInputNoPc) !== false) {
+                        if ($inputAddrNoPcNorm && strlen($inputAddrNoPcNorm) > 5 && strpos($normRes, $inputAddrNoPcNorm) !== false) {
                             $score += 200;
                         }
 
-                        // Bonus: If the first number (usually house/flat number) matches exactly at the start
+                        // Bonus: If it starts with the same house number
                         if (!empty($targetNumbers) && preg_match('/^' . $targetNumbers[0] . '\b/', $resAddr)) {
                             $score += 100;
                         }
 
-                        // Threshold for a valid match (e.g., matching a house number + some address details)
-                        // Lowered to 120 to be even more inclusive while relying on API postcode filter
-                        if ($score < 120)
+                        // Threshold for a valid match (Lowered since the number filter is now extremely strict)
+                        if ($score < 150)
                             continue;
 
-                        if (isset($property['sold_history']) && is_array($property['sold_history'])) {
+                        // Combine sold history and asking price history
+                        $history = [];
+
+                        // ONLY include sold history if it's an exact unit match 
+                        // (prevents neighbors' sales from appearing if results are at building level)
+                        if ($isUnitMatch && isset($property['sold_history']) && is_array($property['sold_history'])) {
+                            foreach ($property['sold_history'] as $s) {
+                                $s['is_sold'] = true;
+                                $history[] = $s;
+                            }
+                        }
+
+                        // Include asking prices (important for 2025/latest data)
+                        if (isset($property['asking_prices']) && is_array($property['asking_prices'])) {
+                            foreach ($property['asking_prices'] as $a) {
+                                $a['is_sold'] = false;
+                                $history[] = $a;
+                            }
+                        }
+
+                        // Add current price as a listing record
+                        if (isset($property['price']) && $property['price'] > 0) {
+                            $history[] = [
+                                'date' => $property['price_date'] ?? date('Y-m-d'),
+                                'amount' => $property['price'],
+                                'is_sold' => false,
+                                'label' => 'Current Listing'
+                            ];
+                        }
+
+                        if (!empty($history)) {
                             // Check if this property exists in our database
                             $internalListing = \App\Models\Listing::where(function ($q) use ($property) {
                                 $addr = $property['address'] ?? $property['label'] ?? '';
@@ -355,10 +411,10 @@ class ListingController extends Controller
 
                             $internalUrl = $internalListing ? route('listing.show', $internalListing->slug ?? $internalListing->id) : null;
 
-                            foreach ($property['sold_history'] as $sale) {
+                            foreach ($history as $record) {
                                 $formattedPrices[] = [
-                                    'date' => $sale['date'],
-                                    'price' => $sale['amount'],
+                                    'date' => $record['date'],
+                                    'price' => $record['amount'],
                                     'type' => $property['property_type'] ?? 'Residential',
                                     'name' => $property['address'] ?? $property['label'] ?? 'N/A',
                                     'location' => $property['postcode'] ?? $listing->postcode ?? 'N/A',
@@ -367,6 +423,8 @@ class ListingController extends Controller
                                     'search_postcode' => $listing->postcode,
                                     'url' => $internalUrl ?? $property['url'] ?? '#',
                                     'is_internal' => (bool) $internalListing,
+                                    'is_sold' => $record['is_sold'] ?? true,
+                                    'record_label' => $record['label'] ?? ($record['is_sold'] ? 'SOLD' : 'Listing'),
                                     'description' => $property['description_text'] ?? 'No additional description available.',
                                     'images' => $property['site_images'] ?? [],
                                     'tenure' => $property['tenure'] ?? 'N/A',
@@ -833,7 +891,7 @@ class ListingController extends Controller
     public function soldPropertiesSearch(Request $request)
     {
         $location = $request->input('location');
-        $radius = $request->input('radius', 0.5);
+        $radius = $request->input('radius', 0);
         // If "Exactly this location" (0) is selected, we use 0.25 miles as a safe bet for UK postcode centers
         if ($radius == 0)
             $radius = 0.25;

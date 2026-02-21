@@ -29,10 +29,10 @@
                 <div class="w-full md:w-48 relative border-t md:border-t-0 md:border-l border-gray-100">
                     <select name="radius"
                         class="block w-full pl-4 pr-10 py-4 rounded-full border-0 focus:ring-0 text-gray-900 font-bold bg-transparent">
-                        <option value="0" {{ request('radius') == '0' ? 'selected' : '' }}>Exactly this location</option>
+                        <option value="0" {{ request('radius', 0) == '0' ? 'selected' : '' }}>Exactly this location</option>
                         <option value="0.1" {{ request('radius') == '0.1' ? 'selected' : '' }}>0.1 miles</option>
                         <option value="0.25" {{ request('radius') == '0.25' ? 'selected' : '' }}>0.25 miles</option>
-                        <option value="0.5" {{ request('radius', 0.5) == '0.5' ? 'selected' : '' }}>0.5 miles</option>
+                        <option value="0.5" {{ request('radius') == '0.5' ? 'selected' : '' }}>0.5 miles</option>
                         <option value="1" {{ request('radius') == '1' ? 'selected' : '' }}>1 mile</option>
                     </select>
                 </div>
@@ -168,7 +168,7 @@
                                 </a>
                             @else
                                 <a href="{{ route('property.external-details') }}?postcode={{ urlencode($property['postcode']) }}&address={{ urlencode($property['address']) }}&search_postcode={{ urlencode($property['search_postcode']) }}&lat={{ $property['latitude'] ?? '' }}&lng={{ $property['longitude'] ?? '' }}"
-                                    class="block w-full py-3 bg-gray-50 text-gray-900 font-bold rounded-xl text-center hover:bg-primary hover:text-white transition-colors">
+                                    class="block w-full py-3 bg-gray-100 text-primary font-bold rounded-xl text-center hover:bg-primary/10 transition-colors">
                                     View Details
                                 </a>
                             @endif

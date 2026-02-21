@@ -878,47 +878,86 @@
                     }
                 }
 
-                let html = `
-                    <div class="overflow-x-auto">
-                        <table class="w-full text-left min-w-[600px]">
+                // Responsive Layout: Table for Desktop, Cards for Mobile
+                let tableHtml = `
+                    <div class="hidden md:block overflow-x-auto">
+                        <table class="w-full text-left">
                             <thead>
                                 <tr class="border-b border-gray-100">
                                     <th class="py-3 text-xs font-black text-gray-400 uppercase tracking-wider">Property</th>
-                                    <th class="py-3 text-xs font-black text-gray-400 uppercase tracking-wider">Location</th>
+                                    <th class="py-3 text-xs font-black text-gray-400 uppercase tracking-wider text-center">Status</th>
                                     <th class="py-3 text-xs font-black text-gray-400 uppercase tracking-wider">Date</th>
                                     <th class="py-3 text-xs font-black text-gray-400 uppercase tracking-wider">Price</th>
                                     <th class="py-3 text-xs font-black text-gray-400 uppercase tracking-wider">Type</th>
-                                    <th class="py-3 text-xs font-black text-gray-400 uppercase tracking-wider whitespace-nowrap">Actions</th>
+                                    <th class="py-3 text-xs font-black text-gray-400 uppercase tracking-wider whitespace-nowrap text-right">Actions</th>
                                 </tr>
                             </thead>
                             <tbody class="divide-y divide-gray-50">
                 `;
+
+                let cardsHtml = `<div class="md:hidden space-y-4">`;
 
                 prices.forEach((item, index) => {
                     const date = item.date || 'N/A';
                     const price = item.price || 0;
                     const type = item.type || 'Residential';
                     const name = item.name || 'N/A';
-                    const location = item.location || 'N/A';
+                    const status = item.record_label || (item.is_sold ? 'SOLD' : 'Listing');
+                    const statusClass = item.is_sold ? 'bg-emerald-100 text-emerald-700' : 'bg-blue-100 text-blue-700';
+                    const formattedPrice = `£${new Intl.NumberFormat('en-GB').format(price)}`;
 
-                    html += `
-                        <tr>
-                            <td class="py-4 text-sm font-bold text-primary">${name}</td>
-                            <td class="py-4 text-sm text-gray-600">${location}</td>
-                            <td class="py-4 text-sm font-bold text-primary">${date}</td>
-                            <td class="py-4 text-sm font-black text-secondary">£${new Intl.NumberFormat('en-GB').format(price)}</td>
-                            <td class="py-4 text-sm font-medium text-gray-600">${type}</td>
-                            <td class="py-4 text-sm">
-                                <button onclick="window.dispatchEvent(new CustomEvent('open-external-detail', { detail: window.soldPriceData[${index}] }))" class="inline-flex items-center gap-1 text-secondary font-bold hover:underline whitespace-nowrap">
-                                    Details <i class="fa-solid fa-eye text-[10px]"></i>
+                    // Desktop Row
+                    tableHtml += `
+                        <tr class="hover:bg-gray-50/50 transition-colors">
+                            <td class="py-4 text-sm font-bold text-primary">
+                                <div class="truncate max-w-[200px]" title="${name}">${name}</div>
+                            </td>
+                            <td class="py-4 text-sm text-center">
+                                <span class="px-2 py-0.5 rounded text-[10px] font-black uppercase tracking-wider ${statusClass}">${status}</span>
+                            </td>
+                            <td class="py-4 text-sm font-bold text-gray-500">${date}</td>
+                            <td class="py-4 text-sm font-black text-secondary">${formattedPrice}</td>
+                            <td class="py-4 text-sm font-medium text-gray-400">${type}</td>
+                            <td class="py-4 text-sm text-right">
+                                <button onclick="window.dispatchEvent(new CustomEvent('open-external-detail', { detail: window.soldPriceData[${index}] }))" class="inline-flex items-center gap-1 text-secondary font-bold hover:underline whitespace-nowrap bg-secondary/10 px-3 py-1.5 rounded-lg text-xs">
+                                    Details <i class="fa-solid fa-arrow-right text-[10px]"></i>
                                 </button>
                             </td>
                         </tr>
                     `;
+
+                    // Mobile Card
+                    cardsHtml += `
+                        <div class="bg-gray-50/50 p-4 rounded-2xl border border-gray-100 space-y-3">
+                            <div class="flex justify-between items-start">
+                                <span class="px-2 py-0.5 rounded text-[10px] font-black uppercase tracking-wider ${statusClass}">${status}</span>
+                                <span class="text-sm font-black text-secondary">${formattedPrice}</span>
+                            </div>
+                            <div>
+                                <h4 class="text-sm font-bold text-primary line-clamp-2">${name}</h4>
+                                <div class="flex gap-4 mt-2">
+                                    <div class="text-[10px] text-gray-400 font-bold uppercase tracking-widest leading-none border-r border-gray-200 pr-4">
+                                        <p class="mb-1">Date</p>
+                                        <p class="text-gray-600 text-[11px]">${date}</p>
+                                    </div>
+                                    <div class="text-[10px] text-gray-400 font-bold uppercase tracking-widest leading-none">
+                                        <p class="mb-1">Type</p>
+                                        <p class="text-gray-600 text-[11px]">${type}</p>
+                                    </div>
+                                </div>
+                            </div>
+                            <button onclick="window.dispatchEvent(new CustomEvent('open-external-detail', { detail: window.soldPriceData[${index}] }))" 
+                                class="w-full py-2.5 bg-white border border-gray-200 text-secondary font-bold rounded-xl text-xs flex items-center justify-center gap-2 hover:bg-gray-50 transition-colors">
+                                View Full Records <i class="fa-solid fa-arrow-right text-[10px]"></i>
+                            </button>
+                        </div>
+                    `;
                 });
 
-                html += '</tbody></table></div>';
-                container.innerHTML = html;
+                tableHtml += '</tbody></table></div>';
+                cardsHtml += '</div>';
+                
+                container.innerHTML = cardsHtml + tableHtml;
 
             } catch (error) {
                 console.error('Error fetching sold prices:', error);
