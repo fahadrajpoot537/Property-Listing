@@ -538,67 +538,69 @@
                         }
                     @endphp
 
-                    <div class="section-heading">Mortgage Calculator</div>
-                    <style>
-                        .mortgage-table {
-                            width: 100%;
-                            border-collapse: collapse;
-                        }
+                    @if(in_array(strtolower($listing->purpose), ['buy', 'sale']))
+                        <div class="section-heading">Mortgage Calculator</div>
+                        <style>
+                            .mortgage-table {
+                                width: 100%;
+                                border-collapse: collapse;
+                            }
 
-                        .mortgage-table td {
-                            padding: 4px 0;
-                            color: #000000 !important;
-                            font-size: 11px;
-                        }
+                            .mortgage-table td {
+                                padding: 4px 0;
+                                color: #000000 !important;
+                                font-size: 11px;
+                            }
 
-                        .mortgage-table .m-label {
-                            text-align: left;
-                        }
+                            .mortgage-table .m-label {
+                                text-align: left;
+                            }
 
-                        .mortgage-table .m-val {
-                            text-align: right;
-                            font-weight: 700;
-                            color: #000000 !important;
-                        }
-                    </style>
-                    <div class="mortgage-box">
-                        <table class="mortgage-table">
-                            <tr>
-                                <td class="m-label">Estimated Monthly Payment</td>
-                                <td class="m-val" style="font-size: 14px;">£{{ number_format($mMonthlyPayment, 2) }}
-                                </td>
-                            </tr>
-                            <tr>
-                                <td colspan="2"
-                                    style="border-bottom: 1px dashed #bae6fd; height: 1px; padding: 0; margin: 5px 0;">
-                                </td>
-                            </tr>
-                            <tr>
-                                <td class="m-label">Total Amount (£)</td>
-                                <td class="m-val">{{ number_format($mPrice, 2) }}</td>
-                            </tr>
-                            <tr>
-                                <td class="m-label">Down Payment (%)</td>
-                                <td class="m-val">{{ number_format($mDepositPercent, 2) }}</td>
-                            </tr>
-                            <tr>
-                                <td class="m-label">Interest Rate (%)</td>
-                                <td class="m-val">{{ number_format($mInterestRate, 2) }}</td>
-                            </tr>
-                            <tr>
-                                <td class="m-label">Loan Terms (Years)</td>
-                                <td class="m-val">{{ $mYears }}</td>
-                            </tr>
-                            <tr>
-                                <td class="m-label">Down Payment Amount:</td>
-                                <td class="m-val">£{{ number_format($mDepositAmount, 2) }}</td>
-                            </tr>
-                            <tr>
-                                <td class="m-label">Loan Amount:</td>
-                                <td class="m-val">£{{ number_format($mLoanAmount, 2) }}</td>
-                            </tr>
-                        </table>
-                    </div>
+                            .mortgage-table .m-val {
+                                text-align: right;
+                                font-weight: 700;
+                                color: #000000 !important;
+                            }
+                        </style>
+                        <div class="mortgage-box">
+                            <table class="mortgage-table">
+                                <tr>
+                                    <td class="m-label">Estimated Monthly Payment</td>
+                                    <td class="m-val" style="font-size: 14px;">£{{ number_format($mMonthlyPayment, 2) }}
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td colspan="2"
+                                        style="border-bottom: 1px dashed #bae6fd; height: 1px; padding: 0; margin: 5px 0;">
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="m-label">Total Amount (£)</td>
+                                    <td class="m-val">{{ number_format($mPrice, 2) }}</td>
+                                </tr>
+                                <tr>
+                                    <td class="m-label">Down Payment (%)</td>
+                                    <td class="m-val">{{ number_format($mDepositPercent, 2) }}</td>
+                                </tr>
+                                <tr>
+                                    <td class="m-label">Interest Rate (%)</td>
+                                    <td class="m-val">{{ number_format($mInterestRate, 2) }}</td>
+                                </tr>
+                                <tr>
+                                    <td class="m-label">Loan Terms (Years)</td>
+                                    <td class="m-val">{{ $mYears }}</td>
+                                </tr>
+                                <tr>
+                                    <td class="m-label">Down Payment Amount:</td>
+                                    <td class="m-val">£{{ number_format($mDepositAmount, 2) }}</td>
+                                </tr>
+                                <tr>
+                                    <td class="m-label">Loan Amount:</td>
+                                    <td class="m-val">£{{ number_format($mLoanAmount, 2) }}</td>
+                                </tr>
+                            </table>
+                        </div>
+                    @endif
 
                     @if($mapImage)
                         <div class="section-heading" style="margin-top:20px;">Location</div>
