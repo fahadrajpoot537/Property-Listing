@@ -427,15 +427,18 @@
 
                                         <div class="stats-row">
                                             @if($listing->bedrooms > 0)
-                                                <div class="stat-item"><i class="fa-solid fa-bed"></i> {{ $listing->bedrooms }} Beds</div>
+                                                <div class="stat-item"><i class="fa-solid fa-bed"></i> {{ $listing->bedrooms }} Beds
+                                                </div>
                                             @elseif($listing->unitType)
-                                                <div class="stat-item"><i class="fa-solid fa-house-user"></i> {{ $listing->unitType->title }}</div>
+                                                <div class="stat-item"><i class="fa-solid fa-house-user"></i>
+                                                    {{ $listing->unitType->title }}</div>
                                             @endif
 
                                             @if($listing->bathrooms > 0)
-                                                <div class="stat-item"><i class="fa-solid fa-bath"></i> {{ $listing->bathrooms }} Baths</div>
+                                                <div class="stat-item"><i class="fa-solid fa-bath"></i> {{ $listing->bathrooms }}
+                                                    Baths</div>
                                             @endif
-                                            
+
                                             <div class="stat-item"><i class="fa-solid fa-vector-square"></i>
                                                 {{ $listing->area_size ?? 'N/A' }} sqft</div>
                                         </div>
@@ -614,19 +617,23 @@
                                     </select>
                                 </div>
 
-                                <div class="grid grid-cols-2 gap-2">
+                                <div class="space-y-4">
                                     <div>
                                         <label class="form-label-custom">Min Price</label>
                                         <div class="relative">
-                                            <i class="fa-solid fa-sterling-sign absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 text-xs z-10"></i>
-                                            <input type="number" name="min_price" value="{{ request('min_price') }}" class="sidebar-input" placeholder="No Min">
+                                            <i
+                                                class="fa-solid fa-pound-sign absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 text-sm z-10"></i>
+                                            <input type="number" name="min_price" value="{{ request('min_price') }}"
+                                                class="sidebar-input" placeholder="No Min">
                                         </div>
                                     </div>
                                     <div>
                                         <label class="form-label-custom">Max Price</label>
                                         <div class="relative">
-                                            <i class="fa-solid fa-sterling-sign absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 text-xs z-10"></i>
-                                            <input type="number" name="max_price" value="{{ request('max_price') }}" class="sidebar-input" placeholder="No Max">
+                                            <i
+                                                class="fa-solid fa-pound-sign absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 text-sm z-10"></i>
+                                            <input type="number" name="max_price" value="{{ request('max_price') }}"
+                                                class="sidebar-input" placeholder="No Max">
                                         </div>
                                     </div>
                                 </div>
@@ -751,7 +758,7 @@
                 return;
             @endif
 
-                                                                                                        const data = {
+                                                                                                                const data = {
                 _token: '{{ csrf_token() }}'
             };
             if (listingId) data.listing_id = listingId;

@@ -22,16 +22,18 @@
         </p>
 
         <div class="flex justify-center mb-8">
-          <a href="https://uk.trustpilot.com/review/propertyfinda.co.uk" target="_blank" 
-             class="inline-flex items-center gap-2 bg-white px-5 py-2.5 border border-[#00B67A] rounded hover:shadow-md transition-all">
-              <span class="text-[#191919] text-base md:text-lg font-medium">Review us on</span>
-              <div class="flex items-center gap-1.5">
-                  <svg viewBox="0 0 100 100" class="w-6 h-6">
-                      <rect width="100" height="100" fill="#00B67A" rx="4" />
-                      <path d="M50 20l8.1 16.2 17.9 2.6-13 12.6 3.1 17.8-16.1-8.5-16.1 8.5 3.1-17.8-13-12.6 17.9-2.6 8.1-16.2z" fill="white" />
-                  </svg>
-                  <span class="text-[#00B67A] text-xl md:text-2xl font-black tracking-tighter" style="font-family: 'Outfit', sans-serif;">Trustpilot</span>
-              </div>
+          <a href="https://uk.trustpilot.com/review/propertyfinda.co.uk" target="_blank"
+            class="inline-flex items-center gap-2 bg-white px-5 py-2.5 border border-[#00B67A] rounded hover:shadow-md transition-all">
+            <span class="text-[#191919] text-base md:text-lg font-medium">Review us on</span>
+            <div class="flex items-center gap-1.5">
+              <svg viewBox="0 0 100 100" class="w-6 h-6">
+                <rect width="100" height="100" fill="#00B67A" rx="4" />
+                <path d="M50 20l8.1 16.2 17.9 2.6-13 12.6 3.1 17.8-16.1-8.5-16.1 8.5 3.1-17.8-13-12.6 17.9-2.6 8.1-16.2z"
+                  fill="white" />
+              </svg>
+              <span class="text-[#00B67A] text-xl md:text-2xl font-black tracking-tighter"
+                style="font-family: 'Outfit', sans-serif;">Trustpilot</span>
+            </div>
           </a>
         </div>
       </div>
@@ -207,12 +209,12 @@
                 </div>
 
                 <div class="relative">
-                  <div class="filter-icon-wrapper"><i class="fa-solid fa-sterling-sign"></i></div>
+                  <div class="filter-icon-wrapper"><i class="fa-solid fa-pound-sign"></i></div>
                   <input type="number" name="min_price" placeholder="Min Price"
                     class="w-full pl-12 pr-4 py-4 text-base font-medium text-gray-900 bg-gray-50 border border-gray-200 rounded-xl focus:bg-white focus:ring-4 focus:ring-secondary/10 focus:border-secondary transition-all h-[56px] placeholder-gray-400 outline-none">
                 </div>
                 <div class="relative">
-                  <div class="filter-icon-wrapper"><i class="fa-solid fa-sterling-sign"></i></div>
+                  <div class="filter-icon-wrapper"><i class="fa-solid fa-pound-sign"></i></div>
                   <input type="number" name="max_price" placeholder="Max Price"
                     class="w-full pl-12 pr-4 py-4 text-base font-medium text-gray-900 bg-gray-50 border border-gray-200 rounded-xl focus:bg-white focus:ring-4 focus:ring-secondary/10 focus:border-secondary transition-all h-[56px] placeholder-gray-400 outline-none">
                 </div>
@@ -604,7 +606,7 @@
           class="bg-white/5 hover:bg-white/10 transition-colors border border-white/5 p-6 rounded-3xl backdrop-blur-sm group">
           <div
             class="w-10 h-10 rounded-xl bg-secondary/20 flex items-center justify-center text-white mb-4 group-hover:scale-110 transition-transform">
-            <i class="fa-solid fa-sterling-sign text-lg"></i>
+            <i class="fa-solid fa-pound-sign text-lg"></i>
           </div>
           <div class="text-3xl font-black text-white mb-1">£{{ $affiliate_rate }}</div>
           <p class="text-white text-xs font-bold uppercase tracking-wide leading-relaxed">Per
@@ -856,7 +858,7 @@
         return;
       @endif
 
-                                                                                                                                                                                    const data = {
+                                                                                                                                                                                          const data = {
         _token: '{{ csrf_token() }}'
       };
       if (listingId) data.listing_id = listingId;

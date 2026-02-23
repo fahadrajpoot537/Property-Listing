@@ -64,11 +64,12 @@
                             <div class="bg-primary/50 rounded-3xl p-6 border border-white/5">
                                 <div
                                     class="w-12 h-12 bg-secondary/20 rounded-xl flex items-center justify-center text-secondary text-xl mb-4">
-                                    <i class="fa-solid fa-sterling-sign"></i>
+                                    <i class="fa-solid fa-pound-sign"></i>
                                 </div>
                                 <div class="text-3xl font-black text-white mb-1">£{{ $rate }}</div>
                                 <div class="text-xs text-white/50 uppercase font-bold tracking-wider">Per
-                                    {{ number_format($batch_size / 1000, 1) }}k Visitors</div>
+                                    {{ number_format($batch_size / 1000, 1) }}k Visitors
+                                </div>
                             </div>
                             <div class="bg-primary/50 rounded-3xl p-6 border border-white/5">
                                 <div

@@ -186,13 +186,15 @@
                     @endforeach
                   </select>
                 </div>
-                <div class="relative">
-                  <div class="filter-icon-wrapper"><i class="fa-solid fa-sterling-sign text-secondary"></i></div>
+                <!-- Min Price Sale -->
+                <div class="relative col-span-2 lg:col-span-full">
+                  <div class="filter-icon-wrapper"><i class="fa-solid fa-pound-sign text-secondary"></i></div>
                   <input type="number" id="min-price-sale" placeholder="Min Price"
                     class="w-full pl-12 pr-4 py-4 text-base font-medium text-gray-900 bg-gray-50 border border-gray-200 rounded-xl focus:bg-white focus:ring-4 focus:ring-secondary/10 focus:border-secondary transition-all h-[56px] placeholder-gray-400 outline-none">
                 </div>
-                <div class="relative">
-                  <div class="filter-icon-wrapper"><i class="fa-solid fa-sterling-sign text-secondary"></i></div>
+                <!-- Max Price Sale -->
+                <div class="relative col-span-2 lg:col-span-full">
+                  <div class="filter-icon-wrapper"><i class="fa-solid fa-pound-sign text-secondary"></i></div>
                   <input type="number" id="max-price-sale" placeholder="Max Price"
                     class="w-full pl-12 pr-4 py-4 text-base font-medium text-gray-900 bg-gray-50 border border-gray-200 rounded-xl focus:bg-white focus:ring-4 focus:ring-secondary/10 focus:border-secondary transition-all h-[56px] placeholder-gray-400 outline-none">
                 </div>
@@ -275,13 +277,15 @@
                     @endforeach
                   </select>
                 </div>
-                <div class="relative">
-                  <div class="filter-icon-wrapper"><i class="fa-solid fa-sterling-sign text-secondary"></i></div>
+                <!-- Min Price Rent -->
+                <div class="relative col-span-2 lg:col-span-full">
+                  <div class="filter-icon-wrapper"><i class="fa-solid fa-pound-sign text-secondary"></i></div>
                   <input type="number" id="min-price-rent" placeholder="Min Price"
                     class="w-full pl-12 pr-4 py-4 text-base font-medium text-gray-900 bg-gray-50 border border-gray-200 rounded-xl focus:bg-white focus:ring-4 focus:ring-secondary/10 focus:border-secondary transition-all h-[56px] placeholder-gray-400 outline-none">
                 </div>
-                <div class="relative">
-                  <div class="filter-icon-wrapper"><i class="fa-solid fa-sterling-sign text-secondary"></i></div>
+                <!-- Max Price Rent -->
+                <div class="relative col-span-2 lg:col-span-full">
+                  <div class="filter-icon-wrapper"><i class="fa-solid fa-pound-sign text-secondary"></i></div>
                   <input type="number" id="max-price-rent" placeholder="Max Price"
                     class="w-full pl-12 pr-4 py-4 text-base font-medium text-gray-900 bg-gray-50 border border-gray-200 rounded-xl focus:bg-white focus:ring-4 focus:ring-secondary/10 focus:border-secondary transition-all h-[56px] placeholder-gray-400 outline-none">
                 </div>
