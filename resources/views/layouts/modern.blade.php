@@ -7,6 +7,7 @@
     <meta name="csrf-token" content="{{ csrf_token() }}">
 
     <title>@yield('title', 'PropertyFinda - Premium Property Listings')</title>
+    <link rel="icon" type="image/png" href="{{ asset('logoor.png') }}">
 
     <!-- Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
