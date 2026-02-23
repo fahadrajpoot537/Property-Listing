@@ -1,6 +1,6 @@
 @extends('layouts.master')
 
-@section('title', 'Property Map - FindaUk')
+@section('title', 'Property Map - PropertyFinda')
 
 @section('content')
     <!--===== HERO AREA STARTS =======-->
@@ -411,10 +411,10 @@
                             const propertiesInShape = checkPropertiesInShape(newShape, [
                                 @foreach($listings as $listing)
                                     @if($listing->latitude && $listing->longitude)
-                                                                                    {
+                                                                                                    {
                                             id: {{ $listing->id }},
-                                                    slug: '{{ $listing->slug ?? $listing->id }}',
-                                                            title: '{{ addslashes($listing->property_title) }}',
+                                            slug: '{{ $listing->slug ?? $listing->id }}',
+                                            title: '{{ addslashes($listing->property_title) }}',
                                             price: {{ $listing->price }},
                                             lat: {{ $listing->latitude }},
                                             lng: {{ $listing->longitude }},
@@ -428,7 +428,7 @@
                                         },
                                     @endif
                                 @endforeach
-                                                    ]);
+                                                            ]);
 
                             // Update the prices list with properties in the drawn area
                             updatePricesList(propertiesInShape);
@@ -509,7 +509,7 @@
                             map.fitBounds(bounds);
                         }
                     @endif
-                                    }
+                                            }
 
             function addPropertyMarker(property) {
                 if (!map) return;
@@ -524,17 +524,17 @@
                 // Create an info window with price as content
                 const infoWindow = new google.maps.InfoWindow({
                     content: `
-                                                <div style="min-width: 200px;">
-                                                    <div style="font-weight: bold; font-size: 16px; color: #007bff;">£${property.price.toLocaleString()}</div>
-                                                    <div style="font-weight: bold; margin-top: 5px;">${property.title}</div>
-                                                    <div style="color: #666; font-size: 12px; margin-top: 3px;">${property.address}</div>
-                                                    <div style="margin-top: 8px; display: flex; gap: 10px;">
-                                                        ${property.bedrooms > 0 ? `<span style="font-size: 12px;"><i class="fa fa-bed"></i> ${property.bedrooms} beds</span>` : `<span style="font-size: 12px;"><i class="fa fa-building"></i> ${property.unit_type}</span>`}
-                                                        ${property.bathrooms > 0 ? `<span style="font-size: 12px;"><i class="fa fa-bath"></i> ${property.bathrooms} baths</span>` : ''}
-                                                        <span style="font-size: 12px;"><i class="fa fa-ruler-combined"></i> ${property.area_size} sqft</span>
-                                                    </div>
-                                                </div>
-                                            `
+                                                        <div style="min-width: 200px;">
+                                                            <div style="font-weight: bold; font-size: 16px; color: #007bff;">£${property.price.toLocaleString()}</div>
+                                                            <div style="font-weight: bold; margin-top: 5px;">${property.title}</div>
+                                                            <div style="color: #666; font-size: 12px; margin-top: 3px;">${property.address}</div>
+                                                            <div style="margin-top: 8px; display: flex; gap: 10px;">
+                                                                ${property.bedrooms > 0 ? `<span style="font-size: 12px;"><i class="fa fa-bed"></i> ${property.bedrooms} beds</span>` : `<span style="font-size: 12px;"><i class="fa fa-building"></i> ${property.unit_type}</span>`}
+                                                                ${property.bathrooms > 0 ? `<span style="font-size: 12px;"><i class="fa fa-bath"></i> ${property.bathrooms} baths</span>` : ''}
+                                                                <span style="font-size: 12px;"><i class="fa fa-ruler-combined"></i> ${property.area_size} sqft</span>
+                                                            </div>
+                                                        </div>
+                                                    `
                 });
 
                 // Add click listener to open property details
@@ -564,16 +564,16 @@
 
                 properties.forEach(function (property) {
                     const priceElement = $(`
-                                                <div class="price-item" style="padding: 8px 0; border-bottom: 1px solid #eee;">
-                                                    <div style="font-weight: bold; color: #007bff;">£${property.price.toLocaleString()}</div>
-                                                    <div style="font-size: 12px; color: #333;">${property.title}</div>
-                                                    <div style="font-size: 11px; color: #666;">
-                                                        ${property.bedrooms > 0 ? property.bedrooms + ' bed' : property.unit_type}
-                                                        ${property.bedrooms > 0 && property.bathrooms > 0 ? ', ' : ''}
-                                                        ${property.bathrooms > 0 ? property.bathrooms + ' bath' : ''}
-                                                    </div>
-                                                </div>
-                                            `);
+                                                        <div class="price-item" style="padding: 8px 0; border-bottom: 1px solid #eee;">
+                                                            <div style="font-weight: bold; color: #007bff;">£${property.price.toLocaleString()}</div>
+                                                            <div style="font-size: 12px; color: #333;">${property.title}</div>
+                                                            <div style="font-size: 11px; color: #666;">
+                                                                ${property.bedrooms > 0 ? property.bedrooms + ' bed' : property.unit_type}
+                                                                ${property.bedrooms > 0 && property.bathrooms > 0 ? ', ' : ''}
+                                                                ${property.bathrooms > 0 ? property.bathrooms + ' bath' : ''}
+                                                            </div>
+                                                        </div>
+                                                    `);
 
                     // Add click handler to pan to the property on the map
                     priceElement.click(function () {
@@ -588,17 +588,17 @@
                                 // For now, we'll just open the info window
                                 const tempInfoWindow = new google.maps.InfoWindow({
                                     content: `
-                                                                <div style="min-width: 200px;">
-                                                                    <div style="font-weight: bold; font-size: 16px; color: #007bff;">£${property.price.toLocaleString()}</div>
-                                                                    <div style="font-weight: bold; margin-top: 5px;">${property.title}</div>
-                                                                    <div style="color: #666; font-size: 12px; margin-top: 3px;">${property.address}</div>
-                                                                    <div style="margin-top: 8px; display: flex; gap: 10px;">
-                                                                        <span style="font-size: 12px;"><i class="fa fa-bed"></i> ${property.bedrooms} beds</span>
-                                                                        <span style="font-size: 12px;"><i class="fa fa-bath"></i> ${property.bathrooms} baths</span>
-                                                                        <span style="font-size: 12px;"><i class="fa fa-ruler-combined"></i> ${property.area_size} sqft</span>
-                                                                    </div>
-                                                                </div>
-                                                            `
+                                                                        <div style="min-width: 200px;">
+                                                                            <div style="font-weight: bold; font-size: 16px; color: #007bff;">£${property.price.toLocaleString()}</div>
+                                                                            <div style="font-weight: bold; margin-top: 5px;">${property.title}</div>
+                                                                            <div style="color: #666; font-size: 12px; margin-top: 3px;">${property.address}</div>
+                                                                            <div style="margin-top: 8px; display: flex; gap: 10px;">
+                                                                                <span style="font-size: 12px;"><i class="fa fa-bed"></i> ${property.bedrooms} beds</span>
+                                                                                <span style="font-size: 12px;"><i class="fa fa-bath"></i> ${property.bathrooms} baths</span>
+                                                                                <span style="font-size: 12px;"><i class="fa fa-ruler-combined"></i> ${property.area_size} sqft</span>
+                                                                            </div>
+                                                                        </div>
+                                                                    `
                                 });
                                 tempInfoWindow.open(map, m);
                             }
