@@ -1,6 +1,6 @@
 @extends('layouts.modern')
 
-@section('title', 'Partner Registration - FindaUK')
+@section('title', 'Partner Registration - PropertyFinda')
 
 @section('content')
     <div class="min-h-screen pt-24 md:pt-32 pb-12 md:pb-20 flex items-center justify-center px-4 bg-gray-50">
@@ -111,7 +111,8 @@
                             <input type="checkbox" required id="agree"
                                 class="mt-1 w-5 h-5 rounded-lg border-secondary/30 text-secondary focus:ring-secondary cursor-pointer">
                             <span class="text-[11px] text-primary/70 font-bold leading-relaxed">
-                                I verify the information provided and agree to the FindaUK Partner Terms, including the
+                                I verify the information provided and agree to the PropertyFinda Partner Terms, including
+                                the
                                 <span class="text-secondary">£50 Commission</span> structure per 1,000 unique hits.
                             </span>
                         </label>

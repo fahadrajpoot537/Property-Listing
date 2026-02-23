@@ -136,7 +136,7 @@ class RoleAndPermissionSeeder extends Seeder
 
         // Create a default admin user if not exists
         $admin = User::firstOrCreate(
-            ['email' => 'admin@findauk.com'],
+            ['email' => 'admin@propertyfinda.co.uk'],
             [
                 'name' => 'Super Admin',
                 'username' => 'admin',

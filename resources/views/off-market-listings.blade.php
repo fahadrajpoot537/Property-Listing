@@ -89,7 +89,7 @@
   </style>
 @endpush
 
-@section('title', 'Off Market Listings - FindaUk')
+@section('title', 'Off Market Listings - PropertyFinda')
 
 @section('content')
   <!-- Portal Hero Search Section -->

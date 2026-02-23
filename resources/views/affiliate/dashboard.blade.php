@@ -1,6 +1,6 @@
 @extends('layouts.modern')
 
-@section('title', 'Partner Dashboard - FindaUK')
+@section('title', 'Partner Dashboard - PropertyFinda')
 
 @section('content')
     <div class="pt-32 pb-20 bg-gray-50 min-h-screen">
@@ -69,7 +69,8 @@
                         <div class="text-5xl font-black text-emerald-600 mb-2 tracking-tight">
                             £{{ $stats['total_earnings'] }}</div>
                         <p class="text-gray-400 text-sm font-medium">Based on £{{ $stats['rate'] }} per
-                            {{ number_format($stats['batch_size']) }} unique</p>
+                            {{ number_format($stats['batch_size']) }} unique
+                        </p>
                     </div>
                     <div
                         class="absolute -bottom-6 -right-6 text-emerald-50 text-7xl transform group-hover:-translate-y-2 transition-transform duration-500">

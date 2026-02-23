@@ -22,7 +22,7 @@
         </p>
 
         <hr style="border: none; border-top: 1px solid #eee; margin: 20px 0;">
-        <p style="font-size: 12px; color: #777;">This email was sent from FindaUK Portal.</p>
+        <p style="font-size: 12px; color: #777;">This email was sent from PropertyFinda Portal.</p>
     </div>
 </body>
 

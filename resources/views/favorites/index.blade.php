@@ -1,6 +1,6 @@
 @extends('layouts.modern')
 
-@section('title', 'My Favorite Properties - FindaUK')
+@section('title', 'My Favorite Properties - PropertyFinda')
 
 @section('content')
     <div class="pt-24 pb-20 bg-gray-50 min-h-screen">

@@ -1,6 +1,6 @@
 @extends('layouts.master')
 
-@section('title', 'Our Services - FindaUk')
+@section('title', 'Our Services - PropertyFinda')
 
 @section('content')
     <!--===== PAGE HERO AREA STARTS =======-->

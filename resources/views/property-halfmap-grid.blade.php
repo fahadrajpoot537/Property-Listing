@@ -1,6 +1,6 @@
 @extends('layouts.modern')
 
-@section('title', 'Property Search - FindaUK')
+@section('title', 'Property Search - PropertyFinda')
 
 @section('content')
     <style>
