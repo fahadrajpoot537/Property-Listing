@@ -8,7 +8,7 @@
 
     <title>@yield('title', 'PropertyFinda - Premium Property Listings')</title>
     <link rel="icon" type="image/png" href="{{ asset('logoor.png') }}">
-
+    <meta name="google-site-verification" content="3oDlCFANTaccxygYAUyFonXChUf9D9hTRpjlvUIwzkc" />
     <!-- Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -16,7 +16,7 @@
         href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&family=Playfair+Display:wght@400;600;700&display=swap"
         rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-
+    <meta name="google-site-verification" content="3oDlCFANTaccxygYAUyFonXChUf9D9hTRpjlvUIwzkc" />
     <!-- Scripts -->
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 
