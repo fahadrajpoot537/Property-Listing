@@ -19,9 +19,9 @@
              <span class="px-5 py-2.5 rounded-2xl text-[11px] font-black uppercase tracking-widest bg-orange-50 text-[#ff931e] ring-1 ring-orange-200 shadow-xl shadow-orange-500/10">
                 OFF-MARKET ASSET
             </span>
-            <button class="w-12 h-12 bg-black text-white rounded-2xl flex items-center justify-center hover:bg-[#ff931e] transition-all shadow-xl">
+            <a href="{{ route('admin.off-market-listings.edit', $listing->id) }}" class="w-12 h-12 bg-black text-white rounded-2xl flex items-center justify-center hover:bg-[#ff931e] transition-all shadow-xl">
                 <i class='bx bxs-edit-alt text-xl'></i>
-            </button>
+            </a>
         </div>
     </div>
 
@@ -33,14 +33,30 @@
                 <div class="swiper mainSwiper h-[500px]">
                     <div class="swiper-wrapper">
                         <!-- Thumbnail first -->
+                        @if($listing->thumbnail)
                         <div class="swiper-slide">
                             <img src="{{ asset('storage/' . $listing->thumbnail) }}" class="w-full h-full object-cover grayscale" alt="Deal Hero">
                         </div>
-                        <!-- Gallery images -->
-                        @if($listing->gallery)
+                        @else
+                        <div class="swiper-slide">
+                            <div class="w-full h-full bg-slate-900 flex items-center justify-center text-white/20">
+                                <i class='bx bx-landscape text-9xl'></i>
+                            </div>
+                        </div>
+                        @endif
+                        
+                        <!-- Photos from Media table -->
+                        @foreach($listing->media->where('type', 'photo') as $photo)
+                            <div class="swiper-slide">
+                                <img src="{{ asset('storage/' . $photo->file_path) }}" class="w-full h-full object-cover grayscale" alt="Surveillance Image">
+                            </div>
+                        @endforeach
+
+                        <!-- Legacy Gallery column -->
+                        @if($listing->gallery && is_array($listing->gallery))
                             @foreach($listing->gallery as $image)
                                 <div class="swiper-slide">
-                                    <img src="{{ asset('storage/' . $image) }}" class="w-full h-full object-cover grayscale" alt="Surveillance Image">
+                                    <img src="{{ asset('storage/' . $image) }}" class="w-full h-full object-cover grayscale" alt="Legacy Image">
                                 </div>
                             @endforeach
                         @endif
@@ -69,13 +85,22 @@
             <!-- Thumbnail Swiper -->
             <div class="swiper thumbSwiper mt-4">
                 <div class="swiper-wrapper">
+                    @if($listing->thumbnail)
                     <div class="swiper-slide cursor-pointer opacity-40 hover:opacity-100 transition-opacity !w-24 !h-20">
                         <img src="{{ asset('storage/' . $listing->thumbnail) }}" class="w-full h-full object-cover rounded-2xl border-2 border-transparent grayscale" alt="Thumb Hero">
                     </div>
-                    @if($listing->gallery)
+                    @endif
+                    
+                    @foreach($listing->media->where('type', 'photo') as $photo)
+                        <div class="swiper-slide cursor-pointer opacity-40 hover:opacity-100 transition-opacity !w-24 !h-20">
+                            <img src="{{ asset('storage/' . $photo->file_path) }}" class="w-full h-full object-cover rounded-2xl border-2 border-transparent grayscale" alt="Thumb Gallery">
+                        </div>
+                    @endforeach
+
+                    @if($listing->gallery && is_array($listing->gallery))
                         @foreach($listing->gallery as $image)
                             <div class="swiper-slide cursor-pointer opacity-40 hover:opacity-100 transition-opacity !w-24 !h-20">
-                                <img src="{{ asset('storage/' . $image) }}" class="w-full h-full object-cover rounded-2xl border-2 border-transparent grayscale" alt="Thumb Gallery">
+                                <img src="{{ asset('storage/' . $image) }}" class="w-full h-full object-cover rounded-2xl border-2 border-transparent grayscale" alt="Thumb Legacy">
                             </div>
                         @endforeach
                     @endif
@@ -84,27 +109,19 @@
 
             <style>
                 .thumbSwiper .swiper-slide-thumb-active { opacity: 1; }
-                .thumbSwiper .swiper-slide-thumb-active img { border-color: #ff931e; grayscale: 0; }
-                .mainSwiper .swiper-slide-active img { grayscale: 0; transition: grayscale 0.5s; }
+                .thumbSwiper .swiper-slide-thumb-active img { border-color: #ff931e; filter: grayscale(0); }
+                .mainSwiper .swiper-slide-active img { filter: grayscale(0); transition: filter 0.5s; }
             </style>
 
             <!-- Stats Grid -->
-            <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+            <div class="grid grid-cols-2 lg:grid-cols-4 gap-6">
                 @php 
                     $specs = [
-                        ['icon' => 'bx-expand', 'label' => 'Total Area', 'value' => $listing->area_size . ' Sq Ft', 'bg' => 'bg-slate-900', 'text' => 'text-white'],
+                        ['icon' => 'bx-expand', 'label' => 'Total Area', 'value' => ($listing->area_size ?: '0') . ' Sq Ft', 'bg' => 'bg-slate-900', 'text' => 'text-white'],
                         ['icon' => 'bx-bed', 'label' => 'Bedrooms', 'value' => $listing->bedrooms, 'bg' => 'bg-white', 'text' => 'text-[#ff931e]'],
                         ['icon' => 'bx-bath', 'label' => 'Bathrooms', 'value' => $listing->bathrooms, 'bg' => 'bg-white', 'text' => 'text-[#ff931e]'],
                         ['icon' => 'bx-shield-quarter', 'label' => 'Asset Class', 'value' => $listing->unitType->title ?? 'N/A', 'bg' => 'bg-slate-900', 'text' => 'text-white']
                     ];
-
-                    if($listing->purpose === 'Buy' && $listing->ownershipStatus) {
-                        $specs[] = ['icon' => 'bx-key', 'label' => 'Ownership', 'value' => $listing->ownershipStatus->title, 'bg' => 'bg-white', 'text' => 'text-[#ff931e]'];
-                    }
-                    if($listing->purpose === 'Rent') {
-                        if($listing->rentFrequency) $specs[] = ['icon' => 'bx-timer', 'label' => 'Frequency', 'value' => $listing->rentFrequency->title, 'bg' => 'bg-slate-900', 'text' => 'text-white'];
-                        if($listing->cheque) $specs[] = ['icon' => 'bx-wallet', 'label' => 'Payments', 'value' => $listing->cheque->title, 'bg' => 'bg-white', 'text' => 'text-[#ff931e]'];
-                    }
                 @endphp
                 @foreach($specs as $spec)
                 <div class="{{ $spec['bg'] }} p-6 rounded-[2rem] border border-slate-100 flex flex-col items-center text-center shadow-sm hover:shadow-md transition-all group">
@@ -116,6 +133,110 @@
                 </div>
                 @endforeach
             </div>
+
+            <!-- Description -->
+            <div class="bg-white rounded-[2.5rem] p-10 border border-slate-50 shadow-sm relative overflow-hidden">
+                <h4 class="text-xl font-black text-black mb-6 italic tracking-tight flex items-center gap-3">
+                    <span class="w-1.5 h-6 bg-[#ff931e] rounded-full"></span> Internal Intelligence Report
+                </h4>
+                <div class="prose prose-slate max-w-none text-slate-600 leading-relaxed font-medium">
+                    {!! $listing->description !!}
+                </div>
+            </div>
+
+            <!-- Material Info & Utilities -->
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-10">
+                <!-- Material Info -->
+                <div class="bg-white rounded-[2.5rem] p-10 border border-slate-50 shadow-sm">
+                    <h4 class="text-xl font-black text-black mb-8 tracking-tight flex items-center gap-3 italic">
+                        <span class="w-1.5 h-6 bg-slate-900 rounded-full"></span> Material Intel
+                    </h4>
+                    <div class="space-y-4">
+                        @php
+                            $mat = $listing->materialInfo;
+                            $matSpecs = [
+                                'Tenure' => $mat->tenure ?? 'N/A',
+                                'Council Tax Band' => $mat->council_tax_band ?? 'N/A',
+                                'Parking' => ($mat->parking_type ?? 'None') . ' (' . ($mat->parking_spaces_count ?? 0) . ' spaces)',
+                                'Construction' => $mat->construction_type ?? 'N/A',
+                                'Flood Risk' => $mat->flood_risk ?? 'N/A',
+                                'Listed Property' => $mat->listed_building ?? 'N/A',
+                            ];
+                        @endphp
+                        @foreach($matSpecs as $label => $value)
+                            <div class="flex justify-between items-center py-2 border-b border-slate-50">
+                                <span class="text-[11px] font-bold text-slate-400 uppercase tracking-wider">{{ $label }}</span>
+                                <span class="text-sm font-black text-slate-800">{{ $value }}</span>
+                            </div>
+                        @endforeach
+                    </div>
+                </div>
+
+                <!-- Utilities -->
+                <div class="bg-white rounded-[2.5rem] p-10 border border-slate-50 shadow-sm">
+                    <h4 class="text-xl font-black text-black mb-8 tracking-tight flex items-center gap-3 italic">
+                        <span class="w-1.5 h-6 bg-[#ff931e] rounded-full"></span> Utility Matrix
+                    </h4>
+                    <div class="space-y-4">
+                        @php
+                            $util = $listing->utilities;
+                            $utilSpecs = [
+                                'Water' => $util->water ?? 'N/A',
+                                'Electricity' => $util->electricity ?? 'N/A',
+                                'Sewerage' => $util->sewerage ?? 'N/A',
+                                'Heating' => $util->heating_type ?? 'N/A',
+                                'Broadband' => $util->broadband ?? 'N/A',
+                                'Mobile' => $util->mobile_coverage ?? 'N/A',
+                            ];
+                        @endphp
+                        @foreach($utilSpecs as $label => $value)
+                            <div class="flex justify-between items-center py-2 border-b border-slate-50">
+                                <span class="text-[11px] font-bold text-slate-400 uppercase tracking-wider">{{ $label }}</span>
+                                <span class="text-sm font-black text-slate-800">{{ $value }}</span>
+                            </div>
+                        @endforeach
+                    </div>
+                </div>
+            </div>
+
+            <!-- Key Features -->
+            @if($listing->details && $listing->details->key_features)
+            <div class="bg-white rounded-[2.5rem] p-10 border border-slate-50 shadow-sm">
+                <h4 class="text-xl font-black text-black mb-8 tracking-tight flex items-center gap-3 italic">
+                    <span class="w-1.5 h-6 bg-emerald-500 rounded-full"></span> Key Strategic Features
+                </h4>
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                    @foreach($listing->details->key_features as $feature)
+                        <div class="flex items-center gap-4 group">
+                            <div class="w-10 h-10 bg-slate-50 text-[#ff931e] rounded-xl flex items-center justify-center transition-all group-hover:bg-[#ff931e] group-hover:text-white">
+                                <i class='bx bx-check-double text-xl'></i>
+                            </div>
+                            <span class="text-slate-700 font-black text-[11px] uppercase tracking-tighter">{{ $feature }}</span>
+                        </div>
+                    @endforeach
+                </div>
+            </div>
+            @endif
+
+            <!-- Floor Plans -->
+            @php $floorplans = $listing->media->where('type', 'floorplan'); @endphp
+            @if($floorplans->count() > 0)
+            <div class="bg-white rounded-[2.5rem] p-10 border border-slate-50 shadow-sm">
+                <h4 class="text-xl font-black text-black mb-8 tracking-tight flex items-center gap-3 italic">
+                    <span class="w-1.5 h-6 bg-indigo-500 rounded-full"></span> Architectural blue-prints
+                </h4>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    @foreach($floorplans as $fp)
+                        <div class="rounded-3xl overflow-hidden border border-slate-100 group relative">
+                            <img src="{{ asset('storage/' . $fp->file_path) }}" class="w-full h-auto transition-transform group-hover:scale-105" alt="Floor Plan">
+                            <div class="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+                                <a href="{{ asset('storage/' . $fp->file_path) }}" target="_blank" class="px-6 py-2 bg-white text-black font-black text-xs uppercase rounded-xl">Expand Node</a>
+                            </div>
+                        </div>
+                    @endforeach
+                </div>
+            </div>
+            @endif
         </div>
 
         <!-- Sidebar Info -->
@@ -135,13 +256,17 @@
                         <p class="text-[10px] text-slate-400 font-bold uppercase tracking-widest">{{ $listing->user->roles->first()->name ?? 'Dealer' }}</p>
                     </div>
                 </div>
-                <div class="p-4 bg-orange-50 rounded-2xl mb-8">
-                     <p class="text-[9px] text-[#ff931e] font-black uppercase tracking-widest mb-1 italic">Vetting Status</p>
-                     <p class="text-xs font-bold text-slate-700">Level 4 Verified Affiliate</p>
-                </div>
+                
                 <div class="space-y-4">
-                    <button class="w-full py-4 bg-slate-900 text-white rounded-2xl font-black text-[11px] uppercase tracking-[0.2em] active:scale-95 transition-all shadow-xl">Contact Intel Source</button>
-                    <button class="w-full py-4 bg-white border border-slate-100 text-[#ff931e] rounded-2xl font-black text-[11px] uppercase tracking-[0.2em] hover:bg-orange-50 transition-all">Download Asset PDF</button>
+                    <a href="mailto:{{ $listing->user->email }}" class="w-full inline-block text-center py-4 bg-slate-900 text-white rounded-2xl font-black text-[11px] uppercase tracking-[0.2em] active:scale-95 transition-all shadow-xl">Contact Intel Source</a>
+                    
+                    @if($listing->brochure_pdf)
+                        <a href="{{ asset('storage/' . $listing->brochure_pdf) }}" target="_blank" class="w-full inline-block text-center py-4 bg-white border border-slate-100 text-[#ff931e] rounded-2xl font-black text-[11px] uppercase tracking-[0.2em] hover:bg-orange-50 transition-all">Download Asset PDF</a>
+                    @endif
+
+                    @if($listing->epc_upload)
+                        <a href="{{ asset('storage/' . $listing->epc_upload) }}" target="_blank" class="w-full inline-block text-center py-4 bg-white border border-slate-100 text-emerald-500 rounded-2xl font-black text-[11px] uppercase tracking-[0.2em] hover:bg-emerald-50 transition-all">View EPC Certificate</a>
+                    @endif
                 </div>
             </div>
 
@@ -151,7 +276,7 @@
                  <div id="map" class="w-full h-[300px] rounded-[2rem] bg-slate-50 grayscale hover:grayscale-0 transition-all"></div>
                  <div class="p-6">
                       <h5 class="font-black text-black italic">Strategic Deployment Node</h5>
-                      <p class="text-xs text-slate-400 font-bold uppercase mt-1">Coordinates: Locked in UK Grid</p>
+                      <p class="text-xs text-slate-400 font-bold uppercase mt-1">LAT: {{ $listing->latitude }} | LONG: {{ $listing->longitude }}</p>
                  </div>
             </div>
             @endif
@@ -181,22 +306,24 @@
 @push('scripts')
 <script async defer src="https://maps.googleapis.com/maps/api/js?key={{ config('services.google.maps_api_key') }}&callback=initMap"></script>
 <script>
-    var swiperThumbs = new Swiper(".thumbSwiper", {
-        spaceBetween: 10,
-        slidesPerView: "auto",
-        freeMode: true,
-        watchSlidesProgress: true,
-    });
-    var swiperMain = new Swiper(".mainSwiper", {
-        spaceBetween: 10,
-        navigation: {
-            nextEl: ".swiper-button-next",
-            prevEl: ".swiper-button-prev",
-        },
-        thumbs: {
-            swiper: swiperThumbs,
-        },
-    });
+    if ($('.thumbSwiper').length > 0) {
+        var swiperThumbs = new Swiper(".thumbSwiper", {
+            spaceBetween: 10,
+            slidesPerView: "auto",
+            freeMode: true,
+            watchSlidesProgress: true,
+        });
+        var swiperMain = new Swiper(".mainSwiper", {
+            spaceBetween: 10,
+            navigation: {
+                nextEl: ".swiper-button-next",
+                prevEl: ".swiper-button-prev",
+            },
+            thumbs: {
+                swiper: swiperThumbs,
+            },
+        });
+    }
 
     function initMap() {
         const pos = { lat: {{ $listing->latitude }}, lng: {{ $listing->longitude }} };

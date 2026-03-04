@@ -100,6 +100,11 @@ class User extends Authenticatable implements MustVerifyEmail
     {
         return $this->hasMany(UserDocument::class);
     }
+
+    public function savedSearches()
+    {
+        return $this->hasMany(SavedSearch::class);
+    }
     public function sendPasswordResetNotification($token)
     {
         $this->notify(new \App\Notifications\Auth\ResetPassword($token));

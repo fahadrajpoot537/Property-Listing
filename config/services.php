@@ -39,4 +39,8 @@ return [
         'maps_api_key' => env('GOOGLE_MAPS_API_KEY'),
     ],
 
+    'patma' => [
+        'api_token' => env('PATMA_API_TOKEN', '3f5f396290a1e9c3be70b679210c188d3562a0d9'),
+    ],
+
 ];

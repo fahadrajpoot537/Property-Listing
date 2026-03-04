@@ -34,14 +34,27 @@ class AdminDashboardController extends Controller
             }
         }
 
+        $walkthroughQuery = \App\Models\WalkThroughInquiry::query();
+        if (!$isAdmin) {
+            if ($isAgency || ($user->hasRole('agent') && $user->agency_id)) {
+                $ownerId = $isAgency ? $user->id : $user->agency_id;
+                $teamIds = \App\Models\User::where('agency_id', $ownerId)->pluck('id')->toArray();
+                $userIds = array_merge([$ownerId], $teamIds);
+                $walkthroughQuery->whereIn('user_id', $userIds);
+            } else {
+                $walkthroughQuery->where('user_id', $user->id);
+            }
+        }
+
         $data = [
             'usersCount' => $isAdmin ? $userQuery->count() : 0,
             'listingsCount' => $listingQuery->count(),
             'offMarketListingsCount' => $offMarketQuery->count(),
+            'walkthroughCount' => $walkthroughQuery->where('status', 'pending')->count(),
             'propertyTypesCount' => \App\Models\PropertyType::count(),
             'unitTypesCount' => \App\Models\UnitType::count(),
             'featuresCount' => \App\Models\Feature::count(),
-            'totalVisitors' => \App\Models\VisitorAnalytic::count(), // Visitors might still be global or we could filter by listing owner?
+            'totalVisitors' => \App\Models\VisitorAnalytic::count(),
             'uniqueVisitors' => \App\Models\VisitorAnalytic::distinct('ip_address')->count('ip_address'),
             'recentListings' => (clone $listingQuery)->latest()->take(5)->get(),
             'recentUsers' => $isAdmin ? (clone $userQuery)->latest()->take(5)->get() : collect(),

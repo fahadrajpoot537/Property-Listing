@@ -4,6 +4,8 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Mail;
+use App\Mail\TeamMemberWelcome;
 
 class AdminUserController extends Controller
 {
@@ -11,18 +13,17 @@ class AdminUserController extends Controller
     {
         $user = auth()->user();
 
-        // Security: Only Admin, Manager, Listing Director, Q/A, and Agency can access the user list
-        // Other roles (e.g., Agent, Freelance) are denied access.
-        if (!$user->hasAnyRole(['admin', 'manager', 'listing director', 'Q/A', 'Agency'])) {
+        // Security: Only Admin and Agency can access the user list
+        if (!$user->hasAnyRole(['admin', 'Agency'])) {
             abort(403, 'Unauthorized access.');
         }
 
         if ($request->ajax()) {
             $query = \App\Models\User::with('roles');
 
-            // Admin, Manager, Listing Director, Q/A see all users
-            if ($user->hasAnyRole(['admin', 'manager', 'listing director', 'Q/A'])) {
-                // No additional filtering needed for these roles
+            // Admin role sees all users
+            if ($user->hasRole('admin')) {
+                // No additional filtering needed for admin
             }
             // Agency users only see their team members (users linked to their agency_id)
             elseif ($user->hasRole('Agency')) {
@@ -58,6 +59,12 @@ class AdminUserController extends Controller
         ]);
 
         $userCreator = auth()->user();
+
+        // Re-check permission for store
+        if (!$userCreator->hasAnyRole(['admin', 'Agency'])) {
+            return response()->json(['success' => false, 'message' => 'Unauthorized.'], 403);
+        }
+
         $agencyId = null;
         $role = $validated['role'];
 
@@ -77,6 +84,11 @@ class AdminUserController extends Controller
         ]);
 
         $user->assignRole($role);
+
+        // Send welcome email if created by Agency or if it's a team member (agent role)
+        if ($userCreator->hasRole('Agency') || ($userCreator->hasRole('admin') && $role === 'agent')) {
+            Mail::to($user->email)->send(new TeamMemberWelcome($user, $validated['password']));
+        }
 
         return response()->json(['success' => true, 'message' => 'User created successfully.', 'data' => $user]);
     }

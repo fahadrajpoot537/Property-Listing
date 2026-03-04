@@ -3,34 +3,35 @@
 @section('header', auth()->user()->hasRole('Agency') ? 'Team Management' : 'Users Management')
 
 @section('content')
-    <div class="flex justify-between items-center mb-6">
-        <h3 class="text-slate-600 font-bold text-2xl">
-            {{ auth()->user()->hasRole('Agency') ? 'My Team' : 'User Management' }}
+    <div class="flex justify-between items-center mb-5">
+        <h3 class="text-slate-800 font-black text-lg tracking-tight uppercase">
+            {{ auth()->user()->hasRole('Agency') ? 'My Team' : 'User Base' }}
         </h3>
         <button onclick="openModal()"
-            class="bg-[#8046F1] hover:bg-[#6D28D9] text-white font-black py-2.5 px-6 rounded-xl shadow-lg shadow-purple-100 transition-all flex items-center gap-2 active:scale-95 text-sm uppercase tracking-wider">
-            <i class='bx bx-plus-circle text-lg'></i>
-            {{ auth()->user()->hasRole('Agency') ? 'Add Team Member' : 'Create New User' }}
+            class="bg-[#8046F1] hover:bg-[#6D28D9] text-white font-black py-2 px-5 rounded-lg shadow-lg shadow-purple-500/10 transition-all flex items-center gap-2 active:scale-95 text-[10px] uppercase tracking-widest">
+            <i class='bx bx-plus text-base'></i>
+            {{ auth()->user()->hasRole('Agency') ? 'Add Member' : 'Create User' }}
         </button>
     </div>
 
     <!-- Filters Section -->
-    <div class="bg-white shadow-sm rounded-xl border border-slate-100 p-5 mb-8">
-        <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+    <div class="bg-white border border-slate-100 p-4 mb-5 rounded-xl">
+        <div class="grid grid-cols-1 md:grid-cols-4 gap-3">
             <div class="col-span-1 md:col-span-2">
-                <label class="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-2">Search User</label>
+                <label class="block text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1.5">Search
+                    User</label>
                 <div class="relative">
-                    <input type="text" id="customSearch" placeholder="Search by name, email or phone..."
-                        class="w-full pl-10 pr-4 py-2.5 rounded-xl border-slate-200 focus:border-indigo-500 focus:ring-indigo-500 text-sm transition-all">
+                    <input type="text" id="customSearch" placeholder="Name, email or phone..."
+                        class="w-full pl-9 pr-4 py-2 rounded-lg border-slate-200 bg-slate-50 text-[11px] focus:bg-white focus:border-indigo-400 outline-none transition-all">
                     <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-slate-400">
-                        <i class='bx bx-search text-lg'></i>
+                        <i class='bx bx-search text-base'></i>
                     </div>
                 </div>
             </div>
             <div>
-                <label class="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-2">Filter by Role</label>
+                <label class="block text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1.5">Role</label>
                 <select id="roleFilter"
-                    class="w-full rounded-xl border-slate-200 focus:border-indigo-500 focus:ring-indigo-500 text-sm py-2.5">
+                    class="w-full rounded-lg border-slate-200 bg-slate-50 text-[11px] py-2 px-2 outline-none focus:bg-white focus:border-indigo-400 transition-all">
                     <option value="">All Roles</option>
                     @foreach($roles as $role)
                         <option value="{{ $role->name }}">{{ ucfirst($role->name) }}</option>
@@ -38,9 +39,9 @@
                 </select>
             </div>
             <div>
-                <label class="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-2">Filter by Status</label>
+                <label class="block text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1.5">Status</label>
                 <select id="statusFilter"
-                    class="w-full rounded-xl border-slate-200 focus:border-indigo-500 focus:ring-indigo-500 text-sm py-2.5">
+                    class="w-full rounded-lg border-slate-200 bg-slate-50 text-[11px] py-2 px-2 outline-none focus:bg-white focus:border-indigo-400 transition-all">
                     <option value="">All Statuses</option>
                     <option value="approved">Approved</option>
                     <option value="document_approved">Document Approved</option>
@@ -51,19 +52,19 @@
         </div>
     </div>
 
-    <div class="bg-white shadow-sm rounded-xl border border-slate-100 p-6">
-        <table id="usersTable" class="w-full text-sm text-left text-slate-500">
-            <thead class="text-xs text-slate-700 uppercase bg-slate-50">
+    <div class="bg-white rounded-xl border border-slate-100 p-0 shadow-sm overflow-hidden">
+        <table id="usersTable" class="w-full text-[13px] text-left text-slate-500">
+            <thead class="text-xs text-slate-400 font-bold uppercase tracking-widest bg-slate-50/50">
                 <tr>
-                    <th class="px-6 py-3">ID</th>
-                    <th class="px-6 py-3">Name</th>
-                    <th class="px-6 py-3">Email</th>
-                    <th class="px-6 py-3">Role</th>
-                    <th class="px-6 py-3">Status</th>
-                    <th class="px-6 py-3">Actions</th>
+                    <th class="px-5 py-3">ID</th>
+                    <th class="px-5 py-3">User Profile</th>
+                    <th class="px-5 py-3">Auth Details</th>
+                    <th class="px-5 py-3">Classification</th>
+                    <th class="px-5 py-3">Lifecycle</th>
+                    <th class="px-5 py-3">Manage</th>
                 </tr>
             </thead>
-            <tbody></tbody>
+            <tbody class="divide-y divide-slate-50"></tbody>
         </table>
     </div>
 
@@ -284,21 +285,21 @@
                                 let typeLabel = doc.type.replace(/_/g, ' ').toUpperCase();
                                 let statusClass = doc.status === 'approved' ? 'text-emerald-500' : 'text-amber-500';
                                 docsHtml += `
-                                                                    <div class="flex items-center justify-between p-4 bg-slate-50 rounded-xl border border-slate-100">
-                                                                        <div class="flex items-center gap-4">
-                                                                            <div class="h-10 w-10 flex items-center justify-center bg-white rounded-lg border border-slate-200">
-                                                                                <i class='bx bxs-file-pdf text-xl text-rose-500'></i>
+                                                                            <div class="flex items-center justify-between p-4 bg-slate-50 rounded-xl border border-slate-100">
+                                                                                <div class="flex items-center gap-4">
+                                                                                    <div class="h-10 w-10 flex items-center justify-center bg-white rounded-lg border border-slate-200">
+                                                                                        <i class='bx bxs-file-pdf text-xl text-rose-500'></i>
+                                                                                    </div>
+                                                                                    <div>
+                                                                                        <p class="text-sm font-bold text-slate-800">${typeLabel}</p>
+                                                                                        <p class="text-xs font-medium ${statusClass}">${doc.status.toUpperCase()}</p>
+                                                                                    </div>
+                                                                                </div>
+                                                                                <a href="/storage/${doc.file_path}" target="_blank" class="flex items-center gap-2 px-4 py-2 bg-white border border-slate-200 text-indigo-600 text-xs font-bold rounded-lg hover:bg-indigo-50 transition-all">
+                                                                                    <i class='bx bx-show'></i> VIEW DOCUMENT
+                                                                                </a>
                                                                             </div>
-                                                                            <div>
-                                                                                <p class="text-sm font-bold text-slate-800">${typeLabel}</p>
-                                                                                <p class="text-xs font-medium ${statusClass}">${doc.status.toUpperCase()}</p>
-                                                                            </div>
-                                                                        </div>
-                                                                        <a href="/storage/${doc.file_path}" target="_blank" class="flex items-center gap-2 px-4 py-2 bg-white border border-slate-200 text-indigo-600 text-xs font-bold rounded-lg hover:bg-indigo-50 transition-all">
-                                                                            <i class='bx bx-show'></i> VIEW DOCUMENT
-                                                                        </a>
-                                                                    </div>
-                                                                `;
+                                                                        `;
                             });
                             $('#viewUserDocuments').html(docsHtml).removeClass('hidden');
                         } else {
@@ -396,12 +397,12 @@
                             {
                                 data: 'name', name: 'name', render: function (data, type, row) {
                                     return `<div class="flex items-center group cursor-pointer" onclick="window.location.href='/admin/users/${row.id}'">
-                                                                        <div class="w-10 h-10 rounded-xl bg-indigo-50 flex items-center justify-center text-indigo-600 font-bold mr-3 group-hover:bg-indigo-600 group-hover:text-white transition-all shadow-sm">${data.charAt(0)}</div>
-                                                                        <div>
-                                                                            <div class="font-bold text-slate-800 group-hover:text-indigo-600 transition-colors uppercase text-[11px] tracking-wider">${data}</div>
-                                                                            <div class="text-[9px] text-slate-400 font-bold uppercase tracking-tight">Click for full profile</div>
-                                                                        </div>
-                                                                    </div>`;
+                                                                                <div class="w-10 h-10 rounded-xl bg-indigo-50 flex items-center justify-center text-indigo-600 font-bold mr-3 group-hover:bg-indigo-600 group-hover:text-white transition-all shadow-sm">${data.charAt(0)}</div>
+                                                                                <div>
+                                                                                    <div class="font-bold text-slate-800 group-hover:text-indigo-600 transition-colors uppercase text-[11px] tracking-wider">${data}</div>
+                                                                                    <div class="text-[9px] text-slate-400 font-bold uppercase tracking-tight">Click for full profile</div>
+                                                                                </div>
+                                                                            </div>`;
                                 }
                             },
                             { data: 'email', name: 'email' },
@@ -429,12 +430,12 @@
                                     }
 
                                     return `
-                                                                        <div class="flex gap-2">
-                                                                            ${approvalBtn}
-                                                                            <button onclick="editUser(${data})" class="w-9 h-9 rounded-xl bg-white border border-slate-200 flex items-center justify-center text-slate-600 hover:bg-indigo-50 hover:border-indigo-200 hover:text-indigo-600 transition-all shadow-sm" title="Edit"><i class='bx bxs-edit text-lg'></i></button>
-                                                                            <button onclick="deleteUser(${data})" class="w-9 h-9 rounded-xl bg-white border border-slate-200 flex items-center justify-center text-slate-600 hover:bg-rose-50 hover:border-rose-200 hover:text-rose-600 transition-all shadow-sm" title="Delete"><i class='bx bxs-trash text-lg'></i></button>
-                                                                        </div>
-                                                                    `;
+                                                                                <div class="flex gap-2">
+                                                                                    ${approvalBtn}
+                                                                                    <button onclick="editUser(${data})" class="w-9 h-9 rounded-xl bg-white border border-slate-200 flex items-center justify-center text-slate-600 hover:bg-indigo-50 hover:border-indigo-200 hover:text-indigo-600 transition-all shadow-sm" title="Edit"><i class='bx bxs-edit text-lg'></i></button>
+                                                                                    <button onclick="deleteUser(${data})" class="w-9 h-9 rounded-xl bg-white border border-slate-200 flex items-center justify-center text-slate-600 hover:bg-rose-50 hover:border-rose-200 hover:text-rose-600 transition-all shadow-sm" title="Delete"><i class='bx bxs-trash text-lg'></i></button>
+                                                                                </div>
+                                                                            `;
                                 }
                             }
                         ],

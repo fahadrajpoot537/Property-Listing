@@ -68,7 +68,17 @@
 
         body {
             font-family: 'Inter', sans-serif !important;
-            background-color: #f1f5f9;
+            background-color: #f8fafc;
+            /* Lighter background for minimal feel */
+            height: 100vh;
+            overflow: hidden;
+            font-size: 13px;
+            /* Slightly smaller base font */
+        }
+
+        /* Effra Font Fallback */
+        .font-effra {
+            font-family: 'Effra', 'Outfit', sans-serif !important;
         }
 
         /* CKEditor Heading Visibility & Content Styling */
@@ -153,13 +163,13 @@
         }
 
         aside nav span {
-            font-size: 10px !important;
+            font-size: 11px !important;
         }
 
         .active-link {
-            background: rgba(128, 70, 241, 0.25) !important;
+            background: rgba(128, 70, 241, 0.1) !important;
             color: white !important;
-            border-left: 4px solid var(--brand-secondary);
+            border-left: 3px solid var(--brand-secondary);
         }
 
         /* Hover effects for sidebar links */
@@ -192,11 +202,12 @@
             box-shadow: 0 5px 15px rgba(128, 70, 241, 0.3);
         }
 
-        /* Card Styling */
+        /* Card Styling - More Minimal */
         main .bg-white {
-            border-radius: 1.25rem;
-            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.05);
-            border: 1px solid rgba(0, 0, 0, 0.04);
+            border-radius: 1rem;
+            box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.05);
+            /* Softer shadow */
+            border: 1px solid #eef2f6;
         }
 
         /* Table enhancements */
@@ -206,19 +217,21 @@
         }
 
         table.dataTable thead th {
-            background-color: #f8fafc;
-            color: #475569;
-            font-weight: 600;
+            background-color: #f1f5f9;
+            color: #64748b;
+            font-weight: 700;
             text-transform: uppercase;
-            font-size: 0.75rem;
-            letter-spacing: 0.05em;
-            border-bottom: 1px solid #e2e8f0 !important;
-            padding: 1rem !important;
+            font-size: 10px;
+            /* Small text for headers */
+            letter-spacing: 0.1em;
+            border-bottom: 2px solid #e2e8f0 !important;
+            padding: 0.75rem 1rem !important;
         }
 
         table.dataTable tbody td {
-            padding: 1rem !important;
-            border-bottom: 1px solid #f1f5f9;
+            padding: 0.75rem 1rem !important;
+            border-bottom: 1px solid #f8fafc;
+            font-size: 13px;
         }
 
         table.dataTable tbody tr:hover {
@@ -307,217 +320,195 @@
         <!-- Sidebar -->
         <aside :class="sidebarOpen ? 'translate-x-0' : '-translate-x-full'"
             class="fixed inset-y-0 left-0 z-50 w-64 bg-[#131B31] text-white transform transition-transform duration-300 ease-in-out lg:relative lg:translate-x-0 flex-shrink-0 flex flex-col h-screen lg:sticky lg:top-0">
-            <div class="h-20 flex items-center justify-between px-6 border-b border-white/5">
+            <div class="h-16 flex items-center justify-between px-5 border-b border-white/5">
                 <a href="{{ route('admin.dashboard') }}" class="flex items-center">
-                    <img src="{{ asset('logoor.png') }}" alt="FindaAdmin" class="h-8 w-auto">
+                    <img src="{{ asset('logoor.png') }}" alt="FindaAdmin" class="h-6 w-auto">
                 </a>
 
                 <!-- Mobile Close Button -->
                 <button @click="sidebarOpen = false" class="lg:hidden text-white/50 hover:text-white transition-colors">
-                    <i class='bx bx-x text-2xl'></i>
+                    <i class='bx bx-x text-xl'></i>
                 </button>
             </div>
 
-            <nav class="flex-1 overflow-y-auto py-6 space-y-1 px-3">
+            <nav class="flex-1 overflow-y-auto py-4 space-y-0.5 px-2">
                 <!-- Core Panel -->
-                <div class="mb-6">
-                    <p class="px-4 text-[12px] font-black text-white/50 uppercase tracking-[0.2em] mb-3">Core Engine
+                <div class="mb-4">
+                    <p class="px-3 text-[10px] font-black text-white/40 uppercase tracking-[0.2em] mb-2">Core Panel
                     </p>
                     <a href="{{ route('admin.dashboard') }}"
-                        class="flex items-center px-4 py-3 rounded-xl text-white/70 font-bold hover:bg-white/5 transition-all duration-300 {{ request()->routeIs('admin.dashboard') ? 'active-link' : '' }}">
-                        <i class='bx bxs-dashboard mr-3 text-xl nav-icon'></i>
-                        <span class="text-[13px] uppercase tracking-widest">Overview</span>
+                        class="flex items-center px-3 py-2 rounded-lg text-white/70 font-bold hover:bg-white/5 transition-all duration-300 {{ request()->routeIs('admin.dashboard') ? 'active-link' : '' }}">
+                        <i class='bx bxs-pie-chart-alt-2 mr-3 text-lg nav-icon'></i>
+                        <span class="text-[12px] uppercase tracking-widest">Dashboard</span>
                     </a>
                     <a href="{{ route('admin.profile.edit') }}"
-                        class="flex items-center px-4 py-3 rounded-xl text-white/70 font-bold hover:bg-white/5 transition-all duration-300 {{ request()->routeIs('admin.profile.edit') ? 'active-link' : '' }}">
-                        <i class='bx bxs-user-circle mr-3 text-xl nav-icon'></i>
-                        <span class="text-[13px] uppercase tracking-widest">My Profile</span>
+                        class="flex items-center px-3 py-2 rounded-lg text-white/70 font-bold hover:bg-white/5 transition-all duration-300 {{ request()->routeIs('admin.profile.edit') ? 'active-link' : '' }}">
+                        <i class='bx bxs-user-circle mr-3 text-lg nav-icon'></i>
+                        <span class="text-[12px] uppercase tracking-widest">Profile</span>
                     </a>
                 </div>
 
                 <!-- Access Management -->
-                @canany(['user.view', 'role.view', 'partner.view'])
+                @if(auth()->user()->hasAnyRole(['admin', 'Agency']) || auth()->user()->canAny(['role.view', 'partner.view']))
                     <div class="mb-2"
                         x-data="{ open: {{ request()->routeIs('admin.users.*', 'admin.roles.*', 'admin.affiliates.*') ? 'true' : 'false' }} }">
                         <button @click="open = !open"
-                            class="w-full flex items-center justify-between px-4 py-3 rounded-xl text-white/50 hover:text-white hover:bg-white/5 transition-all duration-300">
+                            class="w-full flex items-center justify-between px-3 py-2 rounded-lg text-white/50 hover:text-white hover:bg-white/5 transition-all duration-300">
                             <div class="flex items-center">
-                                <i class='bx bxs-user-badge mr-3 text-xl nav-icon'></i>
-                                <span class="text-[12px] font-black uppercase tracking-[0.15em]">Access Control</span>
+                                <i class='bx bxs-user-badge mr-3 text-lg nav-icon'></i>
+                                <span class="text-[11px] font-black uppercase tracking-[0.1em]">Access Management</span>
                             </div>
-                            <i class='bx bx-chevron-down transition-transform duration-300 text-white/30'
+                            <i class='bx bx-chevron-down transition-transform duration-300 text-white/20'
                                 :class="open ? 'rotate-180' : ''"></i>
                         </button>
-                        <div x-show="open" x-collapse x-cloak class="mt-1 space-y-1 ml-4 border-l border-white/10 pl-2">
-                            @can('user.view')
+                        <div x-show="open" x-cloak class="mt-0.5 space-y-0.5 ml-3 border-l border-white/5 pl-2">
+                            @if(auth()->user()->hasAnyRole(['admin', 'Agency']))
                                 <a href="{{ route('admin.users.index') }}"
-                                    class="flex items-center px-4 py-2.5 rounded-xl text-[13px] font-bold text-white/70 hover:text-white transition-all {{ request()->routeIs('admin.users.*') ? 'text-white bg-white/5' : '' }}">
-                                    System Users
+                                    class="flex items-center px-3 py-1.5 rounded-lg text-[12px] font-bold text-white/60 hover:text-white transition-all {{ request()->routeIs('admin.users.*') ? 'text-white bg-white/5' : '' }}">
+                                    Users
                                 </a>
-                            @endcan
+                            @endif
                             @can('role.view')
                                 <a href="{{ route('admin.roles.index') }}"
-                                    class="flex items-center px-4 py-2.5 rounded-xl text-[13px] font-bold text-white/70 hover:text-white transition-all {{ request()->routeIs('admin.roles.*') ? 'text-white bg-white/5' : '' }}">
-                                    Permissions & Roles
+                                    class="flex items-center px-3 py-1.5 rounded-lg text-[12px] font-bold text-white/60 hover:text-white transition-all {{ request()->routeIs('admin.roles.*') ? 'text-white bg-white/5' : '' }}">
+                                    Roles
                                 </a>
                             @endcan
                             @can('partner.view')
                                 <a href="{{ route('admin.affiliates.index') }}"
-                                    class="flex items-center px-4 py-2.5 rounded-xl text-[13px] font-bold text-white/70 hover:text-white transition-all {{ request()->routeIs('admin.affiliates.*') ? 'text-white bg-white/5' : '' }}">
-                                    Partner Network
+                                    class="flex items-center px-3 py-1.5 rounded-lg text-[12px] font-bold text-white/60 hover:text-white transition-all {{ request()->routeIs('admin.affiliates.*') ? 'text-white bg-white/5' : '' }}">
+                                    Partners
                                 </a>
                             @endcan
                         </div>
                     </div>
-                @endcanany
+                @endif
 
-                <!-- Asset Setup -->
+                <!-- Asset Configuration -->
                 @can('asset.manage')
-                    <div class="mb-2"
+                    <div class="mb-1"
                         x-data="{ open: {{ request()->routeIs('admin.property-types.*', 'admin.unit-types.*', 'admin.features.*', 'admin.property-locations.*', 'admin.mortgage-settings.*', 'admin.ownership-statuses.*', 'admin.rent-frequencies.*', 'admin.cheques.*') ? 'true' : 'false' }} }">
                         <button @click="open = !open"
-                            class="w-full flex items-center justify-between px-4 py-3 rounded-xl text-white/50 hover:text-white hover:bg-white/5 transition-all duration-300">
+                            class="w-full flex items-center justify-between px-3 py-2 rounded-lg text-white/50 hover:text-white hover:bg-white/5 transition-all duration-300">
                             <div class="flex items-center">
-                                <i class='bx bxs-cog mr-3 text-xl nav-icon'></i>
-                                <span class="text-[12px] font-black uppercase tracking-[0.15em]">Asset Setup</span>
+                                <i class='bx bxs-box mr-3 text-lg nav-icon'></i>
+                                <span class="text-[11px] font-black uppercase tracking-[0.1em]">Asset Data</span>
                             </div>
-                            <i class='bx bx-chevron-down transition-transform duration-300 text-white/30'
+                            <i class='bx bx-chevron-down transition-transform duration-300 text-white/20'
                                 :class="open ? 'rotate-180' : ''"></i>
                         </button>
-                        <div x-show="open" x-collapse x-cloak class="mt-1 space-y-1 ml-4 border-l border-white/10 pl-2">
+                        <div x-show="open" x-cloak class="mt-0.5 space-y-0.5 ml-3 border-l border-white/5 pl-2">
                             <a href="{{ route('admin.property-types.index') }}"
-                                class="flex items-center px-4 py-2.5 rounded-xl text-[13px] font-bold text-white/70 hover:text-white transition-all {{ request()->routeIs('admin.property-types.*') ? 'text-white bg-white/5' : '' }}">
-                                Property Categories
+                                class="flex items-center px-3 py-1.5 rounded-lg text-[12px] font-bold text-white/60 hover:text-white transition-all {{ request()->routeIs('admin.property-types.*') ? 'text-white bg-white/5' : '' }}">
+                                Categories
                             </a>
                             <a href="{{ route('admin.mortgage-settings.index') }}"
-                                class="flex items-center px-4 py-2.5 rounded-xl text-[13px] font-bold text-white/70 hover:text-white transition-all {{ request()->routeIs('admin.mortgage-settings.*') ? 'text-white bg-white/5' : '' }}">
-                                Mortgage Setup
+                                class="flex items-center px-3 py-1.5 rounded-lg text-[12px] font-bold text-white/60 hover:text-white transition-all {{ request()->routeIs('admin.mortgage-settings.*') ? 'text-white bg-white/5' : '' }}">
+                                Mortgages
                             </a>
                             <a href="{{ route('admin.unit-types.index') }}"
-                                class="flex items-center px-4 py-2.5 rounded-xl text-[13px] font-bold text-white/70 hover:text-white transition-all {{ request()->routeIs('admin.unit-types.*') ? 'text-white bg-white/5' : '' }}">
-                                Unit Definitions
-                            </a>
-                            <a href="{{ route('admin.ownership-statuses.index') }}"
-                                class="flex items-center px-4 py-2.5 rounded-xl text-[13px] font-bold text-white/70 hover:text-white transition-all {{ request()->routeIs('admin.ownership-statuses.*') ? 'text-white bg-white/5' : '' }}">
-                                Ownership Status
-                            </a>
-                            <a href="{{ route('admin.rent-frequencies.index') }}"
-                                class="flex items-center px-4 py-2.5 rounded-xl text-[13px] font-bold text-white/70 hover:text-white transition-all {{ request()->routeIs('admin.rent-frequencies.*') ? 'text-white bg-white/5' : '' }}">
-                                Rent Frequencies
-                            </a>
-                            <a href="{{ route('admin.cheques.index') }}"
-                                class="flex items-center px-4 py-2.5 rounded-xl text-[13px] font-bold text-white/70 hover:text-white transition-all {{ request()->routeIs('admin.cheques.*') ? 'text-white bg-white/5' : '' }}">
-                                Cheque Definitions
+                                class="flex items-center px-3 py-1.5 rounded-lg text-[12px] font-bold text-white/60 hover:text-white transition-all {{ request()->routeIs('admin.unit-types.*') ? 'text-white bg-white/5' : '' }}">
+                                Unit Types
                             </a>
                             <a href="{{ route('admin.features.index') }}"
-                                class="flex items-center px-4 py-2.5 rounded-xl text-[13px] font-bold text-white/70 hover:text-white transition-all {{ request()->routeIs('admin.features.*') ? 'text-white bg-white/5' : '' }}">
-                                Amenity Tags
+                                class="flex items-center px-3 py-1.5 rounded-lg text-[12px] font-bold text-white/60 hover:text-white transition-all {{ request()->routeIs('admin.features.*') ? 'text-white bg-white/5' : '' }}">
+                                Amenities
+                            </a>
+                            <a href="{{ route('admin.ownership-statuses.index') }}"
+                                class="flex items-center px-3 py-1.5 rounded-lg text-[12px] font-bold text-white/60 hover:text-white transition-all {{ request()->routeIs('admin.ownership-statuses.*') ? 'text-white bg-white/5' : '' }}">
+                                Ownership Statuses
                             </a>
                             <a href="{{ route('admin.property-locations.index') }}"
-                                class="flex items-center px-4 py-2.5 rounded-xl text-[13px] font-bold text-white/70 hover:text-white transition-all {{ request()->routeIs('admin.property-locations.*') ? 'text-white bg-white/5' : '' }}">
+                                class="flex items-center px-3 py-1.5 rounded-lg text-[12px] font-bold text-white/60 hover:text-white transition-all {{ request()->routeIs('admin.property-locations.*') ? 'text-white bg-white/5' : '' }}">
                                 Property Locations
                             </a>
                         </div>
                     </div>
                 @endcan
 
-                <!-- Strategic Operations -->
+                <!-- Active Operations -->
                 @canany(['listing.view', 'listing.create', 'off-market.view'])
-                    <div class="mb-6">
-                        <p class="px-4 text-[12px] font-black text-white/30 uppercase tracking-[0.2em] mb-3">Realty
-                            Operations</p>
+                    <div class="mb-4">
+                        <p class="px-3 text-[10px] font-black text-white/40 uppercase tracking-[0.2em] mb-2">Live Trading
+                        </p>
                         @can('listing.view')
                             <a href="{{ route('admin.listings.index') }}"
-                                class="flex items-center px-4 py-3 rounded-xl text-white/70 font-bold hover:bg-white/5 transition-all duration-300 {{ (request()->routeIs('admin.listings.*') && !request()->routeIs('admin.listings.create') && !request()->routeIs('admin.listings.drafts')) ? 'active-link' : '' }}">
-                                <i class='bx bxs-building-house mr-3 text-xl nav-icon'></i>
-                                <span class="text-[13px] uppercase tracking-widest">Listings</span>
-                            </a>
-                        @endcan
-                        @can('listing.create')
-                            <a href="{{ route('admin.listings.create') }}"
-                                class="flex items-center px-4 py-3 rounded-xl text-white/70 font-bold hover:bg-white/5 transition-all duration-300 {{ request()->routeIs('admin.listings.create') ? 'active-link' : '' }}">
-                                <i class='bx bxs-plus-circle mr-3 text-xl nav-icon'></i>
-                                <span class="text-[13px] uppercase tracking-widest">Add Listing</span>
+                                class="flex items-center px-3 py-2 rounded-lg text-white/70 font-bold hover:bg-white/5 transition-all duration-300 {{ (request()->routeIs('admin.listings.*') && !request()->routeIs('admin.listings.create') && !request()->routeIs('admin.listings.drafts')) ? 'active-link' : '' }}">
+                                <i class='bx bx-list-ul mr-3 text-lg nav-icon'></i>
+                                <span class="text-[12px] uppercase tracking-widest">Listings</span>
                             </a>
                         @endcan
                         @can('off-market.view')
                             <a href="{{ route('admin.off-market-listings.index') }}"
-                                class="flex items-center px-4 py-3 rounded-xl text-white/70 font-bold hover:bg-white/5 transition-all duration-300 {{ (request()->routeIs('admin.off-market-listings.*') && !request()->routeIs('admin.off-market-listings.drafts')) ? 'active-link' : '' }}">
-                                <i class='bx bxs-ghost mr-3 text-xl nav-icon'></i>
-                                <span class="text-[13px] uppercase tracking-widest">Off Market</span>
+                                class="flex items-center px-3 py-2 rounded-lg text-white/70 font-bold hover:bg-white/5 transition-all duration-300 {{ (request()->routeIs('admin.off-market-listings.*') && !request()->routeIs('admin.off-market-listings.drafts')) ? 'active-link' : '' }}">
+                                <i class='bx bx-hide mr-3 text-lg nav-icon'></i>
+                                <span class="text-[12px] uppercase tracking-widest">Off Market</span>
                             </a>
                         @endcan
+                        <a href="{{ route('admin.walkthrough.index') }}"
+                            class="flex items-center px-3 py-2 rounded-lg text-white/70 font-bold hover:bg-white/5 transition-all duration-300 {{ request()->routeIs('admin.walkthrough.*') ? 'active-link' : '' }}">
+                            <i class='bx bx-camera-movie mr-3 text-lg nav-icon'></i>
+                            <span class="text-[12px] uppercase tracking-widest">Tours</span>
+                        </a>
                     </div>
                 @endcanany
 
-                <!-- Drafts Management -->
+                <!-- Pending Work -->
                 @canany(['listing.create', 'listing.edit', 'off-market.create', 'off-market.edit'])
-                    <div class="mb-2"
+                    <div class="mb-1"
                         x-data="{ open: {{ request()->routeIs('admin.listings.drafts', 'admin.off-market-listings.drafts') ? 'true' : 'false' }} }">
                         <button @click="open = !open"
-                            class="w-full flex items-center justify-between px-4 py-3 rounded-xl text-white/50 hover:text-white hover:bg-white/5 transition-all duration-300">
+                            class="w-full flex items-center justify-between px-3 py-2 rounded-lg text-white/50 hover:text-white hover:bg-white/5 transition-all duration-300">
                             <div class="flex items-center">
-                                <i class='bx bxs-edit-alt mr-3 text-xl nav-icon'></i>
-                                <span class="text-[12px] font-black uppercase tracking-[0.15em]">Drafts</span>
+                                <i class='bx bx-edit mr-3 text-lg nav-icon'></i>
+                                <span class="text-[11px] font-black uppercase tracking-[0.1em]">Drafts</span>
                             </div>
-                            <i class='bx bx-chevron-down transition-transform duration-300 text-white/30'
+                            <i class='bx bx-chevron-down transition-transform duration-300 text-white/20'
                                 :class="open ? 'rotate-180' : ''"></i>
                         </button>
-                        <div x-show="open" x-collapse x-cloak class="mt-1 space-y-1 ml-4 border-l border-white/10 pl-2">
-                            @canany(['listing.create', 'listing.edit'])
-                                <a href="{{ route('admin.listings.drafts') }}"
-                                    class="flex items-center px-4 py-2.5 rounded-xl text-[13px] font-bold text-white/70 hover:text-white transition-all {{ request()->routeIs('admin.listings.drafts') ? 'text-white bg-white/5' : '' }}">
-                                    Draft Listings
-                                </a>
-                            @endcanany
-                            @canany(['off-market.create', 'off-market.edit'])
-                                <a href="{{ route('admin.off-market-listings.drafts') }}"
-                                    class="flex items-center px-4 py-2.5 rounded-xl text-[13px] font-bold text-white/70 hover:text-white transition-all {{ request()->routeIs('admin.off-market-listings.drafts') ? 'text-white bg-white/5' : '' }}">
-                                    Draft Off-Market
-                                </a>
-                            @endcanany
+                        <div x-show="open" x-cloak class="mt-0.5 space-y-0.5 ml-3 border-l border-white/5 pl-2">
+                            <a href="{{ route('admin.listings.drafts') }}"
+                                class="flex items-center px-3 py-1.5 rounded-lg text-[12px] font-bold text-white/60 hover:text-white transition-all {{ request()->routeIs('admin.listings.drafts') ? 'text-white bg-white/5' : '' }}">
+                                Public Drafts
+                            </a>
+                            <a href="{{ route('admin.off-market-listings.drafts') }}"
+                                class="flex items-center px-3 py-1.5 rounded-lg text-[12px] font-bold text-white/60 hover:text-white transition-all {{ request()->routeIs('admin.off-market-listings.drafts') ? 'text-white bg-white/5' : '' }}">
+                                Private Drafts
+                            </a>
                         </div>
                     </div>
                 @endcanany
 
-                <!-- Content Management -->
+                <!-- Marketing -->
                 @canany(['blog.view', 'content.manage'])
-                    <div class="mb-2"
+                    <div class="mb-1"
                         x-data="{ open: {{ request()->routeIs('admin.blogs.*', 'admin.services.*', 'admin.contact.*') ? 'true' : 'false' }} }">
                         <button @click="open = !open"
-                            class="w-full flex items-center justify-between px-4 py-3 rounded-xl text-white/50 hover:text-white hover:bg-white/5 transition-all duration-300">
+                            class="w-full flex items-center justify-between px-3 py-2 rounded-lg text-white/50 hover:text-white hover:bg-white/5 transition-all duration-300">
                             <div class="flex items-center">
-                                <i class='bx bxs-book-content mr-3 text-xl nav-icon'></i>
-                                <span class="text-[12px] font-black uppercase tracking-[0.15em]">Content Hub</span>
+                                <i class='bx bx-paper-plane mr-3 text-lg nav-icon'></i>
+                                <span class="text-[11px] font-black uppercase tracking-[0.1em]">Engage</span>
                             </div>
-                            <i class='bx bx-chevron-down transition-transform duration-300 text-white/30'
+                            <i class='bx bx-chevron-down transition-transform duration-300 text-white/20'
                                 :class="open ? 'rotate-180' : ''"></i>
                         </button>
-                        <div x-show="open" x-collapse x-cloak class="mt-1 space-y-1 ml-4 border-l border-white/10 pl-2">
-                            @can('blog.view')
-                                <a href="{{ route('admin.blogs.index') }}"
-                                    class="flex items-center px-4 py-2.5 rounded-xl text-[13px] font-bold text-white/70 hover:text-white transition-all {{ request()->routeIs('admin.blogs.*') ? 'text-white bg-white/5' : '' }}">
-                                    Blog Articles
-                                </a>
-                            @endcan
-                            @can('content.manage')
-                                <a href="{{ route('admin.services.index') }}"
-                                    class="flex items-center px-4 py-2.5 rounded-xl text-[13px] font-bold text-white/40 hover:text-white transition-all {{ request()->routeIs('admin.services.*') ? 'text-white bg-white/5' : '' }}">
-                                    Service Catalog
-                                </a>
-                                <a href="{{ route('admin.contact.index') }}"
-                                    class="flex items-center px-4 py-2.5 rounded-xl text-[13px] font-bold text-white/40 hover:text-white transition-all {{ request()->routeIs('admin.contact.*') ? 'text-white bg-white/5' : '' }}">
-                                    Contact Messages
-                                </a>
-                                <a href="{{ route('admin.email-templates.index') }}"
-                                    class="flex items-center px-4 py-2.5 rounded-xl text-[13px] font-bold text-white/40 hover:text-white transition-all {{ request()->routeIs('admin.email-templates.*') ? 'text-white bg-white/5' : '' }}">
-                                    Email Templates
-                                </a>
-                                <a href="{{ route('admin.trustpilot-reviews.index') }}"
-                                    class="flex items-center px-4 py-2.5 rounded-xl text-[13px] font-bold text-white/40 hover:text-white transition-all {{ request()->routeIs('admin.trustpilot-reviews.*') ? 'text-white bg-white/5' : '' }}">
-                                    Trustpilot Review
-                                </a>
-                            @endcan
+                        <div x-show="open" x-cloak class="mt-0.5 space-y-0.5 ml-3 border-l border-white/5 pl-2">
+                            <a href="{{ route('admin.blogs.index') }}"
+                                class="flex items-center px-3 py-1.5 rounded-lg text-[12px] font-bold text-white/60 hover:text-white transition-all {{ request()->routeIs('admin.blogs.*') ? 'text-white bg-white/5' : '' }}">
+                                Articles
+                            </a>
+                            <a href="{{ route('admin.contact.index') }}"
+                                class="flex items-center px-3 py-1.5 rounded-lg text-[12px] font-bold text-white/60 hover:text-white transition-all {{ request()->routeIs('admin.contact.*') ? 'text-white bg-white/5' : '' }}">
+                                Contact Messages
+                            </a>
+                            <a href="{{ route('admin.email-templates.index') }}"
+                                class="flex items-center px-3 py-1.5 rounded-lg text-[12px] font-bold text-white/60 hover:text-white transition-all {{ request()->routeIs('admin.email-templates.*') ? 'text-white bg-white/5' : '' }}">
+                                Email Templates
+                            </a>
+                            <a href="{{ route('admin.trustpilot-reviews.index') }}"
+                                class="flex items-center px-3 py-1.5 rounded-lg text-[12px] font-bold text-white/60 hover:text-white transition-all {{ request()->routeIs('admin.trustpilot-reviews.*') ? 'text-white bg-white/5' : '' }}">
+                                Trustpilot Reviews
+                            </a>
                         </div>
                     </div>
                 @endcanany
@@ -536,22 +527,22 @@
                 @endif
             </nav>
 
-            <div class="p-4 border-t border-white/5 bg-black/20">
-                <div class="flex items-center gap-3">
+            <div class="p-3 border-t border-white/5">
+                <div class="flex items-center gap-3 bg-white/5 p-2 rounded-xl">
                     <div
-                        class="w-9 h-9 rounded-lg bg-[#8046F1] flex items-center justify-center text-xs font-black text-white shadow-lg shadow-purple-500/20">
+                        class="w-8 h-8 rounded-lg bg-[#8046F1] flex items-center justify-center text-[10px] font-black text-white">
                         {{ substr(Auth::user()->name, 0, 1) }}
                     </div>
                     <div class="flex-1 min-w-0">
-                        <p class="text-[11px] font-black text-white truncate">{{ Auth::user()->name }}</p>
-                        <p class="text-[9px] text-white/40 font-bold uppercase truncate">
-                            {{ Auth::user()->roles->first()->name ?? 'Admin' }}
+                        <p class="text-[10px] font-bold text-white truncate">{{ Auth::user()->name }}</p>
+                        <p class="text-[8px] text-white/30 uppercase tracking-tighter truncate font-black">
+                            {{ Auth::user()->roles->first()->name ?? 'Access Granted' }}
                         </p>
                     </div>
                     <form method="POST" action="{{ route('logout') }}">
                         @csrf
-                        <button type="submit" class="text-white/30 hover:text-rose-500 transition-colors">
-                            <i class='bx bx-log-out-circle text-lg'></i>
+                        <button type="submit" class="text-white/20 hover:text-rose-400 transition-colors">
+                            <i class='bx bx-power-off text-base'></i>
                         </button>
                     </form>
                 </div>
@@ -562,14 +553,14 @@
         <div class="flex-1 flex flex-col h-screen overflow-hidden">
             <!-- Topbar -->
             <header class="glass-header h-16 flex justify-between items-center px-4 lg:px-6">
-                <div class="flex items-center gap-3">
+                <div class="flex items-center gap-2">
                     <!-- Mobile Menu Toggle -->
                     <button @click="sidebarOpen = true"
-                        class="lg:hidden w-10 h-10 flex items-center justify-center rounded-xl bg-slate-100 text-slate-600 active:scale-95 transition-all">
-                        <i class='bx bx-menu-alt-left text-2xl'></i>
+                        class="lg:hidden w-8 h-8 flex items-center justify-center rounded-lg bg-slate-100 text-slate-600 active:scale-95 transition-all">
+                        <i class='bx bx-menu-alt-left text-xl'></i>
                     </button>
 
-                    <h2 class="font-bold text-lg lg:text-xl text-slate-800 leading-tight truncate">
+                    <h2 class="font-black text-sm lg:text-base text-slate-800 tracking-tight uppercase truncate">
                         @yield('header')
                     </h2>
                 </div>
@@ -583,36 +574,32 @@
 
             <!-- Main Content -->
             <main class="flex-1 overflow-x-hidden overflow-y-auto bg-slate-50 p-6">
-                <div class="max-w-7xl mx-auto">
+                <div class="max-w-7xl mx-auto min-h-full flex flex-col">
                     @if(session('success'))
-                        <div class="bg-emerald-50 border-l-4 border-emerald-500 text-emerald-700 p-4 rounded-md shadow-sm mb-6 flex items-start"
+                        <div class="bg-emerald-50 border-emerald-100 text-emerald-700 p-3 rounded-lg border shadow-sm mb-4 flex items-center justify-between"
                             role="alert">
-                            <i class='bx bxs-check-circle text-xl mr-2'></i>
-                            <div>
-                                <p class="font-bold">Success</p>
-                                <p class="text-sm">{{ session('success') }}</p>
+                            <div class="flex items-center text-xs font-bold">
+                                <i class='bx bx-check-double text-lg mr-2'></i>
+                                <span>{{ session('success') }}</span>
                             </div>
                         </div>
                     @endif
 
                     @if($errors->any())
-                        <div class="bg-rose-50 border-l-4 border-rose-500 text-rose-700 p-4 rounded-md shadow-sm mb-6"
+                        <div class="bg-rose-50 border-rose-100 text-rose-700 p-3 rounded-lg border shadow-sm mb-4"
                             role="alert">
-                            <div class="flex items-start">
-                                <i class='bx bxs-error-circle text-xl mr-2'></i>
-                                <div>
-                                    <p class="font-bold">Error</p>
-                                    <ul class="list-disc list-inside text-sm mt-1">
-                                        @foreach ($errors->all() as $error)
-                                            <li>{{ $error }}</li>
-                                        @endforeach
-                                    </ul>
-                                </div>
-                            </div>
+                            <ul class="list-disc list-inside text-xs font-medium">
+                                @foreach ($errors->all() as $error)
+                                    <li>{{ $error }}</li>
+                                @endforeach
+                            </ul>
                         </div>
                     @endif
 
+
+
                     @yield('content')
+                    <div class="h-20"></div> <!-- Buffer space at bottom -->
                 </div>
             </main>
         </div>

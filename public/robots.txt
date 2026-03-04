@@ -1,2 +1,6 @@
 User-agent: *
-Disallow:
+Disallow: /admin
+Disallow: /api
+Disallow: /chatbot
+
+Sitemap: {{config('app.url')}}/sitemap.xml

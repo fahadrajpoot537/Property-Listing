@@ -65,6 +65,45 @@
                 @enderror
             </div>
 
+            <div class="border-t border-gray-200 pt-6 mt-6">
+                <h3 class="text-lg font-semibold mb-4 text-gray-800">SEO Settings</h3>
+
+                <!-- Meta Title -->
+                <div class="mb-4">
+                    <label class="block text-gray-700 text-sm font-bold mb-2" for="meta_title">Meta Title</label>
+                    <input
+                        class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline @error('meta_title') border-red-500 @enderror"
+                        id="meta_title" type="text" name="meta_title" value="{{ old('meta_title', $blog->meta_title) }}">
+                    @error('meta_title')
+                        <p class="text-red-500 text-xs italic mt-2">{{ $message }}</p>
+                    @enderror
+                </div>
+
+                <!-- Meta Description -->
+                <div class="mb-4">
+                    <label class="block text-gray-700 text-sm font-bold mb-2" for="meta_description">Meta
+                        Description</label>
+                    <textarea id="meta_description" name="meta_description"
+                        class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline @error('meta_description') border-red-500 @enderror"
+                        rows="3">{{ old('meta_description', $blog->meta_description) }}</textarea>
+                    @error('meta_description')
+                        <p class="text-red-500 text-xs italic mt-2">{{ $message }}</p>
+                    @enderror
+                </div>
+
+                <!-- Meta Keywords -->
+                <div class="mb-4">
+                    <label class="block text-gray-700 text-sm font-bold mb-2" for="meta_keywords">Meta Keywords (Comma
+                        separated)</label>
+                    <textarea id="meta_keywords" name="meta_keywords"
+                        class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline @error('meta_keywords') border-red-500 @enderror"
+                        rows="2">{{ old('meta_keywords', $blog->meta_keywords) }}</textarea>
+                    @error('meta_keywords')
+                        <p class="text-red-500 text-xs italic mt-2">{{ $message }}</p>
+                    @enderror
+                </div>
+            </div>
+
             <div class="flex items-center justify-between">
                 <button
                     class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"

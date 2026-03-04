@@ -1,32 +1,97 @@
 <!DOCTYPE html>
 <html>
-
 <head>
-    <title>New Off-Market Inquiry</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PropertyFinda Inquiry</title>
 </head>
+<body style="margin: 0; padding: 0; background-color: #f8fafc; font-family: 'Outfit', 'Helvetica Neue', Helvetica, Arial, sans-serif;">
+    <table border="0" cellpadding="0" cellspacing="0" width="100%" style="table-layout: fixed;">
+        <tr>
+            <td align="center" style="padding: 40px 0;">
+                <table border="0" cellpadding="0" cellspacing="0" width="600" style="background-color: #ffffff; border-radius: 24px; overflow: hidden; box-shadow: 0 10px 40px rgba(0,0,0,0.05); border: 1px solid #f1f5f9;">
+                    <!-- Header with Logo -->
+                    <tr>
+                        <td align="center" style="padding: 40px 40px 20px 40px; background-color: #131B31;">
+                            <img src="{{ $message->embed(public_path('logoor.png')) }}" alt="PropertyFinda" width="180" style="display: block; height: auto;">
+                        </td>
+                    </tr>
 
-<body style="font-family: Arial, sans-serif; line-height: 1.6; color: #333;">
-    <div style="max-width: 600px; margin: 0 auto; padding: 20px; border: 1px solid #eee; border-radius: 10px;">
-        <h2 style="color: #131B31; border-bottom: 2px solid #8046F1; padding-bottom: 10px;">Interested in Confidential
-            Deal</h2>
+                    <!-- Decorative Border -->
+                    <tr>
+                        <td height="4" style="background: linear-gradient(to right, #8046F1, #131B31);"></td>
+                    </tr>
 
-        <p>A new inquiry has been received for the property: <strong>{{ $listing->property_title }} (ID:
-                {{ $listing->id }})</strong></p>
+                    <!-- Body Content -->
+                    <tr>
+                        <td style="padding: 40px;">
+                            <h2 style="margin: 0 0 20px 0; color: #131B31; font-size: 24px; font-weight: 800; letter-spacing: -0.025em;">
+                                Interested in Confidential Deal
+                            </h2>
+                            
+                            <p style="margin: 0 0 30px 0; color: #64748b; font-size: 16px; line-height: 1.6;">
+                                A new inquiry has been received for the property: 
+                                <strong style="color: #1e293b;">{{ $listing->property_title }}</strong>
+                                <span style="background-color: #131B31; color: #ffffff; font-size: 10px; padding: 2px 8px; border-radius: 4px; font-weight: bold; margin-left: 5px; vertical-align: middle;">OFF-MARKET VAULT</span>
+                            </p>
 
-        <div style="background: #f9f9f9; padding: 15px; border-radius: 5px; margin: 20px 0;">
-            <p><strong>Name:</strong> {{ $inquiry['name'] }}</p>
-            <p><strong>Email:</strong> {{ $inquiry['email'] }}</p>
-            <p><strong>Phone:</strong> {{ $inquiry['phone'] }}</p>
-            <p><strong>Message:</strong></p>
-            <p style="white-space: pre-wrap;">{{ $inquiry['message'] }}</p>
-        </div>
+                            <!-- Inquiry Box -->
+                            <div style="background-color: #f1f5f9; border-radius: 16px; padding: 30px; margin-bottom: 30px; border-left: 4px solid #8046F1;">
+                                <table border="0" cellpadding="0" cellspacing="0" width="100%">
+                                    <tr>
+                                        <td style="padding-bottom: 12px; color: #94a3b8; font-size: 11px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.05em;">Prospect Details</td>
+                                    </tr>
+                                    <tr>
+                                        <td style="padding-bottom: 8px; color: #334155; font-size: 15px;">
+                                            <strong style="color: #64748b; width: 80px; display: inline-block;">Name:</strong> {{ $inquiry['name'] }}
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td style="padding-bottom: 8px; color: #334155; font-size: 15px;">
+                                            <strong style="color: #64748b; width: 80px; display: inline-block;">Email:</strong> 
+                                            <a href="mailto:{{ $inquiry['email'] }}" style="color: #8046F1; text-decoration: none; font-weight: 600;">{{ $inquiry['email'] }}</a>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td style="padding-bottom: 20px; color: #334155; font-size: 15px;">
+                                            <strong style="color: #64748b; width: 80px; display: inline-block;">Phone:</strong> {{ $inquiry['phone'] }}
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td style="padding-top: 15px; border-top: 1px dashed #cbd5e1; color: #334155; font-size: 15px; line-height: 1.6; font-style: italic;">
+                                            "{{ $inquiry['message'] }}"
+                                        </td>
+                                    </tr>
+                                </table>
+                            </div>
 
-        <p>Property Link: <a href="{{ route('off-market-listing.show', $listing->id) }}" style="color: #8046F1;">View
-                Property</a></p>
+                            <!-- CTA -->
+                            <table border="0" cellpadding="0" cellspacing="0" width="100%">
+                                <tr>
+                                    <td align="center">
+                                        <a href="{{ route('off-market-listing.show', $listing->id) }}" 
+                                           style="display: inline-block; background-color: #131B31; color: #ffffff; font-weight: 800; font-size: 14px; text-decoration: none; padding: 18px 36px; border-radius: 12px; text-transform: uppercase; letter-spacing: 0.05em; box-shadow: 0 4px 14px rgba(19, 27, 49, 0.25);">
+                                            View Vault Listing
+                                        </a>
+                                    </td>
+                                </tr>
+                            </table>
+                        </td>
+                    </tr>
 
-        <hr style="border: none; border-top: 1px solid #eee; margin: 20px 0;">
-        <p style="font-size: 12px; color: #777;">This email was sent from PropertyFinda Portal.</p>
-    </div>
+                    <!-- Footer -->
+                    <tr>
+                        <td style="padding: 0 40px 40px 40px; text-align: center;">
+                            <p style="margin: 0; color: #94a3b8; font-size: 12px;">
+                                This is an automated notification from <strong style="color: #131B31;">PropertyFinda Portal</strong>.
+                                <br>
+                                &copy; {{ date('Y') }} PropertyFinda. All rights reserved.
+                            </p>
+                        </td>
+                    </tr>
+                </table>
+            </td>
+        </tr>
+    </table>
 </body>
-
 </html>

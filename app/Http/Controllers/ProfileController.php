@@ -8,6 +8,8 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Redirect;
 use Illuminate\View\View;
+use Illuminate\Support\Facades\Mail;
+use App\Mail\AdminNotification;
 
 class ProfileController extends Controller
 {
@@ -93,6 +95,12 @@ class ProfileController extends Controller
             $user->status = 'document_approved';
             $user->save();
         }
+
+        // Notify Admin
+        Mail::to('info@propertyfinda.co.uk')->send(new AdminNotification('document_uploaded', [
+            'user' => $user,
+            'doc_type' => $request->input('type')
+        ]));
 
         return back()->with('status', 'document-uploaded');
     }

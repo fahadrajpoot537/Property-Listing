@@ -1,6 +1,6 @@
 @extends('layouts.modern')
 
-@section('title', 'Sold Properties Search - PropertyFinda')
+@section('title', 'Sold House Prices Search - PropertyFinda')
 
 @section('content')
     <div class="relative min-h-[80vh] flex items-center bg-center bg-no-repeat bg-fixed"
@@ -167,7 +167,7 @@
                                     View Full Listing
                                 </a>
                             @else
-                                <a href="{{ route('property.external-details') }}?postcode={{ urlencode($property['postcode']) }}&address={{ urlencode($property['address']) }}&search_postcode={{ urlencode($property['search_postcode']) }}&lat={{ $property['latitude'] ?? '' }}&lng={{ $property['longitude'] ?? '' }}"
+                                <a href="{{ route('property.external-details') }}?postcode={{ urlencode($property['postcode'] ?? '') }}&address={{ urlencode($property['address'] ?? '') }}&search_postcode={{ urlencode($property['search_postcode'] ?? '') }}&lat={{ $property['latitude'] ?? '' }}&lng={{ $property['longitude'] ?? '' }}&record_label={{ urlencode($property['record_label'] ?? '') }}"
                                     class="block w-full py-3 bg-gray-100 text-primary font-bold rounded-xl text-center hover:bg-primary/10 transition-colors">
                                     View Details
                                 </a>

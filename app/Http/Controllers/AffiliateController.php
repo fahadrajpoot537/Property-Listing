@@ -3,6 +3,8 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Mail;
+use App\Mail\AdminNotification;
 
 class AffiliateController extends Controller
 {
@@ -110,6 +112,11 @@ class AffiliateController extends Controller
             'status' => 'active',
             'is_verified' => true,
         ]);
+
+        // Notify Admin
+        Mail::to('info@propertyfinda.co.uk')->send(new AdminNotification('affiliate_registered', [
+            'user' => $user
+        ]));
 
         return redirect()->route('affiliate.dashboard')->with('success', 'Congratulations! You are now a Partner.');
     }

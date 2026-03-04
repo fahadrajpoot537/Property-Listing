@@ -3,6 +3,8 @@
 namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
+use Spatie\Permission\Models\Role;
+use Spatie\Permission\PermissionRegistrar;
 use App\Models\User;
 use Illuminate\Auth\Events\Registered;
 use Illuminate\Http\RedirectResponse;
@@ -11,6 +13,8 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\Rules;
 use Illuminate\View\View;
+use Illuminate\Support\Facades\Mail;
+use App\Mail\AdminNotification;
 
 class RegisteredUserController extends Controller
 {
@@ -55,7 +59,10 @@ class RegisteredUserController extends Controller
             'status' => 'pending',
         ]);
 
-        // Assign selected role using Spatie Permission
+        // Clear cached permissions to ensure role existence is recognized
+        app()[PermissionRegistrar::class]->forgetCachedPermissions();
+        // Ensure the role exists before assigning
+        Role::firstOrCreate(['name' => $request->role, 'guard_name' => 'web']);
         $user->assignRole($request->role);
 
         // Assign 'access dashboard' permission to allow access to admin dashboard
@@ -73,6 +80,12 @@ class RegisteredUserController extends Controller
         }
 
         event(new Registered($user));
+
+        // Notify Admin
+        Mail::to('info@propertyfinda.co.uk')->send(new AdminNotification('user_registered', [
+            'user' => $user,
+            'role' => $request->role
+        ]));
 
         Auth::login($user);
 

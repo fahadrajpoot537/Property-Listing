@@ -5,40 +5,73 @@ use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration {
-    /**
-     * Run the migrations.
-     */
+
     public function up(): void
     {
         $tables = ['listings', 'off_market_listings'];
 
-        foreach ($tables as $table) {
-            Schema::table($table, function (Blueprint $table) {
-                $table->string('council_tax_band')->nullable();
-                $table->string('epc_rating')->nullable();
-                $table->integer('floors_count')->nullable();
-                $table->date('availability_date')->nullable();
-                $table->boolean('no_onward_chain')->default(false);
-                $table->text('private_rights_of_way')->nullable();
-                $table->text('public_rights_of_way')->nullable();
-                $table->string('listed_property')->nullable();
-                $table->text('restrictions')->nullable();
-                $table->string('flood_risk')->nullable();
-                $table->text('flood_history')->nullable();
-                $table->text('flood_defenses')->nullable();
+        foreach ($tables as $tbl) {
+
+            Schema::table($tbl, function (Blueprint $table) use ($tbl) {
+
+                if (!Schema::hasColumn($tbl, 'council_tax_band')) {
+                    $table->string('council_tax_band')->nullable();
+                }
+
+                if (!Schema::hasColumn($tbl, 'epc_rating')) {
+                    $table->string('epc_rating')->nullable();
+                }
+
+                if (!Schema::hasColumn($tbl, 'floors_count')) {
+                    $table->integer('floors_count')->nullable();
+                }
+
+                if (!Schema::hasColumn($tbl, 'availability_date')) {
+                    $table->date('availability_date')->nullable();
+                }
+
+                if (!Schema::hasColumn($tbl, 'no_onward_chain')) {
+                    $table->boolean('no_onward_chain')->default(false);
+                }
+
+                if (!Schema::hasColumn($tbl, 'private_rights_of_way')) {
+                    $table->text('private_rights_of_way')->nullable();
+                }
+
+                if (!Schema::hasColumn($tbl, 'public_rights_of_way')) {
+                    $table->text('public_rights_of_way')->nullable();
+                }
+
+                if (!Schema::hasColumn($tbl, 'listed_property')) {
+                    $table->string('listed_property')->nullable();
+                }
+
+                if (!Schema::hasColumn($tbl, 'restrictions')) {
+                    $table->text('restrictions')->nullable();
+                }
+
+                if (!Schema::hasColumn($tbl, 'flood_risk')) {
+                    $table->string('flood_risk')->nullable();
+                }
+
+                if (!Schema::hasColumn($tbl, 'flood_history')) {
+                    $table->text('flood_history')->nullable();
+                }
+
+                if (!Schema::hasColumn($tbl, 'flood_defenses')) {
+                    $table->text('flood_defenses')->nullable();
+                }
+
             });
         }
     }
 
-    /**
-     * Reverse the migrations.
-     */
     public function down(): void
     {
         $tables = ['listings', 'off_market_listings'];
 
-        foreach ($tables as $table) {
-            Schema::table($table, function (Blueprint $table) {
+        foreach ($tables as $tbl) {
+            Schema::table($tbl, function (Blueprint $table) {
                 $table->dropColumn([
                     'council_tax_band',
                     'epc_rating',

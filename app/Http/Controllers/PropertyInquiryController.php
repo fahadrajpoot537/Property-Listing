@@ -52,6 +52,15 @@ class PropertyInquiryController extends Controller
             'property_type_id' => $listing->property_type_id,
         ]);
 
+        // Save to Enquiry table for User Tracking (Rightmove style)
+        \App\Models\Enquiry::create([
+            'user_id' => auth()->id(),
+            'listing_id' => $listing->id,
+            'agent_email' => $listing->user->email ?? 'info@propertyfinda.co.uk',
+            'message' => $request->message,
+            'status' => 'sent',
+        ]);
+
         // Send email to property owner if they have an email
         if ($listing->user && $listing->user->email) {
             Mail::to($listing->user->email)->send(new PropertyInquiryMail($inquiryData, $listing));

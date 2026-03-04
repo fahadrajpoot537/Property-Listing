@@ -21,17 +21,17 @@
             background: white;
             border-radius: 1.5rem;
             border: 1px solid #E5E7EB;
-            padding: 1.5rem;
+            padding: 1.25rem;
             position: sticky;
             top: 100px;
             box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
         }
 
         .sidebar-title {
-            font-size: 1.25rem;
+            font-size: 1.1rem;
             font-weight: 800;
             color: #131B31;
-            margin-bottom: 1.5rem;
+            margin-bottom: 1.25rem;
             letter-spacing: -0.025em;
         }
 
@@ -124,7 +124,8 @@
 
         .img-container {
             position: relative;
-            height: 240px;
+            height: 200px;
+            background: #F9FAFB;
         }
 
         .img-container img {
@@ -135,46 +136,46 @@
 
         .price-badge {
             position: absolute;
-            bottom: 1rem;
-            left: 1rem;
+            bottom: 0.75rem;
+            left: 0.75rem;
             background: rgba(255, 255, 255, 0.95);
             backdrop-blur: 4px;
-            padding: 0.5rem 1rem;
-            border-radius: 0.75rem;
+            padding: 0.4rem 0.75rem;
+            border-radius: 0.5rem;
             font-weight: 800;
             color: #131B31;
-            font-size: 1.125rem;
+            font-size: 13px;
             box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
         }
 
         .card-content {
-            padding: 1.5rem;
+            padding: 1rem;
             flex-grow: 1;
             display: flex;
             flex-direction: column;
         }
 
         .property-title {
-            font-size: 1.125rem;
+            font-size: 13px;
             font-weight: 700;
             color: #131B31;
-            margin-bottom: 0.5rem;
+            margin-bottom: 0.25rem;
             line-height: 1.3;
         }
 
         .property-addr {
-            font-size: 0.875rem;
+            font-size: 0.75rem;
             color: #6B7280;
             display: flex;
             align-items: center;
-            gap: 0.5rem;
-            margin-bottom: 1.25rem;
+            gap: 0.4rem;
+            margin-bottom: 1rem;
         }
 
         .stats-row {
             display: flex;
-            gap: 1.5rem;
-            padding-top: 1.25rem;
+            gap: 1rem;
+            padding-top: 1rem;
             border-top: 1px solid #F3F4F6;
             margin-top: auto;
         }
@@ -185,7 +186,7 @@
             gap: 0.5rem;
             font-weight: 600;
             color: #374151;
-            font-size: 0.875rem;
+            font-size: 12px;
         }
 
         .stat-item i {
@@ -325,10 +326,17 @@
                     <!-- Results Header / Top Bar -->
                     <div class="flex flex-col md:flex-row justify-between items-center mb-8 gap-4 px-2">
                         <div>
-                            <h1 class="text-3xl font-extrabold text-primary tracking-tighter">
-                                {{ $listings->total() }} Results
-                                <span class="text-secondary opacity-80">Found</span>
-                            </h1>
+                            <div class="flex items-center gap-4">
+                                <h1 class="text-3xl font-extrabold text-primary tracking-tighter">
+                                    {{ $listings->total() }} Results
+                                    <span class="text-secondary opacity-80">Found</span>
+                                </h1>
+
+                                <button type="button" onclick="saveSearch()"
+                                    class="inline-flex items-center gap-2 px-3 py-1 bg-secondary/10 text-secondary border border-secondary/20 rounded-full text-xs font-black uppercase tracking-widest hover:bg-secondary hover:text-white transition-all shadow-sm">
+                                    <i class="fa-solid fa-bell"></i> Create Alert
+                                </button>
+                            </div>
                             <p class="text-gray-400 text-sm font-medium mt-1">Properties for
                                 {{ request('purpose', 'Sale') }} in {{ request('location', 'United Kingdom') }}
                             </p>
@@ -386,10 +394,19 @@
                                         $isFavorited = in_array($listing->id, $favIds);
                                     @endphp
                                     <div class="img-container">
-                                        <a
-                                            href="{{ $isOffMarket ? route('off-market-listing.show', $listing->slug ?? $listing->id) : route('listing.show', $listing->slug ?? $listing->id) }}">
-                                            <img src="{{ $listing->thumbnail ? asset('storage/' . $listing->thumbnail) : asset('assets/img/all-images/hero/1.jpg') }}"
-                                                alt="Property">
+                                        <a href="{{ $isOffMarket ? route('off-market-listing.show', $listing->slug ?? $listing->id) : route('listing.show', $listing->slug ?? $listing->id) }}"
+                                            class="block h-full w-full">
+                                            @if($listing->thumbnail)
+                                                <img src="{{ asset('storage/' . $listing->thumbnail) }}"
+                                                    alt="{{ $listing->property_title }}">
+                                            @else
+                                                <div
+                                                    class="h-full w-full bg-slate-100 flex flex-col items-center justify-center gap-3">
+                                                    <i class="fa-solid fa-house-chimney text-gray-200 text-4xl"></i>
+                                                    <span class="text-gray-400 text-[10px] font-bold uppercase tracking-wider">No
+                                                        Image</span>
+                                                </div>
+                                            @endif
                                         </a>
                                         <div class="price-badge flex flex-col items-end">
                                             @if($listing->old_price && $listing->old_price > 0 && $listing->old_price != $listing->price)
@@ -413,9 +430,16 @@
                                         </button>
                                     </div>
                                     <div class="card-content">
-                                        <div
-                                            class="inline-block bg-purple-50 text-purple-700 text-[10px] font-bold px-2 py-0.5 rounded uppercase tracking-wider mb-2 w-fit">
-                                            {{ $listing->purpose }}
+                                        <div class="flex items-center gap-2 mb-2 w-fit">
+                                            <span
+                                                class="px-2 py-0.5 rounded text-[10px] font-black uppercase tracking-wider 
+                                                                        {{ $listing->purpose == 'Rent' ? 'bg-secondary text-white' : 'bg-primary text-white' }}">
+                                                {{ $listing->purpose }}
+                                            </span>
+                                            @if($isOffMarket)
+                                                <span
+                                                    class="px-2 py-0.5 rounded bg-black text-white text-[10px] font-black uppercase tracking-wider">Vault</span>
+                                            @endif
                                         </div>
                                         <h3 class="property-title">
                                             <a href="{{ $isOffMarket ? route('off-market-listing.show', $listing->slug ?? $listing->id) : route('listing.show', $listing->slug ?? $listing->id) }}"
@@ -426,35 +450,44 @@
                                         </p>
 
                                         <div class="stats-row">
-                                            @if($listing->bedrooms > 0)
-                                                <div class="stat-item"><i class="fa-solid fa-bed"></i> {{ $listing->bedrooms }} Beds
-                                                </div>
-                                            @elseif($listing->unitType)
-                                                <div class="stat-item"><i class="fa-solid fa-house-user"></i>
-                                                    {{ $listing->unitType->title }}</div>
-                                            @endif
+                                            <div class="stat-item">
+                                                <i class="fa-solid fa-bed"></i>
+                                                @if(strtolower($listing->bedrooms) === 'studio')
+                                                    Studio
+                                                @elseif($listing->bedrooms && $listing->bedrooms > 0)
+                                                    {{ $listing->bedrooms }} Bed{{ $listing->bedrooms > 1 ? 's' : '' }}
+                                                @else
+                                                    N/A
+                                                @endif
+                                            </div>
 
-                                            @if($listing->bathrooms > 0)
-                                                <div class="stat-item"><i class="fa-solid fa-bath"></i> {{ $listing->bathrooms }}
-                                                    Baths</div>
-                                            @endif
+                                            <div class="stat-item">
+                                                <i class="fa-solid fa-bath"></i>
+                                                @if($listing->bathrooms && $listing->bathrooms > 0)
+                                                    {{ $listing->bathrooms }} Bath{{ $listing->bathrooms > 1 ? 's' : '' }}
+                                                @else
+                                                    N/A
+                                                @endif
+                                            </div>
 
-                                            <div class="stat-item"><i class="fa-solid fa-vector-square"></i>
-                                                {{ $listing->area_size ?? 'N/A' }} sqft</div>
+                                            <div class="stat-item">
+                                                <i class="fa-solid fa-vector-square"></i>
+                                                {{ $listing->area_size && is_numeric($listing->area_size) && $listing->area_size > 0 ? number_format((float) $listing->area_size) . ' sqft' : 'N/A' }}
+                                            </div>
                                         </div>
 
                                         <div class="mt-4 flex gap-2">
-                                            <a href="https://wa.me/{{ $listing->user?->phone_number }}?text=Interested%20in%20{{ urlencode($listing->property_title) }}"
-                                                class="flex-1 text-center py-2 px-2 bg-green-500 text-white rounded-lg text-xs font-bold hover:bg-green-600 transition-colors flex items-center justify-center gap-1"
+                                            <a href="https://wa.me/{{ $listing->user?->phone_number ?? '440000000000' }}?text=Interested%20in%20{{ urlencode($listing->property_title) }}"
+                                                class="flex-1 text-center py-1.5 px-1 bg-green-500 text-white rounded-lg text-xs font-bold hover:bg-green-600 transition-colors flex items-center justify-center gap-1"
                                                 target="_blank">
                                                 <i class="fab fa-whatsapp"></i> WhatsApp
                                             </a>
                                             <a href="mailto:{{ $listing->user?->email }}?subject=Enquiry%20about%20{{ urlencode($listing->property_title) }}"
-                                                class="flex-1 text-center py-2 px-2 bg-blue-500 text-white rounded-lg text-xs font-bold hover:bg-blue-600 transition-colors flex items-center justify-center gap-1">
+                                                class="flex-1 text-center py-1.5 px-1 bg-blue-500 text-white rounded-lg text-xs font-bold hover:bg-blue-600 transition-colors flex items-center justify-center gap-1">
                                                 <i class="fa-regular fa-envelope"></i> Email
                                             </a>
                                             <a href="{{ $isOffMarket ? route('off-market-listing.show', $listing->slug ?? $listing->id) : route('listing.show', $listing->slug ?? $listing->id) }}"
-                                                class="flex-1 text-center py-2 px-2 border border-gray-200 text-gray-700 rounded-lg text-xs font-bold hover:bg-gray-50 transition-colors flex items-center justify-center gap-1">
+                                                class="flex-1 text-center py-1.5 px-1 border border-gray-200 text-gray-700 rounded-lg text-xs font-bold hover:bg-gray-50 transition-colors flex items-center justify-center gap-1">
                                                 Details
                                             </a>
                                         </div>
@@ -713,6 +746,22 @@
                 });
             }
 
+            // If we have a location but no lat/lng in URL, try to geocode it for better radius searching and alerting
+            if ($('#sidebar-location').val() && (!$('#sidebar-lat').val() || !$('#sidebar-lng').val())) {
+                const searchLocation = $('#sidebar-location').val();
+                if (typeof google !== 'undefined' && google.maps && google.maps.Geocoder) {
+                    const geocoder = new google.maps.Geocoder();
+                    geocoder.geocode({ address: searchLocation, componentRestrictions: { country: 'uk' } }, function (results, status) {
+                        if (status === 'OK' && results[0]) {
+                            const loc = results[0].geometry.location;
+                            $('#sidebar-lat').val(loc.lat());
+                            $('#sidebar-lng').val(loc.lng());
+                            console.log('Auto-geocoded missing coordinates for:', searchLocation);
+                        }
+                    });
+                }
+            }
+
             // Auto-submit form when selects change
             $('.select2-filter, #sort-select').on('change', function () {
                 if (this.id === 'sort-select') {
@@ -758,7 +807,7 @@
                 return;
             @endif
 
-                                                                                                                const data = {
+                                                                                                                                                        const data = {
                 _token: '{{ csrf_token() }}'
             };
             if (listingId) data.listing_id = listingId;
@@ -781,6 +830,43 @@
                 },
                 error: function () {
                     alert('Something went wrong. Please try again.');
+                }
+            });
+        }
+        function saveSearch() {
+            @if(!auth()->check())
+                window.location.href = "{{ route('login') }}";
+                return;
+            @endif
+
+                                            const filters = {
+                purpose: $('#purpose-hidden-input').val() || 'Buy',
+                location: $('#sidebar-location').val(),
+                lat: $('#sidebar-lat').val(),
+                lng: $('#sidebar-lng').val(),
+                radius: $('select[name="radius"]').val() || 2,
+                property_type_id: $('select[name="property_type"]').val(),
+                unit_type_id: $('select[name="unit_type"]').val(),
+                min_price: $('input[name="min_price"]').val(),
+                max_price: $('input[name="max_price"]').val(),
+                bedrooms: $('select[name="min_bedrooms"]').val()
+            };
+
+            const locationName = filters.location || 'Recent Search';
+
+            $.ajax({
+                url: '{{ route('saved-searches.store') }}',
+                type: 'POST',
+                data: {
+                    _token: '{{ csrf_token() }}',
+                    name: locationName + ' alert',
+                    filters: filters
+                },
+                success: function (res) {
+                    alert(res.message);
+                },
+                error: function (xhr) {
+                    alert(xhr.responseJSON?.message || 'Error saving search.');
                 }
             });
         }

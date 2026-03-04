@@ -26,10 +26,13 @@ class BlogController extends Controller
             'title' => 'required|string|max:255',
             'author' => 'required|string|max:255',
             'image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
-            'content' => 'required|string'
+            'content' => 'required|string',
+            'meta_title' => 'nullable|string|max:255',
+            'meta_description' => 'nullable|string',
+            'meta_keywords' => 'nullable|string'
         ]);
 
-        $data = $request->only(['title', 'content', 'author']);
+        $data = $request->only(['title', 'content', 'author', 'meta_title', 'meta_description', 'meta_keywords']);
         $data['slug'] = \Illuminate\Support\Str::slug($request->title);
 
         if ($request->hasFile('image')) {
@@ -59,10 +62,13 @@ class BlogController extends Controller
             'title' => 'required|string|max:255',
             'author' => 'required|string|max:255',
             'image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
-            'content' => 'required|string'
+            'content' => 'required|string',
+            'meta_title' => 'nullable|string|max:255',
+            'meta_description' => 'nullable|string',
+            'meta_keywords' => 'nullable|string'
         ]);
 
-        $data = $request->only(['title', 'content', 'author']);
+        $data = $request->only(['title', 'content', 'author', 'meta_title', 'meta_description', 'meta_keywords']);
         $data['slug'] = \Illuminate\Support\Str::slug($request->title);
 
         if ($request->hasFile('image')) {

@@ -16,9 +16,8 @@ class OffMarketListingController extends Controller
             ->where('status', 'approved');
 
         // Apply filters
-        if ($request->filled('purpose')) {
-            $query->where('purpose', $request->purpose);
-        }
+        $purpose = $request->input('purpose', 'Buy');
+        $query->where('purpose', $purpose);
 
         // Location & Radius Search
         if ($request->filled('lat') && $request->filled('lng')) {
@@ -195,8 +194,27 @@ class OffMarketListingController extends Controller
             return view('property-halfmap-grid', compact('listings', 'propertyTypes', 'features_all', 'latest_listings', 'user_favorite_off_market_ids'));
         }
 
+        // Fetch separate collections for Buy and Rent to support Alpine.js tabs like Home page
+        $buyListings = \App\Models\OffMarketListing::where('status', 'approved')
+            ->where('purpose', 'Buy')
+            ->latest()
+            ->paginate(12, ['*'], 'buy_page');
+
+        $rentListings = \App\Models\OffMarketListing::where('status', 'approved')
+            ->where('purpose', 'Rent')
+            ->latest()
+            ->paginate(12, ['*'], 'rent_page');
+
         // Return the default off-market-listings view when no search parameters
-        return view('off-market-listings', compact('listings', 'propertyTypes', 'features', 'latest_listings', 'user_favorite_off_market_ids'))->with('offMarketListings', $listings);
+        return view('off-market-listings', compact(
+            'listings',
+            'buyListings',
+            'rentListings',
+            'propertyTypes',
+            'features',
+            'latest_listings',
+            'user_favorite_off_market_ids'
+        ))->with('offMarketListings', $listings);
     }
 
     public function show($id)
@@ -208,7 +226,11 @@ class OffMarketListingController extends Controller
             'unitType',
             'ownershipStatus',
             'rentFrequency',
-            'cheque'
+            'cheque',
+            'materialInfo',
+            'utilities',
+            'media',
+            'details'
         ])->where('status', 'approved')
             ->where(function ($query) use ($id) {
                 $query->where('slug', $id)->orWhere('id', $id);
@@ -245,7 +267,7 @@ class OffMarketListingController extends Controller
             return response()->json(['error' => 'No valid postcode found for this property.'], 404);
         }
 
-        $apiKey = '3f5f396290a1e9c3be70b679210c188d3562a0d9';
+        $apiKey = config('services.patma.api_token');
         // Using radius=0.2 (API minimum) and exact address filtering to only show history for this specific property
         $apiUrl = "https://app.patma.co.uk/api/prospector/v1/list-property/?postcode=" . urlencode($postcode) . "&radius=0.2&require_sold_price=true&include_sold_history=true&include_listing_data=true&token=" . $apiKey;
 
@@ -392,6 +414,8 @@ class OffMarketListingController extends Controller
                                     'type' => $property['property_type'] ?? 'Residential',
                                     'name' => $property['address'] ?? $property['label'] ?? 'N/A',
                                     'location' => $property['postcode'] ?? $listing->postcode ?? 'N/A',
+                                    'latitude' => $property['latitude'] ?? null,
+                                    'longitude' => $property['longitude'] ?? null,
                                     'search_postcode' => $listing->postcode,
                                     'url' => $internalUrl ?? $property['url'] ?? '#',
                                     'is_internal' => (bool) $internalListing,

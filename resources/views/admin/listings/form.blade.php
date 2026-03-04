@@ -1,51 +1,49 @@
 @extends('layouts.admin')
 
 @section('content')
-    <div class="pt-4 pb-4">
-        <div class="flex justify-between items-center mb-8">
-            <div class="flex items-center gap-4">
-                <div
-                    class="w-14 h-14 bg-gradient-to-br from-indigo-500 to-purple-600 text-white rounded-2xl flex items-center justify-center text-2xl rotate-3 shadow-lg shadow-indigo-200">
-                    <i class='bx bxs-home-circle'></i>
-                </div>
-                <div>
-                    <h3 class="text-3xl font-black text-slate-900 tracking-tight" id="pageTitle">
-                        {{ isset($listing) ? 'Modify Listing' : 'New Property Listing' }}
-                    </h3>
-                    <p class="text-[11px] text-slate-400 font-bold uppercase tracking-[0.2em] mt-1">Portfolio Optimizer
-                        <span class="mx-2 text-slate-200">•</span> Step <span id="currentStepText"
-                            class="text-indigo-600">1</span> of 3
-                    </p>
-                </div>
-            </div>
-            <a href="{{ route('admin.listings.index') }}"
-                class="w-12 h-12 flex items-center justify-center rounded-2xl bg-slate-50 text-slate-400 hover:bg-rose-50 hover:text-rose-600 transition-all duration-300">
-                <i class='bx bx-x text-2xl'></i>
-            </a>
-        </div>
-
-        <div class="relative flex items-center justify-between mb-10 px-24">
-            <div class="absolute top-1/2 left-0 w-full h-1 bg-slate-100 -translate-y-1/2 rounded-full overflow-hidden">
-                <div id="stepLine"
-                    class="w-0 h-full bg-gradient-to-r from-indigo-500 to-purple-600 transition-all duration-1000 cubic-bezier(0.4, 0, 0.2, 1)">
-                </div>
-            </div>
-            @for($i = 1; $i <= 3; $i++)
-                <div class="relative z-10 flex flex-col items-center">
-                    <div id="stepCircle{{$i}}"
-                        class="w-12 h-12 rounded-2xl bg-white border-2 border-slate-100 text-slate-400 flex items-center justify-center text-sm font-black shadow-sm transition-all duration-500">
-                        {{$i}}
+    <!-- Sticky Header & Step Indicator -->
+    <div class="sticky top-0 z-30 bg-slate-50/95 backdrop-blur-md pt-3 pb-4 -mx-6 px-6 border-b border-slate-200/50 mb-6">
+        <div class="max-w-7xl mx-auto">
+            <div class="flex justify-between items-center mb-4">
+                <div class="flex items-center gap-3">
+                    <div
+                        class="w-10 h-10 bg-[#131B31] text-white rounded-lg flex items-center justify-center text-lg shadow-lg">
+                        <i class='bx bx-home-alt'></i>
                     </div>
-                    <span id="stepLabel{{$i}}"
-                        class="absolute -bottom-7 text-[9px] font-black uppercase tracking-widest text-slate-300 transition-all">
-                        {{ $i == 1 ? 'Details' : ($i == 2 ? 'Features' : 'Media') }}
-                    </span>
+                    <div>
+                        <h3 class="text-lg font-black text-slate-900 tracking-tight" id="pageTitle">
+                            {{ isset($listing) ? 'Edit Asset' : 'Add New Asset' }}
+                        </h3>
+                        <p class="text-[9px] text-slate-400 font-bold uppercase tracking-widest mt-0.5">
+                            Property Stream • Step <span id="currentStepText" class="text-indigo-600">1</span> of 3
+                        </p>
+                    </div>
                 </div>
-            @endfor
+                <a href="{{ route('admin.listings.index') }}"
+                    class="w-9 h-9 flex items-center justify-center rounded-lg bg-white border border-slate-100 text-slate-400 hover:text-rose-500 transition-all shadow-sm">
+                    <i class='bx bx-x text-xl'></i>
+                </a>
+            </div>
+
+            <!-- Responsive Step Indicator -->
+            <div class="relative flex items-center justify-between px-4 md:px-32">
+                <div class="absolute top-1/2 left-0 w-full h-1 bg-slate-100 -translate-y-1/2 rounded-full">
+                    <div id="stepLine" class="w-0 h-full bg-[#8046F1] transition-all duration-700">
+                    </div>
+                </div>
+                @for($i = 1; $i <= 3; $i++)
+                    <div class="relative z-10 flex flex-col items-center">
+                        <div id="stepCircle{{$i}}"
+                            class="w-8 h-8 rounded-lg bg-white border-2 border-slate-100 text-slate-400 flex items-center justify-center text-xs font-black shadow-sm transition-all">
+                            {{$i}}
+                        </div>
+                    </div>
+                @endfor
+            </div>
         </div>
     </div>
 
-    <div class="bg-white shadow-xl shadow-slate-200/50 rounded-2xl border border-slate-100 overflow-hidden mb-8">
+    <div class="bg-white rounded-xl border border-slate-100 overflow-hidden mb-8 shadow-sm">
         <form id="listingForm" enctype="multipart/form-data" class="flex flex-col flex-1">
             @csrf
             @if(isset($listing))
@@ -55,306 +53,436 @@
                 <input type="hidden" id="listingId" name="id">
             @endif
 
-            <div class="px-8 py-8">
-                <!-- Stage 1 : Basic Details -->
-                <div id="stage1" class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    <div class="md:col-span-2">
-                        <label class="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">Property
-                            Headline</label>
-                        <input type="text" name="property_title" id="property_title"
-                            class="w-full rounded-lg border-slate-100 bg-slate-50/50 text-xs p-3 focus:ring-blue-100 focus:border-[#02b8f2] transition-all"
-                            placeholder="Enter a catchy title..." required value="{{ $listing->property_title ?? '' }}">
-                    </div>
-                    <div class="md:col-span-2">
-                        <label class="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">Property
-                            Location (UK Only)</label>
-                        <div class="relative">
-                            <input type="text" name="address" id="address"
-                                class="w-full rounded-lg border-slate-100 bg-slate-50/50 text-xs p-3 pl-11 focus:ring-blue-100 focus:border-[#02b8f2] transition-all"
-                                placeholder="Search UK address..." required value="{{ $listing->address ?? '' }}">
-                            <i class='bx bxs-map-pin absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 text-xl'></i>
+            <div class="px-6 py-6">
+                <!-- Step 1: Mandatory Fields (Rightmove Style) -->
+                <div id="stage1" class="space-y-6 transition-all duration-500 transform translate-x-0">
+                    <!-- Section: Basic Information -->
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div class="md:col-span-2">
+                            <label
+                                class="block text-[10px] font-black text-slate-400 uppercase tracking-widest mb-2">Property
+                                Headline</label>
+                            <input type="text" name="property_title" id="property_title"
+                                class="w-full rounded-lg border-slate-100 bg-slate-50 text-[13px] px-4 py-3 outline-none focus:bg-white focus:border-indigo-400 transition-all font-medium"
+                                placeholder="e.g. Stunning 3 Bedroom Penthouse in Canary Wharf" required
+                                value="{{ $listing->property_title ?? '' }}">
                         </div>
-                        <input type="hidden" name="latitude" id="latitude" value="{{ $listing->latitude ?? '' }}">
-                        <input type="hidden" name="longitude" id="longitude" value="{{ $listing->longitude ?? '' }}">
+
+                        <div>
+                            <label
+                                class="block text-[10px] font-black text-slate-400 uppercase tracking-widest mb-2">Internal
+                                Reference</label>
+                            <input type="text" name="property_reference_number"
+                                class="w-full rounded-lg border-slate-100 bg-slate-50 text-[13px] px-4 py-3 outline-none focus:bg-white focus:border-indigo-400 transition-all font-medium"
+                                placeholder="REF-XXXXXX" value="{{ $listing->property_reference_number ?? '' }}">
+                        </div>
+                        <div>
+                            <label
+                                class="block text-[10px] font-black text-slate-400 uppercase tracking-widest mb-2">Postcode</label>
+                            <input type="text" name="postcode" id="postcode"
+                                class="w-full rounded-lg border-slate-100 bg-slate-50 text-[13px] px-4 py-3 outline-none focus:bg-white focus:border-indigo-400 transition-all font-medium"
+                                placeholder="e.g. E14 9GE" required value="{{ $listing->postcode ?? '' }}">
+                        </div>
+
+                        <div class="md:col-span-2">
+                            <label class="block text-[10px] font-black text-slate-400 uppercase tracking-widest mb-2">Full
+                                Address</label>
+                            <div class="relative">
+                                <i class='bx bx-map absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 text-lg'></i>
+                                <input type="text" name="address" id="address"
+                                    class="w-full rounded-lg border-slate-100 bg-slate-50 text-[13px] px-4 py-3 pl-10 outline-none focus:bg-white focus:border-indigo-400 transition-all font-medium"
+                                    placeholder="Search for address..." required value="{{ $listing->address ?? '' }}">
+                            </div>
+                            <input type="hidden" name="latitude" id="latitude" value="{{ $listing->latitude ?? '' }}">
+                            <input type="hidden" name="longitude" id="longitude" value="{{ $listing->longitude ?? '' }}">
+                        </div>
+
+                        <div class="md:col-span-2">
+                            <label class="block text-xs font-black text-slate-400 uppercase tracking-[0.2em] mb-3">Display
+                                Address (Masked)</label>
+                            <input type="text" name="display_address" id="display_address"
+                                class="w-full rounded-2xl border-slate-100 bg-slate-50/50 text-sm p-4 transition-all font-medium"
+                                placeholder="e.g. Canary Wharf, London" required
+                                value="{{ $listing->display_address ?? '' }}">
+                        </div>
                     </div>
 
-                    <div>
-                        <label class="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">Purpose</label>
-                        <select name="purpose" id="purpose" class="select2 w-full text-xs" required>
-                            <option value="Rent" {{ (isset($listing) && $listing->purpose == 'Rent') ? 'selected' : '' }}>To
-                                Rent</option>
-                            <option value="Buy" {{ (isset($listing) && $listing->purpose == 'Buy') ? 'selected' : '' }}>For
-                                Sale</option>
-                        </select>
-                    </div>
-                    <div>
-                        <label class="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">Price/Rent
-                            (£)</label>
-                        <div class="relative">
-                            <input type="number" step="0.01" name="price" id="price"
-                                class="w-full rounded-lg border-slate-100 bg-slate-50/50 text-xs p-3 pl-8 focus:ring-blue-100 focus:border-[#02b8f2] transition-all"
+                    <!-- Section: Pricing & Purpose -->
+                    <div
+                        class="grid grid-cols-1 md:grid-cols-3 gap-8 p-6 bg-slate-50/50 rounded-3xl border border-slate-100">
+                        <div>
+                            <label
+                                class="block text-xs font-black text-slate-400 uppercase tracking-[0.2em] mb-3">Purpose</label>
+                            <select name="purpose" id="purpose" class="select2 w-full" required>
+                                <option value="Buy" {{ (isset($listing) && $listing->purpose == 'Buy') ? 'selected' : '' }}>
+                                    For Sale</option>
+                                <option value="Rent" {{ (isset($listing) && $listing->purpose == 'Rent') ? 'selected' : '' }}>
+                                    To Rent</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block text-xs font-black text-slate-400 uppercase tracking-[0.2em] mb-3">Price
+                                Qualifier</label>
+                            <select name="price_qualifier" class="select2 w-full" required>
+                                @foreach(['Offers in Excess Of', 'Guide Price', 'Fixed Price', 'POA'] as $pq)
+                                    <option value="{{ $pq }}" {{ (isset($listing) && $listing->price_qualifier == $pq) ? 'selected' : '' }}>{{ $pq }}</option>
+                                @endforeach
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block text-xs font-black text-slate-400 uppercase tracking-[0.2em] mb-3">Price
+                                (£)</label>
+                            <input type="number" step="0.01" name="price"
+                                class="w-full rounded-2xl border-slate-100 bg-white text-sm p-4 transition-all font-bold"
                                 placeholder="0.00" required value="{{ $listing->price ?? '' }}">
-                            <span class="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 font-bold">£</span>
                         </div>
-                        <div class="mt-2 flex items-center" id="discount_checkbox_container">
-                            <input type="checkbox" id="has_discount"
-                                class="rounded border-slate-300 text-[#02b8f2] focus:ring-0 mr-2"
-                                onchange="toggleDiscountField()" {{ (isset($listing) && $listing->old_price) ? 'checked' : '' }}>
-                            <label for="has_discount" class="text-xs font-bold text-slate-500 uppercase tracking-wider">Add
-                                Discount?</label>
-                        </div>
-                    </div>
 
-                    <div id="discount_field_container"
-                        class="{{ (isset($listing) && $listing->old_price) ? '' : 'hidden' }}">
-                        <label class="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">Old Price
-                            (£)</label>
-                        <div class="relative">
-                            <input type="number" step="0.01" name="old_price" id="old_price"
-                                class="w-full rounded-lg border-slate-100 bg-slate-50/50 text-xs p-3 pl-8 focus:ring-blue-100 focus:border-[#02b8f2] transition-all"
-                                placeholder="0.00" value="{{ $listing->old_price ?? '' }}">
-                            <span class="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 font-bold">£</span>
-                        </div>
-                    </div>
-
-                    <!-- Conditional Fields -->
-                    <div id="for-sale-fields" class="hidden md:col-span-2">
-                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <!-- Rent Only Fields -->
+                        <div id="rent_fields_container"
+                            class="{{ (isset($listing) && $listing->purpose == 'Rent') ? '' : 'hidden' }} md:col-span-3 grid grid-cols-1 md:grid-cols-2 gap-8 pt-4 border-t border-slate-200/50 mt-2">
                             <div>
-                                <label
-                                    class="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">Ownership
-                                    Status</label>
-                                <select name="ownership_status_id" id="ownership_status_id" class="select2 w-full text-xs">
-                                    <option value="">Select Ownership</option>
-                                    @foreach($ownershipStatuses as $os)
-                                        <option value="{{ $os->id }}" {{ (isset($listing) && $listing->ownership_status_id == $os->id) ? 'selected' : '' }}>{{ $os->title }}
-                                        </option>
-                                    @endforeach
-                                </select>
-                            </div>
-                            <div>
-                                <label
-                                    class="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-2 text-rose-500">No
-                                    Onward Chain?</label>
-                                <select name="no_onward_chain" id="no_onward_chain" class="select2 w-full text-xs">
-                                    <option value="0" {{ (isset($listing) && !$listing->no_onward_chain) ? 'selected' : '' }}>No</option>
-                                    <option value="1" {{ (isset($listing) && $listing->no_onward_chain) ? 'selected' : '' }}>Yes</option>
-                                </select>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div id="to-rent-fields" class="hidden md:col-span-2">
-                        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-                            <div>
-                                <label class="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">Rent
+                                <label class="block text-xs font-black text-slate-400 uppercase tracking-[0.2em] mb-3">Rent
                                     Frequency</label>
-                                <select name="rent_frequency_id" id="rent_frequency_id" class="select2 w-full text-xs">
-                                    <option value="">Select Frequency</option>
-                                    @foreach($rentFrequencies as $rf)
-                                        <option value="{{ $rf->id }}" {{ (isset($listing) && $listing->rent_frequency_id == $rf->id) ? 'selected' : '' }}>{{ $rf->title }}</option>
-                                    @endforeach
-                                </select>
-                            </div>
-                            <div>
-                                <label class="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">Cheques
-                                    Required</label>
-                                <select name="cheque_id" id="cheque_id" class="select2 w-full text-xs">
-                                    <option value="">Select Cheques</option>
-                                    @foreach($cheques as $c)
-                                        <option value="{{ $c->id }}" {{ (isset($listing) && $listing->cheque_id == $c->id) ? 'selected' : '' }}>{{ $c->title }}</option>
-                                    @endforeach
+                                <select name="rent_frequency" class="select2 w-full">
+                                    <option value="pcm" {{ (isset($listing) && $listing->rent_frequency == 'pcm') ? 'selected' : '' }}>PCM</option>
+                                    <option value="pw" {{ (isset($listing) && $listing->rent_frequency == 'pw') ? 'selected' : '' }}>PW</option>
                                 </select>
                             </div>
                             <div>
                                 <label
-                                    class="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">Availability
-                                    Date</label>
-                                <input type="date" name="availability_date" id="availability_date"
-                                    class="w-full rounded-lg border-slate-100 bg-slate-50/50 text-xs p-3 focus:ring-blue-100 focus:border-[#02b8f2] transition-all"
-                                    value="{{ $listing->availability_date ?? '' }}">
+                                    class="block text-xs font-black text-slate-400 uppercase tracking-[0.2em] mb-3">Security
+                                    Deposit (£)</label>
+                                <input type="text" name="deposit"
+                                    class="w-full rounded-2xl border-slate-100 bg-white text-sm p-4 transition-all font-medium"
+                                    placeholder="5 Weeks Rent..." value="{{ $listing->deposit ?? '' }}">
                             </div>
                         </div>
                     </div>
 
-                    <div>
-                        <label class="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">Property
-                            Type</label>
-                        <select name="property_type_id" id="property_type_id" onchange="handleTypeChange()"
-                            class="select2 w-full text-xs" required>
-                            <option value="">Select Type</option>
-                            @foreach($propertyTypes as $type)
-                                <option value="{{ $type->id }}" data-title="{{ strtolower($type->title) }}" {{ (isset($listing) && $listing->property_type_id == $type->id) ? 'selected' : '' }}>{{ $type->title }}</option>
-                            @endforeach
-                        </select>
-                    </div>
-                    <div>
-                        <label class="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">Unit
-                            Type</label>
-                        <select name="unit_type_id" id="unit_type_id" class="select2 w-full text-xs" required
-                            data-selected="{{ $listing->unit_type_id ?? '' }}">
-                            <option value="">Choose Category</option>
-                        </select>
-                    </div>
-                    <div>
-                        <label class="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">Area (Sq
-                            Ft)</label>
-                        <input type="text" name="area_size" id="area_size"
-                            class="w-full rounded-lg border-slate-100 bg-slate-50/50 text-xs p-3 focus:ring-blue-100 focus:border-[#02b8f2] transition-all"
-                            placeholder="e.g. 1500" required value="{{ $listing->area_size ?? '' }}">
-                    </div>
-                    <div id="bedBathContainer">
-                        <label class="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">Beds &
-                            Baths</label>
-                        <div class="grid grid-cols-2 gap-3">
-                            <select name="bedrooms" id="bedrooms" class="select2 w-full text-xs">
-                                <option value="">N/A</option>
-                                <option value="0" {{ (isset($listing) && $listing->bedrooms === 0) ? 'selected' : '' }}>Studio
-                                </option>
-                                @for($i = 1; $i <= 9; $i++)
-                                    <option value="{{ $i }}" {{ (isset($listing) && $listing->bedrooms == $i) ? 'selected' : '' }}>{{ $i }} Bed{{$i > 1 ? 's' : ''}}</option>
+                    <!-- Section: Key Specifications (Rightmove Centric) -->
+                    <div class="grid grid-cols-2 md:grid-cols-5 gap-4 md:gap-6">
+                        <style>
+                            .chip-group {
+                                display: flex;
+                                flex-wrap: wrap;
+                                gap: 6px;
+                                margin-top: 8px;
+                            }
+
+                            .chip {
+                                padding: 8px 14px;
+                                border-radius: 12px;
+                                border: 1px solid #e2e8f0;
+                                background: white;
+                                color: #64748b;
+                                font-size: 13px;
+                                font-weight: 700;
+                                cursor: pointer;
+                                transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+                                text-align: center;
+                                min-width: 45px;
+                            }
+
+                            .chip:hover {
+                                border-color: #cbd5e1;
+                                background: #f8fafc;
+                            }
+
+                            .chip.active {
+                                border-color: #8046f1;
+                                background: #8046f1;
+                                color: white;
+                                box-shadow: 0 4px 12px rgba(128, 70, 241, 0.2);
+                            }
+                        </style>
+
+                        <div id="bedrooms_container" class="md:col-span-3">
+                            <label
+                                class="block text-[10px] font-black text-indigo-400 uppercase tracking-widest">Bedrooms</label>
+                            <input type="hidden" name="bedrooms" id="bedrooms" value="{{ $listing->bedrooms ?? '' }}"
+                                required>
+                            <div class="chip-group" id="bedroom-chips">
+                                <button type="button"
+                                    class="chip {{ (isset($listing) && $listing->bedrooms == 'Studio') ? 'active' : '' }}"
+                                    data-val="Studio">Studio</button>
+                                @for($i = 1; $i <= 10; $i++)
+                                    <button type="button"
+                                        class="chip {{ (isset($listing) && $listing->bedrooms == $i) ? 'active' : '' }}"
+                                        data-val="{{ $i }}">{{ $i }}</button>
                                 @endfor
-                                <option value="10" {{ (isset($listing) && $listing->bedrooms == 10) ? 'selected' : '' }}>10+
-                                    Beds</option>
-                            </select>
-                            <select name="bathrooms" id="bathrooms" class="select2 w-full text-xs">
-                                <option value="">N/A</option>
-                                @for($i = 1; $i <= 9; $i++)
-                                    <option value="{{ $i }}" {{ (isset($listing) && $listing->bathrooms == $i) ? 'selected' : '' }}>{{ $i }} Bath{{$i > 1 ? 's' : ''}}</option>
+                                <button type="button"
+                                    class="chip {{ (isset($listing) && $listing->bedrooms == '11+') ? 'active' : '' }}"
+                                    data-val="11+">11+</button>
+                            </div>
+                        </div>
+
+                        <div id="bathrooms_container" class="md:col-span-2">
+                            <label
+                                class="block text-[10px] font-black text-blue-400 uppercase tracking-widest">Bathrooms</label>
+                            <input type="hidden" name="bathrooms" id="bathrooms" value="{{ $listing->bathrooms ?? '' }}">
+                            <div class="chip-group" id="bathroom-chips">
+                                @for($i = 1; $i <= 10; $i++)
+                                    <button type="button"
+                                        class="chip {{ (isset($listing) && $listing->bathrooms == $i) ? 'active' : '' }}"
+                                        data-val="{{ $i }}">{{ $i }}</button>
                                 @endfor
-                                <option value="10" {{ (isset($listing) && $listing->bathrooms == 10) ? 'selected' : '' }}>10+
-                                    Baths</option>
-                            </select>
+                                <button type="button"
+                                    class="chip {{ (isset($listing) && $listing->bathrooms == '11+') ? 'active' : '' }}"
+                                    data-val="11+">11+</button>
+                            </div>
+                        </div>
+                        <div id="receptions_container"
+                            class="bg-purple-50/30 p-4 rounded-2xl border border-purple-100/50 hover:border-purple-200 transition-all">
+                            <label
+                                class="block text-[10px] font-black text-purple-400 uppercase tracking-widest mb-2">Receptions</label>
+                            <div class="flex items-center gap-2">
+                                <i class='bx bx-chair text-purple-500 text-lg'></i>
+                                <input type="text" name="reception_rooms" id="reception_rooms"
+                                    class="w-full bg-transparent border-none p-0 text-sm font-bold focus:ring-0"
+                                    value="{{ $listing->reception_rooms ?? 0 }}">
+                            </div>
+                        </div>
+                        <div
+                            class="bg-amber-50/30 p-4 rounded-2xl border border-amber-100/50 hover:border-amber-200 transition-all">
+                            <label class="block text-[10px] font-black text-amber-400 uppercase tracking-widest mb-2">Area
+                                (Sq Ft)</label>
+                            <div class="flex items-center gap-2">
+                                <i class='bx bx-area text-amber-500 text-lg'></i>
+                                <input type="text" name="area_size"
+                                    class="w-full bg-transparent border-none p-0 text-sm font-bold focus:ring-0"
+                                    value="{{ $listing->area_size ?? '' }}">
+                            </div>
+                        </div>
+                        <div
+                            class="bg-rose-50/30 p-4 rounded-2xl border border-rose-100/50 hover:border-rose-200 transition-all">
+                            <label class="block text-[10px] font-black text-rose-400 uppercase tracking-widest mb-2">Floor
+                                Level</label>
+                            <div class="flex items-center gap-2">
+                                <i class='bx bx-layer text-rose-500 text-lg'></i>
+                                <input type="text" name="floor_level"
+                                    class="w-full bg-transparent border-none p-0 text-sm font-bold focus:ring-0"
+                                    placeholder="e.g. 1st" value="{{ $listing->floor_level ?? '' }}">
+                            </div>
                         </div>
                     </div>
+
+                    <!-- Section: Categorization -->
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                        <div>
+                            <label class="block text-xs font-black text-slate-400 uppercase tracking-[0.2em] mb-3">Property
+                                Category</label>
+                            <select name="property_type_id" id="property_type_id" class="select2 w-full" required
+                                onchange="handleTypeChange()">
+                                <option value="">Select Category</option>
+                                @foreach($propertyTypes as $type)
+                                    <option value="{{ $type->id }}" data-title="{{ strtolower($type->title) }}" {{ (isset($listing) && $listing->property_type_id == $type->id) ? 'selected' : '' }}>
+                                        {{ $type->title }}
+                                    </option>
+                                @endforeach
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block text-xs font-black text-slate-400 uppercase tracking-[0.2em] mb-3">Strategy
+                                Category</label>
+                            <select name="unit_type_id" id="unit_type_id" class="select2 w-full" required
+                                data-selected="{{ $listing->unit_type_id ?? '' }}">
+                                <option value="">Choose Category</option>
+                            </select>
+                        </div>
+                        <input type="hidden" name="sub_type" value="Not Specified">
+                    </div>
+
                     <div class="md:col-span-2">
-                        <label class="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">Full
-                            Description</label>
-                        <textarea id="description_editor" class="w-full rounded-lg text-xs p-2"
-                            rows="6">{{ $listing->description ?? '' }}</textarea>
+                        <label class="block text-xs font-black text-slate-400 uppercase tracking-[0.2em] mb-3">Summary
+                            Overview (Rightmove Header)</label>
+                        <textarea name="summary_description" maxlength="300"
+                            class="w-full rounded-2xl border-slate-100 bg-slate-50/50 text-sm p-4 transition-all font-medium"
+                            rows="2"
+                            placeholder="Short impactful summary for search results...">{{ $listing->summary_description ?? '' }}</textarea>
+                    </div>
+
+                    <div class="md:col-span-2">
+                        <label class="block text-xs font-black text-slate-400 uppercase tracking-[0.2em] mb-3">Detailed
+                            Narrative</label>
+                        <div class="rounded-3xl overflow-hidden border border-slate-100">
+                            <textarea id="description_editor"
+                                class="w-full text-sm p-4">{{ $listing->description ?? '' }}</textarea>
+                        </div>
                         <input type="hidden" name="description" id="description_hidden"
                             value="{{ $listing->description ?? '' }}">
                     </div>
                 </div>
 
-                <!-- Stage 2: Features & Legal -->
-                <div id="stage2" class="hidden space-y-8">
+                <!-- Step 2: Property Details -->
+                <div id="stage2" class="hidden space-y-12 transition-all duration-500">
+                    <!-- Key Features -->
                     <div>
                         <label
-                            class="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-4 border-b pb-2">Property
-                            Features & Amenities</label>
-                        <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3">
-                            @foreach($features as $feature)
+                            class="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-4 border-b pb-2">Key
+                            Features (Max 10)</label>
+                        <div id="key_features_container" class="space-y-2">
+                            @if(isset($listing->details) && $listing->details->key_features)
+                                @foreach($listing->details->key_features as $feature)
+                                    <div class="flex gap-2">
+                                        <input type="text" name="key_features[]"
+                                            class="w-full rounded-lg border-slate-100 bg-slate-50/50 text-xs p-2"
+                                            value="{{ $feature }}">
+                                        <button type="button" onclick="this.parentElement.remove()" class="text-rose-500"><i
+                                                class='bx bx-trash'></i></button>
+                                    </div>
+                                @endforeach
+                            @endif
+                        </div>
+                        <button type="button" onclick="addKeyFeature()"
+                            class="mt-2 text-[10px] font-bold text-indigo-600 uppercase tracking-widest">+ Add
+                            Feature</button>
+                    </div>
+
+                    <!-- Tenure -->
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div>
+                            <label
+                                class="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">Tenure</label>
+                            <select name="tenure" id="tenure" class="select2 w-full text-xs"
+                                onchange="toggleLeaseholdFields()">
+                                <option value="Freehold" {{ (isset($listing->materialInfo) && $listing->materialInfo->tenure == 'Freehold') ? 'selected' : '' }}>Freehold</option>
+                                <option value="Leasehold" {{ (isset($listing->materialInfo) && $listing->materialInfo->tenure == 'Leasehold') ? 'selected' : '' }}>Leasehold</option>
+                                <option value="Share of Freehold" {{ (isset($listing->materialInfo) && $listing->materialInfo->tenure == 'Share of Freehold') ? 'selected' : '' }}>Share of
+                                    Freehold</option>
+                            </select>
+                        </div>
+                        <div id="leasehold_fields"
+                            class="{{ (isset($listing->materialInfo) && $listing->materialInfo->tenure == 'Leasehold') ? '' : 'hidden' }} grid grid-cols-1 md:grid-cols-3 gap-4 md:col-span-2">
+                            <div>
                                 <label
-                                    class="group relative flex items-center p-3 bg-slate-50 rounded-xl border border-slate-100 hover:border-indigo-200 hover:bg-white transition-all cursor-pointer">
-                                    <input id="feat_{{ $feature->id }}" name="features[]" value="{{ $feature->id }}"
-                                        type="checkbox" class="h-4 w-4 text-indigo-600 rounded border-slate-300 focus:ring-0" {{ (isset($listing) && $listing->features->contains($feature->id)) ? 'checked' : '' }}>
-                                    <span
-                                        class="ml-2 text-[11px] font-bold text-slate-600 uppercase tracking-tighter">{{ $feature->title }}</span>
-                                </label>
-                            @endforeach
+                                    class="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">Unexpired
+                                    Years</label>
+                                <input type="text" name="unexpired_years"
+                                    class="w-full rounded-lg border-slate-100 bg-slate-50/50 text-xs p-3"
+                                    value="{{ $listing->materialInfo->unexpired_years ?? '' }}">
+                            </div>
+                            <div>
+                                <label class="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">Ground
+                                    Rent (£)</label>
+                                <input type="text" name="ground_rent"
+                                    class="w-full rounded-lg border-slate-100 bg-slate-50/50 text-xs p-3"
+                                    value="{{ $listing->materialInfo->ground_rent ?? '' }}">
+                            </div>
+                            <div>
+                                <label class="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">Service
+                                    Charge (£)</label>
+                                <input type="text" name="service_charge"
+                                    class="w-full rounded-lg border-slate-100 bg-slate-50/50 text-xs p-3"
+                                    value="{{ $listing->materialInfo->service_charge ?? '' }}">
+                            </div>
                         </div>
                     </div>
 
+                    <!-- Utilities -->
                     <div>
                         <label
-                            class="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-4 border-b pb-2">Legal
-                            & Information</label>
+                            class="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-4 border-b pb-2">Utilities
+                            & Material Information</label>
                         <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
                             <div>
-                                <label class="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">Council
-                                    Tax Band</label>
-                                <select name="council_tax_band" class="select2 w-full text-xs">
-                                    <option value="">Select Band</option>
-                                    @foreach(['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H'] as $band)
-                                        <option value="{{ $band }}" {{ (isset($listing) && $listing->council_tax_band == $band) ? 'selected' : '' }}>Band {{ $band }}</option>
-                                    @endforeach
-                                </select>
+                                <label
+                                    class="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">Water</label>
+                                <input type="text" name="utilities_water"
+                                    class="w-full rounded-lg border-slate-100 bg-slate-50/50 text-xs p-3"
+                                    value="{{ $listing->utilities->water ?? '' }}">
                             </div>
                             <div>
-                                <label class="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">EPC
-                                    Rating</label>
-                                <select name="epc_rating" class="select2 w-full text-xs">
-                                    <option value="">Select Rating</option>
-                                    @foreach(['A', 'B', 'C', 'D', 'E', 'F', 'G'] as $rating)
-                                        <option value="{{ $rating }}" {{ (isset($listing) && $listing->epc_rating == $rating) ? 'selected' : '' }}>{{ $rating }}</option>
-                                    @endforeach
-                                </select>
+                                <label
+                                    class="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">Electricity</label>
+                                <input type="text" name="utilities_electricity"
+                                    class="w-full rounded-lg border-slate-100 bg-slate-50/50 text-xs p-3"
+                                    value="{{ $listing->utilities->electricity ?? '' }}">
                             </div>
                             <div>
-                                <label class="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">Floors
-                                    Count</label>
-                                <input type="number" name="floors_count"
-                                    class="w-full rounded-lg border-slate-100 bg-slate-50/50 text-xs p-3 transition-all"
-                                    value="{{ $listing->floors_count ?? '' }}">
+                                <label
+                                    class="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">Sewerage</label>
+                                <input type="text" name="utilities_sewerage"
+                                    class="w-full rounded-lg border-slate-100 bg-slate-50/50 text-xs p-3"
+                                    value="{{ $listing->utilities->sewerage ?? '' }}">
                             </div>
+                            <div>
+                                <label class="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">Heating
+                                    Type</label>
+                                <input type="text" name="utilities_heating"
+                                    class="w-full rounded-lg border-slate-100 bg-slate-50/50 text-xs p-3"
+                                    value="{{ $listing->utilities->heating_type ?? '' }}">
+                            </div>
+                            <div>
+                                <label
+                                    class="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">Broadband</label>
+                                <input type="text" name="utilities_broadband"
+                                    class="w-full rounded-lg border-slate-100 bg-slate-50/50 text-xs p-3"
+                                    value="{{ $listing->utilities->broadband ?? '' }}">
+                            </div>
+                            <div>
+                                <label class="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">Mobile
+                                    Coverage</label>
+                                <input type="text" name="utilities_mobile"
+                                    class="w-full rounded-lg border-slate-100 bg-slate-50/50 text-xs p-3"
+                                    value="{{ $listing->utilities->mobile_coverage ?? '' }}">
+                            </div>
+                        </div>
+                    </div>
 
-                            <div>
-                                <label class="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">Listed
-                                    Property Status</label>
-                                <select name="listed_property" class="select2 w-full text-xs">
-                                    <option value="">None</option>
-                                    <option value="Grade I" {{ (isset($listing) && $listing->listed_property == 'Grade I') ? 'selected' : '' }}>Grade I</option>
-                                    <option value="Grade II*" {{ (isset($listing) && $listing->listed_property == 'Grade II*') ? 'selected' : '' }}>Grade II*</option>
-                                    <option value="Grade II" {{ (isset($listing) && $listing->listed_property == 'Grade II') ? 'selected' : '' }}>Grade II</option>
-                                </select>
-                            </div>
-                            <div>
-                                <label class="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">Flood
-                                    Risk</label>
-                                <select name="flood_risk" class="select2 w-full text-xs">
-                                    <option value="Very Low" {{ (isset($listing) && $listing->flood_risk == 'Very Low') ? 'selected' : '' }}>Very Low</option>
-                                    <option value="Low" {{ (isset($listing) && $listing->flood_risk == 'Low') ? 'selected' : '' }}>Low</option>
-                                    <option value="Medium" {{ (isset($listing) && $listing->flood_risk == 'Medium') ? 'selected' : '' }}>Medium</option>
-                                    <option value="High" {{ (isset($listing) && $listing->flood_risk == 'High') ? 'selected' : '' }}>High</option>
-                                </select>
-                            </div>
-                            <div class="md:col-span-3 grid grid-cols-1 md:grid-cols-2 gap-6">
-                                <div>
-                                    <label
-                                        class="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">Restrictions
-                                        / Covenants</label>
-                                    <textarea name="restrictions"
-                                        class="w-full rounded-lg border-slate-100 bg-slate-50/50 text-xs p-3 mt-1"
-                                        rows="2">{{ $listing->restrictions ?? '' }}</textarea>
-                                </div>
-                                <div>
-                                    <label
-                                        class="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">Private
-                                        Rights of Way</label>
-                                    <textarea name="private_rights_of_way"
-                                        class="w-full rounded-lg border-slate-100 bg-slate-50/50 text-xs p-3 mt-1"
-                                        rows="2">{{ $listing->private_rights_of_way ?? '' }}</textarea>
-                                </div>
-                            </div>
-                            <div class="md:col-span-3 grid grid-cols-1 md:grid-cols-2 gap-6">
-                                <div>
-                                    <label
-                                        class="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">Flood
-                                        History</label>
-                                    <textarea name="flood_history"
-                                        class="w-full rounded-lg border-slate-100 bg-slate-50/50 text-xs p-3 mt-1"
-                                        rows="2">{{ $listing->flood_history ?? '' }}</textarea>
-                                </div>
-                                <div>
-                                    <label
-                                        class="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">Flood
-                                        Defenses</label>
-                                    <textarea name="flood_defenses"
-                                        class="w-full rounded-lg border-slate-100 bg-slate-50/50 text-xs p-3 mt-1"
-                                        rows="2">{{ $listing->flood_defenses ?? '' }}</textarea>
-                                </div>
-                            </div>
+                    <!-- Parking & Construction -->
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                        <div>
+                            <label class="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">Parking
+                                Type</label>
+                            <input type="text" name="parking_type"
+                                class="w-full rounded-lg border-slate-100 bg-slate-50/50 text-xs p-3"
+                                value="{{ $listing->materialInfo->parking_type ?? '' }}">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">Parking
+                                Spaces</label>
+                            <input type="text" name="parking_spaces_count"
+                                class="w-full rounded-lg border-slate-100 bg-slate-50/50 text-xs p-3"
+                                value="{{ $listing->materialInfo->parking_spaces_count ?? '' }}">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">Construction
+                                Type</label>
+                            <input type="text" name="construction_type"
+                                class="w-full rounded-lg border-slate-100 bg-slate-50/50 text-xs p-3"
+                                value="{{ $listing->materialInfo->construction_type ?? '' }}">
+                        </div>
+                    </div>
+
+                    <!-- Compliance & Availability -->
+                    <div
+                        class="grid grid-cols-1 md:grid-cols-2 gap-8 p-6 bg-slate-50/50 rounded-3xl border border-slate-100">
+                        <div>
+                            <label
+                                class="block text-xs font-black text-slate-400 uppercase tracking-[0.2em] mb-3">Government
+                                Scheme</label>
+                            <input type="text" name="government_scheme"
+                                class="w-full rounded-2xl border-slate-100 bg-white text-sm p-4 font-medium"
+                                placeholder="e.g. Help to Buy" value="{{ $listing->government_scheme ?? '' }}">
+                        </div>
+                        <div>
+                            <label
+                                class="block text-xs font-black text-slate-400 uppercase tracking-[0.2em] mb-3">Availability
+                                Date</label>
+                            <input type="date" name="availability_date"
+                                class="w-full rounded-2xl border-slate-100 bg-white text-sm p-4 font-medium"
+                                value="{{ $listing->availability_date ?? '' }}">
                         </div>
                     </div>
                 </div>
 
-                <!-- Stage 3 -->
-                <div id="stage3" class="hidden space-y-6">
+                <!-- Step 3: Media Uploads -->
+                <div id="stage3" class="hidden space-y-6 transition-all duration-500">
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <!-- Hero Image -->
                         <div class="p-4 bg-slate-50 rounded-xl border border-dashed border-slate-200">
                             <label class="block text-xs font-bold text-slate-700 mb-3 flex items-center gap-2 italic">
-                                <i class='bx bx-image-add text-lg text-[#02b8f2]'></i> HERO IMAGE
+                                <i class='bx bx-image-add text-lg text-[#02b8f2]'></i> HERO IMAGE (Required)
                             </label>
                             <input type="file" name="thumbnail" id="thumbnail" accept="image/*"
                                 onchange="previewThumbnail(this)" class="hidden">
@@ -368,16 +496,18 @@
                                         <img src="/storage/{{ $listing->thumbnail }}"
                                             class="w-full h-full object-cover rounded-lg shadow-lg">
                                         <button type="button" onclick="removeThumbnail()"
-                                            class="absolute -top-2 -right-2 w-6 h-6 bg-rose-500 text-white rounded-full flex items-center justify-center hover:bg-rose-600 transition-all shadow-md">
+                                            class="absolute -top-2 -right-2 w-6 h-6 bg-rose-500 text-white rounded-full flex items-center justify-center">
                                             <i class='bx bx-x'></i>
                                         </button>
                                     </div>
                                 @endif
                             </div>
                         </div>
+
+                        <!-- Gallery -->
                         <div class="p-4 bg-slate-50 rounded-xl border border-dashed border-slate-200">
                             <label class="block text-xs font-bold text-slate-700 mb-3 flex items-center gap-2 italic">
-                                <i class='bx bx-images text-lg text-[#02b8f2]'></i> GALLERY
+                                <i class='bx bx-images text-lg text-[#02b8f2]'></i> PHOTOS
                             </label>
                             <input type="file" name="gallery[]" id="gallery" multiple accept="image/*"
                                 onchange="handleGallerySelect(this)" class="hidden">
@@ -385,16 +515,15 @@
                                 class="w-full py-3 bg-white rounded-lg border border-slate-100 text-center cursor-pointer hover:shadow-md transition-all block text-[10px] font-bold text-[#02b8f2] uppercase">Select
                                 Multiple</label>
                             <div id="galleryExisting" class="mt-3 flex flex-wrap gap-1.5">
-                                @if(isset($listing) && $listing->gallery)
-                                    @foreach($listing->gallery as $index => $image)
-                                        <div class="relative group existing-gallery-item">
-                                            <img src="/storage/{{ $image }}"
+                                @if(isset($listing) && $listing->media)
+                                    @foreach($listing->media->where('type', 'photo') as $media)
+                                        <div class="relative group existing-media-item">
+                                            <img src="/storage/{{ $media->file_path }}"
                                                 class="w-16 h-12 object-cover rounded-xl border border-slate-100 shadow-sm">
-                                            <button type="button" onclick="removeExistingImage(this)"
-                                                class="absolute -top-2 -right-2 w-5 h-5 bg-rose-500 text-white rounded-full flex items-center justify-center text-xs opacity-0 group-hover:opacity-100 transition-opacity hover:bg-rose-600">
+                                            <button type="button" onclick="removeExistingMedia({{ $media->id }}, this)"
+                                                class="absolute -top-2 -right-2 w-5 h-5 bg-rose-500 text-white rounded-full flex items-center justify-center text-xs opacity-0 group-hover:opacity-100 transition-opacity">
                                                 <i class='bx bx-x'></i>
                                             </button>
-                                            <input type="hidden" name="existing_gallery[]" value="{{ $image }}">
                                         </div>
                                     @endforeach
                                 @endif
@@ -402,29 +531,8 @@
                             <div id="galleryNew" class="mt-1.5 flex flex-wrap gap-1.5"></div>
                         </div>
                     </div>
-                    <div class="p-6 bg-indigo-900 rounded-xl shadow-lg shadow-indigo-100 relative overflow-hidden">
-                        <div class="absolute top-0 right-0 w-32 h-32 bg-white/5 rounded-full -mr-16 -mt-16"></div>
-                        <label class="block text-sm font-bold text-white mb-3 flex items-center gap-2 italic">
-                            <i class='bx bxs-video text-2xl text-rose-400'></i> PROPERTY WALKTHROUGH
-                        </label>
-                        <input type="file" name="video" id="video" accept="video/*" onchange="previewVideoFile(this)"
-                            class="w-full text-xs text-indigo-200 file:mr-4 file:py-1.5 file:px-3 file:rounded-lg file:border-0 file:bg-white file:text-indigo-900 file:font-bold hover:file:bg-indigo-50 cursor-pointer">
-                        <p class="text-[10px] text-indigo-300 mt-3 font-bold uppercase tracking-wider">Accepted: MP4, MOV •
-                            Max 35MB for best playback</p>
-                        <div id="videoPreview" class="mt-4 {{ isset($listing) && $listing->video ? '' : 'hidden' }}">
-                            @if(isset($listing) && $listing->video)
-                                <div class="relative group w-full h-48">
-                                    <video controls class="w-full h-full rounded-2xl shadow-lg bg-black"
-                                        src="/storage/{{ $listing->video }}"></video>
-                                    <button type="button" onclick="removeVideo()"
-                                        class="absolute -top-2 -right-2 w-6 h-6 bg-rose-500 text-white rounded-full flex items-center justify-center hover:bg-rose-600 transition-all shadow-md z-10">
-                                        <i class='bx bx-x'></i>
-                                    </button>
-                                </div>
-                            @endif
-                        </div>
-                    </div>
 
+                    <!-- Floor Plans -->
                     <div class="p-4 bg-slate-50 rounded-xl border border-dashed border-slate-200">
                         <label class="block text-xs font-bold text-slate-700 mb-3 flex items-center gap-2 italic">
                             <i class='bx bx-map-alt text-lg text-[#02b8f2]'></i> FLOOR PLANS
@@ -432,19 +540,18 @@
                         <input type="file" name="floor_plans[]" id="floor_plans" multiple accept="image/*"
                             onchange="handleFloorPlansSelect(this)" class="hidden">
                         <label for="floor_plans"
-                            class="w-full py-3 bg-white rounded-lg border border-slate-100 text-center cursor-pointer hover:shadow-md transition-all block text-[10px] font-bold text-[#02b8f2] uppercase">Select
-                            Multiple Plans</label>
+                            class="w-full py-3 bg-white rounded-lg border border-slate-100 text-center cursor-pointer hover:shadow-md transition-all block text-[10px] font-bold text-[#02b8f2] uppercase">Upload
+                            Floor Plans</label>
                         <div id="floorPlansExisting" class="mt-3 flex flex-wrap gap-1.5">
-                            @if(isset($listing) && $listing->floor_plans)
-                                @foreach($listing->floor_plans as $index => $image)
-                                    <div class="relative group existing-floorplan-item">
-                                        <img src="/storage/{{ $image }}"
+                            @if(isset($listing) && $listing->media)
+                                @foreach($listing->media->where('type', 'floorplan') as $media)
+                                    <div class="relative group existing-media-item">
+                                        <img src="/storage/{{ $media->file_path }}"
                                             class="w-16 h-12 object-cover rounded-xl border border-slate-100 shadow-sm">
-                                        <button type="button" onclick="removeExistingFloorPlan(this)"
-                                            class="absolute -top-2 -right-2 w-5 h-5 bg-rose-500 text-white rounded-full flex items-center justify-center text-xs opacity-0 group-hover:opacity-100 transition-opacity hover:bg-rose-600">
+                                        <button type="button" onclick="removeExistingMedia({{ $media->id }}, this)"
+                                            class="absolute -top-2 -right-2 w-5 h-5 bg-rose-500 text-white rounded-full flex items-center justify-center text-xs">
                                             <i class='bx bx-x'></i>
                                         </button>
-                                        <input type="hidden" name="existing_floor_plans[]" value="{{ $image }}">
                                     </div>
                                 @endforeach
                             @endif
@@ -452,44 +559,80 @@
                         <div id="floorPlansNew" class="mt-1.5 flex flex-wrap gap-1.5"></div>
                     </div>
 
-                    <!-- Brochure PDF Section -->
-                    <div class="p-6 bg-slate-50 rounded-xl border border-dashed border-slate-200">
-                        <label class="block text-sm font-bold text-slate-700 mb-3 flex items-center gap-2">
-                            <i class='bx bxs-file-pdf text-2xl text-red-500'></i> PROPERTY BROCHURE (PDF)
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <!-- EPC -->
+                        <div class="p-4 bg-slate-50 rounded-xl border border-dashed border-slate-200">
+                            <label class="block text-xs font-bold text-slate-700 mb-3 flex items-center gap-2 italic">
+                                <i class='bx bx-certification text-lg text-emerald-500'></i> EPC UPLOAD
+                            </label>
+                            <input type="file" name="epc_upload" id="epc_upload" accept="image/*,application/pdf"
+                                class="w-full text-xs text-slate-500 file:mr-4 file:py-2 file:px-4 file:rounded-xl file:border-0 file:bg-emerald-50 file:text-emerald-700 file:font-bold hover:file:bg-emerald-100 cursor-pointer">
+                            @if(isset($listing) && $listing->epc_upload)
+                                <div class="mt-2 text-[10px] font-bold text-emerald-600 uppercase"><i class='bx bx-check'></i>
+                                    EPC Uploaded</div>
+                            @endif
+                        </div>
+
+                        <!-- Brochure -->
+                        <div class="p-4 bg-slate-50 rounded-xl border border-dashed border-slate-200">
+                            <label class="block text-xs font-bold text-slate-700 mb-3 flex items-center gap-2 italic">
+                                <i class='bx bxs-file-pdf text-lg text-red-500'></i> BROCHURE (PDF)
+                            </label>
+                            <input type="file" name="brochure_pdf" id="brochure_pdf" accept="application/pdf"
+                                class="w-full text-xs text-slate-500 file:mr-4 file:py-2 file:px-4 file:rounded-xl file:border-0 file:bg-red-50 file:text-red-700 file:font-bold hover:file:bg-red-100 cursor-pointer">
+                            @if(isset($listing) && $listing->brochure_pdf)
+                                <div class="mt-2 text-[10px] font-bold text-red-600 uppercase"><i class='bx bx-check'></i>
+                                    Brochure Uploaded</div>
+                            @endif
+                        </div>
+                    </div>
+
+                    <!-- Video & Virtual Tour -->
+                    <div class="p-6 bg-indigo-900 rounded-xl shadow-lg relative overflow-hidden">
+                        <label class="block text-sm font-bold text-white mb-4 flex items-center gap-2 italic">
+                            <i class='bx bxs-video text-2xl text-rose-400'></i> VIDEO WALKTHROUGH & VIRTUAL TOUR
                         </label>
-                        <input type="file" name="brochure_pdf" id="brochure_pdf" accept="application/pdf"
-                            class="w-full text-xs text-slate-500 file:mr-4 file:py-2 file:px-4 file:rounded-xl file:border-0 file:bg-red-50 file:text-red-700 file:font-bold hover:file:bg-red-100 cursor-pointer">
-                        @if(isset($listing) && $listing->brochure_pdf)
-                            <div class="mt-4 flex items-center gap-3 p-3 bg-white rounded-lg border border-slate-100">
-                                <i class='bx bxs-file-pdf text-xl text-red-500'></i>
-                                <span class="text-xs font-bold text-slate-600">Current Brochure:</span>
-                                <a href="/storage/{{ $listing->brochure_pdf }}" target="_blank"
-                                    class="text-xs font-black text-indigo-600 hover:underline">View PDF</a>
+                        <div class="space-y-4">
+                            <div>
+                                <label
+                                    class="block text-[10px] font-bold text-indigo-300 uppercase tracking-widest mb-1">Video
+                                    File</label>
+                                <input type="file" name="video" id="video" accept="video/*"
+                                    class="w-full text-xs text-indigo-200 file:mr-4 file:py-1.5 file:px-3 file:rounded-lg file:border-0 file:bg-white file:text-indigo-900 file:font-bold hover:file:bg-indigo-50 cursor-pointer">
                             </div>
-                        @endif
+                            <div>
+                                <label
+                                    class="block text-[10px] font-bold text-indigo-300 uppercase tracking-widest mb-1">Virtual
+                                    Tour URL</label>
+                                <input type="url" name="virtual_tour_url"
+                                    class="w-full rounded-lg border-indigo-700 bg-indigo-800 text-white text-xs p-3 transition-all"
+                                    placeholder="https://my.matterport.com/show/..."
+                                    value="{{ $listing->virtual_tour_url ?? '' }}">
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
+    </div>
 
-            <div
-                class="px-8 py-6 bg-slate-50/50 border-t border-slate-100 flex justify-between rounded-b-3xl flex-shrink-0">
-                <button type="button" id="prevBtn" onclick="changeStep(-1)"
-                    class="hidden px-8 py-3.5 rounded-2xl border-2 border-slate-100 bg-white text-slate-700 text-xs font-black uppercase tracking-widest hover:bg-slate-50 transition-all">Previous</button>
-                <div class="flex-1 flex justify-end gap-3">
-                    <a href="{{ route('admin.listings.index') }}"
-                        class="px-6 py-3.5 text-slate-400 text-xs font-black uppercase tracking-widest hover:text-rose-500 transition-all flex items-center">Cancel</a>
-                    <button type="button" id="draftBtn" onclick="saveAsDraft()"
-                        class="px-12 py-3.5 rounded-2xl bg-amber-500 text-white text-xs font-black uppercase tracking-widest shadow-xl shadow-amber-100/30 active:scale-95 transition-all">Save
-                        Draft</button>
-                    <button type="button" id="nextBtn" onclick="changeStep(1)"
-                        class="px-12 py-3.5 rounded-2xl bg-[#8046F1] text-white text-xs font-black uppercase tracking-widest shadow-xl shadow-purple-100/30 active:scale-95 transition-all">Next
-                        Stage</button>
-                    <button type="submit" id="submitBtn"
-                        class="hidden px-12 py-3.5 rounded-2xl bg-[#131B31] text-white text-xs font-black uppercase tracking-widest shadow-xl shadow-slate-900/10 active:scale-95 transition-all">Publish
-                        Property</button>
-                </div>
-            </div>
-        </form>
+    <div class="px-8 py-6 bg-slate-50/50 border-t border-slate-100 flex justify-between rounded-b-3xl flex-shrink-0">
+        <button type="button" id="prevBtn" onclick="changeStep(-1)"
+            class="hidden px-8 py-3.5 rounded-2xl border-2 border-slate-100 bg-white text-slate-700 text-xs font-black uppercase tracking-widest hover:bg-slate-50 transition-all">Previous</button>
+        <div class="flex-1 flex justify-end gap-3">
+            <a href="{{ route('admin.listings.index') }}"
+                class="px-6 py-3.5 text-slate-400 text-xs font-black uppercase tracking-widest hover:text-rose-500 transition-all flex items-center">Cancel</a>
+            <button type="button" id="draftBtn" onclick="saveAsDraft()"
+                class="px-12 py-3.5 rounded-2xl bg-amber-500 text-white text-xs font-black uppercase tracking-widest shadow-xl shadow-amber-100/30 active:scale-95 transition-all">Save
+                Draft</button>
+            <button type="button" id="nextBtn" onclick="changeStep(1)"
+                class="px-12 py-3.5 rounded-2xl bg-[#8046F1] text-white text-xs font-black uppercase tracking-widest shadow-xl shadow-purple-100/30 active:scale-95 transition-all">Next
+                Stage</button>
+            <button type="submit" id="submitBtn"
+                class="hidden px-12 py-3.5 rounded-2xl bg-[#131B31] text-white text-xs font-black uppercase tracking-widest shadow-xl shadow-slate-900/10 active:scale-95 transition-all">Publish
+                Property</button>
+        </div>
+    </div>
+    </form>
     </div>
 
     @push('scripts')
@@ -538,21 +681,25 @@
                 // Initial setup for edit mode
                 toggleDiscountField();
 
-                // Setup Unit Types if we have a selected value (Edit mode)
-                const selectedPropertyType = $('#property_type_id').val();
-                if (selectedPropertyType) {
-                    const selectedUnitType = $('#unit_type_id').data('selected');
-                    const validUnits = unitTypesData.filter(u => u.property_type_id == selectedPropertyType);
-                    $('#unit_type_id').empty().append('<option value="">Choose Category</option>');
-                    validUnits.forEach(u => $('#unit_type_id').append(new Option(u.title, u.id, false, u.id == selectedUnitType)));
-                }
+                // Attach change listeners
+                $('#property_type_id').on('change', handleTypeChange);
+                $('#unit_type_id').on('change', handleStrategyChange);
 
-                const title = ($('#property_type_id option:selected').data('title') || "");
-                if (title.includes('commercial') || title.includes('land')) {
-                    $('#bedBathContainer').addClass('hidden');
-                } else {
-                    $('#bedBathContainer').removeClass('hidden');
-                }
+                // Chip Selector Logic
+                $('.chip').on('click', function () {
+                    const val = $(this).data('val');
+                    const container = $(this).closest('.chip-group');
+                    const input = container.prev('input');
+
+                    container.find('.chip').removeClass('active');
+                    $(this).addClass('active');
+                    input.val(val);
+                });
+
+                // Initial load
+                const selectedUnitType = $('#unit_type_id').data('selected');
+                handleTypeChange(selectedUnitType);
+                handleStrategyChange();
 
                 // Form Submission
                 $('#listingForm').on('submit', function (e) {
@@ -605,39 +752,65 @@
                 $('.select2').select2({ minimumResultsForSearch: Infinity });
             }
 
-            function handleTypeChange() {
+            function handleTypeChange(selectedId = null) {
                 const id = $('#property_type_id').val();
                 const validUnits = unitTypesData.filter(u => u.property_type_id == id);
                 $('#unit_type_id').empty().append('<option value="">Choose Category</option>');
-                validUnits.forEach(u => $('#unit_type_id').append(new Option(u.title, u.id)));
+                validUnits.forEach(u => $('#unit_type_id').append(new Option(u.title, u.id, false, u.id == selectedId)));
 
-                const title = ($('#property_type_id option:selected').data('title') || "");
-                if (title.includes('commercial') || title.includes('land')) {
-                    $('#bedBathContainer').addClass('hidden');
-                    $('#bedrooms, #bathrooms').val('').trigger('change');
+                // Re-trigger strategy check when type changes
+                handleStrategyChange();
+            }
+
+            function handleStrategyChange() {
+                const title = ($('#unit_type_id option:selected').text() || "").toLowerCase();
+                const isComm = title.includes('office') || title.includes('shop');
+
+                if (isComm) {
+                    $('#bedrooms_container, #bathrooms_container, #receptions_container').addClass('hidden');
+                    // Optional: Reset values if hidden to avoid accidental submission
+                    $('#bedrooms, #bathrooms, #reception_rooms').val(0);
                 } else {
-                    $('#bedBathContainer').removeClass('hidden');
+                    $('#bedrooms_container, #bathrooms_container, #receptions_container').removeClass('hidden');
                 }
             }
 
             function handlePurposeChange() {
                 const p = $('#purpose').val();
-                if (p === 'Buy') {
-                    $('#for-sale-fields').removeClass('hidden');
-                    $('#to-rent-fields').addClass('hidden');
-                    $('#discount_checkbox_container').removeClass('hidden');
-                    $('#rent_frequency_id, #cheque_id').val('').trigger('change');
-                } else if (p === 'Rent') {
-                    $('#to-rent-fields').removeClass('hidden');
-                    $('#for-sale-fields').addClass('hidden');
-                    $('#discount_checkbox_container').addClass('hidden');
-                    $('#discount_field_container').addClass('hidden');
-                    $('#has_discount').prop('checked', false);
-                    $('#old_price').val('');
-                    $('#ownership_status_id').val('').trigger('change');
+                if (p === 'Rent') {
+                    $('#rent_fields_container').removeClass('hidden');
                 } else {
-                    $('#for-sale-fields, #to-rent-fields').addClass('hidden');
+                    $('#rent_fields_container').addClass('hidden');
                 }
+            }
+
+            function toggleLeaseholdFields() {
+                const t = $('#tenure').val();
+                if (t === 'Leasehold') {
+                    $('#leasehold_fields').removeClass('hidden');
+                } else {
+                    $('#leasehold_fields').addClass('hidden');
+                }
+            }
+
+            function addKeyFeature() {
+                const container = $('#key_features_container');
+                if (container.children().length >= 10) {
+                    Swal.fire({ icon: 'warning', title: 'Limit Reached', text: 'Maximum 10 key features allowed' });
+                    return;
+                }
+                const div = $(`
+                                                                                                                                                <div class="flex gap-2">
+                                                                                                                                                    <input type="text" name="key_features[]" class="w-full rounded-lg border-slate-100 bg-slate-50/50 text-xs p-2" placeholder="Enter feature...">
+                                                                                                                                                    <button type="button" onclick="this.parentElement.remove()" class="text-rose-500"><i class='bx bx-trash'></i></button>
+                                                                                                                                                </div>
+                                                                                                                                            `);
+                container.append(div);
+            }
+
+            function removeExistingMedia(id, btn) {
+                $('#listingForm').append(`<input type="hidden" name="remove_media[]" value="${id}">`);
+                $(btn).closest('.existing-media-item').remove();
             }
 
             function toggleDiscountField() {
@@ -677,11 +850,19 @@
 
                 currentStep += n;
                 showStep(currentStep);
+                // Scroll the main content area to top
+                const mainEl = document.querySelector('main');
+                if (mainEl) {
+                    mainEl.scrollTo({ top: 0, behavior: 'smooth' });
+                } else {
+                    window.scrollTo({ top: 0, behavior: 'smooth' });
+                }
             }
 
             function showStep(n) {
                 $('#stage1, #stage2, #stage3').addClass('hidden');
                 $(`#stage${n}`).removeClass('hidden');
+                window.scrollTo({ top: 0, behavior: 'smooth' });
 
                 if (n === 1) $(`#stage${n}`).addClass('form-grid');
                 else $(`#stage${n}`).removeClass('form-grid');
@@ -745,13 +926,13 @@
                     const reader = new FileReader();
                     reader.onload = function (e) {
                         preview.removeClass('hidden').html(`
-                                                                                <div class="relative group w-full h-32">
-                                                                                    <img src="${e.target.result}" class="w-full h-full object-cover rounded-lg shadow-lg">
-                                                                                    <button type="button" onclick="removeThumbnail()" class="absolute -top-2 -right-2 w-6 h-6 bg-rose-500 text-white rounded-full flex items-center justify-center hover:bg-rose-600 transition-all shadow-md">
-                                                                                        <i class='bx bx-x'></i>
-                                                                                    </button>
-                                                                                </div>
-                                                                            `);
+                                                                                                                                                                                                                    <div class="relative group w-full h-32">
+                                                                                                                                                                                                                        <img src="${e.target.result}" class="w-full h-full object-cover rounded-lg shadow-lg">
+                                                                                                                                                                                                                        <button type="button" onclick="removeThumbnail()" class="absolute -top-2 -right-2 w-6 h-6 bg-rose-500 text-white rounded-full flex items-center justify-center hover:bg-rose-600 transition-all shadow-md">
+                                                                                                                                                                                                                            <i class='bx bx-x'></i>
+                                                                                                                                                                                                                        </button>
+                                                                                                                                                                                                                    </div>
+                                                                                                                                                                                                                `);
                     }
                     reader.readAsDataURL(input.files[0]);
                 }
@@ -771,13 +952,13 @@
                     const file = input.files[0];
                     const url = URL.createObjectURL(file);
                     preview.removeClass('hidden').html(`
-                                                                            <div class="relative group w-full h-48">
-                                                                                <video controls src="${url}" class="w-full h-full rounded-2xl shadow-lg bg-black"></video>
-                                                                                <button type="button" onclick="removeVideo()" class="absolute -top-2 -right-2 w-6 h-6 bg-rose-500 text-white rounded-full flex items-center justify-center hover:bg-rose-600 transition-all shadow-md z-10">
-                                                                                    <i class='bx bx-x'></i>
-                                                                                </button>
-                                                                            </div>
-                                                                        `);
+                                                                                                                                                                                                                <div class="relative group w-full h-48">
+                                                                                                                                                                                                                    <video controls src="${url}" class="w-full h-full rounded-2xl shadow-lg bg-black"></video>
+                                                                                                                                                                                                                    <button type="button" onclick="removeVideo()" class="absolute -top-2 -right-2 w-6 h-6 bg-rose-500 text-white rounded-full flex items-center justify-center hover:bg-rose-600 transition-all shadow-md z-10">
+                                                                                                                                                                                                                        <i class='bx bx-x'></i>
+                                                                                                                                                                                                                    </button>
+                                                                                                                                                                                                                </div>
+                                                                                                                                                                                                            `);
                 }
             }
 
@@ -806,13 +987,13 @@
                     const reader = new FileReader();
                     reader.onload = function (e) {
                         const div = $(`
-                                                                                <div class="relative group w-16 h-12">
-                                                                                    <img src="${e.target.result}" class="w-full h-full object-cover rounded-xl border border-slate-100 shadow-sm">
-                                                                                    <button type="button" onclick="removeGalleryFile(${index})" class="absolute -top-2 -right-2 w-5 h-5 bg-rose-500 text-white rounded-full flex items-center justify-center text-xs hover:bg-rose-600 transition-all shadow-md">
-                                                                                        <i class='bx bx-x'></i>
-                                                                                    </button>
-                                                                                </div>
-                                                                            `);
+                                                                                                                                                                                                                    <div class="relative group w-16 h-12">
+                                                                                                                                                                                                                        <img src="${e.target.result}" class="w-full h-full object-cover rounded-xl border border-slate-100 shadow-sm">
+                                                                                                                                                                                                                        <button type="button" onclick="removeGalleryFile(${index})" class="absolute -top-2 -right-2 w-5 h-5 bg-rose-500 text-white rounded-full flex items-center justify-center text-xs hover:bg-rose-600 transition-all shadow-md">
+                                                                                                                                                                                                                            <i class='bx bx-x'></i>
+                                                                                                                                                                                                                        </button>
+                                                                                                                                                                                                                    </div>
+                                                                                                                                                                                                                `);
                         container.append(div);
                     }
                     reader.readAsDataURL(file);
@@ -862,13 +1043,13 @@
                     const reader = new FileReader();
                     reader.onload = function (e) {
                         const div = $(`
-                                                                                <div class="relative group w-16 h-12">
-                                                                                    <img src="${e.target.result}" class="w-full h-full object-cover rounded-xl border border-slate-100 shadow-sm">
-                                                                                    <button type="button" onclick="removeFloorPlanFile(${index})" class="absolute -top-2 -right-2 w-5 h-5 bg-rose-500 text-white rounded-full flex items-center justify-center text-xs hover:bg-rose-600 transition-all shadow-md">
-                                                                                        <i class='bx bx-x'></i>
-                                                                                    </button>
-                                                                                </div>
-                                                                            `);
+                                                                                                                                                                                                                    <div class="relative group w-16 h-12">
+                                                                                                                                                                                                                        <img src="${e.target.result}" class="w-full h-full object-cover rounded-xl border border-slate-100 shadow-sm">
+                                                                                                                                                                                                                        <button type="button" onclick="removeFloorPlanFile(${index})" class="absolute -top-2 -right-2 w-5 h-5 bg-rose-500 text-white rounded-full flex items-center justify-center text-xs hover:bg-rose-600 transition-all shadow-md">
+                                                                                                                                                                                                                            <i class='bx bx-x'></i>
+                                                                                                                                                                                                                        </button>
+                                                                                                                                                                                                                    </div>
+                                                                                                                                                                                                                `);
                         container.append(div);
                     }
                     reader.readAsDataURL(file);

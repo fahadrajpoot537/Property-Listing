@@ -9,52 +9,40 @@ class OffMarketListing extends Model
 {
     use HasFactory;
 
-    protected $fillable = [
-        'user_id',
-        'property_title',
-        'description',
-        'property_reference_number',
-        'purpose',
-        'price',
-        'old_price',
-        'area_size',
-        'bedrooms',
-        'bathrooms',
-        'property_type_id',
-        'unit_type_id',
-        'ownership_status_id',
-        'sale_status',
-        'rent_frequency_id',
-        'cheque_id',
-        'thumbnail',
-        'gallery',
-        'video',
-        'brochure_pdf',
-        'address',
-        'latitude',
-        'longitude',
-        'slug',
-        'status',
-        'council_tax_band',
-        'epc_rating',
-        'floors_count',
-        'availability_date',
-        'no_onward_chain',
-        'private_rights_of_way',
-        'public_rights_of_way',
-        'listed_property',
-        'restrictions',
-        'flood_risk',
-        'flood_history',
-        'flood_defenses',
-        'floor_plans',
-    ];
+    protected $guarded = [];
 
     protected $casts = [
         'gallery' => 'array',
         'floor_plans' => 'array',
+        'key_features' => 'array',
         'price' => 'decimal:2',
+        'tags' => 'array',
     ];
+
+    public function materialInfo()
+    {
+        return $this->hasOne(OffMarketMaterialInfo::class, 'off_market_listings_id');
+    }
+
+    public function utilities()
+    {
+        return $this->hasOne(OffMarketUtility::class, 'off_market_listings_id');
+    }
+
+    public function media()
+    {
+        return $this->hasMany(OffMarketMedia::class, 'off_market_listings_id');
+    }
+
+    public function rooms()
+    {
+        return $this->hasMany(OffMarketRoom::class, 'off_market_listings_id');
+    }
+
+    public function details()
+    {
+        return $this->hasOne(OffMarketDetail::class, 'off_market_listings_id');
+    }
 
     public function user()
     {

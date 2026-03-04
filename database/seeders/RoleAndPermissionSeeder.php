@@ -23,6 +23,7 @@ class RoleAndPermissionSeeder extends Seeder
         // define permissions
         $permissions = [
             'dashboard.view',
+            'access dashboard',
 
             // User Management
             'user.view',
@@ -91,6 +92,7 @@ class RoleAndPermissionSeeder extends Seeder
             'Agency',
             'Freelance',
             'landlord',
+            'agent',
         ];
 
         foreach ($roles as $roleName) {
@@ -105,6 +107,7 @@ class RoleAndPermissionSeeder extends Seeder
             if ($roleName === 'manager') {
                 $role->syncPermissions([
                     'dashboard.view',
+                    'access dashboard',
                     'user.view',
                     'listing.view',
                     'listing.edit',
@@ -120,6 +123,7 @@ class RoleAndPermissionSeeder extends Seeder
             if ($roleName === 'listing director') {
                 $role->syncPermissions([
                     'dashboard.view',
+                    'access dashboard',
                     'listing.view',
                     'listing.create',
                     'listing.edit',
@@ -132,14 +136,43 @@ class RoleAndPermissionSeeder extends Seeder
                     'off-market.approve',
                 ]);
             }
+
+            if ($roleName === 'Agency') {
+                $role->syncPermissions([
+                    'dashboard.view',
+                    'access dashboard',
+                    'listing.view',
+                    'listing.create',
+                    'listing.edit',
+                    'off-market.view',
+                    'off-market.create',
+                    'off-market.edit',
+                    'user.view',
+                    'user.create',
+                    'user.edit',
+                ]);
+            }
+
+            if ($roleName === 'agent') {
+                $role->syncPermissions([
+                    'dashboard.view',
+                    'access dashboard',
+                    'listing.view',
+                    'listing.create',
+                    'listing.edit',
+                    'off-market.view',
+                    'off-market.create',
+                    'off-market.edit',
+                ]);
+            }
         }
 
         // Create a default admin user if not exists
         $admin = User::firstOrCreate(
-            ['email' => 'admin@propertyfinda.co.uk'],
+            ['username' => 'admin'],
             [
+                'email' => 'admin@propertyfinda.co.uk',
                 'name' => 'Super Admin',
-                'username' => 'admin',
                 'password' => Hash::make('password'),
             ]
         );

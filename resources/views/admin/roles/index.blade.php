@@ -3,25 +3,25 @@
 @section('header', 'Role Management')
 
 @section('content')
-    <div class="flex justify-between items-center mb-6">
-        <h3 class="text-slate-600">Role Management</h3>
+    <div class="flex justify-between items-center mb-5">
+        <h3 class="text-slate-800 font-black text-lg tracking-tight uppercase">Access Control</h3>
         <button onclick="openModal()"
-            class="bg-indigo-600 hover:bg-indigo-700 text-white font-medium py-2 px-4 rounded-lg shadow-sm transition-colors flex items-center gap-2">
-            <i class='bx bx-plus'></i> Create New Role
+            class="bg-[#8046F1] hover:bg-[#6D28D9] text-white font-black py-2 px-5 rounded-lg shadow-lg shadow-purple-500/10 transition-all flex items-center gap-2 active:scale-95 text-[10px] uppercase tracking-widest">
+            <i class='bx bx-plus text-base'></i> New Role
         </button>
     </div>
 
-    <div class="bg-white shadow-sm rounded-xl border border-slate-100 p-6">
-        <table id="rolesTable" class="w-full text-sm text-left text-slate-500">
-            <thead class="text-xs text-slate-700 uppercase bg-slate-50">
+    <div class="bg-white rounded-xl border border-slate-100 overflow-hidden shadow-sm">
+        <table id="rolesTable" class="w-full text-[13px] text-left text-slate-500">
+            <thead class="text-[10px] text-slate-400 font-black uppercase tracking-widest bg-slate-50/50">
                 <tr>
-                    <th class="px-6 py-3">ID</th>
-                    <th class="px-6 py-3">Role Name</th>
-                    <th class="px-6 py-3">Permissions</th>
-                    <th class="px-6 py-3">Actions</th>
+                    <th class="px-5 py-3">ID</th>
+                    <th class="px-5 py-3">Identifier</th>
+                    <th class="px-5 py-3">Capabilities</th>
+                    <th class="px-5 py-3">Manage</th>
                 </tr>
             </thead>
-            <tbody></tbody>
+            <tbody class="divide-y divide-slate-50"></tbody>
         </table>
     </div>
 
@@ -98,11 +98,11 @@
                         {
                             data: 'id', name: 'actions', orderable: false, searchable: false, render: function (data, type, row) {
                                 return `
-                                    <div class="flex gap-2">
-                                        <button onclick="editRole(${data})" class="w-8 h-8 rounded-full bg-slate-100 flex items-center justify-center text-slate-600 hover:bg-indigo-100 hover:text-indigo-600 transition-colors"><i class='bx bxs-edit'></i></button>
-                                        <button onclick="deleteRole(${data})" class="w-8 h-8 rounded-full bg-slate-100 flex items-center justify-center text-slate-600 hover:bg-rose-100 hover:text-rose-600 transition-colors"><i class='bx bxs-trash'></i></button>
-                                    </div>
-                                `;
+                                            <div class="flex gap-1.5">
+                                                <button onclick="editRole(${data})" class="w-7 h-7 rounded bg-slate-50 flex items-center justify-center text-slate-400 hover:text-[#8046F1] transition-all"><i class='bx bx-edit-alt'></i></button>
+                                                <button onclick="deleteRole(${data})" class="w-7 h-7 rounded bg-slate-50 flex items-center justify-center text-slate-400 hover:text-rose-500 transition-all"><i class='bx bx-trash'></i></button>
+                                            </div>
+                                        `;
                             }
                         }
                     ]

@@ -23,6 +23,11 @@ return Application::configure(basePath: dirname(__DIR__))
             'document.approved' => \App\Http\Middleware\EnsureDocumentApproved::class,
         ]);
     })
+    ->withSchedule(function (\Illuminate\Console\Scheduling\Schedule $schedule) {
+        $schedule->job(new \App\Jobs\ProcessSavedSearchAlerts)->hourly();
+        $schedule->command('fetch:sold-prices')->weekly();
+        $schedule->command('sitemap:generate')->daily();
+    })
     ->withExceptions(function (Exceptions $exceptions): void {
         //
     })->create();

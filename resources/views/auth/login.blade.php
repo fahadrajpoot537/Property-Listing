@@ -71,76 +71,122 @@
                     </div>
                 @endif
 
-                <form method="POST" action="{{ route('login') }}" class="space-y-6">
-                    @csrf
+                <div x-data="{ 
+                        step: 'email', 
+                        login: '{{ old('login') }}', 
+                        checking: false,
+                        async checkUser() {
+                            if (!this.login) return;
+                            this.checking = true;
+                            try {
+                                const response = await fetch('{{ route('check-user') }}', {
+                                    method: 'POST',
+                                    headers: {
+                                        'Content-Type': 'application/json',
+                                        'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                                    },
+                                    body: JSON.stringify({ login: this.login })
+                                });
+                                const data = await response.json();
+                                if (data.exists) {
+                                    this.step = 'password';
+                                } else {
+                                    window.location.href = '{{ route('register') }}?email=' + encodeURIComponent(this.login);
+                                }
+                            } catch (e) {
+                                console.error(e);
+                            } finally {
+                                this.checking = false;
+                            }
+                        }
+                    }">
+                    <form method="POST" action="{{ route('login') }}" class="space-y-6">
+                        @csrf
 
-                    <!-- Login (Email/Username) -->
-                    <div class="space-y-2">
-                        <label for="login" class="text-xs font-black uppercase tracking-widest text-gray-400 ml-1">Username
-                            or Email</label>
-                        <div class="relative group">
-                            <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
-                                <i
-                                    class="fa-solid fa-envelope text-gray-300 group-focus-within:text-secondary transition-colors"></i>
+                        <!-- Login (Email/Username) -->
+                        <div class="space-y-2">
+                            <label for="login"
+                                class="text-xs font-black uppercase tracking-widest text-gray-400 ml-1">Username
+                                or Email</label>
+                            <div class="relative group">
+                                <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+                                    <i
+                                        class="fa-solid fa-envelope text-gray-300 group-focus-within:text-secondary transition-colors"></i>
+                                </div>
+                                <input type="text" id="login" name="login" x-model="login" required autofocus
+                                    class="w-full pl-11 pr-4 py-4 bg-gray-50 border border-gray-200 rounded-2xl focus:bg-white focus:ring-4 focus:ring-secondary/10 focus:border-secondary transition-all outline-none font-medium text-gray-800"
+                                    placeholder="Type your email" :readonly="step === 'password'"
+                                    @keydown.enter.prevent="step === 'email' ? checkUser() : $el.closest('form').submit()">
                             </div>
-                            <input type="text" id="login" name="login" value="{{ old('login') }}" required autofocus
-                                class="w-full pl-11 pr-4 py-4 bg-gray-50 border border-gray-200 rounded-2xl focus:bg-white focus:ring-4 focus:ring-secondary/10 focus:border-secondary transition-all outline-none font-medium text-gray-800"
-                                placeholder="Type your email">
                         </div>
-                    </div>
 
-                    <!-- Password -->
-                    <div class="space-y-2">
-                        <div class="flex justify-between items-center ml-1">
-                            <label for="password"
-                                class="text-xs font-black uppercase tracking-widest text-gray-400">Password</label>
-                            @if (Route::has('password.request'))
-                                <a href="{{ route('password.request') }}"
-                                    class="text-xs font-bold text-secondary hover:text-secondary-dark hover:underline">
-                                    Forgot Password?
-                                </a>
-                            @endif
-                        </div>
-                        <div class="relative group" x-data="{ show: false }">
-                            <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
-                                <i
-                                    class="fa-solid fa-lock text-gray-300 group-focus-within:text-secondary transition-colors"></i>
+                        <!-- Password (Hidden initially) -->
+                        <div class="space-y-6 animate-fadeIn" x-show="step === 'password'" x-cloak>
+                            <div class="space-y-2">
+                                <div class="flex justify-between items-center ml-1">
+                                    <label for="password"
+                                        class="text-xs font-black uppercase tracking-widest text-gray-400">Password</label>
+                                    @if (Route::has('password.request'))
+                                        <a href="{{ route('password.request') }}"
+                                            class="text-xs font-bold text-secondary hover:text-secondary-dark hover:underline">Forgot
+                                            Password?</a>
+                                    @endif
+                                </div>
+                                <div class="relative group" x-data="{ show: false }">
+                                    <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+                                        <i
+                                            class="fa-solid fa-lock text-gray-300 group-focus-within:text-secondary transition-colors"></i>
+                                    </div>
+                                    <input :type="show ? 'text' : 'password'" id="password" name="password"
+                                        class="w-full pl-11 pr-12 py-4 bg-gray-50 border border-gray-200 rounded-2xl focus:bg-white focus:ring-4 focus:ring-secondary/10 focus:border-secondary transition-all outline-none font-medium text-gray-800"
+                                        placeholder="Enter your password">
+                                    <button type="button" @click="show = !show"
+                                        class="absolute inset-y-0 right-0 pr-4 flex items-center text-gray-400 hover:text-secondary transition-colors">
+                                        <i class="fa-solid" :class="show ? 'fa-eye-slash' : 'fa-eye'"></i>
+                                    </button>
+                                </div>
                             </div>
-                            <input :type="show ? 'text' : 'password'" id="password" name="password" required
-                                class="w-full pl-11 pr-12 py-4 bg-gray-50 border border-gray-200 rounded-2xl focus:bg-white focus:ring-4 focus:ring-secondary/10 focus:border-secondary transition-all outline-none font-medium text-gray-800"
-                                placeholder="Enter your password">
-                            <button type="button" @click="show = !show"
-                                class="absolute inset-y-0 right-0 pr-4 flex items-center text-gray-400 hover:text-secondary transition-colors">
-                                <i class="fa-solid" :class="show ? 'fa-eye-slash' : 'fa-eye'"></i>
+
+                            <div class="flex items-center">
+                                <label class="flex items-center gap-3 cursor-pointer group select-none">
+                                    <input type="checkbox" name="remember"
+                                        class="w-5 h-5 rounded border-gray-300 text-secondary focus:ring-secondary/20 transition-all cursor-pointer">
+                                    <span
+                                        class="text-sm font-bold text-gray-600 group-hover:text-secondary transition-colors">Remember
+                                        me</span>
+                                </label>
+                            </div>
+
+                            <button type="submit"
+                                class="w-full py-4 bg-primary hover:bg-primary-dark text-white font-extrabold text-xl rounded-2xl shadow-xl shadow-primary/20 transition-all transform hover:-translate-y-1 flex items-center justify-center gap-3">
+                                Sign In <i class="fa-solid fa-arrow-right-to-bracket"></i>
                             </button>
                         </div>
-                    </div>
 
-                    <div class="flex items-center">
-                        <!-- Remember Me -->
-                        <label class="flex items-center gap-3 cursor-pointer group select-none">
-                            <input type="checkbox" name="remember"
-                                class="w-5 h-5 rounded border-gray-300 text-secondary focus:ring-secondary/20 transition-all cursor-pointer">
-                            <span
-                                class="text-sm font-bold text-gray-600 group-hover:text-secondary transition-colors">Remember
-                                me</span>
-                        </label>
-                    </div>
+                        <!-- Continue Button (Step 1) -->
+                        <div x-show="step === 'email'">
+                            <button type="button" @click="checkUser()" :disabled="checking"
+                                class="w-full py-4 bg-primary hover:bg-primary-dark text-white font-extrabold text-xl rounded-2xl shadow-xl shadow-primary/20 transition-all transform hover:-translate-y-1 flex items-center justify-center gap-3">
+                                <span x-show="!checking">Continue</span>
+                                <span x-show="checking"><i class="fa-solid fa-spinner fa-spin"></i> Checking...</span>
+                                <i class="fa-solid fa-arrow-right" x-show="!checking"></i>
+                            </button>
 
-                    <!-- Submit -->
-                    <button type="submit"
-                        class="w-full py-4 bg-primary hover:bg-primary-dark text-white font-extrabold text-xl rounded-2xl shadow-xl shadow-primary/20 transition-all transform hover:-translate-y-1 flex items-center justify-center gap-3">
-                        Sign In <i class="fa-solid fa-arrow-right-to-bracket"></i>
-                    </button>
+                            <p class="mt-8 text-center text-gray-500 font-medium text-sm md:text-base">
+                                New to PropertyFinda?
+                                <a href="{{ route('register') }}"
+                                    class="text-secondary font-black hover:underline ml-1">Create Account</a>
+                            </p>
+                        </div>
 
-                    <!-- No Social Buttons Here -->
-
-                    <p class="mt-8 text-center text-gray-500 font-medium text-sm md:text-base">
-                        New to PropertyFinda?
-                        <a href="{{ route('register') }}" class="text-secondary font-black hover:underline ml-1">Create
-                            Account</a>
-                    </p>
-                </form>
+                        <div x-show="step === 'password'" class="text-center">
+                            <button type="button" @click="step = 'email'"
+                                class="text-xs font-bold text-gray-400 uppercase tracking-widest hover:text-primary transition-colors">
+                                Not you? Use another account
+                            </button>
+                        </div>
+                    </form>
+                </div>
             </div>
         </div>
     </div>

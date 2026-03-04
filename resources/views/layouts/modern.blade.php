@@ -26,6 +26,10 @@
         [x-cloak] {
             display: none !important;
         }
+
+        .font-effra {
+            font-family: 'Effra', 'Outfit', sans-serif !important;
+        }
     </style>
 </head>
 
@@ -70,41 +74,42 @@
                             <img src="{{ asset('logoor.png') }}" alt="PropertyFinda" class="h-12 w-auto">
                         </div>
                     </a>
-                    <div class="hidden md:ml-10 md:flex space-x-8">
+                    <div class="hidden md:ml-6 lg:ml-10 md:flex space-x-4 lg:space-x-6">
                         <a href="{{ route('home') }}"
-                            class="inline-flex items-center px-1 pt-1 border-b-2 {{ request()->routeIs('home') ? 'border-secondary text-primary' : 'border-transparent text-gray-500' }} text-sm font-medium leading-5 hover:text-primary hover:border-secondary transition duration-150 ease-in-out">Home</a>
+                            class="inline-flex items-center px-1 pt-1 border-b-2 {{ request()->routeIs('home') ? 'border-secondary text-primary' : 'border-transparent text-gray-500' }} text-sm font-bold leading-5 hover:text-primary hover:border-secondary transition duration-150 ease-in-out whitespace-nowrap">Home</a>
                         <!-- Properties Dropdown -->
                         <a href="{{ route('listings.index') }}"
-                            class="inline-flex items-center px-1 pt-1 border-b-2 {{ request()->routeIs('listings.index') ? 'border-secondary text-primary' : 'border-transparent text-gray-500' }} text-sm font-medium leading-5 hover:text-primary hover:border-secondary transition duration-150 ease-in-out">Properties</a>
+                            class="inline-flex items-center px-1 pt-1 border-b-2 {{ request()->routeIs('listings.index') ? 'border-secondary text-primary' : 'border-transparent text-gray-500' }} text-sm font-bold leading-5 hover:text-primary hover:border-secondary transition duration-150 ease-in-out whitespace-nowrap">Properties</a>
                         <a href="{{ route('sold-properties.search') }}"
-                            class="inline-flex items-center px-1 pt-1 border-b-2 {{ request()->routeIs('sold-properties.search') ? 'border-secondary text-primary' : 'border-transparent text-gray-500' }} text-sm font-medium leading-5 hover:text-primary hover:border-secondary transition duration-150 ease-in-out">Sold
-                            Properties</a>
+                            class="inline-flex items-center px-1 pt-1 border-b-2 {{ request()->routeIs('sold-properties.search') ? 'border-secondary text-primary' : 'border-transparent text-gray-500' }} text-sm font-bold leading-5 hover:text-primary hover:border-secondary transition duration-150 ease-in-out whitespace-nowrap">Sold
+                            House Prices</a>
                         <a href="{{ route('off-market-listings.index') }}"
-                            class="inline-flex items-center px-1 pt-1 border-b-2 {{ request()->routeIs('off-market-listings.index') ? 'border-secondary text-primary' : 'border-transparent text-gray-500' }} text-sm font-medium leading-5 hover:text-primary hover:border-secondary transition duration-150 ease-in-out">Off
-                            Market</a>
+                            class="inline-flex items-center px-1 pt-1 border-b-2 {{ request()->routeIs('off-market-listings.index') ? 'border-secondary text-primary' : 'border-transparent text-gray-500' }} text-sm font-bold leading-5 hover:text-primary hover:border-secondary transition duration-150 ease-in-out whitespace-nowrap">Off-Market
+                            Vault</a>
+                        <a href="{{ route('mortgages') }}"
+                            class="inline-flex items-center px-1 pt-1 border-b-2 {{ request()->routeIs('mortgages') ? 'border-secondary text-primary' : 'border-transparent text-gray-500' }} text-sm font-bold leading-5 hover:text-primary hover:border-secondary transition duration-150 ease-in-out whitespace-nowrap">Mortgages</a>
                         <a href="{{ route('agents.index') }}"
-                            class="inline-flex items-center px-1 pt-1 border-b-2 {{ request()->routeIs('agents.*') ? 'border-secondary text-primary' : 'border-transparent text-gray-500' }} text-sm font-medium leading-5 hover:text-primary hover:border-secondary transition duration-150 ease-in-out">Agents</a>
+                            class="inline-flex items-center px-1 pt-1 border-b-2 {{ request()->routeIs('agents.*') ? 'border-secondary text-primary' : 'border-transparent text-gray-500' }} text-sm font-bold leading-5 hover:text-primary hover:border-secondary transition duration-150 ease-in-out whitespace-nowrap">Agents</a>
                         <a href="{{ route('blog.list') }}"
-                            class="inline-flex items-center px-1 pt-1 border-b-2 {{ request()->routeIs('blog.*') ? 'border-secondary text-primary' : 'border-transparent text-gray-500' }} text-sm font-medium leading-5 hover:text-primary hover:border-secondary transition duration-150 ease-in-out">News</a>
+                            class="inline-flex items-center px-1 pt-1 border-b-2 {{ request()->routeIs('blog.*') ? 'border-secondary text-primary' : 'border-transparent text-gray-500' }} text-sm font-bold leading-5 hover:text-primary hover:border-secondary transition duration-150 ease-in-out whitespace-nowrap">News</a>
 
                         <!-- Contact Dropdown -->
                         <div class="relative flex items-center h-20" x-data="{ open: false }" @mouseenter="open = true"
                             @mouseleave="open = false">
                             <button @click="open = !open"
-                                class="inline-flex items-center gap-1 px-1 pt-1 border-b-2 {{ request()->routeIs('help') || request()->routeIs('contact.create') ? 'border-secondary text-primary' : 'border-transparent text-gray-500' }} text-sm font-medium leading-5 hover:text-primary hover:border-secondary transition duration-150 ease-in-out h-full focus:outline-none">
+                                class="inline-flex items-center gap-1 px-1 pt-1 border-b-2 {{ request()->routeIs('help') || request()->routeIs('contact.create') ? 'border-secondary text-primary' : 'border-transparent text-gray-500' }} text-sm font-bold leading-5 hover:text-primary hover:border-secondary transition duration-150 ease-in-out h-full focus:outline-none whitespace-nowrap">
                                 Support
                                 <i class="fa-solid fa-chevron-down text-[10px] ml-1 transition-transform duration-200"
                                     :class="open ? 'rotate-180' : ''"></i>
                             </button>
 
                             <div x-show="open" x-cloak x-transition:enter="transition ease-out duration-200"
-                                x-transition:enter-start="opacity-0 translate-y-1"
+                                x-transition:enter-start="opacity-0 translate-y-2"
                                 x-transition:enter-end="opacity-100 translate-y-0"
                                 x-transition:leave="transition ease-in duration-150"
                                 x-transition:leave-start="opacity-100 translate-y-0"
-                                x-transition:leave-end="opacity-0 translate-y-1"
-                                class="absolute left-1/2 -translate-x-1/2 top-full mt-14 w-64 bg-white rounded-2xl shadow-xl shadow-primary/10 border border-gray-100 py-2 z-50"
-                                style="margin-top:230%">
+                                x-transition:leave-end="opacity-0 translate-y-2"
+                                class="absolute left-1/2 -translate-x-1/2 top-full mt-2 w-64 bg-white rounded-2xl shadow-xl shadow-primary/10 border border-gray-100 py-2 z-50">
 
                                 <div
                                     class="absolute -top-2 left-1/2 -translate-x-1/2 w-4 h-4 bg-white transform rotate-45 border-t border-l border-gray-100">
@@ -169,7 +174,7 @@
                                     <form method="POST" action="{{ route('logout') }}">
                                         @csrf
                                         <button type="submit"
-                                            class="w-full flex items-center gap-3 px-4 py-3 text-sm font-bold text-rose-500 hover:bg-rose-50 transition-all">
+                                            class="w-full flex items-center gap-3 px-4 py-3 text-xs font-bold text-rose-500 hover:bg-rose-50 transition-all">
                                             <i class="fa-solid fa-right-from-bracket w-5"></i>
                                             Sign Out
                                         </button>
@@ -212,10 +217,12 @@
                     class="block pl-3 pr-4 py-3 rounded-lg text-base font-medium {{ request()->routeIs('listings.index') ? 'text-primary bg-gray-50 border-secondary' : 'text-gray-600 border-transparent' }} hover:text-primary hover:bg-gray-50 transition duration-150 ease-in-out border-l-4">Properties</a>
                 <a href="{{ route('sold-properties.search') }}"
                     class="block pl-3 pr-4 py-3 rounded-lg text-base font-medium {{ request()->routeIs('sold-properties.search') ? 'text-primary bg-gray-50 border-secondary' : 'text-gray-600 border-transparent' }} hover:text-primary hover:bg-gray-50 transition duration-150 ease-in-out border-l-4">Sold
-                    Properties</a>
+                    House Prices</a>
                 <a href="{{ route('off-market-listings.index') }}"
-                    class="block pl-3 pr-4 py-3 rounded-lg text-base font-medium {{ request()->routeIs('off-market-listings.index') ? 'text-primary bg-gray-50 border-secondary' : 'text-gray-600 border-transparent' }} hover:text-primary hover:bg-gray-50 transition duration-150 ease-in-out border-l-4">Off
-                    Market</a>
+                    class="block pl-3 pr-4 py-3 rounded-lg text-base font-medium {{ request()->routeIs('off-market-listings.index') ? 'text-primary bg-gray-50 border-secondary' : 'text-gray-600 border-transparent' }} hover:text-primary hover:bg-gray-50 transition duration-150 ease-in-out border-l-4">Off-Market
+                    Vault</a>
+                <a href="{{ route('mortgages') }}"
+                    class="block pl-3 pr-4 py-3 rounded-lg text-base font-medium {{ request()->routeIs('mortgages') ? 'text-primary bg-gray-50 border-secondary' : 'text-gray-600 border-transparent' }} hover:text-primary hover:bg-gray-50 transition duration-150 ease-in-out border-l-4">Mortgages</a>
                 <a href="{{ route('agents.index') }}"
                     class="block pl-3 pr-4 py-3 rounded-lg text-base font-medium {{ request()->routeIs('agents.*') ? 'text-primary bg-gray-50 border-secondary' : 'text-gray-600 border-transparent' }} hover:text-primary hover:bg-gray-50 transition duration-150 ease-in-out border-l-4">Agents</a>
                 <a href="{{ route('blog.list') }}"
@@ -312,7 +319,9 @@
                         <li><a href="{{ route('listings.index') }}"
                                 class="hover:text-black transition duration-200">Browse Properties</a></li>
                         <li><a href="{{ route('off-market-listings.index') }}"
-                                class="hover:text-black transition duration-200">Off Market</a></li>
+                                class="hover:text-black transition duration-200">Off-Market Vault</a></li>
+                        <li><a href="{{ route('mortgages') }}"
+                                class="hover:text-black transition duration-200">Mortgages</a></li>
                         <li><a href="{{ route('contact.create') }}"
                                 class="hover:text-black transition duration-200">Contact Us</a></li>
                     </ul>
@@ -384,6 +393,7 @@
         });
     </script>
 
+    @include('partials.cookie-consent')
     @include('partials.chatbot-widget')
     @stack('modals')
     @stack('scripts')

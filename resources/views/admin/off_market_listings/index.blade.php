@@ -36,62 +36,67 @@
         }
     </style>
 
-    <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-6">
+    <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-5">
         <div>
-            <h3 class="text-slate-800 font-extrabold text-2xl tracking-tight">Off-Market Assets</h3>
-            <p class="text-slate-500 text-sm mt-1 flex items-center gap-1">
-                <i class='bx bxs-bolt-circle text-[#02b8f2]'></i> Exclusive premium deals strictly for registered investors.
+            <h3 class="text-slate-800 font-black text-lg tracking-tight uppercase">Private Assets</h3>
+            <p class="text-slate-400 text-[10px] font-bold uppercase tracking-wider mt-0.5">
+                Exclusive Investment Stream
             </p>
         </div>
-        <div class="flex items-center gap-3">
+        <div class="flex flex-wrap items-center gap-2">
             <div id="bulkActionsBar"
-                class="hidden flex items-center gap-2 bg-black border border-slate-700 text-white px-4 py-2 rounded-2xl shadow-xl">
-                <span class="text-[11px] font-bold uppercase tracking-wider text-slate-400 mr-2"><span
+                class="hidden flex items-center gap-2 bg-[#131B31] text-white px-3 py-1.5 rounded-lg shadow-lg">
+                <span class="text-[9px] font-black uppercase tracking-widest mr-1 text-white/50"><span
                         id="selectedCount">0</span> Selected</span>
                 <select id="bulkActionType"
-                    class="bg-slate-800 border-none text-[11px] font-bold rounded-lg focus:ring-0 py-1 cursor-pointer">
-                    <option value="">Actions</option>
-                    <option value="approved">Approve</option>
-                    <option value="pending">Set Pending</option>
-                    <option value="rejected">Reject</option>
-                    <option value="draft">Move to Drafts</option>
-                    <option value="duplicate">Duplicate</option>
-                    <option value="export">Export to CSV</option>
-                    <option value="delete">Delete</option>
+                    class="bg-white/10 border-none text-[9px] font-bold rounded focus:ring-0 py-0.5 px-1 cursor-pointer">
+                    <option value="" class="text-black">Actions</option>
+                    <option value="approved" class="text-black">Approve</option>
+                    <option value="under_offer" class="text-black">Under Offer</option>
+                    <option value="sold" class="text-black">Sold</option>
+                    <option value="pending" class="text-black">Set Pending</option>
+                    <option value="rejected" class="text-black">Reject</option>
+                    <option value="draft" class="text-black">Move to Drafts</option>
+                    <option value="duplicate" class="text-black">Duplicate</option>
+                    <option value="export" class="text-black">Export to CSV</option>
+                    <option value="delete" class="text-black">Delete</option>
                 </select>
                 <button onclick="applyBulkAction()"
-                    class="bg-[#02b8f2] hover:opacity-90 text-white text-[11px] font-black uppercase px-4 py-1.5 rounded-lg active:scale-95 transition-all">Apply</button>
+                    class="bg-[#8046F1] hover:opacity-90 text-white text-[9px] font-black uppercase px-3 py-1 rounded transition-all active:scale-95">Apply</button>
             </div>
 
             <a href="{{ route('admin.off-market-listings.export') }}" target="_blank"
-                class="flex items-center gap-2 border-2 bg-white border-slate-200 hover:border-emerald-400 text-slate-600 hover:text-emerald-500 px-4 py-2.5 rounded-2xl transition-all active:scale-95">
-                <i class='bx bxs-file-export text-lg'></i>
-                <span class="text-sm font-bold">Export All</span>
+                class="flex items-center gap-1.5 border bg-white border-slate-200 hover:border-emerald-400 text-slate-500 hover:text-emerald-500 px-3 py-2 rounded-lg transition-all active:scale-95">
+                <i class='bx bx-export text-base'></i>
+                <span class="text-[11px] font-black uppercase">Export</span>
             </a>
 
             <button id="filterToggle"
-                class="flex items-center gap-2 border-2 bg-white border-slate-200 hover:border-[#02b8f2] text-slate-600 hover:text-[#02b8f2] px-4 py-2.5 rounded-2xl transition-all">
-                <i class='bx bx-filter text-lg'></i>
-                <span class="text-sm font-bold">Filters</span>
+                class="flex items-center gap-1.5 border bg-white border-slate-200 hover:border-indigo-400 text-slate-500 hover:text-indigo-600 px-3 py-2 rounded-lg transition-all active:scale-95">
+                <i class='bx bx-filter-alt text-base'></i>
+                <span class="text-[11px] font-black uppercase">Filters</span>
             </button>
 
             <a href="{{ route('admin.off-market-listings.create') }}"
-                class="bg-black hover:bg-slate-900 text-white font-black py-3 px-8 rounded-2xl shadow-xl transition-all flex items-center gap-3 active:scale-95 uppercase tracking-wider text-sm">
-                <i class='bx bxs-zap text-xl text-[#02b8f2]'></i> Launch Deal
+                class="bg-[#131B31] hover:bg-slate-900 text-white font-black py-2.5 px-6 rounded-lg shadow-lg transition-all flex items-center gap-2 active:scale-95 uppercase tracking-widest text-[11px]">
+                <i class='bx bx-zap text-base text-amber-400'></i> Launch Deal
             </a>
         </div>
     </div>
 
-    <div id="filtersSection" class="hidden bg-white shadow-lg rounded-2xl border border-slate-100 p-6 mb-6">
-        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-            <div>
-                <label class="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">Deal Title</label>
+    <div id="filtersSection" class="hidden bg-white shadow-sm rounded-xl border border-slate-100 p-5 mb-5">
+        <div class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-3">
+            <div class="col-span-2">
+                <label class="block text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1.5">Search
+                    Deal</label>
                 <input type="text" id="filterPropertyTitle"
-                    class="w-full rounded-lg border-slate-100 bg-slate-50/50 text-xs p-2" placeholder="Search title...">
+                    class="w-full rounded-lg border-slate-100 bg-slate-50 text-[11px] px-3 py-2 outline-none focus:bg-white focus:border-indigo-400 transition-all"
+                    placeholder="Enter keywords...">
             </div>
             <div>
-                <label class="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">Deal Type</label>
-                <select id="filterPropertyType" class="w-full rounded-lg border-slate-100 bg-slate-50/50 text-xs p-2">
+                <label class="block text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1.5">Type</label>
+                <select id="filterPropertyType"
+                    class="w-full rounded-lg border-slate-100 bg-slate-50 text-[11px] px-2 py-2 outline-none focus:bg-white focus:border-indigo-400 transition-all">
                     <option value="">All Types</option>
                     @foreach($propertyTypes as $type)
                         <option value="{{ $type->id }}">{{ $type->title }}</option>
@@ -99,42 +104,46 @@
                 </select>
             </div>
             <div>
-                <label class="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">Status</label>
-                <select id="filterStatus" class="w-full rounded-lg border-slate-100 bg-slate-50/50 text-xs p-2">
-                    <option value="">All Statuses</option>
+                <label class="block text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1.5">Status</label>
+                <select id="filterStatus"
+                    class="w-full rounded-lg border-slate-100 bg-slate-50 text-[11px] px-2 py-2 outline-none focus:bg-white focus:border-indigo-400 transition-all">
+                    <option value="">All</option>
                     <option value="approved">Approved</option>
+                    <option value="under_offer">Under Offer</option>
+                    <option value="sold">Sold Out</option>
                     <option value="pending">Pending</option>
                     <option value="rejected">Rejected</option>
                 </select>
             </div>
-        </div>
-        <div class="flex justify-end gap-3 mt-6 pt-4 border-t border-slate-100">
-            <button onclick="clearFilters()"
-                class="px-4 py-2 text-slate-600 hover:text-slate-800 text-sm font-bold rounded-lg transition-all">Clear
-                All</button>
-            <button onclick="applyFilters()"
-                class="bg-[#02b8f2] hover:opacity-90 text-white px-6 py-2 rounded-lg text-sm font-bold transition-all active:scale-95">Apply
-                Filters</button>
+            <div class="flex items-end gap-2 px-1">
+                <button onclick="clearFilters()"
+                    class="h-9 px-3 text-slate-400 hover:text-slate-600 text-[11px] font-black uppercase transition-all">Clear</button>
+                <button onclick="applyFilters()"
+                    class="h-9 flex-1 bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg text-[11px] font-black uppercase shadow-lg shadow-indigo-600/10 transition-all">Filter</button>
+            </div>
         </div>
     </div>
 
-    <div class="bg-white shadow-xl shadow-slate-200/50 rounded-2xl border border-slate-100 p-6 overflow-hidden">
-        <table id="offMarketTable" class="w-full text-sm text-left text-slate-500">
-            <thead class="text-xs text-slate-400 uppercase bg-slate-50/50">
-                <tr>
-                    <th class="px-4 py-4 w-10 text-center">
-                        <input type="checkbox" id="selectAll" class="rounded border-slate-300 text-[#02b8f2] focus:ring-0">
-                    </th>
-                    <th class="px-6 py-4 font-bold">Deal Details</th>
-                    <th class="px-6 py-4 font-bold">Sourced By</th>
-                    <th class="px-6 py-4 font-bold">Category</th>
-                    <th class="px-6 py-4 font-bold">Premium Price</th>
-                    <th class="px-6 py-4 font-bold">Market Status</th>
-                    <th class="px-6 py-4 font-bold">Actions</th>
-                </tr>
-            </thead>
-            <tbody class="divide-y divide-slate-100 italic-none"></tbody>
-        </table>
+    <div class="bg-white rounded-xl border border-slate-100 overflow-x-auto shadow-sm">
+        <div class="min-w-full">
+            <table id="offMarketTable" class="w-full text-[13px] text-left text-slate-500">
+                <thead class="text-[10px] text-slate-400 font-black uppercase tracking-widest bg-slate-50/50">
+                    <tr>
+                        <th class="px-4 py-4 w-10 text-center">
+                            <input type="checkbox" id="selectAll"
+                                class="rounded border-slate-300 text-[#02b8f2] focus:ring-0">
+                        </th>
+                        <th class="px-6 py-4 font-bold">Deal Details</th>
+                        <th class="px-6 py-4 font-bold">Sourced By</th>
+                        <th class="px-6 py-4 font-bold">Category</th>
+                        <th class="px-6 py-4 font-bold">Premium Price</th>
+                        <th class="px-6 py-4 font-bold">Market Status</th>
+                        <th class="px-6 py-4 font-bold">Actions</th>
+                    </tr>
+                </thead>
+                <tbody class="divide-y divide-slate-100 italic-none"></tbody>
+            </table>
+        </div>
     </div>
 
     @push('scripts')
@@ -153,7 +162,12 @@
                             d.filters = {
                                 property_title: $('#filterPropertyTitle').val(),
                                 property_type_id: $('#filterPropertyType').val(),
-                                status: $('#filterStatus').val()
+                                purpose: $('#filterPurpose').val(),
+                                status: $('#filterStatus').val(),
+                                min_price: $('#filterMinPrice').val(),
+                                max_price: $('#filterMaxPrice').val(),
+                                bedrooms: $('#filterBedrooms').val(),
+                                bathrooms: $('#filterBathrooms').val()
                             };
                         }
                     },
@@ -162,47 +176,49 @@
                         { data: 'id', orderable: false, className: 'text-center', render: d => `<input type="checkbox" class="row-checkbox rounded-md border-slate-300 text-[#02b8f2] focus:ring-0" value="${d}">` },
                         {
                             data: 'property_title', render: (d, t, r) => `
-                                                                                <div class="flex items-center py-2">
-                                                                                    ${r.thumbnail ? `<img src="/storage/${r.thumbnail}" class="w-12 h-12 rounded-xl object-cover border-2 border-white shadow-md">` : `<div class="w-12 h-12 bg-slate-100 rounded-xl flex items-center justify-center text-slate-400"><i class='bx bx-landscape text-2xl'></i></div>`}
-                                                                                    <div class="ml-4">
-                                                                                        <a href="/admin/off-market-listings/${r.id}" class="font-extrabold text-slate-800 hover:text-[#02b8f2] transition-colors tracking-tight leading-tight block">${d}</a>
-                                                                                        <div class="text-[10px] font-bold text-slate-400 uppercase mt-1">Ref: ${r.property_reference_number}</div>
-                                                                                    </div>
-                                                                                </div>`
+                                                                                                                        <div class="flex items-center py-2">
+                                                                                                                            ${r.thumbnail ? `<img src="/storage/${r.thumbnail}" class="w-12 h-12 rounded-xl object-cover border-2 border-white shadow-md">` : `<div class="w-12 h-12 bg-slate-100 rounded-xl flex items-center justify-center text-slate-400"><i class='bx bx-landscape text-2xl'></i></div>`}
+                                                                                                                            <div class="ml-4">
+                                                                                                                                <a href="/admin/off-market-listings/${r.id}" class="font-extrabold text-slate-800 hover:text-[#02b8f2] transition-colors tracking-tight leading-tight block">${d}</a>
+                                                                                                                                <div class="text-[10px] font-bold text-slate-400 uppercase mt-1">Ref: ${r.property_reference_number}</div>
+                                                                                                                            </div>
+                                                                                                                        </div>`
                         },
                         { data: 'user.name', render: d => `<span class="bg-slate-100 text-slate-700 px-3 py-1 rounded-lg text-[10px] font-black uppercase">${d || 'Admin'}</span>` },
                         {
                             data: 'property_type.title', render: (d, t, r) => `
-                                                                                <div class="flex flex-col">
-                                                                                    <span class="text-[10px] font-black text-[#02b8f2] uppercase tracked-widest">${d || 'Deal'}</span>
-                                                                                    <span class="text-[10px] font-bold text-slate-400 uppercase tracking-tighter">${r.unit_type ? r.unit_type.title : 'Premium'}</span>
-                                                                                </div>`
+                                                                                                                        <div class="flex flex-col">
+                                                                                                                            <span class="text-[10px] font-black text-[#02b8f2] uppercase tracked-widest">${d || 'Deal'}</span>
+                                                                                                                            <span class="text-[10px] font-bold text-slate-400 uppercase tracking-tighter">${r.unit_type ? r.unit_type.title : 'Premium'}</span>
+                                                                                                                        </div>`
                         },
                         {
                             data: 'price', render: (d, t, r) => `
-                                                        <div class="flex flex-col">
-                                                            ${r.old_price && r.old_price > d ? `<span class="text-[10px] text-slate-400" style="text-decoration: line-through;">£${numberWithCommas(r.old_price)}</span>` : ''}
-                                                            <span class="font-black text-slate-800">£${numberWithCommas(d)}</span>
-                                                        </div>`
+                                                                                                <div class="flex flex-col">
+                                                                                                    ${r.old_price && r.old_price > d ? `<span class="text-[10px] text-slate-400" style="text-decoration: line-through;">£${numberWithCommas(r.old_price)}</span>` : ''}
+                                                                                                    <span class="font-black text-slate-800">£${numberWithCommas(d)}</span>
+                                                                                                </div>`
                         },
                         {
                             data: 'status', render: (d, t, r) => {
-                                let color = d === 'approved' ? 'emerald' : (d === 'rejected' ? 'rose' : (d === 'draft' ? 'slate' : 'amber'));
+                                let color = d === 'approved' ? 'emerald' : (d === 'under_offer' ? 'indigo' : (d === 'sold' ? 'purple' : (d === 'rejected' ? 'rose' : (d === 'draft' ? 'slate' : 'amber'))));
                                 return `
-                                                                                    <select onchange="updateStatus(${r.id}, this.value)" class="bg-${color}-50 text-${color}-600 border border-${color}-100 rounded-lg px-2 py-1 text-[10px] font-black uppercase focus:ring-0 cursor-pointer">
-                                                                                        <option value="pending" ${d === 'pending' ? 'selected' : ''}>Pending</option>
-                                                                                        <option value="approved" ${d === 'approved' ? 'selected' : ''}>Approved</option>
-                                                                                        <option value="rejected" ${d === 'rejected' ? 'selected' : ''}>Rejected</option>
-                                                                                        <option value="draft" ${d === 'draft' ? 'selected' : ''}>Draft</option>
-                                                                                    </select>`;
+                                                                                                                             <select onchange="updateStatus(${r.id}, this.value)" class="bg-${color}-50 text-${color}-600 border border-${color}-100 rounded-lg px-2 py-1 text-[10px] font-black uppercase focus:ring-0 cursor-pointer">
+                                                                                                                                 <option value="pending" ${d === 'pending' ? 'selected' : ''}>Pending</option>
+                                                                                                                                 <option value="approved" ${d === 'approved' ? 'selected' : ''}>Approved</option>
+                                                                                                                                 <option value="under_offer" ${d === 'under_offer' ? 'selected' : ''}>Under Offer</option>
+                                                                                                                                 <option value="sold" ${d === 'sold' ? 'selected' : ''}>Sold</option>
+                                                                                                                                 <option value="rejected" ${d === 'rejected' ? 'selected' : ''}>Rejected</option>
+                                                                                                                                 <option value="draft" ${d === 'draft' ? 'selected' : ''}>Draft</option>
+                                                                                                                             </select>`;
                             }
                         },
                         {
                             data: 'id', render: d => `
-                                                                                <div class="flex gap-2">
-                                                                                    <a href="/admin/off-market-listings/${d}/edit" class="w-8 h-8 rounded-lg bg-slate-50 text-slate-500 hover:bg-slate-900 hover:text-white transition-all flex items-center justify-center"><i class='bx bxs-edit-alt text-lg'></i></a>
-                                                                                    <button onclick="deleteListing(${d})" class="w-8 h-8 rounded-lg bg-slate-50 text-slate-500 hover:bg-rose-600 hover:text-white transition-all flex items-center justify-center"><i class='bx bxs-trash text-lg'></i></button>
-                                                                                </div>`
+                                                                                                                        <div class="flex gap-2">
+                                                                                                                            <a href="/admin/off-market-listings/${d}/edit" class="w-8 h-8 rounded-lg bg-slate-50 text-slate-500 hover:bg-slate-900 hover:text-white transition-all flex items-center justify-center"><i class='bx bxs-edit-alt text-lg'></i></a>
+                                                                                                                            <button onclick="deleteListing(${d})" class="w-8 h-8 rounded-lg bg-slate-50 text-slate-500 hover:bg-rose-600 hover:text-white transition-all flex items-center justify-center"><i class='bx bxs-trash text-lg'></i></button>
+                                                                                                                        </div>`
                         }
                     ],
                     drawCallback: function () { toggleBulkBar(); }

@@ -3,45 +3,54 @@
 @section('header', 'Contact Messages')
 
 @section('content')
-    <div class="flex justify-between items-center mb-6">
-        <h3 class="text-slate-600">Manage Contact Submissions</h3>
+    <div class="mb-5">
+        <h3 class="text-slate-800 font-black text-lg tracking-tight uppercase">Inquiry Stream</h3>
+        <p class="text-[10px] text-slate-400 font-bold uppercase tracking-widest mt-0.5">Manage Direct Contact Submissions
+        </p>
     </div>
 
-    <div class="bg-white shadow-sm rounded-xl border border-slate-100 p-6">
-        <table id="contactTable" class="w-full text-sm text-left text-slate-500">
-            <thead class="text-xs text-slate-700 uppercase bg-slate-50">
+    <div class="bg-white rounded-xl border border-slate-100 overflow-hidden shadow-sm">
+        <table id="contactTable" class="w-full text-[13px] text-left text-slate-500">
+            <thead class="text-[10px] text-slate-400 font-black uppercase tracking-widest bg-slate-50/50">
                 <tr>
-                    <th class="px-6 py-3">ID</th>
-                    <th class="px-6 py-3">Name</th>
-                    <th class="px-6 py-3">Email</th>
-                    <th class="px-6 py-3">Subject</th>
-                    <th class="px-6 py-3">Submitted</th>
-                    <th class="px-6 py-3">Actions</th>
+                    <th class="px-5 py-3">ID</th>
+                    <th class="px-5 py-3">Sender Profile</th>
+                    <th class="px-5 py-3">Message Intent</th>
+                    <th class="px-5 py-3">Lifecycle</th>
+                    <th class="px-5 py-3">Manage</th>
                 </tr>
             </thead>
-            <tbody>
+            <tbody class="divide-y divide-slate-50">
                 @forelse($submissions as $submission)
-                    <tr class="border-b border-slate-100 hover:bg-slate-50">
-                        <td class="px-6 py-4">{{ $submission->id }}</td>
-                        <td class="px-6 py-4 font-medium text-slate-800">{{ $submission->name }}</td>
-                        <td class="px-6 py-4 text-slate-600">{{ $submission->email }}</td>
-                        <td class="px-6 py-4 text-slate-600">{{ Str::limit($submission->subject, 40) }}</td>
-                        <td class="px-6 py-4 text-slate-500">{{ $submission->created_at->format('M d, Y') }}</td>
-                        <td class="px-6 py-4">
-                            <div class="flex gap-2">
+                    <tr class="hover:bg-slate-50 border-b border-slate-50 last:border-0 transition-all">
+                        <td class="px-5 py-3 text-slate-400">#{{ $submission->id }}</td>
+                        <td class="px-5 py-3">
+                            <div class="font-bold text-slate-800">{{ $submission->name }}</div>
+                            <div class="text-[10px] text-slate-400 font-medium">{{ $submission->email }}</div>
+                        </td>
+                        <td class="px-5 py-3">
+                            <div class="text-slate-600 font-medium truncate max-w-xs">{{ Str::limit($submission->subject, 40) }}
+                            </div>
+                        </td>
+                        <td class="px-5 py-3">
+                            <span
+                                class="text-[10px] font-bold text-slate-400 uppercase">{{ $submission->created_at->format('d M, Y') }}</span>
+                        </td>
+                        <td class="px-5 py-3">
+                            <div class="flex gap-1.5">
                                 <a href="{{ route('admin.contact.show', $submission) }}"
-                                    class="w-8 h-8 rounded-full bg-slate-100 flex items-center justify-center text-slate-600 hover:bg-[#8046F1] hover:text-white transition-colors"
-                                    title="View Details">
+                                    class="w-7 h-7 rounded bg-slate-50 flex items-center justify-center text-slate-400 hover:text-[#8046F1] transition-all"
+                                    title="View">
                                     <i class='bx bx-show'></i>
                                 </a>
                                 <form action="{{ route('admin.contact.destroy', $submission) }}" method="POST" class="inline">
                                     @csrf
                                     @method('DELETE')
                                     <button type="submit"
-                                        class="w-8 h-8 rounded-full bg-slate-100 flex items-center justify-center text-slate-600 hover:bg-rose-100 hover:text-rose-600 transition-colors"
-                                        onclick="return confirm('Are you sure you want to delete this message?')"
-                                        title="Delete Message">
-                                        <i class='bx bxs-trash'></i>
+                                        class="w-7 h-7 rounded bg-slate-50 flex items-center justify-center text-slate-400 hover:text-rose-500 transition-all"
+                                        onclick="return confirm('Delete message?')"
+                                        title="Delete">
+                                        <i class='bx bx-trash'></i>
                                     </button>
                                 </form>
                             </div>

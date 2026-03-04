@@ -12,7 +12,7 @@ class BrochureController extends Controller
 {
     public function download($id)
     {
-        $listing = Listing::with(['features', 'user', 'propertyType', 'unitType', 'ownershipStatus', 'rentFrequency', 'cheque'])
+        $listing = Listing::with(['features', 'user', 'propertyType', 'unitType', 'ownershipStatus', 'rentFrequency', 'cheque', 'materialInfo', 'utilities', 'media', 'rooms', 'details'])
             ->where(function ($query) use ($id) {
                 $query->where('slug', $id)->orWhere('id', $id);
             })
@@ -41,7 +41,7 @@ class BrochureController extends Controller
             return redirect()->route('login');
         }
 
-        $listing = OffMarketListing::with(['features', 'user', 'propertyType', 'unitType', 'ownershipStatus', 'rentFrequency', 'cheque'])
+        $listing = OffMarketListing::with(['features', 'user', 'propertyType', 'unitType', 'ownershipStatus', 'rentFrequency', 'cheque', 'materialInfo', 'utilities', 'media', 'rooms', 'details'])
             ->where(function ($query) use ($id) {
                 $query->where('slug', $id)->orWhere('id', $id);
             })
@@ -69,10 +69,30 @@ class BrochureController extends Controller
 
     private function prepareBrochureData($listing, &$gallery, &$contactPerson, &$mortgageDetails, &$mapImage)
     {
-        // Prepare gallery images
-        $gallery = is_array($listing->gallery)
-            ? $listing->gallery
-            : json_decode($listing->gallery, true) ?? [];
+        // Collect all images (similar to property detail page logic)
+        $galleryCol = is_array($listing->gallery) ? $listing->gallery : json_decode($listing->gallery, true) ?? [];
+        $allImages = [];
+
+        // 1. Thumbnail as first image
+        if ($listing->thumbnail) {
+            $allImages[] = $listing->thumbnail;
+        }
+
+        // 2. Gallery column images
+        foreach ($galleryCol as $img) {
+            $allImages[] = $img;
+        }
+
+        // 3. Media relation images
+        if ($listing->media) {
+            foreach ($listing->media as $m) {
+                if ($m->type === 'photo') {
+                    $allImages[] = $m->file_path;
+                }
+            }
+        }
+
+        $gallery = array_unique($allImages);
 
         // Contact Person: Logged in user takes precedence over listing agent
         $contactPerson = auth()->check() ? auth()->user() : $listing->user;
@@ -90,7 +110,6 @@ class BrochureController extends Controller
             $deposit = $price * ($depositPercent / 100);
             $principal = $price - $deposit;
 
-            // Monthly calculation
             $monthlyRate = ($rate / 100) / 12;
             $months = $term * 12;
 
@@ -116,7 +135,6 @@ class BrochureController extends Controller
             if ($apiKey) {
                 $lat = $listing->latitude;
                 $lng = $listing->longitude;
-                // High res map image
                 $mapUrl = "https://maps.googleapis.com/maps/api/staticmap?center={$lat},{$lng}&zoom=15&size=600x300&scale=2&maptype=roadmap&markers=color:0x8046F1%7C{$lat},{$lng}&key={$apiKey}";
 
                 try {
@@ -125,7 +143,6 @@ class BrochureController extends Controller
                         $mapImage = 'data:image/png;base64,' . base64_encode($mapData);
                     }
                 } catch (\Exception $e) {
-                    // Fail silently
                 }
             }
         }

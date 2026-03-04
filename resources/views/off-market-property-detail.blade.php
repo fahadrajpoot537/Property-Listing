@@ -153,7 +153,7 @@
 @endpush
 
 @section('content')
-    <div class="bg-gray-50 pt-32 pb-24 mt-2">
+    <div class="bg-gray-50 pt-2 pb-24 mt-2">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
 
             <!-- Header -->
@@ -163,19 +163,18 @@
                         <nav class="flex mb-4 text-xs font-bold text-gray-400 gap-2">
                             <a href="{{ route('home') }}" class="hover:text-secondary">Home</a>
                             <span>/</span>
-                            <a href="{{ route('off-market-listings.index') }}" class="hover:text-secondary">Off-Market
-                                Vault</a>
+                            <a href="{{ route('off-market-listings.index') }}" class="hover:text-secondary">Off-Market Vault</a>
                             <span>/</span>
                             <span class="text-gray-900">{{ $listing->property_reference_number }}</span>
                         </nav>
 
                         <div class="flex items-center gap-3 mb-4">
-                            <span class="bg-secondary text-white px-4 py-1 rounded-full text-xs font-bold">FOR
+                            <span class="bg-rose-500 text-white px-4 py-1 rounded-full text-xs font-bold uppercase tracking-wider">
+                                Off-Market</span>
+                            <span class="bg-secondary text-white px-4 py-1 rounded-full text-xs font-bold">
                                 {{ $listing->purpose }}</span>
                             <span
                                 class="bg-gray-100 text-gray-600 px-4 py-1 rounded-full text-xs font-bold">{{ $listing->propertyType->title ?? 'Property' }}</span>
-                            <span class="bg-gray-800 text-white px-4 py-1 rounded-full text-xs font-bold">PRIVATE
-                                LISTING</span>
                         </div>
 
                         <h1 class="text-3xl md:text-5xl font-black text-primary mb-4">
@@ -186,6 +185,18 @@
                             <i class="fa-solid fa-location-dot text-secondary"></i>
                             <span>{{ $listing->address }}</span>
                         </div>
+
+                        @php 
+                            $tags = $listing->details->tags ?? $listing->tags ?? [];
+                            if(!is_array($tags)) $tags = json_decode($tags, true) ?? [];
+                        @endphp
+                        @if(count($tags) > 0)
+                            <div class="flex flex-wrap gap-2 mt-6">
+                                @foreach($tags as $tag)
+                                    <span class="px-3 py-1.5 bg-secondary/5 text-secondary rounded-xl text-[10px] font-black uppercase tracking-wider border border-secondary/10">#{{ $tag }}</span>
+                                @endforeach
+                            </div>
+                        @endif
                     </div>
 
                     <div class="flex items-center gap-4 header-actions">
@@ -196,10 +207,11 @@
                                     @php
                                         $percentage = round((($listing->old_price - $listing->price) / $listing->old_price) * 100);
                                     @endphp
-                                    <span class="text-xs bg-red-100 text-red-600 px-2 py-0.5 rounded-md font-black">-{{ $percentage }}% OFF</span>
+                                    <span class="text-xs bg-red-100 text-red-600 px-2 py-0.5 rounded-md font-black italic">-{{ $percentage }}% OFF</span>
                                 </div>
                             @endif
                             <span class="text-4xl font-black text-primary">£{{ number_format($listing->price) }}</span>
+                            <p class="text-[10px] text-gray-400 font-bold uppercase tracking-widest mt-1">Price Qualifier: {{ $listing->price_qualifier }}</p>
                         </div>
 
                         @if(auth()->check())
@@ -227,18 +239,51 @@
             <!-- Gallery -->
             <div class="mb-12">
                 @php 
-                                        $gallery = is_array($listing->gallery) ? $listing->gallery : json_decode($listing->gallery, true) ?? [];
-                    $floorPlans = is_array($listing->floor_plans) ? $listing->floor_plans : json_decode($listing->floor_plans, true) ?? [];
+                    $gallery = is_array($listing->gallery) ? $listing->gallery : json_decode($listing->gallery, true) ?? [];
+                    $floorPlansColumn = is_array($listing->floor_plans) ? $listing->floor_plans : json_decode($listing->floor_plans, true) ?? [];
 
                     $allMedia = [];
+                    // 1. Video
                     if ($listing->video)
-                        $allMedia[] = ['type' => 'video', 'src' => $listing->video];
+                        $allMedia[] = ['type' => 'video', 'src' => asset('storage/' . $listing->video), 'label' => 'Video Tour'];
+                    
+                    // 2. Thumbnail
                     if ($listing->thumbnail)
-                        $allMedia[] = ['type' => 'image', 'src' => asset('storage/' . $listing->thumbnail)];
+                        $allMedia[] = ['type' => 'image', 'src' => asset('storage/' . $listing->thumbnail), 'label' => 'Main Photo'];
+                    
+                    // 3. Media table photos
+                    foreach ($listing->media->where('type', 'photo') as $photo)
+                        $allMedia[] = ['type' => 'image', 'src' => asset('storage/' . $photo->file_path), 'label' => 'Photo'];
+                        
+                    // 4. Legacy Gallery column
                     foreach ($gallery as $img)
-                        $allMedia[] = ['type' => 'image', 'src' => asset('storage/' . $img)];
-                    foreach ($floorPlans as $img)
-                        $allMedia[] = ['type' => 'image', 'src' => asset('storage/' . $img)];
+                        $allMedia[] = ['type' => 'image', 'src' => asset('storage/' . $img), 'label' => 'Photo'];
+                    
+                    // Collect Documents separately
+                    $documents = [];
+                    if($listing->epc_upload) $documents[] = ['type' => 'EPC', 'path' => asset('storage/' . $listing->epc_upload), 'name' => 'Energy Performance Certificate'];
+                    if($listing->brochure_pdf) $documents[] = ['type' => 'Brochure', 'path' => asset('storage/' . $listing->brochure_pdf), 'name' => 'Property Brochure'];
+                    
+                    // Add floor plans from column
+                    foreach($floorPlansColumn as $fp) {
+                        $documents[] = ['type' => 'Floor Plan', 'path' => asset('storage/' . $fp), 'name' => 'Floor Plan'];
+                    }
+                    
+                    // Add documents from Media relation
+                    if($listing->media) {
+                        foreach($listing->media as $m) {
+                            if($m->type === 'floorplan') {
+                                $documents[] = ['type' => 'Floor Plan', 'path' => asset('storage/' . $m->file_path), 'name' => 'Floor Plan'];
+                            } elseif($m->type === 'epc') {
+                                $documents[] = ['type' => 'EPC', 'path' => asset('storage/' . $m->file_path), 'name' => 'Energy Performance Certificate'];
+                            } elseif($m->type === 'brochure') {
+                                $documents[] = ['type' => 'Brochure', 'path' => asset('storage/' . $m->file_path), 'name' => 'Property Brochure'];
+                            }
+                        }
+                    }
+
+                    // Remove unique media entries by src
+                    $allMedia = collect($allMedia)->unique('src')->values()->all();
                 @endphp
 
                 <div class="property-gallery-grid">
@@ -250,7 +295,7 @@
                                         <iframe src="{{ $allMedia[0]['src'] }}" class="w-full h-full pointer-events-none" frameborder="0"></iframe>
                                     @else
                                         <video class="w-full h-full object-cover">
-                                            <source src="{{ asset('storage/' . $allMedia[0]['src']) }}" type="video/mp4">
+                                            <source src="{{ $allMedia[0]['src'] }}" type="video/mp4">
                                         </video>
                                     @endif
                                     <div class="absolute inset-0 flex flex-col items-center justify-center bg-black/30">
@@ -327,100 +372,273 @@
                 <!-- Main Content -->
                 <div class="w-full lg:w-2/3 space-y-8">
 
-                    <!-- Quick Stats -->
-                    <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
-                        <div class="bg-white p-6 rounded-2xl border border-gray-100 text-center">
-                            @if($listing->bedrooms > 0)
-                                <i class="fa-solid fa-bed text-2xl text-secondary mb-2"></i>
-                                <p class="text-2xl font-black text-primary">{{ $listing->bedrooms }}</p>
-                                <p class="text-xs text-gray-500 font-medium">Bedrooms</p>
-                            @else
-                                <i class="fa-solid fa-house-user text-2xl text-secondary mb-2"></i>
-                                <p class="text-2xl font-black text-primary">{{ $listing->unitType->title ?? 'Property' }}</p>
-                                <p class="text-xs text-gray-500 font-medium">Type</p>
-                            @endif
+                    <div style="display: flex; gap: 8px; width: 100%; margin-bottom: 24px;">
+                        <div style="flex: 1; background: white; padding: 12px 8px; border-radius: 16px; border: 1px solid #f3f4f6; text-align: center; min-width: 0;">
+                            <i class="fa-solid fa-bed text-secondary" style="font-size: 18px; margin-bottom: 4px; display: block;"></i>
+                            <p class="text-primary" style="font-size: 14px; font-weight: 900; margin: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
+                                @if(strtolower($listing->bedrooms) === 'studio')
+                                    Studio
+                                @elseif($listing->bedrooms && $listing->bedrooms > 0)
+                                    {{ $listing->bedrooms }}
+                                @else
+                                    N/A
+                                @endif
+                            </p>
+                            <p style="font-size: 10px; color: #9ca3af; font-weight: 500; margin: 0;">Beds</p>
                         </div>
-                        @if($listing->bathrooms > 0)
-                            <div class="bg-white p-6 rounded-2xl border border-gray-100 text-center">
-                                <i class="fa-solid fa-bath text-2xl text-secondary mb-2"></i>
-                                <p class="text-2xl font-black text-primary">{{ $listing->bathrooms }}</p>
-                                <p class="text-xs text-gray-500 font-medium">Bathrooms</p>
-                            </div>
-                        @endif
-                        <div class="bg-white p-6 rounded-2xl border border-gray-100 text-center">
-                            <i class="fa-solid fa-vector-square text-2xl text-secondary mb-2"></i>
-                            <p class="text-2xl font-black text-primary">{{ $listing->area_size ?? 'N/A' }}</p>
-                            <p class="text-xs text-gray-500 font-medium">Sq Ft</p>
+                        <div style="flex: 1; background: white; padding: 12px 8px; border-radius: 16px; border: 1px solid #f3f4f6; text-align: center; min-width: 0;">
+                            <i class="fa-solid fa-bath text-secondary" style="font-size: 18px; margin-bottom: 4px; display: block;"></i>
+                            <p class="text-primary" style="font-size: 14px; font-weight: 900; margin: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
+                                {{ $listing->bathrooms && $listing->bathrooms > 0 ? $listing->bathrooms : 'N/A' }}
+                            </p>
+                            <p style="font-size: 10px; color: #9ca3af; font-weight: 500; margin: 0;">Baths</p>
                         </div>
-                        <div class="bg-white p-6 rounded-2xl border border-gray-100 text-center">
-                            <i class="fa-solid fa-stairs text-2xl text-secondary mb-2"></i>
-                            <p class="text-2xl font-black text-primary">{{ $listing->floors_count ?? '1' }}</p>
-                            <p class="text-xs text-gray-500 font-medium">Floors</p>
+                        <div style="flex: 1; background: white; padding: 12px 8px; border-radius: 16px; border: 1px solid #f3f4f6; text-align: center; min-width: 0;">
+                            <i class="fa-solid fa-couch text-secondary" style="font-size: 18px; margin-bottom: 4px; display: block;"></i>
+                            <p class="text-primary" style="font-size: 14px; font-weight: 900; margin: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
+                                {{ $listing->reception_rooms && $listing->reception_rooms > 0 ? $listing->reception_rooms : 'N/A' }}
+                            </p>
+                            <p style="font-size: 10px; color: #9ca3af; font-weight: 500; margin: 0;">Recp</p>
+                        </div>
+                        <div style="flex: 1; background: white; padding: 12px 8px; border-radius: 16px; border: 1px solid #f3f4f6; text-align: center; min-width: 0;">
+                            <i class="fa-solid fa-stairs text-secondary" style="font-size: 18px; margin-bottom: 4px; display: block;"></i>
+                            <p class="text-primary" style="font-size: 14px; font-weight: 900; margin: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
+                                {{ $listing->floor_level && $listing->floor_level !== '' ? $listing->floor_level : 'N/A' }}
+                            </p>
+                            <p style="font-size: 10px; color: #9ca3af; font-weight: 500; margin: 0;">Floor</p>
+                        </div>
+                        <div style="flex: 1; background: white; padding: 12px 8px; border-radius: 16px; border: 1px solid #f3f4f6; text-align: center; min-width: 0;">
+                            <i class="fa-solid fa-vector-square text-secondary" style="font-size: 18px; margin-bottom: 4px; display: block;"></i>
+                            <p class="text-primary" style="font-size: 14px; font-weight: 900; margin: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
+                                {{ $listing->area_size && is_numeric($listing->area_size) && $listing->area_size > 0 ? number_format((float)$listing->area_size) : 'N/A' }}
+                            </p>
+                            <p style="font-size: 10px; color: #9ca3af; font-weight: 500; margin: 0;">Sqft</p>
                         </div>
                     </div>
 
-                    <!-- Property Details -->
+                    <!-- Description -->
+                    <div class="bg-white p-6 md:p-8 rounded-3xl border border-gray-100" x-data="{ expanded: false }">
+                        <h2 class="text-2xl font-black text-primary mb-6">About this property</h2>
+                        <div class="prose prose-slate max-w-none text-gray-600">
+                            <div x-show="!expanded">
+                                {!! \Illuminate\Support\Str::limit(strip_tags($listing->description), 400) !!}
+                            </div>
+                            <div x-show="expanded" x-cloak>
+                                {!! $listing->description !!}
+                            </div>
+
+                            @if(strlen(strip_tags($listing->description)) > 400)
+                                <button @click="expanded = !expanded" class="text-secondary font-bold hover:underline mt-4">
+                                    <span x-text="expanded ? 'Read Less' : 'Read Full Description'"></span>
+                                </button>
+                            @endif
+                        </div>
+                    </div>
+
+                    <!-- Material Information -->
+                    @php
+                        $mi = $listing->materialInfo;
+                        $tenure = $mi->tenure ?? $listing->tenure ?? 'N/A';
+                        $councilTax = $mi->council_tax_band ?? $listing->council_tax_band ?? 'N/A';
+                        $parking = $mi->parking_type ?? $listing->parking_type ?? 'N/A';
+                        $construction = $mi->construction_type ?? $listing->construction_type ?? 'N/A';
+                        $serviceCharge = $mi->service_charge ?? $listing->service_charge ?? null;
+                        $groundRent = $mi->ground_rent ?? $listing->ground_rent ?? null;
+                        $deposit = $listing->details->deposit ?? $listing->deposit ?? null;
+                    @endphp
                     <div class="bg-white p-8 rounded-3xl border border-gray-100 shadow-sm">
-                        <h2 class="text-2xl font-black text-primary mb-6">Property Details</h2>
+                        <h2 class="text-2xl font-black text-primary mb-6">Financial & Tenure</h2>
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-x-12 gap-y-2">
-                            <div class="flex justify-between py-3 border-b border-gray-100">
-                                <span class="text-gray-600 font-medium">Property ID</span>
-                                <span class="font-bold text-primary">{{ $listing->property_reference_number }}</span>
+                             <div class="flex justify-between py-3 border-b border-gray-100">
+                                <span class="text-gray-600 font-medium">Tenure Type</span>
+                                <span class="font-bold text-primary">{{ $tenure }}</span>
                             </div>
-                            <div class="flex justify-between py-3 border-b border-gray-100">
-                                <span class="text-gray-600 font-medium">Ownership</span>
-                                <span
-                                    class="font-bold text-primary">{{ $listing->ownershipStatus->title ?? 'Freehold' }}</span>
-                            </div>
-                            @if($listing->epc_rating)
+                            @if($mi->unexpired_years ?? $listing->unexpired_years)
                                 <div class="flex justify-between py-3 border-b border-gray-100">
-                                    <span class="text-gray-600 font-medium">EPC Rating</span>
-                                    <span
-                                        class="px-3 py-1 bg-emerald-500 text-white rounded-lg text-sm font-bold">{{ $listing->epc_rating }}</span>
+                                    <span class="text-gray-600 font-medium">Lease Remaining</span>
+                                    <span class="font-bold text-primary">{{ $mi->unexpired_years ?? $listing->unexpired_years }} Years</span>
                                 </div>
                             @endif
-                            @if($listing->council_tax_band)
+                            @if($councilTax && $councilTax !== 'N/A')
                                 <div class="flex justify-between py-3 border-b border-gray-100">
                                     <span class="text-gray-600 font-medium">Council Tax</span>
-                                    <span class="font-bold text-primary">Band {{ $listing->council_tax_band }}</span>
+                                    <span class="font-bold text-primary">Band {{ $councilTax }}</span>
                                 </div>
                             @endif
-                            @if($listing->listed_property)
+                            @if($deposit)
                                 <div class="flex justify-between py-3 border-b border-gray-100">
-                                    <span class="text-gray-600 font-medium">Listed Building</span>
-                                    <span class="font-bold text-primary">{{ $listing->listed_property }}</span>
+                                    <span class="text-gray-600 font-medium">Deposit</span>
+                                    <span class="font-bold text-emerald-600">@if(is_numeric($deposit))£{{ number_format($deposit, 2) }}@else{{ $deposit }}@endif</span>
                                 </div>
                             @endif
-                            @if($listing->no_onward_chain)
+                            @if($serviceCharge)
                                 <div class="flex justify-between py-3 border-b border-gray-100">
-                                    <span class="text-gray-600 font-medium">Clean Status</span>
-                                    <span class="font-bold text-primary">No Onward Chain</span>
+                                    <span class="text-gray-600 font-medium">Service Charge</span>
+                                    <span class="font-bold text-emerald-600">@if(is_numeric($serviceCharge))£{{ number_format($serviceCharge, 2) }}@else{{ $serviceCharge }}@endif</span>
                                 </div>
                             @endif
-                            @if($listing->flood_risk)
+                            @if($groundRent)
                                 <div class="flex justify-between py-3 border-b border-gray-100">
-                                    <span class="text-gray-600 font-medium">Flood Risk</span>
-                                    <span class="font-bold text-primary">{{ $listing->flood_risk }}</span>
+                                    <span class="text-gray-600 font-medium">Ground Rent</span>
+                                    <span class="font-bold text-emerald-600">@if(is_numeric($groundRent))£{{ number_format($groundRent, 2) }}@else{{ $groundRent }}@endif</span>
                                 </div>
                             @endif
-                            @if($listing->private_rights_of_way)
+                            <div class="flex justify-between py-3 border-b border-gray-100">
+                                <span class="text-gray-600 font-medium">Parking</span>
+                                <span class="font-bold text-primary">{{ $parking }}</span>
+                            </div>
+                            @if($construction && $construction !== 'N/A')
                                 <div class="flex justify-between py-3 border-b border-gray-100">
-                                    <span class="text-gray-600 font-medium">Private Rights of Way</span>
-                                    <span class="font-bold text-primary">{{ $listing->private_rights_of_way }}</span>
+                                    <span class="text-gray-600 font-medium">Construction</span>
+                                    <span class="font-bold text-primary">{{ $construction }}</span>
                                 </div>
                             @endif
-                            @if($listing->public_rights_of_way)
-                                <div class="flex justify-between py-3 border-b border-gray-100">
-                                    <span class="text-gray-600 font-medium">Public Rights of Way</span>
-                                    <span class="font-bold text-primary">{{ $listing->public_rights_of_way }}</span>
-                                </div>
+                        </div>
+                    </div>
+
+                    <!-- Additional Information -->
+                    @php 
+                        $scheme = $listing->details->government_scheme ?? $listing->government_scheme; 
+                        $avail = $listing->availability_date;
+                    @endphp
+                    @if($avail || $scheme)
+                    <div class="bg-white p-8 rounded-3xl border border-gray-100">
+                        <h2 class="text-2xl font-black text-primary mb-6">Status & Schemes</h2>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            @if($avail)
+                            <div class="flex flex-col p-4 bg-gray-50 rounded-2xl">
+                                <span class="text-[10px] font-black text-gray-400 uppercase tracking-widest mb-1">Available From</span>
+                                <span class="text-lg font-black text-primary">{{ \Carbon\Carbon::parse($avail)->format('d M Y') }}</span>
+                            </div>
                             @endif
-                            @if($listing->restrictions)
-                                <div class="col-span-1 md:col-span-2 flex justify-between py-3 border-b border-gray-100">
-                                    <span class="text-gray-600 font-medium">Restrictions</span>
-                                    <span class="font-bold text-primary text-right pl-4">{{ $listing->restrictions }}</span>
-                                </div>
+                            @if($scheme)
+                            <div class="flex flex-col p-4 bg-gray-50 rounded-2xl">
+                                <span class="text-[10px] font-black text-gray-400 uppercase tracking-widest mb-1">Government Scheme</span>
+                                <span class="text-lg font-black text-primary">{{ $scheme }}</span>
+                            </div>
                             @endif
+                        </div>
+                    </div>
+                    @endif
+
+                    <!-- Utilities & Connectivity -->
+                    @php
+                        $util = $listing->utilities;
+                        $water = $util->water ?? $listing->utilities_water ?? 'N/A';
+                        $electric = $util->electricity ?? $listing->utilities_electricity ?? 'N/A';
+                        $sewer = $util->sewerage ?? $listing->utilities_sewerage ?? 'N/A';
+                        $heating = $util->heating_type ?? $listing->heating_type ?? 'N/A';
+                        $broadband = $util->broadband ?? $listing->broadband ?? 'N/A';
+                    @endphp
+                    <div class="bg-white p-8 rounded-3xl border border-gray-100">
+                        <h2 class="text-2xl font-black text-primary mb-6">Utilities & Connectivity</h2>
+                        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                            <div class="flex items-center gap-4 bg-gray-50 p-4 rounded-2xl">
+                                <div class="w-10 h-10 bg-blue-100 text-blue-600 rounded-xl flex items-center justify-center">
+                                    <i class="fa-solid fa-droplet"></i>
+                                </div>
+                                <div>
+                                    <p class="text-[10px] font-black text-gray-400 uppercase tracking-widest">Water</p>
+                                    <p class="text-sm font-bold text-primary">{{ $water }}</p>
+                                </div>
+                            </div>
+                            <div class="flex items-center gap-4 bg-gray-50 p-4 rounded-2xl">
+                                <div class="w-10 h-10 bg-yellow-100 text-yellow-600 rounded-xl flex items-center justify-center">
+                                    <i class="fa-solid fa-bolt"></i>
+                                </div>
+                                <div>
+                                    <p class="text-[10px] font-black text-gray-400 uppercase tracking-widest">Electricity</p>
+                                    <p class="text-sm font-bold text-primary">{{ $electric }}</p>
+                                </div>
+                            </div>
+                            <div class="flex items-center gap-4 bg-gray-50 p-4 rounded-2xl">
+                                <div class="w-10 h-10 bg-orange-100 text-orange-600 rounded-xl flex items-center justify-center">
+                                    <i class="fa-solid fa-fire"></i>
+                                </div>
+                                <div>
+                                    <p class="text-[10px] font-black text-gray-400 uppercase tracking-widest">Heating</p>
+                                    <p class="text-sm font-bold text-primary">{{ $heating }}</p>
+                                </div>
+                            </div>
+                            <div class="flex items-center gap-4 bg-gray-50 p-4 rounded-2xl">
+                                <div class="w-10 h-10 bg-purple-100 text-purple-600 rounded-xl flex items-center justify-center">
+                                    <i class="fa-solid fa-wifi"></i>
+                                </div>
+                                <div>
+                                    <p class="text-[10px] font-black text-gray-400 uppercase tracking-widest">Broadband</p>
+                                    <p class="text-sm font-bold text-primary">{{ $broadband }}</p>
+                                </div>
+                            </div>
+                            <div class="flex items-center gap-4 bg-gray-50 p-4 rounded-2xl">
+                                <div class="w-10 h-10 bg-indigo-100 text-indigo-600 rounded-xl flex items-center justify-center">
+                                    <i class="fa-solid fa-signal"></i>
+                                </div>
+                                <div>
+                                    <p class="text-[10px] font-black text-gray-400 uppercase tracking-widest">Mobile</p>
+                                    <p class="text-sm font-bold text-primary">{{ $util->mobile_coverage ?? $listing->mobile_coverage ?? 'Check Area' }}</p>
+                                </div>
+                            </div>
+                            <div class="flex items-center gap-4 bg-gray-50 p-4 rounded-2xl">
+                                <div class="w-10 h-10 bg-teal-100 text-teal-600 rounded-xl flex items-center justify-center">
+                                    <i class="fa-solid fa-toilet"></i>
+                                </div>
+                                <div>
+                                    <p class="text-[10px] font-black text-gray-400 uppercase tracking-widest">Sewerage</p>
+                                    <p class="text-sm font-bold text-primary">{{ $sewer }}</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Property Documents -->
+                    @if(count($documents) > 0)
+                        <div class="bg-white p-8 rounded-3xl border border-gray-100">
+                            <h2 class="text-2xl font-black text-primary mb-6">Documents & Floor Plans</h2>
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                @foreach($documents as $doc)
+                                    <a href="{{ $doc['path'] }}" target="_blank" class="flex items-center justify-between p-4 bg-gray-50 hover:bg-white border border-gray-100 hover:border-secondary rounded-2xl transition-all group">
+                                        <div class="flex items-center gap-4">
+                                            <div class="w-12 h-12 bg-white rounded-xl flex items-center justify-center text-secondary shadow-sm">
+                                                @if($doc['type'] === 'Floor Plan')
+                                                    <i class="fa-solid fa-map"></i>
+                                                @elseif($doc['type'] === 'EPC')
+                                                    <i class="fa-solid fa-leaf"></i>
+                                                @else
+                                                    <i class="fa-solid fa-file-pdf"></i>
+                                                @endif
+                                            </div>
+                                            <div>
+                                                <p class="text-sm font-black text-primary">{{ $doc['name'] }}</p>
+                                                <p class="text-[10px] text-gray-400 uppercase font-bold">{{ $doc['type'] }}</p>
+                                            </div>
+                                        </div>
+                                        <i class="fa-solid fa-chevron-right text-gray-300 group-hover:text-secondary group-hover:translate-x-1 transition-all"></i>
+                                    </a>
+                                @endforeach
+                            </div>
+                        </div>
+                    @endif
+
+                    <!-- Safety & Risks -->
+                    <div class="bg-white p-8 rounded-3xl border border-gray-100">
+                        <h2 class="text-2xl font-black text-primary mb-6">Safety & Risks</h2>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-x-12 gap-y-2">
+                             <div class="flex justify-between py-3 border-b border-gray-100">
+                                <span class="text-gray-600 font-medium">Flood Risk</span>
+                                <span class="font-bold text-primary">{{ $mi->flood_risk ?? $listing->flood_risk ?? 'Very Low' }}</span>
+                            </div>
+                            <div class="flex justify-between py-3 border-b border-gray-100">
+                                <span class="text-gray-600 font-medium">Cladding Risk</span>
+                                <span class="font-bold text-primary">{{ $mi->cladding_risk ?? $listing->cladding_risk ?? 'None Reported' }}</span>
+                            </div>
+                            <div class="flex justify-between py-3 border-b border-gray-100">
+                                <span class="text-gray-600 font-medium">Coastal Erosion</span>
+                                <span class="font-bold text-primary">No Risk</span>
+                            </div>
+                            <div class="flex justify-between py-3 border-b border-gray-100">
+                                <span class="text-gray-600 font-medium">Mining History</span>
+                                <span class="font-bold text-primary">None</span>
+                            </div>
                         </div>
                     </div>
 
@@ -449,34 +667,45 @@
                         </div>
                     </div>
 
-                    <!-- Description -->
-                    <div class="bg-white p-6 md:p-8 rounded-3xl border border-gray-100" x-data="{ expanded: false }">
-                        <h2 class="text-2xl font-black text-primary mb-6">Description</h2>
-                        <div class="prose prose-slate max-w-none text-gray-600">
-                            <div x-show="!expanded">
-                                {{ \Illuminate\Support\Str::limit(strip_tags($listing->description), 200) }}
+                    <!-- Room Breakdown -->
+                    @if($listing->rooms->count() > 0)
+                        <div class="bg-white p-8 rounded-3xl border border-gray-100">
+                            <h2 class="text-2xl font-black text-primary mb-6">Room Breakdown</h2>
+                            <div class="space-y-4">
+                                @foreach($listing->rooms as $room)
+                                    <div class="p-5 bg-gray-50 rounded-2xl flex flex-col md:flex-row md:items-center justify-between gap-4">
+                                        <div>
+                                            <h4 class="font-black text-primary">{{ $room->room_name }}</h4>
+                                            @if($room->room_description)
+                                                <p class="text-sm text-gray-500 mt-1">{{ $room->room_description }}</p>
+                                            @endif
+                                        </div>
+                                        @if($room->room_size)
+                                            <div class="bg-white px-4 py-2 rounded-xl text-xs font-bold text-secondary border border-gray-100 shadow-sm whitespace-nowrap">
+                                                {{ $room->room_size }}
+                                            </div>
+                                        @endif
+                                    </div>
+                                @endforeach
                             </div>
-                            <div x-show="expanded" x-cloak>
-                                {!! $listing->description !!}
-                            </div>
-
-                            @if(strlen(strip_tags($listing->description)) > 200)
-                                <button @click="expanded = !expanded" class="text-secondary font-bold hover:underline mt-4">
-                                    <span x-text="expanded ? 'See Less' : 'See More'"></span>
-                                </button>
-                            @endif
                         </div>
-                    </div>
+                    @endif
 
                     <!-- Features -->
-                    @if($listing->features->count() > 0)
+                    @php
+                        $relFeatures = $listing->features->pluck('title')->toArray();
+                        $jsonFeatures = $listing->details->key_features ?? [];
+                        if(!is_array($jsonFeatures)) $jsonFeatures = json_decode($jsonFeatures, true) ?? [];
+                        $allFeatures = array_unique(array_merge($relFeatures, $jsonFeatures));
+                    @endphp
+                    @if(count($allFeatures) > 0)
                         <div class="bg-white p-6 md:p-8 rounded-3xl border border-gray-100">
                             <h2 class="text-2xl font-black text-primary mb-6">Key Features</h2>
                             <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
-                                @foreach($listing->features as $feature)
+                                @foreach($allFeatures as $feature)
                                     <div class="flex items-center gap-3 p-3 bg-gray-50 rounded-xl">
                                         <i class="fa-solid fa-check-circle text-secondary"></i>
-                                        <span class="text-sm font-medium text-gray-700">{{ $feature->title }}</span>
+                                        <span class="text-sm font-medium text-gray-700">{{ $feature }}</span>
                                     </div>
                                 @endforeach
                             </div>
@@ -516,7 +745,7 @@
                                 </div>
                                 <div>
                                     <h3 class="text-xl font-black">{{ $listing->user->name ?? 'Agent' }}</h3>
-                                    <p class="text-sm text-gray-300">Private Client Advisor</p>
+                                    <p class="text-sm text-gray-300">Property Consultant</p>
                                 </div>
                             </div>
 
@@ -527,33 +756,113 @@
                                     value="{{ auth()->check() ? auth()->user()->name : '' }}"
                                     class="w-full bg-white/10 border border-white/20 rounded-xl p-3 text-white placeholder-gray-400 focus:ring-2 focus:ring-secondary outline-none">
                                 <input type="text" name="phone" placeholder="Phone Number" required
-                                    value="{{ auth()->check() ? auth()->user()->phone_number : '' }}"
+                                    value="{{ auth()->check() ? auth()->user()->phone_number ?? auth()->user()->phone ?? '' : '' }}"
                                     class="w-full bg-white/10 border border-white/20 rounded-xl p-3 text-white placeholder-gray-400 focus:ring-2 focus:ring-secondary outline-none">
                                 <input type="email" name="email" placeholder="Email Address" required
                                     value="{{ auth()->check() ? auth()->user()->email : '' }}"
                                     class="w-full bg-white/10 border border-white/20 rounded-xl p-3 text-white placeholder-gray-400 focus:ring-2 focus:ring-secondary outline-none">
                                 <textarea name="message" rows="3"
-                                    class="w-full bg-white/10 border border-white/20 rounded-xl p-3 text-white placeholder-gray-400 focus:ring-2 focus:ring-secondary outline-none resize-none">I'm interested in this off-market opportunity {{ $listing->property_reference_number }}</textarea>
+                                    class="w-full bg-white/10 border border-white/20 rounded-xl p-3 text-white placeholder-gray-400 focus:ring-2 focus:ring-secondary outline-none resize-none">I'm interested in Ref: {{ $listing->property_reference_number }} - {{ $listing->property_title }}</textarea>
 
                                 <button type="submit"
-                                    class="w-full py-4 bg-secondary hover:bg-secondary/90 text-white font-bold rounded-xl transition-all">
-                                    Send Inquiry
+                                    class="w-full py-4 bg-secondary hover:bg-secondary/90 text-white font-bold rounded-xl transition-all shadow-xl shadow-secondary/20">
+                                    Book a Viewing
                                 </button>
                             </form>
 
                             <div class="mt-6 grid grid-cols-2 gap-3">
-                                <a href="https://wa.me/{{ $listing->user->phone_number ?? '' }}?text=Interested in {{ urlencode($listing->property_title) }}"
+                                <a href="https://wa.me/{{ $listing->user->phone_number ?? $listing->user->phone ?? '' }}?text=Interested in Ref: {{ $listing->property_reference_number }} - {{ $listing->property_title }}"
                                     class="py-3 bg-emerald-500 rounded-xl flex items-center justify-center gap-2 text-sm font-bold hover:bg-emerald-600 transition-all">
                                     <i class="fab fa-whatsapp"></i> WhatsApp
                                 </a>
-                                <a href="tel:{{ $listing->user->phone_number ?? '' }}"
+                                <a href="tel:{{ $listing->user->phone_number ?? $listing->user->phone ?? '' }}"
                                     class="py-3 bg-white/10 rounded-xl flex items-center justify-center gap-2 text-sm font-bold border border-white/20 hover:bg-white/20 transition-all">
                                     <i class="fa-solid fa-phone"></i> Call
                                 </a>
                             </div>
                         </div>
 
-                        <!-- Similar Properties -->
+                        <!-- Tour Request Card -->
+                        <div class="bg-white p-8 rounded-3xl border border-gray-100 shadow-sm" x-data="{ tourModalOpen: false }">
+                            <h3 class="text-xl font-black text-primary mb-2">Request Virtual Tour</h3>
+                            <p class="text-sm text-gray-500 mb-6">See this property from the comfort of your home. Request a live video walk-through.</p>
+                            <button @click="tourModalOpen = true" class="w-full py-4 border-2 border-secondary text-secondary font-bold rounded-xl hover:bg-secondary hover:text-white transition-all">
+                                Request Tour
+                            </button>
+
+                            <!-- Tour Modal -->
+                            <div x-show="tourModalOpen" 
+                                 x-transition:enter="transition ease-out duration-300"
+                                 x-transition:enter-start="opacity-0"
+                                 x-transition:enter-end="opacity-100"
+                                 x-transition:leave="transition ease-in duration-200"
+                                 x-transition:leave-start="opacity-100"
+                                 x-transition:leave-end="opacity-0"
+                                 class="fixed inset-0 z-[100000] flex items-center justify-center p-4 bg-primary/60 backdrop-blur-sm"
+                                 style="display: none;"
+                                 x-cloak>
+                                <div @click.away="tourModalOpen = false" class="bg-white w-full max-w-lg rounded-3xl shadow-2xl overflow-hidden relative">
+                                    <button @click="tourModalOpen = false" class="absolute top-4 right-4 text-gray-400 hover:text-primary transition-colors">
+                                        <i class="fa-solid fa-xmark text-xl"></i>
+                                    </button>
+                                    
+                                    <div class="p-8">
+                                        <div class="w-16 h-16 bg-secondary/10 rounded-2xl flex items-center justify-center text-secondary text-3xl mb-6 mx-auto">
+                                            <i class="fa-solid fa-video"></i>
+                                        </div>
+                                        <h3 class="text-2xl font-black text-primary text-center mb-2">Virtual Tour Request</h3>
+                                        <p class="text-sm text-gray-500 text-center mb-8">Fill in your details and the agent will contact you to schedule a live video viewing.</p>
+
+                                        <form action="{{ route('listing.walkthrough', $listing->id) }}" method="POST" class="space-y-4">
+                                            @csrf
+                                            <input type="hidden" name="listing_type" value="off_market">
+                                            <div class="space-y-1">
+                                                <label class="text-xs font-black text-gray-400 uppercase tracking-widest pl-1">Full Name</label>
+                                                <input type="text" name="name" required placeholder="John Doe"
+                                                    value="{{ auth()->check() ? auth()->user()->name : '' }}"
+                                                    class="w-full bg-gray-50 border border-gray-100 rounded-xl p-3.5 text-primary placeholder-gray-400 focus:ring-2 focus:ring-secondary outline-none transition-all">
+                                            </div>
+                                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                                <div class="space-y-1">
+                                                    <label class="text-xs font-black text-gray-400 uppercase tracking-widest pl-1">Email</label>
+                                                    <input type="email" name="email" required placeholder="john@example.com"
+                                                        value="{{ auth()->check() ? auth()->user()->email : '' }}"
+                                                        class="w-full bg-gray-50 border border-gray-100 rounded-xl p-3.5 text-primary placeholder-gray-400 focus:ring-2 focus:ring-secondary outline-none transition-all">
+                                                </div>
+                                                <div class="space-y-1">
+                                                    <label class="text-xs font-black text-gray-400 uppercase tracking-widest pl-1">Phone</label>
+                                                    <input type="text" name="phone" required placeholder="+44 ..."
+                                                        value="{{ auth()->check() ? auth()->user()->phone_number ?? auth()->user()->phone ?? '' : '' }}"
+                                                        class="w-full bg-gray-50 border border-gray-100 rounded-xl p-3.5 text-primary placeholder-gray-400 focus:ring-2 focus:ring-secondary outline-none transition-all">
+                                                </div>
+                                            </div>
+                                            <div class="space-y-1">
+                                                <label class="text-xs font-black text-gray-400 uppercase tracking-widest pl-1">Preferred Time</label>
+                                                <select name="preferred_time" class="w-full bg-gray-50 border border-gray-100 rounded-xl p-3.5 text-primary focus:ring-2 focus:ring-secondary outline-none transition-all">
+                                                    <option value="Morning (9am - 12pm)">Morning (9am - 12pm)</option>
+                                                    <option value="Afternoon (12pm - 4pm)">Afternoon (12pm - 4pm)</option>
+                                                    <option value="Evening (4pm - 7pm)">Evening (4pm - 7pm)</option>
+                                                    <option value="Weekend">Weekend</option>
+                                                    <option value="As soon as possible">As soon as possible</option>
+                                                </select>
+                                            </div>
+                                            <div class="space-y-1">
+                                                <label class="text-xs font-black text-gray-400 uppercase tracking-widest pl-1">Message / Notes (Optional)</label>
+                                                <textarea name="message" rows="3" placeholder="Any specific areas you want to see?"
+                                                    class="w-full bg-gray-50 border border-gray-100 rounded-xl p-3.5 text-primary placeholder-gray-400 focus:ring-2 focus:ring-secondary outline-none transition-all resize-none"></textarea>
+                                            </div>
+
+                                            <button type="submit" class="w-full py-4 bg-primary text-white font-bold rounded-xl hover:bg-primary-dark transition-all shadow-xl shadow-primary/20 flex items-center justify-center gap-2 mt-4">
+                                                <span>Confirm My Request</span>
+                                                <i class="fa-solid fa-paper-plane text-xs"></i>
+                                            </button>
+                                        </form>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Similar Opportunities -->
                         @if($similarProperties->count() > 0)
                             <div class="bg-white p-6 rounded-3xl border border-gray-100">
                                 <h3 class="text-lg font-black text-primary mb-4">Similar Opportunities</h3>
@@ -574,6 +883,16 @@
                                             </div>
                                         </a>
                                     @endforeach
+                                </div>
+                            </div>
+                        @endif
+
+                        <!-- Mortgage Calculator -->
+                        @if($listing->purpose === 'Buy')
+                            <div class="bg-white p-6 rounded-3xl border border-gray-100 shadow-sm">
+                                <h3 class="text-lg font-black text-primary mb-4">Mortgage Calculator</h3>
+                                <div class="bg-gray-50 p-4 rounded-2xl">
+                                    <x-mortgage-calculator>{{ $listing->price }}</x-mortgage-calculator>
                                 </div>
                             </div>
                         @endif
@@ -852,6 +1171,45 @@
 
                 window.soldPriceData = prices;
 
+                // Enhance page with external data if internal data is missing/sparse
+                const bestResult = prices[0];
+                if (bestResult) {
+                    // Update description if external is much longer
+                    const externalDesc = bestResult.description;
+                    const internalDesc = @json(strip_tags($listing->description));
+                    
+                    if (externalDesc && externalDesc.length > internalDesc.length + 50) {
+                        const descContainer = document.querySelector('[x-data="{ expanded: false }"] .prose');
+                        if (descContainer) {
+                            const enhancedHtml = `
+                                <div class="mb-4 bg-secondary/5 border border-secondary/20 p-4 rounded-xl flex items-center gap-3">
+                                    <i class="fa-solid fa-wand-magic-sparkles text-secondary"></i>
+                                    <span class="text-xs font-bold text-secondary uppercase tracking-wider text-wrap">Enhanced description found via PaTMa API</span>
+                                </div>
+                                <div class="whitespace-pre-line">${externalDesc}</div>
+                            `;
+                            // Replace the internal description logic with the enhanced one
+                            descContainer.innerHTML = enhancedHtml;
+                            // Hide the "Read Less/More" button since we showed the full enhanced desc
+                            const seeMoreBtn = descContainer.closest('div').querySelector('button');
+                            if(seeMoreBtn) seeMoreBtn.style.display = 'none';
+                        }
+                    }
+
+                    // If internal gallery is empty but external has images
+                    // Note: allMedia variable from PHP
+                    const internalGalleryCount = {{ count($allMedia) }};
+                    if (internalGalleryCount <= 1 && bestResult.images && bestResult.images.length > 0) {
+                         const galleryNotification = document.createElement('div');
+                         galleryNotification.className = "mt-4 bg-secondary/5 border border-secondary/20 p-4 rounded-xl flex items-center gap-3";
+                         galleryNotification.innerHTML = `
+                            <i class="fa-solid fa-images text-secondary"></i>
+                            <span class="text-xs font-bold text-secondary uppercase tracking-wider">Additional images available in the history gallery below</span>
+                         `;
+                         document.querySelector('.property-gallery-grid')?.after(galleryNotification);
+                    }
+                }
+
                 // Responsive Layout: Table for Desktop, Cards for Mobile
                 let tableHtml = `
                     <div class="hidden md:block overflow-x-auto">
@@ -894,9 +1252,9 @@
                             <td class="py-4 text-sm font-bold text-gray-500">${date}</td>
                             <td class="py-4 text-sm font-black text-secondary">${formattedPrice}</td>
                             <td class="py-4 text-sm text-right">
-                                <button onclick="window.dispatchEvent(new CustomEvent('open-external-detail', { detail: window.soldPriceData[${index}] }))" class="inline-flex items-center gap-1 text-secondary font-bold hover:underline whitespace-nowrap bg-secondary/10 px-3 py-1.5 rounded-lg text-xs">
+                                <a href="{{ route('property.external-details') }}?postcode=${encodeURIComponent(item.location || '')}&address=${encodeURIComponent(item.name || '')}&search_postcode=${encodeURIComponent(item.search_postcode || '')}&lat=${item.latitude || ''}&lng=${item.longitude || ''}&record_label=${encodeURIComponent(status)}" class="inline-flex items-center gap-1 text-secondary font-bold hover:underline whitespace-nowrap bg-secondary/10 px-3 py-1.5 rounded-lg text-xs">
                                     Details <i class="fa-solid fa-arrow-right text-[10px]"></i>
-                                </button>
+                                </a>
                             </td>
                         </tr>
                     `;
@@ -924,10 +1282,10 @@
                                     </div>
                                 </div>
                             </div>
-                            <button onclick="window.dispatchEvent(new CustomEvent('open-external-detail', { detail: window.soldPriceData[${index}] }))" 
+                            <a href="{{ route('property.external-details') }}?postcode=${encodeURIComponent(item.location || '')}&address=${encodeURIComponent(item.name || '')}&search_postcode=${encodeURIComponent(item.search_postcode || '')}&lat=${item.latitude || ''}&lng=${item.longitude || ''}&record_label=${encodeURIComponent(status)}" 
                                 class="w-full py-2.5 bg-white border border-gray-200 text-secondary font-bold rounded-xl text-xs flex items-center justify-center gap-2 hover:bg-gray-50 transition-colors">
                                 View Full Records <i class="fa-solid fa-arrow-right text-[10px]"></i>
-                            </button>
+                            </a>
                         </div>
                     `;
                 });

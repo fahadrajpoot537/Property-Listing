@@ -36,6 +36,7 @@ Route::get('/property-map', [\App\Http\Controllers\ListingController::class, 'ma
 Route::get('/property/{id}', [App\Http\Controllers\ListingController::class, 'show'])->name('listing.show');
 Route::get('/property/{id}/sold-prices', [App\Http\Controllers\ListingController::class, 'getSoldPrices'])->name('listing.sold-prices');
 Route::post('/property/{id}/inquiry', [App\Http\Controllers\PropertyInquiryController::class, 'store'])->name('listing.inquiry');
+Route::post('/property/{id}/walk-through', [App\Http\Controllers\WalkThroughInquiryController::class, 'store'])->name('listing.walkthrough');
 Route::get('/property/{id}/brochure', [App\Http\Controllers\BrochureController::class, 'download'])->name('listing.brochure');
 Route::get('/sold-properties', [\App\Http\Controllers\ListingController::class, 'soldPropertiesSearch'])->name('sold-properties.search');
 Route::get('/property-external-details', [App\Http\Controllers\ListingController::class, 'showExternalDetails'])->name('property.external-details');
@@ -66,6 +67,10 @@ Route::post('/chatbot/chat', [\App\Http\Controllers\ChatbotController::class, 'c
 Route::get('/contact', [ContactController::class, 'create'])->name('contact.create');
 Route::post('/contact', [ContactController::class, 'store'])->name('contact.store');
 
+// Sitemap
+Route::get('/sitemap.xml', [\App\Http\Controllers\SitemapController::class, 'index'])->name('sitemap');
+
+
 Route::get('/blogs', [BlogController::class, 'list'])->name('blog.list');
 Route::get('/blog/{blog}', [BlogController::class, 'show'])->name('blog.show');
 
@@ -77,6 +82,7 @@ Route::view('/terms-of-service', 'pages.terms-of-service')->name('terms');
 Route::view('/cookie-policy', 'pages.cookie-policy')->name('cookies');
 Route::view('/gdpr-compliance', 'pages.gdpr-compliance')->name('gdpr');
 Route::view('/help-center', 'pages.help')->name('help');
+Route::view('/mortgages', 'mortgages')->name('mortgages');
 
 Route::get('/referral', [
     \App\Http\Controllers\Auth\RegisteredUserController::class,
@@ -147,6 +153,9 @@ Route::middleware('auth')->group(function () {
         Route::get('/contact/{submission}', [ContactController::class, 'show'])->name('contact.show');
         Route::delete('/contact/{submission}', [ContactController::class, 'destroy'])->name('contact.destroy');
 
+        Route::get('/walkthrough-inquiries', [\App\Http\Controllers\WalkThroughInquiryController::class, 'index'])->name('walkthrough.index');
+        Route::patch('/walkthrough-inquiries/{id}/status', [\App\Http\Controllers\WalkThroughInquiryController::class, 'updateStatus'])->name('walkthrough.update-status');
+
         Route::resource('email-templates', \App\Http\Controllers\Admin\AdminEmailTemplateController::class);
         Route::resource('trustpilot-reviews', \App\Http\Controllers\Admin\TrustpilotReviewController::class)
             ->only(['index', 'store']);
@@ -154,6 +163,24 @@ Route::middleware('auth')->group(function () {
 });
 
 Route::get('/partner', [\App\Http\Controllers\AffiliateController::class, 'landing'])->name('affiliate.welcome');
+
+use App\Http\Controllers\SavedSearchController;
+
+Route::post('/check-user', function (\Illuminate\Http\Request $request) {
+    $exists = \App\Models\User::where('email', $request->login)
+        ->orWhere('username', $request->login)
+        ->exists();
+    return response()->json(['exists' => $exists]);
+})->name('check-user');
+
+Route::middleware(['auth'])->group(function () {
+    Route::post('/saved-searches', [SavedSearchController::class, 'store'])->name('saved-searches.store');
+    Route::get('/dashboard/saved-searches', [SavedSearchController::class, 'index'])->name('saved-searches.index');
+    Route::delete('/saved-searches/{id}', [SavedSearchController::class, 'destroy'])->name('saved-searches.destroy');
+
+    Route::get('/dashboard/enquiries', [\App\Http\Controllers\EnquiryController::class, 'index'])->name('enquiries.index');
+    Route::delete('/dashboard/enquiries/{id}', [\App\Http\Controllers\EnquiryController::class, 'destroy'])->name('enquiries.destroy');
+});
 
 Route::middleware(['auth'])->group(function () {
     Route::get('/affiliate/dashboard', [

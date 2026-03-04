@@ -1,10 +1,12 @@
 <?php
-
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\Admin\ListingRequest;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Mail;
+use App\Mail\AdminNotification;
 
 use Illuminate\Routing\Controllers\HasMiddleware;
 use Illuminate\Routing\Controllers\Middleware;
@@ -127,100 +129,9 @@ class AdminOffMarketListingController extends Controller implements HasMiddlewar
         return view('admin.off_market_listings.form', compact('users', 'propertyTypes', 'unitTypes', 'features', 'ownershipStatuses', 'rentFrequencies', 'cheques'));
     }
 
-    public function store(Request $request)
-    {
-        $validated = $request->validate([
-            'property_title' => 'required|string|max:255',
-            'description' => 'required|string',
-            'purpose' => 'required|in:Rent,Buy',
-            'price' => 'required|numeric',
-            'old_price' => 'nullable|numeric',
-            'area_size' => 'required|string',
-            'bedrooms' => 'nullable|integer|min:0|max:100',
-            'bathrooms' => 'nullable|integer|min:0|max:100',
-            'property_type_id' => 'required|exists:property_types,id',
-            'unit_type_id' => 'required|exists:unit_types,id',
-            'address' => 'nullable|string|max:500',
-            'latitude' => 'nullable|numeric',
-            'longitude' => 'nullable|numeric',
-            'video' => 'nullable|file|mimetypes:video/mp4,video/quicktime|max:102400', // Max 35MB
-            'features' => 'array',
-            'thumbnail' => 'required|image|max:102400', // Max 10MB
-            'gallery.*' => 'image|mimes:jpeg,png,jpg,webp|max:102400', // Max 20MB
-            'floor_plans.*' => 'image|mimes:jpeg,png,jpg,webp|max:102400', // Max 20MB
-            'ownership_status_id' => 'nullable|exists:ownership_statuses,id',
-            'rent_frequency_id' => 'nullable|exists:rent_frequencies,id',
-            'cheque_id' => 'nullable|exists:cheques,id',
-            'council_tax_band' => 'nullable|string',
-            'epc_rating' => 'nullable|string',
-            'floors_count' => 'nullable|integer',
-            'availability_date' => 'nullable|date',
-            'no_onward_chain' => 'nullable|boolean',
-            'private_rights_of_way' => 'nullable|string',
-            'public_rights_of_way' => 'nullable|string',
-            'listed_property' => 'nullable|string',
-            'restrictions' => 'nullable|string',
-            'flood_risk' => 'nullable|string',
-            'flood_history' => 'nullable|string',
-            'flood_defenses' => 'nullable|string',
-            'brochure_pdf' => 'nullable|file|mimes:pdf|max:10240',
-        ]);
-
-        $validated['property_reference_number'] = 'OFF-REF-' . time();
-        $validated['slug'] = \Illuminate\Support\Str::slug($validated['property_title']) . '-' . time();
-        $validated['status'] = 'pending';
-        $validated['user_id'] = auth()->id();
-
-        if ($request->hasFile('thumbnail')) {
-            $validated['thumbnail'] = $request->file('thumbnail')->store('thumbnails', 'public');
-        }
-
-        if ($request->hasFile('video')) {
-            $validated['video'] = $request->file('video')->store('videos', 'public');
-        }
-
-        if ($request->hasFile('gallery')) {
-            $galleryPaths = [];
-            foreach ($request->file('gallery') as $file) {
-                $galleryPaths[] = $file->store('gallery', 'public');
-            }
-            $validated['gallery'] = $galleryPaths;
-        }
-
-        if ($request->hasFile('brochure_pdf')) {
-            $validated['brochure_pdf'] = $request->file('brochure_pdf')->store('brochures', 'public');
-        }
-
-        if ($request->hasFile('floor_plans')) {
-            $floorPlanPaths = [];
-            foreach ($request->file('floor_plans') as $file) {
-                $floorPlanPaths[] = $file->store('floor_plans', 'public');
-            }
-            $validated['floor_plans'] = $floorPlanPaths;
-        }
-
-        $listing = \App\Models\OffMarketListing::create($validated);
-
-        if ($request->is_draft == "1") {
-            $listing->update(['status' => 'draft']);
-        }
-
-        if (isset($validated['features'])) {
-            $listing->features()->sync($validated['features']);
-        }
-
-        return response()->json(['success' => true, 'message' => 'Off-Market Listing created successfully.']);
-    }
-
-    public function show(string $id)
-    {
-        $listing = \App\Models\OffMarketListing::with(['user', 'features', 'propertyType', 'unitType', 'ownershipStatus', 'rentFrequency', 'cheque'])->findOrFail($id);
-        return view('admin.off_market_listings.show', compact('listing'));
-    }
-
     public function edit(string $id)
     {
-        $listing = \App\Models\OffMarketListing::with(['features', 'ownershipStatus', 'rentFrequency', 'cheque'])->findOrFail($id);
+        $listing = \App\Models\OffMarketListing::with(['materialInfo', 'utilities', 'details', 'media', 'features'])->findOrFail($id);
         $users = \App\Models\User::all();
         $propertyTypes = \App\Models\PropertyType::all();
         $unitTypes = \App\Models\UnitType::all();
@@ -231,119 +142,354 @@ class AdminOffMarketListingController extends Controller implements HasMiddlewar
         return view('admin.off_market_listings.form', compact('listing', 'users', 'propertyTypes', 'unitTypes', 'features', 'ownershipStatuses', 'rentFrequencies', 'cheques'));
     }
 
-    public function update(Request $request, string $id)
+    public function show(string $id)
     {
-        $listing = \App\Models\OffMarketListing::findOrFail($id);
+        $listing = \App\Models\OffMarketListing::with(['user', 'propertyType', 'unitType', 'features', 'materialInfo', 'utilities', 'media', 'rooms', 'details'])->findOrFail($id);
 
-        $validated = $request->validate([
-            'property_title' => 'required|string|max:255',
-            'description' => 'required|string',
-            'purpose' => 'required|in:Rent,Buy',
-            'price' => 'required|numeric',
-            'old_price' => 'nullable|numeric',
-            'area_size' => 'required|string',
-            'bedrooms' => 'nullable|integer|min:0|max:100',
-            'bathrooms' => 'nullable|integer|min:0|max:100',
-            'property_type_id' => 'required|exists:property_types,id',
-            'unit_type_id' => 'required|exists:unit_types,id',
-            'address' => 'nullable|string|max:500',
-            'latitude' => 'nullable|numeric',
-            'longitude' => 'nullable|numeric',
-            'video' => 'nullable|file|mimetypes:video/mp4,video/quicktime|max:102400', // Max 35MB
-            'status' => 'sometimes|in:pending,approved,rejected,draft',
-            'features' => 'array',
-            'thumbnail' => 'image|nullable|max:102400', // Max 10MB
-            'gallery.*' => 'image|mimes:jpeg,png,jpg,webp|max:102400', // Max 20MB
-            'floor_plans.*' => 'image|mimes:jpeg,png,jpg,webp|max:102400', // Max 20MB
-            'ownership_status_id' => 'nullable|exists:ownership_statuses,id',
-            'rent_frequency_id' => 'nullable|exists:rent_frequencies,id',
-            'cheque_id' => 'nullable|exists:cheques,id',
-            'council_tax_band' => 'nullable|string',
-            'epc_rating' => 'nullable|string',
-            'floors_count' => 'nullable|integer',
-            'availability_date' => 'nullable|date',
-            'no_onward_chain' => 'nullable|boolean',
-            'private_rights_of_way' => 'nullable|string',
-            'public_rights_of_way' => 'nullable|string',
-            'listed_property' => 'nullable|string',
-            'restrictions' => 'nullable|string',
-            'flood_risk' => 'nullable|string',
-            'flood_history' => 'nullable|string',
-            'flood_defenses' => 'nullable|string',
-            'brochure_pdf' => 'nullable|file|mimes:pdf|max:10240',
-        ]);
+        // Role-based access control
+        $user = auth()->user();
+        if (!$user->hasAnyRole(['admin', 'manager', 'listing director', 'Q/A'])) {
+            if ($user->hasRole('Agency') || ($user->hasRole('agent') && $user->agency_id)) {
+                $ownerId = $user->hasRole('Agency') ? $user->id : $user->agency_id;
+                $teamIds = \App\Models\User::where('agency_id', $ownerId)->pluck('id')->toArray();
+                $poolIds = array_merge([$ownerId], $teamIds);
+
+                if (!in_array($listing->user_id, $poolIds)) {
+                    abort(403, 'Unauthorized access to this listing');
+                }
+            } else {
+                if ($listing->user_id != $user->id) {
+                    abort(403, 'Unauthorized access to this listing');
+                }
+            }
+        }
+
+        return view('admin.off_market_listings.show', compact('listing'));
+    }
+
+    public function store(ListingRequest $request)
+    {
+        $validated = $request->validated();
+
+        $validated['property_reference_number'] = $request->property_reference_number ?: 'OFF-REF-' . strtoupper(\Illuminate\Support\Str::random(10));
+        $validated['slug'] = \Illuminate\Support\Str::slug($validated['property_title']) . '-' . time();
+        $validated['user_id'] = auth()->id();
+        $validated['status'] = $request->is_draft ? 'draft' : 'pending';
 
         if ($request->hasFile('thumbnail')) {
             $validated['thumbnail'] = $request->file('thumbnail')->store('thumbnails', 'public');
-        } elseif ($request->has('remove_thumbnail')) {
-            $validated['thumbnail'] = null;
         }
-
         if ($request->hasFile('video')) {
             $validated['video'] = $request->file('video')->store('videos', 'public');
-        } elseif ($request->has('remove_video')) {
-            $validated['video'] = null;
         }
-
-        // Keep existing images (minus removed ones)
-        $galleryPaths = $listing->gallery ?? [];
-
-        // Remove images marked for deletion
-        if ($request->has('remove_gallery')) {
-            $galleryPaths = array_diff($galleryPaths, array_filter($request->remove_gallery));
-            Log::info('Gallery paths after removal: ', $galleryPaths);
-        }
-
-        // Add new uploaded images
-        if ($request->hasFile('gallery')) {
-            foreach ($request->file('gallery') as $file) {
-                $galleryPaths[] = $file->store('gallery', 'public');
-            }
-            Log::info('New gallery paths added: ', $galleryPaths);
-        }
-
-        $validated['gallery'] = array_values($galleryPaths);
-
         if ($request->hasFile('brochure_pdf')) {
-            if ($listing->brochure_pdf)
-                \Storage::disk('public')->delete($listing->brochure_pdf);
             $validated['brochure_pdf'] = $request->file('brochure_pdf')->store('brochures', 'public');
         }
+        if ($request->hasFile('epc_upload')) {
+            $validated['epc_upload'] = $request->file('epc_upload')->store('epc', 'public');
+        }
 
-        // Handle Floor Plans
-        $floorPlanPaths = $listing->floor_plans ?? [];
+        // Separate main table data
+        $mainData = \Illuminate\Support\Arr::only($validated, [
+            'property_title',
+            'summary_description',
+            'description',
+            'purpose',
+            'price',
+            'price_qualifier',
+            'old_price',
+            'postcode',
+            'address',
+            'display_address',
+            'latitude',
+            'longitude',
+            'bedrooms',
+            'bathrooms',
+            'reception_rooms',
+            'area_size',
+            'floor_level',
+            'property_type_id',
+            'sub_type',
+            'unit_type_id',
+            'property_reference_number',
+            'slug',
+            'user_id',
+            'status',
+            'thumbnail',
+            'video',
+            'brochure_pdf',
+            'epc_upload',
+            'virtual_tour_url',
+            // Flat fields
+            'tenure',
+            'unexpired_years',
+            'ground_rent',
+            'service_charge',
+            'council_tax_band',
+            'parking_type',
+            'parking_spaces_count',
+            'construction_type',
+            'accessibility',
+            'rights_restrictions',
+            'listed_building',
+            'flood_risk',
+            'cladding_risk',
+            'other_risks',
+            'utilities_water',
+            'utilities_electricity',
+            'utilities_sewerage',
+            'heating_type',
+            'broadband',
+            'mobile_coverage',
+            'key_features',
+            'tags',
+            'government_scheme',
+            'deposit',
+            'availability_date'
+        ]);
 
-        if ($request->has('remove_floor_plans')) {
-            $floorPlanPaths = array_diff($floorPlanPaths, array_filter($request->remove_floor_plans));
+        // Map utilities/heating correctly
+        $mainData['heating_type'] = $request->utilities_heating;
+        $mainData['broadband'] = $request->utilities_broadband;
+        $mainData['mobile_coverage'] = $request->utilities_mobile;
+        $mainData['listed_property'] = $request->listed_property;
+
+        $listing = \App\Models\OffMarketListing::create($mainData);
+
+        // Sync Features
+        if ($request->has('features')) {
+            $listing->features()->sync($request->features);
+        }
+
+        // Save Normalized Data
+        $listing->materialInfo()->create([
+            'tenure' => $request->tenure,
+            'unexpired_years' => $request->unexpired_years,
+            'ground_rent' => $request->ground_rent,
+            'service_charge' => $request->service_charge,
+            'council_tax_band' => $request->council_tax_band,
+            'parking_type' => $request->parking_type,
+            'parking_spaces_count' => $request->parking_spaces_count,
+            'construction_type' => $request->construction_type,
+            'accessibility' => $request->accessibility,
+            'rights_restrictions' => $request->rights_restrictions,
+            'listed_building' => $request->listed_property, // Fixed: Front-end uses listed_property
+            'flood_risk' => $request->flood_risk,
+            'cladding_risk' => $request->cladding_risk,
+            'other_risks' => $request->other_risks,
+        ]);
+
+        // Notify Admin
+        Mail::to('info@propertyfinda.co.uk')->send(new AdminNotification('listing_added', [
+            'user' => auth()->user(),
+            'listing' => $listing,
+            'listing_type' => 'Off-Market Listing'
+        ]));
+
+        $listing->utilities()->create([
+            'water' => $request->utilities_water,
+            'electricity' => $request->utilities_electricity,
+            'sewerage' => $request->utilities_sewerage,
+            'heating_type' => $request->utilities_heating,
+            'broadband' => $request->utilities_broadband,
+            'mobile_coverage' => $request->utilities_mobile,
+        ]);
+
+        $listing->details()->create([
+            'key_features' => $request->key_features,
+            'tags' => $request->tags,
+            'government_scheme' => $request->government_scheme,
+            'deposit' => $request->deposit,
+        ]);
+
+        // Media Uploads
+        if ($request->hasFile('gallery')) {
+            foreach ($request->file('gallery') as $file) {
+                $listing->media()->create([
+                    'type' => 'photo',
+                    'file_path' => $file->store('gallery', 'public'),
+                ]);
+            }
         }
 
         if ($request->hasFile('floor_plans')) {
             foreach ($request->file('floor_plans') as $file) {
-                $floorPlanPaths[] = $file->store('floor_plans', 'public');
+                $listing->media()->create([
+                    'type' => 'floorplan',
+                    'file_path' => $file->store('floor_plans', 'public'),
+                ]);
             }
         }
-        $validated['floor_plans'] = array_values($floorPlanPaths);
 
-        // Enforce verification check for 'approved' status
-        if ($request->status === 'approved' && $listing->user->status !== 'document_approved') {
-            return response()->json([
-                'success' => false,
-                'message' => 'Verification Required: You must verify your account before approving listings.',
-                'redirect' => route('profile.edit')
-            ], 403);
+        $this->updateListingLifeCycle($listing);
+
+        return response()->json(['success' => true, 'message' => 'Off-Market Listing created successfully.', 'listing_id' => $listing->id]);
+
+        return response()->json(['success' => true, 'message' => 'Off-Market Listing created successfully.', 'listing_id' => $listing->id]);
+    }
+
+    public function update(ListingRequest $request, string $id)
+    {
+        $listing = \App\Models\OffMarketListing::findOrFail($id);
+
+        $validated = $request->validated();
+
+        if ($request->hasFile('thumbnail')) {
+            $validated['thumbnail'] = $request->file('thumbnail')->store('thumbnails', 'public');
+        }
+        if ($request->hasFile('video')) {
+            $validated['video'] = $request->file('video')->store('videos', 'public');
+        }
+        if ($request->hasFile('brochure_pdf')) {
+            $validated['brochure_pdf'] = $request->file('brochure_pdf')->store('brochures', 'public');
+        }
+        if ($request->hasFile('epc_upload')) {
+            $validated['epc_upload'] = $request->file('epc_upload')->store('epc', 'public');
         }
 
-        $listing->update($validated);
-
-        if ($request->is_draft == "1") {
-            $listing->update(['status' => 'draft']);
+        if ($request->is_draft) {
+            $validated['status'] = 'draft';
         }
 
-        if (isset($validated['features'])) {
-            $listing->features()->sync($validated['features']);
+        // Separate main table data
+        $mainData = \Illuminate\Support\Arr::only($validated, [
+            'property_title',
+            'summary_description',
+            'description',
+            'purpose',
+            'price',
+            'price_qualifier',
+            'old_price',
+            'postcode',
+            'address',
+            'display_address',
+            'latitude',
+            'longitude',
+            'bedrooms',
+            'bathrooms',
+            'reception_rooms',
+            'area_size',
+            'floor_level',
+            'property_type_id',
+            'sub_type',
+            'unit_type_id',
+            'status',
+            'thumbnail',
+            'video',
+            'brochure_pdf',
+            'epc_upload',
+            'virtual_tour_url',
+            // Flat fields
+            'tenure',
+            'unexpired_years',
+            'ground_rent',
+            'service_charge',
+            'council_tax_band',
+            'parking_type',
+            'parking_spaces_count',
+            'construction_type',
+            'accessibility',
+            'rights_restrictions',
+            'listed_building',
+            'flood_risk',
+            'cladding_risk',
+            'other_risks',
+            'utilities_water',
+            'utilities_electricity',
+            'utilities_sewerage',
+            'heating_type',
+            'broadband',
+            'mobile_coverage',
+            'key_features',
+            'tags',
+            'government_scheme',
+            'deposit',
+            'availability_date'
+        ]);
+
+        // Map utilities/heating correctly
+        $mainData['heating_type'] = $request->utilities_heating;
+        $mainData['broadband'] = $request->utilities_broadband;
+        $mainData['mobile_coverage'] = $request->utilities_mobile;
+        $mainData['listed_property'] = $request->listed_property;
+
+        $listing->update($mainData);
+
+        // Sync Features
+        if ($request->has('features')) {
+            $listing->features()->sync($request->features);
         }
+
+        // Update Normalized Data
+        $listing->materialInfo()->updateOrCreate([], [
+            'tenure' => $request->tenure,
+            'unexpired_years' => $request->unexpired_years,
+            'ground_rent' => $request->ground_rent,
+            'service_charge' => $request->service_charge,
+            'council_tax_band' => $request->council_tax_band,
+            'parking_type' => $request->parking_type,
+            'parking_spaces_count' => $request->parking_spaces_count,
+            'construction_type' => $request->construction_type,
+            'accessibility' => $request->accessibility,
+            'rights_restrictions' => $request->rights_restrictions,
+            'listed_building' => $request->listed_property, // Fixed: Front-end uses listed_property
+            'flood_risk' => $request->flood_risk,
+            'cladding_risk' => $request->cladding_risk,
+            'other_risks' => $request->other_risks,
+        ]);
+
+        $listing->utilities()->updateOrCreate([], [
+            'water' => $request->utilities_water,
+            'electricity' => $request->utilities_electricity,
+            'sewerage' => $request->utilities_sewerage,
+            'heating_type' => $request->utilities_heating,
+            'broadband' => $request->utilities_broadband,
+            'mobile_coverage' => $request->utilities_mobile,
+        ]);
+
+        $listing->details()->updateOrCreate([], [
+            'key_features' => $request->key_features,
+            'tags' => $request->tags,
+            'government_scheme' => $request->government_scheme,
+            'deposit' => $request->deposit,
+        ]);
+
+        // Media Uploads
+        if ($request->hasFile('gallery')) {
+            foreach ($request->file('gallery') as $file) {
+                $listing->media()->create([
+                    'type' => 'photo',
+                    'file_path' => $file->store('gallery', 'public'),
+                ]);
+            }
+        }
+
+        if ($request->hasFile('floor_plans')) {
+            foreach ($request->file('floor_plans') as $file) {
+                $listing->media()->create([
+                    'type' => 'floorplan',
+                    'file_path' => $file->store('floor_plans', 'public'),
+                ]);
+            }
+        }
+
+        // Remove media logic
+        if ($request->has('remove_media')) {
+            \App\Models\OffMarketMedia::whereIn('id', $request->remove_media)->delete();
+        }
+
+        $this->updateListingLifeCycle($listing);
 
         return response()->json(['success' => true, 'message' => 'Off-Market Listing updated successfully.']);
+    }
+
+    private function updateListingLifeCycle($listing)
+    {
+        if ($listing->status === 'draft') {
+            return;
+        }
+
+        // Removed auto-approval so newly added listings stay 'pending' by default.
     }
 
     public function destroy(string $id)
@@ -357,18 +503,20 @@ class AdminOffMarketListingController extends Controller implements HasMiddlewar
     public function updateStatus(Request $request, $id)
     {
         $listing = \App\Models\OffMarketListing::findOrFail($id);
+        $newStatus = $request->status;
 
-        // If trying to set to approved, check if listing owner is verified
-        if ($request->status === 'approved' && $listing->user->status !== 'document_approved') {
+        // If trying to set to approved, under_offer, or sold, check if listing owner is verified
+        $restrictedStatuses = ['approved', 'under_offer', 'sold'];
+        if (in_array($newStatus, $restrictedStatuses) && $listing->user->status !== 'document_approved') {
             return response()->json([
                 'success' => false,
-                'message' => 'Verification Required: You must verify your account before approving listings.',
+                'message' => 'Verification Required: You must verify your account before setting this listing to ' . str_replace('_', ' ', $newStatus) . '.',
                 'redirect' => route('profile.edit')
             ], 403);
         }
 
-        $listing->update(['status' => $request->status]);
-        return response()->json(['success' => true, 'message' => 'Status updated to ' . $request->status]);
+        $listing->update(['status' => $newStatus]);
+        return response()->json(['success' => true, 'message' => 'Status updated to ' . str_replace('_', ' ', $newStatus)]);
     }
 
     public function bulkAction(Request $request)
@@ -414,12 +562,12 @@ class AdminOffMarketListingController extends Controller implements HasMiddlewar
                 break;
             case 'duplicate':
                 foreach ($ids as $id) {
-                    $original = \App\Models\OffMarketListing::with('features')->find($id);
+                    $original = \App\Models\OffMarketListing::with(['features', 'materialInfo', 'utilities', 'details', 'media'])->find($id);
                     if ($original) {
                         $new = $original->replicate();
                         $new->property_title = $original->property_title . ' (Copy)';
                         $new->slug = \Illuminate\Support\Str::slug($new->property_title) . '-' . time() . '-' . uniqid();
-                        $new->property_reference_number = 'OFF-REF-' . time() . uniqid();
+                        $new->property_reference_number = 'OFF-REF-' . time() . strtoupper(\Illuminate\Support\Str::random(5));
                         $new->status = 'pending';
                         $new->created_at = now();
                         $new->updated_at = now();
@@ -429,9 +577,26 @@ class AdminOffMarketListingController extends Controller implements HasMiddlewar
                         if ($original->features->isNotEmpty()) {
                             $new->features()->sync($original->features->pluck('id'));
                         }
+
+                        // Replicate associated records
+                        if ($original->materialInfo)
+                            $new->materialInfo()->create($original->materialInfo->toArray());
+                        if ($original->utilities)
+                            $new->utilities()->create($original->utilities->toArray());
+                        if ($original->details)
+                            $new->details()->create($original->details->toArray());
+
+                        // Replicate media records
+                        foreach ($original->media as $media) {
+                            $new->media()->create([
+                                'type' => $media->type,
+                                'file_path' => $media->file_path,
+                                'sort_order' => $media->sort_order
+                            ]);
+                        }
                     }
                 }
-                $msg = "Selected deals duplicated successfully.";
+                $msg = count($ids) . " deals duplicated successfully.";
                 break;
             case 'export':
                 return response()->json(['success' => true, 'redirect' => route('admin.off-market-listings.export', ['ids' => implode(',', $ids)])]);

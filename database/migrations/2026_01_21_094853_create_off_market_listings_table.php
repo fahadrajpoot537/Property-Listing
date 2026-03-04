@@ -16,11 +16,24 @@ return new class extends Migration {
             $table->string('property_title');
             $table->longText('description')->nullable();
             $table->string('property_reference_number')->unique();
-            $table->string('purpose'); // Rent / Buy
+            $table->string('purpose');
             $table->decimal('price', 15, 2);
             $table->string('area_size');
             $table->integer('bedrooms');
             $table->integer('bathrooms');
+
+            // 🔹 Flat Specific Fields
+            $table->string('tenure')->nullable();
+            $table->string('unexpired_years')->nullable();
+            $table->string('ground_rent')->nullable();
+            $table->string('service_charge')->nullable();
+            $table->string('deposit')->nullable();
+            $table->string('parking_spaces_count')->nullable();
+            $table->string('council_tax_band')->nullable();
+            $table->string('parking_type')->nullable();
+            $table->string('construction_type')->nullable();
+            $table->text('rights_restrictions')->nullable();
+
             $table->foreignId('property_type_id')->constrained('property_types');
             $table->foreignId('unit_type_id')->constrained('unit_types');
             $table->string('ownership_status')->nullable();
@@ -32,7 +45,7 @@ return new class extends Migration {
             $table->string('video')->nullable();
             $table->string('brochure_pdf')->nullable();
             $table->string('slug')->unique();
-            $table->string('status')->default('pending'); // pending, approved, rejected
+            $table->string('status')->default('pending');
             $table->timestamps();
         });
 

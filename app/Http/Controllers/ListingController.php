@@ -233,7 +233,7 @@ class ListingController extends Controller
 
     public function show($id)
     {
-        $listing = Listing::with(['features', 'user', 'propertyType', 'unitType'])
+        $listing = Listing::with(['features', 'user', 'propertyType', 'unitType', 'materialInfo', 'utilities', 'media', 'rooms', 'details'])
             ->where('status', 'approved')
             ->where(function ($query) use ($id) {
                 $query->where('slug', $id)->orWhere('id', $id);
@@ -271,7 +271,7 @@ class ListingController extends Controller
             return response()->json(['error' => 'No valid postcode found for this property.'], 404);
         }
 
-        $apiKey = '3f5f396290a1e9c3be70b679210c188d3562a0d9';
+        $apiKey = config('services.patma.api_token');
         // Using radius=0.2 (API minimum) and exact address filtering to only show history for this specific property
         $apiUrl = "https://app.patma.co.uk/api/prospector/v1/list-property/?postcode=" . urlencode($postcode) . "&radius=0.2&require_sold_price=true&include_sold_history=true&include_listing_data=true&token=" . $apiKey;
 
@@ -365,8 +365,9 @@ class ListingController extends Controller
                             $score += 100;
                         }
 
-                        // Threshold for a valid match (Lowered since the number filter is now extremely strict)
-                        if ($score < 150)
+                        // Threshold for a valid match
+                        // Higher score for getSoldPrices since we only want to match the SPECIFIC property
+                        if ($score < 200)
                             continue;
 
                         // Combine sold history and asking price history
@@ -610,8 +611,21 @@ class ListingController extends Controller
             $query->where('purpose', $request->purpose);
         }
 
-        // Location & Radius Search
-        if ($request->filled('lat') && $request->filled('lng')) {
+        // Polygon Search
+        if ($request->filled('polygon')) {
+            $polygon = json_decode($request->polygon, true);
+            if (is_array($polygon) && count($polygon) > 2) {
+                $wkt = 'POLYGON((';
+                $points = [];
+                foreach ($polygon as $point) {
+                    $points[] = $point['lng'] . ' ' . $point['lat'];
+                }
+                $points[] = $polygon[0]['lng'] . ' ' . $polygon[0]['lat'];
+                $wkt .= implode(',', $points) . '))';
+
+                $query->whereRaw("ST_Contains(ST_GeomFromText(?), POINT(longitude, latitude))", [$wkt]);
+            }
+        } elseif ($request->filled('lat') && $request->filled('lng')) {
             $lat = $request->lat;
             $lng = $request->lng;
 
@@ -769,7 +783,7 @@ class ListingController extends Controller
         }
 
         // Use the EXACT same API configuration as getSoldPrices
-        $apiKey = '3f5f396290a1e9c3be70b679210c188d3562a0d9';
+        $apiKey = config('services.patma.api_token');
         $url = "https://app.patma.co.uk/api/prospector/v1/list-property/?postcode=" . urlencode($apiPostcode) . "&radius=0.5&require_sold_price=true&include_listing_data=true&include_sold_history=true&token=" . $apiKey;
 
         \Illuminate\Support\Facades\Log::info("External Details API Call: {$url}");
@@ -804,51 +818,66 @@ class ListingController extends Controller
                         $score = 0;
                         $resAddr = $res['address'] ?? $res['label'] ?? '';
                         $resAddrClean = strtolower(preg_replace('/[^a-z0-9 ]/', ' ', $resAddr));
-                        $normResAddr = strtolower(preg_replace('/[^a-zA-Z0-9]/', '', $resAddr));
-                        $normInputAddr = strtolower(preg_replace('/[^a-zA-Z0-9]/', '', $address));
+                        $normRes = strtolower(preg_replace('/[^a-z0-9]/', '', $resAddr));
 
                         // Priority 1: Exact coordinate match
                         if ($lat && $lng && isset($res['latitude'], $res['longitude'])) {
                             if (abs((float) $res['latitude'] - (float) $lat) < 0.0001 && abs((float) $res['longitude'] - (float) $lng) < 0.0001) {
-                                $score += 100;
+                                $score += 300;
                             }
                         }
 
-                        // Priority 2: Full Address Match
-                        if ($normResAddr === $normInputAddr) {
+                        // 1. Check Full Normalized Match
+                        if ($normRes === strtolower(preg_replace('/[^a-z0-9]/', '', $address)) || $normRes === $normInputAddrNoPc) {
                             $score += 500;
                         }
 
-                        // Priority 3: Word & Number Match
-                        $matchCount = 0;
-                        foreach ($inputWords as $word) {
-                            if (strlen($word) > 1 && strpos($resAddrClean, $word) !== false) {
-                                $matchCount++;
-                                $score += 10;
-                            }
-                        }
+                        // 2. Advanced Match Type Detection
+                        // Remove postcode from result address for clean number extraction
+                        $resAddrNoPc = preg_replace('/\b[A-Z]{1,2}\d[A-Z\d]?\s*\d[A-Z]{2}\b/i', '', $resAddr);
+                        preg_match_all('/\d+/', $resAddrNoPc, $resMatches);
+                        $resNumbers = array_unique($resMatches[0] ?? []);
 
-                        // Number matching - CRITICAL for distinguishing flats
-                        foreach ($targetNumbers as $num) {
-                            if (preg_match('/\b' . $num . '\b/', $resAddr)) {
+                        if (!empty($targetNumbers)) {
+                            $missing = array_diff($targetNumbers, $resNumbers);
+                            $extra = array_diff($resNumbers, $targetNumbers);
+
+                            if (empty($missing) && empty($extra)) {
+                                // Exact numeric match (e.g., both are Flat 3, 8 ...)
+                                $score += 250;
+                            } elseif (!empty($extra)) {
+                                // Explicitly a different unit (e.g., viewing 26, result is 28)
+                                continue;
+                            } elseif (empty($resNumbers)) {
+                                // Result has no unit numbers (Building/Street level)
                                 $score += 100;
+                            } else {
+                                // Missing some or other mismatch
+                                continue;
                             }
                         }
 
-                        // Substring match ignoring postcodes
-                        if ($normResAddr && $normInputAddrNoPc && (strpos($normResAddr, $normInputAddrNoPc) !== false)) {
-                            $score += 150;
+                        // 3. Word Matches
+                        foreach ($inputWords as $word) {
+                            $word = trim($word);
+                            if (strlen($word) > 3 && strpos($resAddrClean, $word) !== false) {
+                                $score += 60;
+                            } elseif (strlen($word) > 2 && strpos($resAddrClean, $word) !== false) {
+                                $score += 20;
+                            }
                         }
 
-                        // Priority 4: Data Quality (Prefer results with images/descriptions)
+                        // 4. Substring Match
+                        if ($normInputAddrNoPc && strlen($normInputAddrNoPc) > 5 && strpos($normRes, $normInputAddrNoPc) !== false) {
+                            $score += 200;
+                        }
+
+                        // 5. Data Quality
                         if (!empty($res['site_images']) || !empty($res['images'])) {
                             $score += 50;
                         }
-                        if (!empty($res['description_text']) || !empty($res['description'])) {
-                            $score += 30;
-                        }
 
-                        if ($score > $bestScore && $score > 0) {
+                        if ($score > $bestScore && $score > 150) {
                             $bestScore = $score;
                             $bestMatch = $res;
                         }
@@ -856,7 +885,7 @@ class ListingController extends Controller
 
                     $property = $bestMatch;
 
-                    // Fallback to first result ONLY if there is only 1 result and no best match found
+                    // Fallback to first result ONLY if there is only 1 result and it's a decent guess
                     if (!$property && count($data['data']['available_results']) === 1) {
                         $property = $data['data']['available_results'][0];
                     }
@@ -945,7 +974,7 @@ class ListingController extends Controller
                 }
 
                 $postcodeFormatted = (strlen($postcode) > 4) ? substr($postcode, 0, -3) . ' ' . substr($postcode, -3) : $postcode;
-                $apiKey = '3f5f396290a1e9c3be70b679210c188d3562a0d9';
+                $apiKey = config('services.patma.api_token');
 
                 // PaTMa list-property API call
                 $url = "https://app.patma.co.uk/api/prospector/v1/list-property/?postcode=" . urlencode($postcodeFormatted) . "&radius=" . $searchRadius . "&require_sold_price=true&include_sold_history=true&include_listing_data=true&limit=100&token=" . $apiKey;

@@ -3,27 +3,28 @@
 @section('content')
 
   <!-- Portal Hero Search Section -->
-  <div class="relative bg-primary overflow-visible">
+  <div class="relative bg-primary overflow-visible min-h-[60vh] md:min-h-[90vh] flex flex-col">
     <!-- Background Pattern -->
     <div class="absolute inset-0 z-0">
       <!-- Image with Overlay -->
-      <img src="{{ asset('1.jpg') }}" class="w-full h-full object-cover" alt="Background">
+      <img src="{{ asset('hero_premium.png') }}" class="w-full h-full object-cover" alt="Background">
       <!-- <div class="absolute inset-0 bg-primary/80 mix-blend-multiply"></div> -->
     </div>
 
-    <div class="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 md:py-24">
-      <div class="text-center mb-10">
-        <h1 class="text-3xl md:text-6xl font-extrabold text-white mb-4 tracking-tight"
+    <div
+      class="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-20 pb-48 md:pt-96 md:pb-[480px] flex-1 flex flex-col justify-center">
+      <div class="text-center mb-16 md:mb-32 lg:mb-40 px-4">
+        <h1 class="text-3xl md:text-5xl font-black text-white mb-1 md:mb-4 tracking-tight"
           style="text-shadow: 2px 2px 4px rgba(0,0,0,0.7);">
           Find Your Perfect Home
         </h1>
-        <p class="text-xl text-white font-medium mb-6" style="text-shadow: 1px 1px 3px rgba(0,0,0,0.6);">
-          Search properties for sale and to rent in the UK
+        <p class="text-base text-white font-medium mb-10 drop-shadow-md max-w-lg mx-auto leading-relaxed">
+          The UK's fastest growing property search portal for sale and to rent.
         </p>
 
-        <div class="flex justify-center mb-8">
+        <div class="flex justify-center mb-1">
           <a href="https://uk.trustpilot.com/review/propertyfinda.co.uk" target="_blank"
-            class="inline-flex items-center gap-2 bg-white px-5 py-2.5 border border-[#00B67A] rounded hover:shadow-md transition-all">
+            class="inline-flex items-center gap-2 bg-white px-4 py-2.5 border border-[#00B67A] rounded hover:shadow-md transition-all">
             <span class="text-[#191919] text-base md:text-lg font-medium">Review us on</span>
             <div class="flex items-center gap-1.5">
               <svg viewBox="0 0 100 100" class="w-6 h-6">
@@ -39,22 +40,20 @@
       </div>
 
       <!-- Main Portal Search Box (Rightmove-meets-Zoopla Mixture) -->
-      <div class="bg-white rounded-2xl shadow-2xl overflow-visible max-w-5xl mx-auto p-2">
+      <div style="margin-bottom: 15%;"
+        class="bg-white rounded-2xl md:rounded-3xl shadow-[0_20px_50px_rgba(0,0,0,0.15)] overflow-visible max-w-5xl mx-auto p-2 md:p-3 relative -mb-24 md:-mb-52 border border-gray-100">
         <div x-data="{ tab: 'buy' }">
           <!-- Tabs Style (Zoopla Inspired) -->
           <div class="flex p-1 bg-gray-100 rounded-xl mb-4">
-            <button @click="tab = 'buy'" class="flex-1 py-3 text-base font-bold text-center transition-all rounded-lg"
+            <button @click="tab = 'buy'"
+              class="flex-1 py-3 text-base font-bold text-center transition-all rounded-lg font-effra"
               :class="tab === 'buy' ? 'bg-white text-primary shadow-sm' : 'text-gray-500 hover:text-primary'">
               For Sale
             </button>
-            <button @click="tab = 'rent'" class="flex-1 py-3 text-base font-bold text-center transition-all rounded-lg"
+            <button @click="tab = 'rent'"
+              class="flex-1 py-3 text-base font-bold text-center transition-all rounded-lg font-effra"
               :class="tab === 'rent' ? 'bg-white text-primary shadow-sm' : 'text-gray-500 hover:text-primary'">
               To Rent
-            </button>
-            <button @click="tab = 'discounted'"
-              class="flex-1 py-3 text-base font-bold text-center transition-all rounded-lg"
-              :class="tab === 'discounted' ? 'bg-white text-primary shadow-sm' : 'text-gray-500 hover:text-primary'">
-              Discounted Properties
             </button>
           </div>
 
@@ -179,15 +178,16 @@
                 </div>
 
                 <button type="submit"
-                  class="md:w-48 py-4 bg-secondary hover:bg-secondary-dark text-white font-extrabold text-lg rounded-xl shadow-lg shadow-secondary/20 transition-all transform hover:-translate-y-0.5 flex items-center justify-center gap-2 h-[56px]">
-                  Search
+                  class="md:w-48 py-4 bg-secondary hover:bg-secondary-dark text-white font-bold rounded-xl shadow-xl shadow-secondary/20 transition-all flex items-center justify-center gap-2 font-effra h-[56px] group">
+                  <span>Search</span>
+                  <i class="fa-solid fa-arrow-right text-xs group-hover:translate-x-1 transition-transform"></i>
                 </button>
               </div>
 
               <!-- Filters Grid -->
-              <div class="grid grid-cols-2 lg:grid-cols-6 gap-3">
+              <div class="grid grid-cols-2 lg:grid-cols-5 gap-3">
                 <!-- Property Type (Moved from 2nd position to 1st) -->
-                <div class="relative">
+                <div class="relative col-span-2 lg:col-span-1">
                   <div class="filter-icon-wrapper"><i class="fa-solid fa-house"></i></div>
                   <select name="property_type" class="select2-filter w-full" data-placeholder="Property type">
                     <option value="">Any Type</option>
@@ -197,16 +197,7 @@
                   </select>
                 </div>
 
-                <!-- Unit Type (New) -->
-                <div class="relative">
-                  <div class="filter-icon-wrapper"><i class="fa-solid fa-building"></i></div>
-                  <select name="unit_type" class="select2-filter w-full" data-placeholder="Unit type">
-                    <option value="">Any Unit</option>
-                    @foreach(\App\Models\UnitType::all() as $type)
-                      <option value="{{ $type->id }}">{{ $type->title }}</option>
-                    @endforeach
-                  </select>
-                </div>
+
 
                 <div class="relative">
                   <div class="filter-icon-wrapper"><i class="fa-solid fa-pound-sign"></i></div>
@@ -240,19 +231,14 @@
                   </select>
                 </div>
               </div>
+              <!-- Added some bottom padding space -->
+              <div class="mb-5 md:mb-8"></div>
             </form>
 
             <!-- jQuery & Select2 JS -->
             <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
             <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
-            <script>
-              $(document).ready(function () {
-                $('.select2-filter').select2({
-                  minimumResultsForSearch: 20,
-                  width: '100%',
-                  dropdownAutoWidth: true
-                });
-              });
+            <script>             $(document).ready(function () { $('.select2-filter').select2({ minimumResultsForSearch: 20, width: '100%', dropdownAutoWidth: true }); });
             </script>
           </div>
         </div>
@@ -261,7 +247,7 @@
   </div>
 
   <!-- Browse by Category Section -->
-  <section class="py-16 bg-white border-b border-gray-100">
+  <section class="pt-4 pb-16 md:pt-80 md:pb-2 bg-white border-b border-gray-100">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
       <h2 class="text-2xl font-bold text-primary mb-8 tracking-tight">Browse Properties</h2>
       <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-6">
@@ -322,195 +308,86 @@
               <i class="fa-solid {{ $cat['icon'] }} text-2xl"></i>
             </div>
             <span
-              class="font-bold text-gray-800 tracking-tight text-lg group-hover:text-secondary transition-colors">{{ $cat['name'] }}</span>
+              class="font-bold text-gray-800 tracking-tight text-base group-hover:text-secondary transition-colors">{{ $cat['name'] }}</span>
           </a>
         @endforeach
       </div>
     </div>
   </section>
+  <style>
+    .featured-swiper {
+      height: 100%;
+    }
 
+    .featured-swiper .swiper-wrapper {
+      align-items: stretch;
+    }
+
+    .featured-swiper .swiper-slide {
+      height: auto !important;
+    }
+  </style>
   <!-- Featured Properties Section -->
-  <section class="py-20 bg-gray-50">
+  <section class="py-16 bg-gray-50 overflow-hidden">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
       <div class="flex justify-between items-end mb-10">
         <div>
-          <h2 class="text-3xl font-extrabold text-primary tracking-tight">Featured Properties</h2>
-          <p class="text-gray-500 mt-2 text-lg">Hand-picked homes from across the UK</p>
+          <h2 class="text-3xl font-black text-primary tracking-tight">Featured Properties</h2>
+          <p class="text-gray-500 mt-1 text-sm font-medium">Hand-picked homes from across the UK</p>
         </div>
         <a href="{{ route('listings.index') }}" class="text-secondary font-bold hover:underline flex items-center gap-2">
           View all properties <i class="fa-solid fa-arrow-right text-xs"></i>
         </a>
       </div>
 
-      <div x-data="{ featuredTab: 'sale' }">
+      <div x-data="{ featuredTab: 'sale' }" class="min-h-[600px]">
         <div class="flex gap-4 mb-8">
-          <button @click="featuredTab = 'sale'" class="px-6 py-2.5 rounded-full font-bold transition-all"
-            :class="featuredTab === 'sale' ? 'bg-primary text-white' : 'bg-white text-gray-500 hover:bg-gray-100'">Buy</button>
-          <button @click="featuredTab = 'rent'" class="px-6 py-2.5 rounded-full font-bold transition-all"
-            :class="featuredTab === 'rent' ? 'bg-primary text-white' : 'bg-white text-gray-500 hover:bg-gray-100'">Rent</button>
+          <button @click="featuredTab = 'sale'" class="px-8 py-3 rounded-xl font-bold transition-all shadow-sm"
+            :class="featuredTab === 'sale' ? 'bg-primary text-white scale-105' : 'bg-white text-gray-500 hover:bg-gray-100'">Buy</button>
+          <button @click="featuredTab = 'rent'" class="px-8 py-3 rounded-xl font-bold transition-all shadow-sm"
+            :class="featuredTab === 'rent' ? 'bg-primary text-white scale-105' : 'bg-white text-gray-500 hover:bg-gray-100'">Rent</button>
         </div>
 
-        <div x-show="featuredTab === 'sale'">
-          <div class="swiper featured-swiper">
-            <div class="swiper-wrapper">
-              @foreach($buyListings as $listing)
-                <div class="swiper-slide h-auto pb-12">
-                  <div
-                    class="bg-white rounded-[2rem] overflow-hidden shadow-sm hover:shadow-2xl hover:-translate-y-2 transition-all duration-500 border border-gray-100 h-full flex flex-col group">
-                    <div class="relative h-64 overflow-hidden">
-                      <a href="{{ route('listing.show', $listing->slug ?? $listing->id) }}">
-                        <img
-                          src="{{ $listing->thumbnail ? asset('storage/' . $listing->thumbnail) : asset('assets/img/all-images/hero/1.jpg') }}"
-                          class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
-                          alt="Property">
-                      </a>
-                      <div
-                        class="absolute top-4 left-4 bg-white/95 backdrop-blur-sm px-4 py-2 rounded-2xl text-primary font-black shadow-sm flex flex-col items-start leading-none gap-1">
-                        @if($listing->old_price && $listing->old_price > 0 && $listing->old_price != $listing->price)
-                          <span class="text-[10px] text-gray-400 font-bold"
-                            style="text-decoration: line-through;">£{{ number_format($listing->old_price) }}</span>
-                        @endif
-                        <span class="text-lg">£{{ number_format($listing->price) }}</span>
-                      </div>
-                      <button onclick="toggleFavorite({{ $listing->id }}, null, this)"
-                        class="absolute top-4 right-4 w-12 h-12 bg-white/95 backdrop-blur-sm rounded-2xl flex items-center justify-center transition-all shadow-sm {{ in_array($listing->id, $user_favorite_ids ?? []) ? 'text-red-500' : 'text-gray-400' }} hover:scale-110">
-                        <i
-                          class="{{ in_array($listing->id, $user_favorite_ids ?? []) ? 'fa-solid' : 'fa-regular' }} fa-heart text-xl"></i>
-                      </button>
-                    </div>
-                    <div class="p-8 flex flex-col flex-grow">
-                      <div class="flex items-center gap-2 mb-3">
-                        <span
-                          class="bg-secondary/10 text-secondary text-[10px] font-black uppercase tracking-widest px-3 py-1 rounded-full">{{ $listing->purpose }}</span>
-                      </div>
-                      <h3
-                        class="font-black text-xl text-primary mb-3 line-clamp-1 group-hover:text-secondary transition-colors leading-tight">
-                        <a
-                          href="{{ route('listing.show', $listing->slug ?? $listing->id) }}">{{ $listing->property_title }}</a>
-                      </h3>
-                      <p class="text-gray-500 mb-6 flex items-center gap-2 text-sm font-medium">
-                        <i class="fa-solid fa-location-dot text-gray-300"></i> {{ Str::limit($listing->address, 40) }}
-                      </p>
-                      <div class="mt-auto pt-6 border-t border-gray-100">
-                        <div class="grid grid-cols-2 gap-4 mb-4">
-                          @if($listing->bedrooms > 0)
-                            <div class="flex items-center gap-2 text-gray-700 font-bold text-sm">
-                              <i class="fa-solid fa-bed text-gray-400"></i> {{ $listing->bedrooms }} Beds
-                            </div>
-                          @elseif($listing->unitType)
-                            <div class="flex items-center gap-2 text-gray-700 font-bold text-sm">
-                              <i class="fa-solid fa-house-user text-gray-400"></i> {{ $listing->unitType->title }}
-                            </div>
-                          @endif
-
-                          @if($listing->bathrooms > 0)
-                            <div class="flex items-center gap-2 text-gray-700 font-bold text-sm text-right justify-end">
-                              <i class="fa-solid fa-bath text-gray-400"></i> {{ $listing->bathrooms }} Baths
-                            </div>
-                          @endif
-                        </div>
-                        <div class="flex gap-2">
-                          <a href="https://wa.me/{{ $listing->user?->phone_number }}?text=Interested in {{ urlencode($listing->property_title) }}"
-                            target="_blank"
-                            class="flex-1 bg-green-500 hover:bg-green-600 text-white text-xs font-bold py-2 px-3 rounded-lg flex items-center justify-center gap-1 transition-colors">
-                            <i class="fab fa-whatsapp"></i> WhatsApp
-                          </a>
-                          <a href="mailto:{{ $listing->user?->email }}?subject=Enquiry about {{ urlencode($listing->property_title) }}"
-                            class="flex-1 bg-blue-500 hover:bg-blue-600 text-white text-xs font-bold py-2 px-3 rounded-lg flex items-center justify-center gap-1 transition-colors">
-                            <i class="fa-regular fa-envelope"></i> Email
-                          </a>
-                          <a href="{{ route('listing.show', $listing->slug ?? $listing->id) }}"
-                            class="flex-1 border border-gray-200 hover:border-secondary hover:text-secondary text-gray-600 text-xs font-bold py-2 px-3 rounded-lg flex items-center justify-center transition-all">
-                            Details
-                          </a>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              @endforeach
-            </div>
-            <div class="swiper-pagination"></div>
-          </div>
-        </div>
-
-        <div x-show="featuredTab === 'rent'">
-          @if($rentListings->count() > 0)
-            <div class="swiper featured-swiper">
+        <!-- Buy Listings -->
+        <div x-show="featuredTab === 'sale'" x-transition:enter="transition ease-out duration-300"
+          x-transition:enter-start="opacity-0 translate-y-4" x-transition:enter-end="opacity-100 translate-y-0">
+          @if($buyListings->count() > 0)
+            <div class="swiper featured-swiper-results overflow-visible pb-12">
               <div class="swiper-wrapper">
-                @foreach($rentListings as $listing)
-                  <div class="swiper-slide h-auto pb-12">
-                    <div
-                      class="bg-white rounded-[2rem] overflow-hidden shadow-sm hover:shadow-2xl hover:-translate-y-2 transition-all duration-500 border border-gray-100 h-full flex flex-col group">
-                      <div class="relative h-64 overflow-hidden">
-                        <a href="{{ route('listing.show', $listing->slug ?? $listing->id) }}">
-                          <img
-                            src="{{ $listing->thumbnail ? asset('storage/' . $listing->thumbnail) : asset('assets/img/all-images/hero/1.jpg') }}"
-                            class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
-                            alt="Property">
-                        </a>
-                        <div
-                          class="absolute top-4 left-4 bg-white/95 backdrop-blur-sm px-4 py-2 rounded-2xl text-primary font-black shadow-sm flex flex-col items-start leading-none gap-1">
-                          @if($listing->old_price && $listing->old_price > 0 && $listing->old_price != $listing->price)
-                            <span class="text-[10px] text-gray-400 font-bold"
-                              style="text-decoration: line-through;">£{{ number_format($listing->old_price) }}</span>
-                          @endif
-                          <span class="text-lg">£{{ number_format($listing->price) }}</span>
-                        </div>
-                        <button onclick="toggleFavorite({{ $listing->id }}, null, this)"
-                          class="absolute top-4 right-4 w-12 h-12 bg-white/95 backdrop-blur-sm rounded-2xl flex items-center justify-center transition-all shadow-sm {{ in_array($listing->id, $user_favorite_ids ?? []) ? 'text-red-500' : 'text-gray-400' }} hover:scale-110">
-                          <i
-                            class="{{ in_array($listing->id, $user_favorite_ids ?? []) ? 'fa-solid' : 'fa-regular' }} fa-heart text-xl"></i>
-                        </button>
-                      </div>
-                      <div class="p-8 flex flex-col flex-grow">
-                        <div class="flex items-center gap-2 mb-3">
-                          <span
-                            class="bg-secondary/10 text-secondary text-[10px] font-black uppercase tracking-widest px-3 py-1 rounded-full">{{ $listing->purpose }}</span>
-                        </div>
-                        <h3
-                          class="font-black text-xl text-primary mb-3 line-clamp-1 group-hover:text-secondary transition-colors leading-tight">
-                          <a
-                            href="{{ route('listing.show', $listing->slug ?? $listing->id) }}">{{ $listing->property_title }}</a>
-                        </h3>
-                        <p class="text-gray-500 mb-6 flex items-center gap-2 text-sm font-medium">
-                          <i class="fa-solid fa-location-dot text-gray-300"></i> {{ Str::limit($listing->address, 40) }}
-                        </p>
-                        <div class="mt-auto pt-6 border-t border-gray-100">
-                          <div class="grid grid-cols-2 gap-4 mb-4">
-                            <div class="flex items-center gap-2 text-gray-700 font-bold text-sm">
-                              <i class="fa-solid fa-bed text-gray-400"></i> {{ $listing->bedrooms }} Beds
-                            </div>
-                            <div class="flex items-center gap-2 text-gray-700 font-bold text-sm text-right justify-end">
-                              <i class="fa-solid fa-bath text-gray-400"></i> {{ $listing->bathrooms }} Baths
-                            </div>
-                          </div>
-                          <div class="flex gap-2">
-                            <a href="https://wa.me/{{ $listing->user?->phone_number }}?text=Interested in {{ urlencode($listing->property_title) }}"
-                              target="_blank"
-                              class="flex-1 bg-green-500 hover:bg-green-600 text-white text-xs font-bold py-2 px-3 rounded-lg flex items-center justify-center gap-1 transition-colors">
-                              <i class="fab fa-whatsapp"></i> WhatsApp
-                            </a>
-                            <a href="mailto:{{ $listing->user?->email }}?subject=Enquiry about {{ urlencode($listing->property_title) }}"
-                              class="flex-1 bg-blue-500 hover:bg-blue-600 text-white text-xs font-bold py-2 px-3 rounded-lg flex items-center justify-center gap-1 transition-colors">
-                              <i class="fa-regular fa-envelope"></i> Email
-                            </a>
-                            <a href="{{ route('listing.show', $listing->slug ?? $listing->id) }}"
-                              class="flex-1 border border-gray-200 hover:border-secondary hover:text-secondary text-gray-600 text-xs font-bold py-2 px-3 rounded-lg flex items-center justify-center transition-all">
-                              Details
-                            </a>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
+                @foreach($buyListings as $listing)
+                  <div class="swiper-slide h-auto">
+                    @include('partials.property-card', ['listing' => $listing, 'user_favorite_ids' => $user_favorite_ids])
                   </div>
                 @endforeach
               </div>
-              <div class="swiper-pagination"></div>
+              <div class="swiper-pagination !-bottom-2"></div>
             </div>
           @else
-            <div class="text-center py-20 bg-white rounded-3xl border border-dashed border-gray-200">
-              <p class="text-gray-400 text-lg">No featured rentals available right now.</p>
+            <div class="py-20 text-center bg-white rounded-3xl border-2 border-dashed border-gray-100">
+              <i class="fa-solid fa-house-circle-exclamation text-4xl text-gray-200 mb-4"></i>
+              <h3 class="text-xl font-bold text-gray-400">No properties available for sale.</h3>
+            </div>
+          @endif
+        </div>
+
+        <!-- Rent Listings -->
+        <div x-show="featuredTab === 'rent'" x-transition:enter="transition ease-out duration-300"
+          x-transition:enter-start="opacity-0 translate-y-4" x-transition:enter-end="opacity-100 translate-y-0">
+          @if($rentListings->count() > 0)
+            <div class="swiper featured-swiper-results overflow-visible pb-12">
+              <div class="swiper-wrapper">
+                @foreach($rentListings as $listing)
+                  <div class="swiper-slide h-auto">
+                    @include('partials.property-card', ['listing' => $listing, 'user_favorite_ids' => $user_favorite_ids])
+                  </div>
+                @endforeach
+              </div>
+              <div class="swiper-pagination !-bottom-2"></div>
+            </div>
+          @else
+            <div class="py-20 text-center bg-white rounded-3xl border-2 border-dashed border-gray-100">
+              <i class="fa-solid fa-house-circle-exclamation text-4xl text-gray-200 mb-4"></i>
+              <h3 class="text-xl font-bold text-gray-400">No rental properties featured yet.</h3>
             </div>
           @endif
         </div>
@@ -519,7 +396,7 @@
   </section>
 
   <!-- Location Explorer Section -->
-  <section class="py-20 bg-white border-b border-gray-100">
+  <section class="py-3 bg-white border-b border-gray-100">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
       <div class="mb-10 text-center">
         <h2 class="text-3xl md:text-5xl font-black text-primary tracking-tight mb-4">Explore By Location</h2>
@@ -590,12 +467,11 @@
           class="inline-flex items-center gap-2 bg-white/5 px-3 py-1.5 rounded-full text-secondary font-bold text-[10px] uppercase tracking-widest mb-4 border border-white/5">
           <span class="w-1.5 h-1.5 bg-secondary rounded-full animate-pulse"></span> Partnership
         </div>
-        <h2 class="text-3xl md:text-5xl font-black text-white mb-4 tracking-tight">
+        <h2 class="text-3xl font-black text-white mb-3 tracking-tight">
           Grow With <span class="text-secondary">PropertyFinda</span>
         </h2>
-        <p class="text-base text-white/50 font-medium max-w-xl mx-auto leading-relaxed">
-          Join our affiliate network. Earn competitive commissions by referring users to the UK's fastest-growing property
-          platform.
+        <p class="text-sm text-white/50 font-medium max-w-lg mx-auto leading-relaxed">
+          Join our affiliate network and earn competitive commissions.
         </p>
       </div>
 
@@ -642,10 +518,10 @@
           class="bg-white/5 hover:bg-white/10 transition-colors border border-white/5 p-6 rounded-3xl backdrop-blur-sm group">
           <div
             class="w-10 h-10 rounded-xl bg-secondary/20 flex items-center justify-center text-white mb-4 group-hover:scale-110 transition-transform">
-            <i class="fa-solid fa-headset text-lg"></i>
+            <i class="fa-solid fa-headset text-base"></i>
           </div>
-          <div class="text-2xl font-black text-white mb-1">Support</div>
-          <p class="text-white text-xs font-bold uppercase tracking-wide leading-relaxed">Dedicated Partner <br>Team
+          <div class="text-xl font-bold text-white mb-1">Support</div>
+          <p class="text-white/70 text-[10px] font-bold uppercase tracking-wide leading-relaxed">Dedicated Partner Team
           </p>
         </div>
       </div>
@@ -655,7 +531,7 @@
         class="bg-gradient-to-br from-white/10 to-white/5 border border-white/10 rounded-3xl p-2 pl-6 md:pl-8 flex flex-col md:flex-row items-center justify-between gap-4">
         <div class="text-center md:text-left py-4 md:py-0">
           <h3 class="text-white font-bold text-lg">Ready to start earning?</h3>
-          <p class="text-white/50 text-sm font-medium">No payout thresholds. Monthly payments.</p>
+          <p class="text-white/50 text-xs font-medium">No payout thresholds. Monthly payments.</p>
         </div>
 
         <div class="w-full md:w-auto">
@@ -683,31 +559,37 @@
   </section>
 
   <!-- Trust Section -->
-  <section class="py-24 bg-white">
+  <section class="py-4 bg-white">
     <div class="max-w-4xl mx-auto px-4 text-center">
       <h2 class="text-4xl font-extrabold text-primary mb-16 tracking-tight">Everything You Need To Find A Home</h2>
       <div class="grid md:grid-cols-3 gap-12">
-        <div>
-          <div class="text-secondary text-5xl mb-6"><i class="fa-solid fa-shield"></i></div>
-          <h3 class="text-xl font-bold mb-4">Verified Agents</h3>
-          <p class="text-gray-500">Every listing on PropertyFinda comes from registered, vetted UK estate agents.</p>
+        <div class="group">
+          <div class="text-secondary text-3xl mb-6 transition-transform group-hover:scale-110"><i
+              class="fa-solid fa-shield"></i></div>
+          <h3 class="text-xl font-bold mb-3">Verified Agents</h3>
+          <p class="text-gray-500 text-sm leading-relaxed">Every listing on PropertyFinda comes from registered, vetted UK
+            estate agents.</p>
         </div>
-        <div>
-          <div class="text-secondary text-5xl mb-6"><i class="fa-solid fa-bolt"></i></div>
-          <h3 class="text-xl font-bold mb-4">Instant Alerts</h3>
-          <p class="text-gray-500">Be the first to know. Get notified as soon as properties hit the market.</p>
+        <div class="group">
+          <div class="text-secondary text-3xl mb-6 transition-transform group-hover:scale-110"><i
+              class="fa-solid fa-bolt"></i></div>
+          <h3 class="text-xl font-bold mb-3">Instant Alerts</h3>
+          <p class="text-gray-500 text-sm leading-relaxed">Be the first to know. Get notified as soon as properties hit
+            the market.</p>
         </div>
-        <div>
-          <div class="text-secondary text-5xl mb-6"><i class="fa-solid fa-map-location-dot"></i></div>
-          <h3 class="text-xl font-bold mb-4">Market Data</h3>
-          <p class="text-gray-500">Access deep insights into local pricing, schools, and transport.</p>
+        <div class="group">
+          <div class="text-secondary text-3xl mb-6 transition-transform group-hover:scale-110"><i
+              class="fa-solid fa-map-location-dot"></i></div>
+          <h3 class="text-xl font-bold mb-3">Market Data</h3>
+          <p class="text-gray-500 text-sm leading-relaxed">Access deep insights into local pricing, schools, and
+            transport.</p>
         </div>
       </div>
     </div>
   </section>
 
   <!-- Latest News / Blogs Section -->
-  <section class="py-24 bg-gray-50 overflow-hidden">
+  <section class="py-4 bg-gray-50 overflow-hidden">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
       <div class="flex justify-between items-end mb-12">
         <div>
@@ -784,9 +666,6 @@
   <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
 
   <!-- Google Maps API with Places Library -->
-  <script
-    src="https://maps.googleapis.com/maps/api/js?key={{ config('services.google.maps_api_key') }}&libraries=places"></script>
-
   <script>
     document.addEventListener('DOMContentLoaded', function () {
       // Initialize Google Places Autocomplete
@@ -796,33 +675,35 @@
           types: ['geocode'],
           componentRestrictions: { country: 'uk' }
         });
-
         // Reset lat/lng when user types to ensure we don't use old coordinates for a new text search
         locationInput.addEventListener('input', function () {
           document.getElementById('search-lat').value = '';
           document.getElementById('search-lng').value = '';
         });
-
         autocomplete.addListener('place_changed', function () {
           const place = autocomplete.getPlace();
           if (!place.geometry) return;
-
           document.getElementById('search-lat').value = place.geometry.location.lat();
           document.getElementById('search-lng').value = place.geometry.location.lng();
         });
       }
 
-      // Initialize Swiper
-      new Swiper('.featured-swiper', {
-        slidesPerView: 1,
-        spaceBetween: 24,
-        loop: true,
-        autoplay: { delay: 4000, disableOnInteraction: false },
-        pagination: { el: '.swiper-pagination', clickable: true, dynamicBullets: true },
-        breakpoints: {
-          768: { slidesPerView: 2, spaceBetween: 30 },
-          1024: { slidesPerView: 3, spaceBetween: 30 }
-        }
+      // Initialize Swiper for Each Featured Swiper instance individually
+      document.querySelectorAll('.featured-swiper-results').forEach(el => {
+        new Swiper(el, {
+          slidesPerView: 1,
+          spaceBetween: 24,
+          autoHeight: false,
+          loop: true,
+          observer: true,
+          observeParents: true,
+          autoplay: { delay: 4000, disableOnInteraction: false },
+          pagination: { el: el.querySelector('.swiper-pagination'), clickable: true, dynamicBullets: true },
+          breakpoints: {
+            768: { slidesPerView: 2, spaceBetween: 24 },
+            1024: { slidesPerView: 3, spaceBetween: 32 }
+          }
+        });
       });
 
       // Initialize Location Swiper
@@ -830,6 +711,8 @@
         slidesPerView: 1,
         spaceBetween: 24,
         loop: true,
+        observer: true,
+        observeParents: true,
         autoplay: { delay: 4500, disableOnInteraction: false },
         pagination: { el: '.location-swiper .swiper-pagination', clickable: true },
         breakpoints: {
@@ -844,6 +727,8 @@
         slidesPerView: 1,
         spaceBetween: 24,
         loop: true,
+        observer: true,
+        observeParents: true,
         autoplay: { delay: 5000, disableOnInteraction: false },
         breakpoints: {
           768: { slidesPerView: 2, spaceBetween: 30 },
@@ -858,14 +743,11 @@
         return;
       @endif
 
-                                                                                                                                                                                          const data = {
-        _token: '{{ csrf_token() }}'
-      };
+                                                          const data = { _token: '{{ csrf_token() }}' };
       if (listingId) data.listing_id = listingId;
       if (offMarketId) data.off_market_listing_id = offMarketId;
 
       const icon = $(btn).find('i');
-
       $.ajax({
         url: '{{ route('favorites.toggle') }}',
         type: 'POST',

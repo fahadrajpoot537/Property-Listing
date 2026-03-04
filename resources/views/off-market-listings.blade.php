@@ -3,6 +3,7 @@
 @push('styles')
   <!-- Select2 CSS -->
   <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css" />
   <style>
     /* Google Autocomplete Styling */
     .pac-container {
@@ -85,7 +86,9 @@
       color: #9ca3af;
     }
 
-    [x-cloak] { display: none !important; }
+    [x-cloak] {
+      display: none !important;
+    }
   </style>
 @endpush
 
@@ -96,35 +99,37 @@
   <div class="relative bg-primary overflow-visible">
     <!-- Background Pattern -->
     <div class="absolute inset-0 z-0">
-    <img src="{{ asset('hero22.jpg') }}"
-         class="w-full h-full object-cover"
-         alt="Background">
-</div>
+      <img src="{{ asset('hero22.jpg') }}" class="w-full h-full object-cover" alt="Background">
+    </div>
 
 
-    <div class="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 md:py-24">
+    <div class="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-12 pb-24 md:pt-16 md:pb-32">
       <div class="text-center mb-10">
-        <div class="inline-flex items-center gap-2 px-4 py-2 bg-secondary/20 backdrop-blur-md rounded-full border border-secondary/30 text-white text-xs font-black uppercase tracking-[0.2em] mb-6">
+        <div
+          class="inline-flex items-center gap-2 px-4 py-2 bg-secondary/20 backdrop-blur-md rounded-full border border-secondary/30 text-white text-xs font-black uppercase tracking-[0.2em] mb-6">
           <i class="fa-solid fa-lock "></i> Exclusive Portfolio
         </div>
-        <h1 class="text-3xl md:text-6xl font-extrabold text-white mb-4 tracking-tight">
+        <h1 class="text-3xl md:text-4xl font-extrabold text-white mb-4 tracking-tight">
           Off-Market <span class="text-white">Opportunities</span>
         </h1>
-        <p class="text-xl text-white font-medium max-w-3xl mx-auto">
-          Access strictly confidential deals across the UK. Exclusive properties that never hit the open market, available only to our verified network.
+        <p class="text-lg text-white font-medium max-w-3xl mx-auto">
+          Access strictly confidential deals across the UK. Exclusive properties that never hit the open market, available
+          only to our verified network.
         </p>
       </div>
 
       <!-- Main Portal Search Box -->
-      <div class="bg-white rounded-2xl shadow-2xl overflow-visible max-w-5xl mx-auto p-2">
+      <div class="bg-white rounded-2xl shadow-2xl overflow-visible max-w-5xl mx-auto p-2 relative -mb-32 md:-mb-48">
         <div x-data="{ tab: 'sale' }">
           <!-- Tabs Style -->
           <div class="flex p-1 bg-gray-100 rounded-xl mb-4">
-            <button @click="tab = 'sale'" class="flex-1 py-3 text-base font-bold text-center transition-all rounded-lg"
+            <button @click="tab = 'sale'"
+              class="flex-1 py-3 text-base font-bold text-center transition-all rounded-lg font-effra"
               :class="tab === 'sale' ? 'bg-white text-primary shadow-sm' : 'text-gray-500 hover:text-primary'">
               For Sale
             </button>
-            <button @click="tab = 'rent'" class="flex-1 py-3 text-base font-bold text-center transition-all rounded-lg"
+            <button @click="tab = 'rent'"
+              class="flex-1 py-3 text-base font-bold text-center transition-all rounded-lg font-effra"
               :class="tab === 'rent' ? 'bg-white text-primary shadow-sm' : 'text-gray-500 hover:text-primary'">
               To Rent
             </button>
@@ -136,12 +141,12 @@
               <div class="flex flex-col md:flex-row gap-3 mb-6">
                 <div class="relative flex-grow group">
                   <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none z-10">
-                   
+
                   </div>
                   <input type="text" id="location-sale" placeholder="Enter city, area or postcode"
-                    class="w-full pl-16 pr-4 py-4 text-lg font-medium text-gray-900 bg-gray-50 border border-gray-200 rounded-xl focus:bg-white focus:ring-4 focus:ring-secondary/10 focus:border-secondary transition-all h-16 placeholder-gray-400">
+                    class="w-full pl-16 pr-4 py-4 text-lg font-medium text-gray-900 bg-gray-50 border border-gray-200 rounded-xl focus:bg-white focus:ring-4 focus:ring-secondary/10 focus:border-secondary transition-all h-[56px] placeholder-gray-400">
                 </div>
-                
+
                 <!-- Radius Select (Moved here) -->
                 <div class="w-full md:w-48">
                   <select id="radius-sale" class="select2-filter w-full" data-placeholder="Radius">
@@ -159,15 +164,15 @@
                 </div>
 
                 <button onclick="searchOffMarketProperties('sale')"
-                  class="md:w-64 px-10 bg-secondary hover:bg-secondary-dark text-white font-extrabold text-xl rounded-xl shadow-lg shadow-secondary/20 transition-all transform hover:-translate-y-0.5 flex items-center justify-center gap-2 h-16">
+                  class="md:w-48 py-4 bg-secondary hover:bg-secondary-dark text-white font-extrabold text-lg rounded-xl shadow-lg shadow-secondary/20 transition-all transform hover:-translate-y-0.5 flex items-center justify-center gap-2 h-[56px] font-effra">
                   Search
                 </button>
               </div>
 
-              <div class="grid grid-cols-2 lg:grid-cols-6 gap-3">
+              <div class="grid grid-cols-2 lg:grid-cols-5 gap-3">
                 <!-- Property Type (Moved to first position) -->
                 <div class="relative">
-                  <div class="filter-icon-wrapper"><i class="fa-solid fa-house text-secondary"></i></div>
+                  <div class="filter-icon-wrapper"><i class="fa-solid fa-house"></i></div>
                   <select id="property-type-sale" class="select2-filter w-full" data-placeholder="Property Type">
                     <option value="">Any Type</option>
                     @foreach(\App\Models\PropertyType::all() as $type)
@@ -176,30 +181,21 @@
                   </select>
                 </div>
 
-                <!-- Unit Type (New) -->
-                <div class="relative">
-                  <div class="filter-icon-wrapper"><i class="fa-solid fa-building text-secondary"></i></div>
-                  <select id="unit-type-sale" class="select2-filter w-full" data-placeholder="Unit Type">
-                    <option value="">Any Unit</option>
-                    @foreach(\App\Models\UnitType::all() as $type)
-                      <option value="{{ $type->id }}">{{ $type->title }}</option>
-                    @endforeach
-                  </select>
-                </div>
+
                 <!-- Min Price Sale -->
-                <div class="relative col-span-2 lg:col-span-full">
-                  <div class="filter-icon-wrapper"><i class="fa-solid fa-pound-sign text-secondary"></i></div>
+                <div class="relative">
+                  <div class="filter-icon-wrapper"><i class="fa-solid fa-pound-sign"></i></div>
                   <input type="number" id="min-price-sale" placeholder="Min Price"
                     class="w-full pl-12 pr-4 py-4 text-base font-medium text-gray-900 bg-gray-50 border border-gray-200 rounded-xl focus:bg-white focus:ring-4 focus:ring-secondary/10 focus:border-secondary transition-all h-[56px] placeholder-gray-400 outline-none">
                 </div>
                 <!-- Max Price Sale -->
-                <div class="relative col-span-2 lg:col-span-full">
-                  <div class="filter-icon-wrapper"><i class="fa-solid fa-pound-sign text-secondary"></i></div>
+                <div class="relative">
+                  <div class="filter-icon-wrapper"><i class="fa-solid fa-pound-sign"></i></div>
                   <input type="number" id="max-price-sale" placeholder="Max Price"
                     class="w-full pl-12 pr-4 py-4 text-base font-medium text-gray-900 bg-gray-50 border border-gray-200 rounded-xl focus:bg-white focus:ring-4 focus:ring-secondary/10 focus:border-secondary transition-all h-[56px] placeholder-gray-400 outline-none">
                 </div>
                 <div class="relative">
-                  <div class="filter-icon-wrapper"><i class="fa-solid fa-bed text-secondary"></i></div>
+                  <div class="filter-icon-wrapper"><i class="fa-solid fa-bed"></i></div>
                   <select id="min-bedrooms-sale" class="select2-filter w-full" data-placeholder="Bedrooms">
                     <option value="">Any Beds</option>
                     <option value="0">Studio</option>
@@ -210,7 +206,7 @@
                   </select>
                 </div>
                 <div class="relative">
-                  <div class="filter-icon-wrapper"><i class="fa-solid fa-bath text-secondary"></i></div>
+                  <div class="filter-icon-wrapper"><i class="fa-solid fa-bath"></i></div>
                   <select id="min-bathrooms-sale" class="select2-filter w-full" data-placeholder="Bathrooms">
                     <option value="">Any Baths</option>
                     @for($i = 1; $i <= 9; $i++)
@@ -230,9 +226,9 @@
                     <i class="fa-solid fa-location-dot text-gray-400 text-lg"></i>
                   </div>
                   <input type="text" id="location-rent" placeholder="Enter city, area or postcode"
-                    class="w-full pl-16 pr-4 py-4 text-lg font-medium text-gray-900 bg-gray-50 border border-gray-200 rounded-xl focus:bg-white focus:ring-4 focus:ring-secondary/10 focus:border-secondary transition-all h-16 placeholder-gray-400">
+                    class="w-full pl-16 pr-4 py-4 text-lg font-medium text-gray-900 bg-gray-50 border border-gray-200 rounded-xl focus:bg-white focus:ring-4 focus:ring-secondary/10 focus:border-secondary transition-all h-[56px] placeholder-gray-400">
                 </div>
-                
+
                 <!-- Radius Select (Moved here) -->
                 <div class="w-full md:w-48">
                   <select id="radius-rent" class="select2-filter w-full" data-placeholder="Radius">
@@ -250,15 +246,15 @@
                 </div>
 
                 <button onclick="searchOffMarketProperties('rent')"
-                  class="md:w-64 px-10 bg-secondary hover:bg-secondary-dark text-white font-extrabold text-xl rounded-xl shadow-lg shadow-secondary/20 transition-all transform hover:-translate-y-0.5 flex items-center justify-center gap-2 h-16">
+                  class="md:w-48 py-4 bg-secondary hover:bg-secondary-dark text-white font-extrabold text-lg rounded-xl shadow-lg shadow-secondary/20 transition-all transform hover:-translate-y-0.5 flex items-center justify-center gap-2 h-[56px] font-effra">
                   Search
                 </button>
               </div>
 
-              <div class="grid grid-cols-2 lg:grid-cols-6 gap-3">
+              <div class="grid grid-cols-2 lg:grid-cols-5 gap-3">
                 <!-- Property Type (Moved to first position) -->
                 <div class="relative">
-                  <div class="filter-icon-wrapper"><i class="fa-solid fa-house text-secondary"></i></div>
+                  <div class="filter-icon-wrapper"><i class="fa-solid fa-house"></i></div>
                   <select id="property-type-rent" class="select2-filter w-full" data-placeholder="Property Type">
                     <option value="">Any Type</option>
                     @foreach(\App\Models\PropertyType::all() as $type)
@@ -267,30 +263,21 @@
                   </select>
                 </div>
 
-                <!-- Unit Type (New) -->
-                <div class="relative">
-                  <div class="filter-icon-wrapper"><i class="fa-solid fa-building text-secondary"></i></div>
-                  <select id="unit-type-rent" class="select2-filter w-full" data-placeholder="Unit Type">
-                    <option value="">Any Unit</option>
-                    @foreach(\App\Models\UnitType::all() as $type)
-                      <option value="{{ $type->id }}">{{ $type->title }}</option>
-                    @endforeach
-                  </select>
-                </div>
+
                 <!-- Min Price Rent -->
-                <div class="relative col-span-2 lg:col-span-full">
-                  <div class="filter-icon-wrapper"><i class="fa-solid fa-pound-sign text-secondary"></i></div>
+                <div class="relative">
+                  <div class="filter-icon-wrapper"><i class="fa-solid fa-pound-sign"></i></div>
                   <input type="number" id="min-price-rent" placeholder="Min Price"
                     class="w-full pl-12 pr-4 py-4 text-base font-medium text-gray-900 bg-gray-50 border border-gray-200 rounded-xl focus:bg-white focus:ring-4 focus:ring-secondary/10 focus:border-secondary transition-all h-[56px] placeholder-gray-400 outline-none">
                 </div>
                 <!-- Max Price Rent -->
-                <div class="relative col-span-2 lg:col-span-full">
-                  <div class="filter-icon-wrapper"><i class="fa-solid fa-pound-sign text-secondary"></i></div>
+                <div class="relative">
+                  <div class="filter-icon-wrapper"><i class="fa-solid fa-pound-sign"></i></div>
                   <input type="number" id="max-price-rent" placeholder="Max Price"
                     class="w-full pl-12 pr-4 py-4 text-base font-medium text-gray-900 bg-gray-50 border border-gray-200 rounded-xl focus:bg-white focus:ring-4 focus:ring-secondary/10 focus:border-secondary transition-all h-[56px] placeholder-gray-400 outline-none">
                 </div>
                 <div class="relative">
-                  <div class="filter-icon-wrapper"><i class="fa-solid fa-bed text-secondary"></i></div>
+                  <div class="filter-icon-wrapper"><i class="fa-solid fa-bed"></i></div>
                   <select id="min-bedrooms-rent" class="select2-filter w-full" data-placeholder="Bedrooms">
                     <option value="">Any Beds</option>
                     <option value="0">Studio</option>
@@ -301,7 +288,7 @@
                   </select>
                 </div>
                 <div class="relative">
-                  <div class="filter-icon-wrapper"><i class="fa-solid fa-bath text-secondary"></i></div>
+                  <div class="filter-icon-wrapper"><i class="fa-solid fa-bath"></i></div>
                   <select id="min-bathrooms-rent" class="select2-filter w-full" data-placeholder="Bathrooms">
                     <option value="">Any Baths</option>
                     @for($i = 1; $i <= 9; $i++)
@@ -312,7 +299,7 @@
                 </div>
               </div>
             </div>
-            </div>
+            <div class="mb-5 md:mb-10"></div>
           </div>
         </div>
       </div>
@@ -320,125 +307,93 @@
   </div>
   <!--===== HERO AREA ENDS =======-->
   <!--===== PROPERTIES GRID STARTS =======-->
-  <div class="pb-24 bg-[#F9FAFB] mt-4">
+  <div class="pt-32 pb-24 md:pt-48 bg-[#F9FAFB] mt-4" id="listings-section" x-data="{ resultsTab: 'sale' }">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-      <div class="flex justify-between items-end mb-12">
+      <div class="flex flex-col md:flex-row justify-between items-start md:items-end gap-6 mb-12">
         <div>
-          <h2 class="text-4xl font-black text-primary mb-2">Available Opportunities</h2>
-          <p class="text-gray-500 font-bold">Confidential off-market deals currently available.</p>
+          <h2 class="text-3xl font-black text-primary mb-1">Available Opportunities</h2>
+          <p class="text-gray-500 font-bold text-sm">Confidential off-market deals currently available.</p>
+
+          <!-- Quick Tabs Filter - Alpine Style like Home -->
+          <div class="flex gap-2 mt-6 p-1 bg-gray-100 rounded-2xl w-fit">
+            <button @click="resultsTab = 'sale'"
+              class="px-8 py-2.5 rounded-xl font-black transition-all text-sm uppercase tracking-wider"
+              :class="resultsTab === 'sale' ? 'bg-primary text-white shadow-lg' : 'text-gray-500 hover:text-primary'">Buy</button>
+            <button @click="resultsTab = 'rent'"
+              class="px-8 py-2.5 rounded-xl font-black transition-all text-sm uppercase tracking-wider"
+              :class="resultsTab === 'rent' ? 'bg-primary text-white shadow-lg' : 'text-gray-500 hover:text-primary'">Rent</button>
+          </div>
         </div>
+
         <div class="flex items-center gap-3">
           <div class="relative">
             <select id="sort-select" onchange="applySort(this.value)"
-                class="appearance-none block w-full pl-3 pr-8 py-2 border border-blue-100 rounded-lg leading-tight focus:outline-none focus:bg-white focus:border-secondary text-sm h-[42px] shadow-sm font-bold text-gray-600 bg-white"
-                style="min-width: 150px;">
-                <option value="newest" {{ request('sort') == 'newest' ? 'selected' : '' }}>Newest listed</option>
-                <option value="oldest" {{ request('sort') == 'oldest' ? 'selected' : '' }}>Oldest listed</option>
-                <option value="price_low" {{ request('sort') == 'price_low' ? 'selected' : '' }}>Price (Lowest)</option>
-                <option value="price_high" {{ request('sort') == 'price_high' ? 'selected' : '' }}>Price (Highest)</option>
+              class="appearance-none block w-full pl-3 pr-8 py-2 border border-blue-100 rounded-lg leading-tight focus:outline-none focus:bg-white focus:border-secondary text-sm h-[42px] shadow-sm font-bold text-gray-600 bg-white"
+              style="min-width: 150px;">
+              <option value="newest" {{ request('sort') == 'newest' ? 'selected' : '' }}>Newest listed</option>
+              <option value="oldest" {{ request('sort') == 'oldest' ? 'selected' : '' }}>Oldest listed</option>
+              <option value="price_low" {{ request('sort') == 'price_low' ? 'selected' : '' }}>Price (Lowest)</option>
+              <option value="price_high" {{ request('sort') == 'price_high' ? 'selected' : '' }}>Price (Highest)</option>
             </select>
             <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-700">
-                <i class="fa-solid fa-chevron-down text-[10px]"></i>
+              <i class="fa-solid fa-chevron-down text-[10px]"></i>
             </div>
           </div>
         </div>
       </div>
 
-      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-        @forelse($offMarketListings as $listing)
-          <div class="h-full">
-            <div class="bg-white rounded-3xl overflow-hidden shadow-sm hover:shadow-2xl hover:-translate-y-2 transition-all duration-300 border border-gray-100 h-full flex flex-col group">
-              <div class="relative h-64 overflow-hidden shrink-0">
-                <a href="{{ route('off-market-listing.show', $listing->slug ?? $listing->id) }}">
-                  @php 
-                    $gallery = is_array($listing->gallery) ? $listing->gallery : json_decode($listing->gallery, true) ?? []; 
-                  @endphp
-                  <img src="{{ $listing->thumbnail ? asset('storage/' . $listing->thumbnail) : (isset($gallery[0]) ? asset('storage/' . $gallery[0]) : asset('assets/img/all-images/hero/1.jpg')) }}" 
-                       class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" alt="Listing">
-                </a>
-                
-                <div class="absolute top-4 left-4 flex flex-col gap-2">
-                  <div class="bg-white/95 backdrop-blur-sm px-3 py-1.5 rounded-xl text-primary font-bold shadow-sm whitespace-nowrap">
-                    @if($listing->old_price && $listing->old_price > $listing->price)
-                      <span class="text-xs text-gray-400 mr-1" style="text-decoration: line-through;">£{{ number_format($listing->old_price) }}</span>
-                    @endif
-                    £{{ number_format($listing->price) }}
-                    @if($listing->old_price && $listing->old_price > $listing->price)
-                      @php
-                        $percentage = round((($listing->old_price - $listing->price) / $listing->old_price) * 100);
-                      @endphp
-                      <span class="ml-1 text-[10px] bg-red-100 text-red-600 px-1.5 py-0.5 rounded-md">-{{ $percentage }}%</span>
-                    @endif
+      <div class="listing-results">
+        <!-- Buy Tab (Alpine) -->
+        <div x-show="resultsTab === 'sale'" x-transition:enter="transition ease-out duration-300"
+          x-transition:enter-start="opacity-0 translate-y-4" x-transition:enter-end="opacity-100 translate-y-0">
+
+          @if($buyListings->count() > 0)
+            <div class="swiper off-market-swiper-results overflow-visible pb-12">
+              <div class="swiper-wrapper">
+                @foreach($buyListings as $listing)
+                  <div class="swiper-slide h-auto">
+                    @include('partials.property-card', ['listing' => $listing, 'user_favorite_off_market_ids' => $user_favorite_off_market_ids])
                   </div>
-                  <span class="px-3 py-1 bg-secondary text-white rounded-md text-[10px] font-black uppercase tracking-widest w-fit">Off-Market</span>
-                </div>
-
-                <button onclick="toggleFavorite(null, {{ $listing->id }}, this)" 
-                  class="absolute top-4 right-4 w-10 h-10 bg-white/95 backdrop-blur-sm rounded-full flex items-center justify-center {{ in_array($listing->id, $user_favorite_off_market_ids ?? []) ? 'text-red-500' : 'text-gray-400' }} hover:text-red-500 transition-colors shadow-sm">
-                  <i class="{{ in_array($listing->id, $user_favorite_off_market_ids ?? []) ? 'fa-solid' : 'fa-regular' }} fa-heart"></i>
-                </button>
+                @endforeach
               </div>
-              
-              <div class="p-6 flex flex-col flex-grow">
-                <h3 class="text-xl font-bold text-primary mb-2">
-                  <a href="{{ route('off-market-listing.show', $listing->slug ?? $listing->id) }}" class="hover:text-secondary transition-colors">
-                    {{ $listing->property_title }}
-                  </a>
-                </h3>
-                
-                <p class="text-gray-500 mb-6 flex items-center gap-2">
-                  <i class="fa-solid fa-location-dot text-gray-300"></i>
-                  {{ Str::limit($listing->address, 45) ?? 'Location Confidential' }}
-                </p>
-                
-                <div class="mt-auto grid grid-cols-2 gap-4 pt-6 border-t border-gray-50">
-                  @if($listing->bedrooms > 0)
-                    <div class="flex items-center gap-2 text-gray-700 font-medium">
-                      <i class="fa-solid fa-bed text-gray-400"></i> {{ $listing->bedrooms }} Bedrooms
-                    </div>
-                  @elseif($listing->unitType)
-                    <div class="flex items-center gap-2 text-gray-700 font-medium">
-                      <i class="fa-solid fa-house-user text-gray-400"></i> {{ $listing->unitType->title }}
-                    </div>
-                  @endif
+              <div class="swiper-pagination !-bottom-2"></div>
+            </div>
+          @else
+            <div class="py-20 text-center bg-white rounded-3xl border border-dashed border-gray-100">
+              <p class="text-gray-400 font-bold">No off-market sale opportunities found.</p>
+            </div>
+          @endif
 
-                  @if($listing->bathrooms > 0)
-                    <div class="flex items-center gap-2 text-gray-700 font-medium text-right justify-end">
-                      <i class="fa-solid fa-bath text-gray-400"></i> {{ $listing->bathrooms }} Baths
-                    </div>
-                  @endif
-                </div>
+          <div class="mt-8 flex justify-center">
+            {{ $buyListings->appends(['purpose' => 'Buy'])->links() }}
+          </div>
+        </div>
 
-                <div class="mt-4 flex gap-2 pt-4 border-t border-gray-50">
-                  <a href="https://wa.me/{{ $listing->user?->phone_number }}?text=Interested%20in%20Of-Market%20{{ urlencode($listing->property_title) }}"
-                      class="flex-1 text-center py-2 px-2 bg-green-500 text-white rounded-lg text-xs font-bold hover:bg-green-600 transition-colors flex items-center justify-center gap-1" target="_blank">
-                      <i class="fab fa-whatsapp"></i> WhatsApp
-                  </a>
-                  <a href="mailto:{{ $listing->user?->email }}?subject=Enquiry%20about%20Off-Market%20{{ urlencode($listing->property_title) }}"
-                      class="flex-1 text-center py-2 px-2 bg-blue-500 text-white rounded-lg text-xs font-bold hover:bg-blue-600 transition-colors flex items-center justify-center gap-1">
-                      <i class="fa-regular fa-envelope"></i> Email
-                  </a>
-                  <a href="{{ route('off-market-listing.show', $listing->slug ?? $listing->id) }}"
-                      class="flex-1 text-center py-2 px-2 border border-gray-200 text-gray-700 rounded-lg text-xs font-bold hover:bg-gray-50 transition-colors flex items-center justify-center gap-1">
-                      Details
-                  </a>
-                </div>
+        <!-- Rent Tab (Alpine) -->
+        <div x-show="resultsTab === 'rent'" x-transition:enter="transition ease-out duration-300"
+          x-transition:enter-start="opacity-0 translate-y-4" x-transition:enter-end="opacity-100 translate-y-0" x-cloak>
+
+          @if($rentListings->count() > 0)
+            <div class="swiper off-market-swiper-results overflow-visible pb-12">
+              <div class="swiper-wrapper">
+                @foreach($rentListings as $listing)
+                  <div class="swiper-slide h-auto">
+                    @include('partials.property-card', ['listing' => $listing, 'user_favorite_off_market_ids' => $user_favorite_off_market_ids])
+                  </div>
+                @endforeach
               </div>
+              <div class="swiper-pagination !-bottom-2"></div>
             </div>
-          </div>
-        @empty
-          <div class="col-span-full py-20 text-center">
-            <div class="w-20 h-20 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-6">
-              <i class="fa-solid fa-magnifying-glass text-2xl text-gray-300"></i>
+          @else
+            <div class="py-20 text-center bg-white rounded-3xl border border-dashed border-gray-100">
+              <p class="text-gray-400 font-bold">No off-market rental opportunities found.</p>
             </div>
-            <h3 class="text-2xl font-black text-primary">No properties found</h3>
-            <p class="text-gray-500 font-bold mt-2">Try adjusting your filters to see more confidential deals.</p>
+          @endif
+
+          <div class="mt-8 flex justify-center">
+            {{ $rentListings->appends(['purpose' => 'Rent'])->links() }}
           </div>
-        @endforelse
-      </div>
-      <!-- Pagination -->
-      <div class="mt-12">
-        {{ $offMarketListings->links() }}
+        </div>
       </div>
     </div>
   </div>
@@ -477,11 +432,11 @@
           types: ['geocode', 'establishment']
         };
         const autocompleteSale = new google.maps.places.Autocomplete(locationInputSale, options);
-        
+
         // Reset stored coordinates when user types to avoid using old coordinates with new text
-        locationInputSale.addEventListener('input', function() {
-            selectedLatSale = null;
-            selectedLngSale = null;
+        locationInputSale.addEventListener('input', function () {
+          selectedLatSale = null;
+          selectedLngSale = null;
         });
 
         autocompleteSale.addListener('place_changed', function () {
@@ -506,9 +461,9 @@
         const autocompleteRent = new google.maps.places.Autocomplete(locationInputRent, options);
 
         // Reset stored coordinates when user types
-        locationInputRent.addEventListener('input', function() {
-            selectedLatRent = null;
-            selectedLngRent = null;
+        locationInputRent.addEventListener('input', function () {
+          selectedLatRent = null;
+          selectedLngRent = null;
         });
 
         autocompleteRent.addListener('place_changed', function () {
@@ -539,7 +494,6 @@
 
       // Get customize filter values
       const propertyType = document.getElementById(`property-type-${tab}`)?.value;
-      const unitType = document.getElementById(`unit-type-${tab}`)?.value;
       const minPrice = document.getElementById(`min-price-${tab}`)?.value;
       const maxPrice = document.getElementById(`max-price-${tab}`)?.value;
       const minSize = document.getElementById(`min-size-${tab}`)?.value;
@@ -576,7 +530,6 @@
 
       if (radius) params.append('radius', radius);
       if (propertyType) params.append('property_type_id', propertyType);
-      if (unitType) params.append('unit_type_id', unitType);
       if (minPrice) params.append('min_price', minPrice);
       if (maxPrice) params.append('max_price', maxPrice);
       if (minSize) params.append('min_size', minSize);
@@ -616,64 +569,77 @@
       initLocationAutocomplete();
     }
   </script>
+  @push('scripts')
+    <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+    <script src="{{ asset('js/currency-converter.js') }}"></script>
+    <script>
+      $(document).ready(function () {
+        $('.select2-filter').select2({
+          width: '100%',
+          minimumResultsForSearch: Infinity
+        });
 
-  <!-- jQuery & Select2 JS -->
-  <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
-  <script>
-    $(document).ready(function() {
-      $('.select2-filter').select2({
-        width: '100%',
-        minimumResultsForSearch: Infinity
-      });
-    });
-  </script>
-  <script src="{{ asset('js/currency-converter.js') }}"></script>
-  <script>
-    // Initialize currency converter
-    document.addEventListener('DOMContentLoaded', function () {
-      if (typeof initializeCurrencyConverter === 'function') {
-        initializeCurrencyConverter();
-      }
-    });
+        // Initialize Off-Market Carousel Results
+        document.querySelectorAll('.off-market-swiper-results').forEach(el => {
+          new Swiper(el, {
+            slidesPerView: 1,
+            spaceBetween: 24,
+            loop: true,
+            observer: true,
+            observeParents: true,
+            autoplay: { delay: 4000, disableOnInteraction: false },
+            pagination: { el: el.querySelector('.swiper-pagination'), clickable: true, dynamicBullets: true },
+            breakpoints: {
+              768: { slidesPerView: 2, spaceBetween: 24 },
+              1024: { slidesPerView: 3, spaceBetween: 24 }
+            }
+          });
+        });
 
-    function toggleFavorite(listingId, offMarketId, btn) {
-      @if(!auth()->check())
-        window.location.href = "{{ route('login') }}";
-        return;
-      @endif
-
-      const data = {
-        _token: '{{ csrf_token() }}'
-      };
-      if (listingId) data.listing_id = listingId;
-      if (offMarketId) data.off_market_listing_id = offMarketId;
-
-      const icon = $(btn).find('i');
-
-      $.ajax({
-        url: '{{ route('favorites.toggle') }}',
-        type: 'POST',
-        data: data,
-        success: function(res) {
-          if (res.status === 'added') {
-            $(btn).removeClass('text-gray-400').addClass('text-red-500');
-            icon.removeClass('fa-regular').addClass('fa-solid');
-          } else {
-            $(btn).removeClass('text-red-500').addClass('text-gray-400');
-            icon.removeClass('fa-solid').addClass('fa-regular');
-          }
-        },
-        error: function() {
-          alert('Something went wrong. Please try again.');
+        if (typeof initializeCurrencyConverter === 'function') {
+          initializeCurrencyConverter();
         }
       });
-    }
-    function applySort(sort) {
-      const params = new URLSearchParams(window.location.search);
-      params.set('sort', sort);
-      window.location.href = window.location.pathname + '?' + params.toString();
-    }
-  </script>
+
+      function toggleFavorite(listingId, offMarketId, btn) {
+        @if(!auth()->check())
+          window.location.href = "{{ route('login') }}";
+          return;
+        @endif
+
+                  const data = { _token: '{{ csrf_token() }}' };
+        if (listingId) data.listing_id = listingId;
+        if (offMarketId) data.off_market_listing_id = offMarketId;
+
+        const icon = $(btn).find('i');
+
+        $.ajax({
+          url: '{{ route('favorites.toggle') }}',
+          type: 'POST',
+          data: data,
+          success: function (res) {
+            if (res.status === 'added') {
+              $(btn).removeClass('text-gray-400').addClass('text-red-500');
+              icon.removeClass('fa-regular').addClass('fa-solid');
+            } else {
+              $(btn).removeClass('text-red-500').addClass('text-gray-400');
+              icon.removeClass('fa-solid').addClass('fa-regular');
+            }
+          },
+          error: function () {
+            alert('Something went wrong. Please try again.');
+          }
+        });
+      }
+
+      function applySort(sort) {
+        const params = new URLSearchParams(window.location.search);
+        params.set('sort', sort);
+        window.location.href = window.location.pathname + '?' + params.toString();
+      }
+    </script>
+  @endpush
 
 @endsection

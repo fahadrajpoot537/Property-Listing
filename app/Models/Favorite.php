@@ -3,10 +3,19 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Factories\HasFactory; // Added this line
 
 class Favorite extends Model
 {
-    protected $fillable = ['user_id', 'listing_id', 'off_market_listing_id'];
+    use HasFactory; // Added this line
+
+    protected $fillable = [
+        'user_id',
+        'listing_id',
+        'off_market_listing_id',
+        'notes', // Added this line
+        'status', // Added this line
+    ];
 
     public function user()
     {
