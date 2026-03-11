@@ -4,7 +4,7 @@
 
 @section('content')
     <div class="flex justify-between items-center mb-5">
-        <h3 class="text-slate-800 font-black text-lg tracking-tight uppercase">Asset Categories</h3>
+        <h3 class="text-slate-800 font-black text-lg tracking-tight uppercase">Property Types</h3>
         <button onclick="openModal()"
             class="bg-[#8046F1] hover:bg-[#6D28D9] text-white font-black py-2 px-5 rounded-lg shadow-lg shadow-purple-500/10 transition-all flex items-center gap-2 active:scale-95 text-[10px] uppercase tracking-widest">
             <i class='bx bx-plus text-base'></i> New Type
@@ -16,7 +16,8 @@
             <thead class="text-[10px] text-slate-400 font-black uppercase tracking-widest bg-slate-50/50">
                 <tr>
                     <th class="px-5 py-3">ID</th>
-                    <th class="px-5 py-3">Classification</th>
+                    <th class="px-5 py-3">Title</th>
+                    <th class="px-5 py-3">Category</th>
                     <th class="px-5 py-3">Slug</th>
                     <th class="px-5 py-3">Manage</th>
                 </tr>
@@ -45,6 +46,18 @@
                             <input type="text" name="title" id="title"
                                 class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm border p-2"
                                 required>
+                        </div>
+
+                        <div class="mb-4">
+                            <label for="category_id" class="block text-sm font-medium text-gray-700">Category</label>
+                            <select name="category_id" id="category_id"
+                                class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm border p-2"
+                                required>
+                                <option value="">Select Category</option>
+                                @foreach($categories as $cat)
+                                    <option value="{{ $cat->id }}">{{ $cat->name }}</option>
+                                @endforeach
+                            </select>
                         </div>
 
                         <div class="mb-4">
@@ -85,15 +98,20 @@
                                 return `<span class="font-medium text-slate-800">${data}</span>`;
                             }
                         },
+                        {
+                            data: 'category', name: 'category.name', render: function (data) {
+                                return data ? `<span class="px-2 py-0.5 rounded-full bg-slate-100 text-slate-600 font-bold text-[10px] uppercase">${data.name}</span>` : 'N/A';
+                            }
+                        },
                         { data: 'slug', name: 'slug' },
                         {
                             data: 'id', name: 'actions', orderable: false, searchable: false, render: function (data) {
                                 return `
-                                            <div class="flex gap-1.5">
-                                                <button onclick="editType(${data})" class="w-7 h-7 rounded bg-slate-50 flex items-center justify-center text-slate-400 hover:text-[#8046F1] transition-all"><i class='bx bx-edit-alt'></i></button>
-                                                <button onclick="deleteType(${data})" class="w-7 h-7 rounded bg-slate-50 flex items-center justify-center text-slate-400 hover:text-rose-500 transition-all"><i class='bx bx-trash'></i></button>
-                                            </div>
-                                        `;
+                                                            <div class="flex gap-1.5">
+                                                                <button onclick="editType(${data})" class="w-7 h-7 rounded bg-slate-50 flex items-center justify-center text-slate-400 hover:text-[#8046F1] transition-all"><i class='bx bx-edit-alt'></i></button>
+                                                                <button onclick="deleteType(${data})" class="w-7 h-7 rounded bg-slate-50 flex items-center justify-center text-slate-400 hover:text-rose-500 transition-all"><i class='bx bx-trash'></i></button>
+                                                            </div>
+                                                        `;
                             }
                         }
                     ]
@@ -146,6 +164,7 @@
                 $.get(`/admin/property-types/${id}/edit`, function (data) {
                     $('#typeId').val(data.id);
                     $('#title').val(data.title);
+                    $('#category_id').val(data.category_id);
                     $('#description').val(data.description);
                     $('#meta_title').val(data.meta_title);
                     $('#modalTitle').text('Edit Property Type');

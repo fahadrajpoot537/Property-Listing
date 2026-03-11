@@ -411,7 +411,7 @@
                 <!-- Asset Configuration -->
                 @can('asset.manage')
                     <div class="mb-1"
-                        x-data="{ open: {{ request()->routeIs('admin.property-types.*', 'admin.unit-types.*', 'admin.features.*', 'admin.property-locations.*', 'admin.mortgage-settings.*', 'admin.ownership-statuses.*', 'admin.rent-frequencies.*', 'admin.cheques.*') ? 'true' : 'false' }} }">
+                        x-data="{ open: {{ request()->routeIs('admin.categories.*', 'admin.property-types.*', 'admin.unit-types.*', 'admin.features.*', 'admin.property-locations.*', 'admin.mortgage-settings.*', 'admin.ownership-statuses.*', 'admin.rent-frequencies.*', 'admin.cheques.*') ? 'true' : 'false' }} }">
                         <button @click="open = !open"
                             class="w-full flex items-center justify-between px-3 py-2 rounded-lg text-white/50 hover:text-white hover:bg-white/5 transition-all duration-300">
                             <div class="flex items-center">
@@ -422,9 +422,13 @@
                                 :class="open ? 'rotate-180' : ''"></i>
                         </button>
                         <div x-show="open" x-cloak class="mt-0.5 space-y-0.5 ml-3 border-l border-white/5 pl-2">
+                            <a href="{{ route('admin.categories.index') }}"
+                                class="flex items-center px-3 py-1.5 rounded-lg text-[12px] font-bold text-white/60 hover:text-white transition-all {{ request()->routeIs('admin.categories.*') ? 'text-white bg-white/5' : '' }}">
+                                Categories
+                            </a>
                             <a href="{{ route('admin.property-types.index') }}"
                                 class="flex items-center px-3 py-1.5 rounded-lg text-[12px] font-bold text-white/60 hover:text-white transition-all {{ request()->routeIs('admin.property-types.*') ? 'text-white bg-white/5' : '' }}">
-                                Categories
+                                Property Types
                             </a>
                             <a href="{{ route('admin.mortgage-settings.index') }}"
                                 class="flex items-center px-3 py-1.5 rounded-lg text-[12px] font-bold text-white/60 hover:text-white transition-all {{ request()->routeIs('admin.mortgage-settings.*') ? 'text-white bg-white/5' : '' }}">

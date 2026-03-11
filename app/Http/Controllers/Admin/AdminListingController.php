@@ -125,7 +125,8 @@ class AdminListingController extends Controller implements HasMiddleware
         $cheques = \App\Models\Cheque::all();
         $amenities = \App\Models\Amenity::all();
         $tags = \App\Models\Tag::all();
-        return view('admin.listings.form', compact('users', 'propertyTypes', 'features', 'ownershipStatuses', 'rentFrequencies', 'cheques'));
+        $categories = \App\Models\Category::all();
+        return view('admin.listings.form', compact('users', 'propertyTypes', 'features', 'ownershipStatuses', 'rentFrequencies', 'cheques', 'categories'));
     }
 
     public function show(string $id)
@@ -164,7 +165,8 @@ class AdminListingController extends Controller implements HasMiddleware
         $cheques = \App\Models\Cheque::all();
         $amenities = \App\Models\Amenity::all();
         $tags = \App\Models\Tag::all();
-        return view('admin.listings.form', compact('listing', 'users', 'propertyTypes', 'features', 'ownershipStatuses', 'rentFrequencies', 'cheques'));
+        $categories = \App\Models\Category::all();
+        return view('admin.listings.form', compact('listing', 'users', 'propertyTypes', 'features', 'ownershipStatuses', 'rentFrequencies', 'cheques', 'categories'));
     }
 
     public function store(ListingRequest $request)
@@ -207,6 +209,7 @@ class AdminListingController extends Controller implements HasMiddleware
             'area_size',
             'floor_level',
             'property_type_id',
+            'category_id',
             'sub_type',
             'property_reference_number',
             'slug',
@@ -327,6 +330,7 @@ class AdminListingController extends Controller implements HasMiddleware
         $listing = \App\Models\Listing::findOrFail($id);
 
         $validated = $request->validated();
+        $validated['property_reference_number'] = $request->property_reference_number ?: $listing->property_reference_number ?: 'REF-' . strtoupper(\Illuminate\Support\Str::random(10));
 
         if ($request->is_draft) {
             $validated['status'] = 'draft';
@@ -362,7 +366,9 @@ class AdminListingController extends Controller implements HasMiddleware
             'area_size',
             'floor_level',
             'property_type_id',
+            'category_id',
             'sub_type',
+            'property_reference_number',
             'status',
             'thumbnail',
             'video',

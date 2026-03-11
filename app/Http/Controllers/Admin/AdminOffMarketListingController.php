@@ -125,7 +125,8 @@ class AdminOffMarketListingController extends Controller implements HasMiddlewar
         $cheques = \App\Models\Cheque::all();
         $amenities = \App\Models\Amenity::all();
         $tags = \App\Models\Tag::all();
-        return view('admin.off_market_listings.form', compact('users', 'propertyTypes', 'features', 'ownershipStatuses', 'rentFrequencies', 'cheques'));
+        $categories = \App\Models\Category::all();
+        return view('admin.off_market_listings.form', compact('users', 'propertyTypes', 'features', 'ownershipStatuses', 'rentFrequencies', 'cheques', 'categories'));
     }
 
     public function edit(string $id)
@@ -139,7 +140,8 @@ class AdminOffMarketListingController extends Controller implements HasMiddlewar
         $cheques = \App\Models\Cheque::all();
         $amenities = \App\Models\Amenity::all();
         $tags = \App\Models\Tag::all();
-        return view('admin.off_market_listings.form', compact('listing', 'users', 'propertyTypes', 'features', 'ownershipStatuses', 'rentFrequencies', 'cheques'));
+        $categories = \App\Models\Category::all();
+        return view('admin.off_market_listings.form', compact('listing', 'users', 'propertyTypes', 'features', 'ownershipStatuses', 'rentFrequencies', 'cheques', 'categories'));
     }
 
     public function show(string $id)
@@ -206,6 +208,7 @@ class AdminOffMarketListingController extends Controller implements HasMiddlewar
             'area_size',
             'floor_level',
             'property_type_id',
+            'category_id',
             'sub_type',
             'property_reference_number',
             'slug',
@@ -325,6 +328,7 @@ class AdminOffMarketListingController extends Controller implements HasMiddlewar
         $listing = \App\Models\OffMarketListing::findOrFail($id);
 
         $validated = $request->validated();
+        $validated['property_reference_number'] = $request->property_reference_number ?: $listing->property_reference_number ?: 'OFF-REF-' . strtoupper(\Illuminate\Support\Str::random(10));
 
         if ($request->hasFile('thumbnail')) {
             $validated['thumbnail'] = $request->file('thumbnail')->store('thumbnails', 'public');
@@ -360,7 +364,9 @@ class AdminOffMarketListingController extends Controller implements HasMiddlewar
             'area_size',
             'floor_level',
             'property_type_id',
+            'category_id',
             'sub_type',
+            'property_reference_number',
             'status',
             'thumbnail',
             'video',

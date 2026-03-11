@@ -12,11 +12,17 @@ class PropertyType extends Model
     protected $fillable = [
         'title',
         'slug',
+        'category_id',
         'meta_title',
         'meta_keywords',
         'meta_description',
         'description',
     ];
+
+    public function category()
+    {
+        return $this->belongsTo(Category::class);
+    }
 
 
 

@@ -20,6 +20,7 @@ class ListingRequest extends FormRequest
         $table = $listingId ? 'listings' : 'off_market_listings';
 
         return [
+            'category_id' => 'required|exists:categories,id',
             'property_title' => 'required|string|max:255',
             'description' => 'nullable|string|max:32000',
             'purpose' => 'required|in:Rent,Buy',
@@ -36,6 +37,7 @@ class ListingRequest extends FormRequest
             'floor_level' => 'nullable|string',
             'property_type_id' => 'nullable|exists:property_types,id',
             'sub_type' => 'nullable|string',
+            'property_reference_number' => 'nullable|string|max:255',
             'slug' => [
                 'nullable',
                 'string',

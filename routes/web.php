@@ -112,6 +112,7 @@ Route::middleware('auth')->group(function () {
         ])->name('users.update-status');
         Route::resource('users', \App\Http\Controllers\Admin\AdminUserController::class);
         Route::resource('roles', \App\Http\Controllers\Admin\AdminRoleController::class);
+        Route::resource('categories', \App\Http\Controllers\Admin\AdminCategoryController::class);
         Route::resource('property-types', \App\Http\Controllers\Admin\AdminPropertyTypeController::class);
 
         Route::resource('features', \App\Http\Controllers\Admin\AdminFeatureController::class);

@@ -16,10 +16,11 @@ class AdminPropertyTypeController extends Controller
     public function index(Request $request)
     {
         if ($request->ajax()) {
-            $propertyTypes = \App\Models\PropertyType::latest()->get();
+            $propertyTypes = \App\Models\PropertyType::with('category')->latest()->get();
             return response()->json(['data' => $propertyTypes]);
         }
-        return view('admin.property_types.index');
+        $categories = \App\Models\Category::all();
+        return view('admin.property_types.index', compact('categories'));
     }
 
     public function create()
@@ -31,6 +32,7 @@ class AdminPropertyTypeController extends Controller
     {
         $validated = $request->validate([
             'title' => 'required|string|max:255',
+            'category_id' => 'required|exists:categories,id',
             'meta_title' => 'nullable|string|max:255',
             'meta_keywords' => 'nullable|string|max:255',
             'meta_description' => 'nullable|string',
@@ -61,6 +63,7 @@ class AdminPropertyTypeController extends Controller
 
         $validated = $request->validate([
             'title' => 'required|string|max:255',
+            'category_id' => 'required|exists:categories,id',
             'meta_title' => 'nullable|string|max:255',
             'meta_keywords' => 'nullable|string|max:255',
             'meta_description' => 'nullable|string',

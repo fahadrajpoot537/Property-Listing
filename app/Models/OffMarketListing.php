@@ -53,6 +53,11 @@ class OffMarketListing extends Model
         return $this->belongsTo(PropertyType::class);
     }
 
+    public function category()
+    {
+        return $this->belongsTo(Category::class);
+    }
+
 
 
     public function features()

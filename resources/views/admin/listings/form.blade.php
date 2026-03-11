@@ -69,10 +69,10 @@
 
                         <div>
                             <label class="block text-[13px] font-black text-black uppercase tracking-widest mb-2">Internal
-                                Reference (Auto-Generated)</label>
+                                Reference (Optional)</label>
                             <input type="text" name="property_reference_number"
                                 class="w-full rounded-lg border-slate-100 bg-slate-50 text-[13px] px-4 py-3 outline-none focus:bg-white focus:border-indigo-400 transition-all font-medium"
-                                placeholder="REF-XXXXXX" readonly value="{{ $listing->property_reference_number ?? '' }}">
+                                placeholder="Auto-generated if left blank" value="{{ $listing->property_reference_number ?? '' }}">
                         </div>
 
                         <div class="md:col-span-2">
@@ -251,21 +251,32 @@
                     </div>
 
                     <!-- Section: Categorization -->
-                    <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
                         <div>
-                            <label class="block text-xs font-black text-black uppercase tracking-[0.2em] mb-3">Property
-                                Type</label>
-                            <select name="property_type_id" id="property_type_id" class="select2 w-full" required
-                                onchange="handleTypeChange()">
+                            <label class="block text-xs font-black text-black uppercase tracking-[0.2em] mb-3">Category</label>
+                            <select name="category_id" id="category_id" class="select2 w-full" required onchange="filterPropertyTypes()">
                                 <option value="">Select Category</option>
+                                @foreach($categories as $cat)
+                                    <option value="{{ $cat->id }}" {{ (isset($listing) && $listing->category_id == $cat->id) ? 'selected' : '' }}>
+                                        {{ $cat->name }}
+                                    </option>
+                                @endforeach
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block text-xs font-black text-black uppercase tracking-[0.2em] mb-3">Property Type</label>
+                            <select name="property_type_id" id="property_type_id" class="select2 w-full" required onchange="handleTypeChange()">
+                                <option value="">Select Property Type</option>
                                 @foreach($propertyTypes as $type)
-                                    <option value="{{ $type->id }}" data-title="{{ strtolower($type->title) }}" {{ (isset($listing) && $listing->property_type_id == $type->id) ? 'selected' : '' }}>
+                                    <option value="{{ $type->id }}" 
+                                            data-category="{{ $type->category_id }}" 
+                                            data-title="{{ strtolower($type->title) }}" 
+                                            {{ (isset($listing) && $listing->property_type_id == $type->id) ? 'selected' : '' }}>
                                         {{ $type->title }}
                                     </option>
                                 @endforeach
                             </select>
                         </div>
-
                         <input type="hidden" name="sub_type" value="Not Specified">
                     </div>
 
@@ -647,6 +658,7 @@
 
                 // Initial load
                 handleTypeChange();
+                filterPropertyTypes();
 
                 // Form Submission
                 $('#listingForm').on('submit', function (e) {
@@ -707,6 +719,29 @@
                     $('#bedrooms_container, #bathrooms_container, #receptions_container').addClass('hidden');
                 } else {
                     $('#bedrooms_container, #bathrooms_container, #receptions_container').removeClass('hidden');
+                }
+            }
+
+            function filterPropertyTypes() {
+                const categoryId = $('#category_id').val();
+                const propertyTypeSelect = $('#property_type_id');
+                
+                propertyTypeSelect.find('option').each(function() {
+                    if ($(this).val() === "") return;
+                    
+                    if (categoryId == "" || $(this).data('category') == categoryId) {
+                        $(this).prop('disabled', false);
+                    } else {
+                        $(this).prop('disabled', true);
+                    }
+                });
+                
+                // If current selection is now invalid, reset it
+                const currentVal = propertyTypeSelect.val();
+                if (currentVal && propertyTypeSelect.find(`option[value="${currentVal}"]:disabled`).length > 0) {
+                    propertyTypeSelect.val('').trigger('change');
+                } else {
+                    propertyTypeSelect.trigger('change');
                 }
             }
 
