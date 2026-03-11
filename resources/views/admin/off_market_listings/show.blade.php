@@ -120,7 +120,7 @@
                         ['icon' => 'bx-expand', 'label' => 'Total Area', 'value' => ($listing->area_size ?: '0') . ' Sq Ft', 'bg' => 'bg-slate-900', 'text' => 'text-white'],
                         ['icon' => 'bx-bed', 'label' => 'Bedrooms', 'value' => $listing->bedrooms, 'bg' => 'bg-white', 'text' => 'text-[#ff931e]'],
                         ['icon' => 'bx-bath', 'label' => 'Bathrooms', 'value' => $listing->bathrooms, 'bg' => 'bg-white', 'text' => 'text-[#ff931e]'],
-                        ['icon' => 'bx-shield-quarter', 'label' => 'Asset Class', 'value' => $listing->unitType->title ?? 'N/A', 'bg' => 'bg-slate-900', 'text' => 'text-white']
+                        ['icon' => 'bx-shield-quarter', 'label' => 'Asset Class', 'value' => $listing->propertyType->title ?? 'N/A', 'bg' => 'bg-slate-900', 'text' => 'text-white']
                     ];
                 @endphp
                 @foreach($specs as $spec)

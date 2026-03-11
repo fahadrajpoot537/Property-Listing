@@ -61,9 +61,33 @@ class PropertyInquiryController extends Controller
             'status' => 'sent',
         ]);
 
-        // Send email to property owner if they have an email
+        // Save to WalkThroughInquiry table so it shows up on the Agent/Agency and Super Admin Enquiries Dashboard
+        \App\Models\WalkThroughInquiry::create([
+            'listing_id' => $listing->id,
+            'off_market_listing_id' => null,
+            'user_id' => $listing->user_id,
+            'sender_id' => auth()->id(),
+            'name' => $request->name,
+            'email' => $request->email,
+            'phone' => $request->phone,
+            'preferred_time' => 'General Inquiry',
+            'message' => $request->message,
+            'status' => 'pending',
+        ]);
+
+        // Route email to the correct recipient
         if ($listing->user && $listing->user->email) {
-            Mail::to($listing->user->email)->send(new PropertyInquiryMail($inquiryData, $listing));
+            $notificationEmail = $listing->user->email;
+
+            // If the listing owner is an agent and belongs to an agency, route email to the agency
+            if ($listing->user->hasRole('agent') && $listing->user->agency_id) {
+                $agency = \App\Models\User::find($listing->user->agency_id);
+                if ($agency && $agency->email) {
+                    $notificationEmail = $agency->email;
+                }
+            }
+
+            Mail::to($notificationEmail)->send(new PropertyInquiryMail($inquiryData, $listing));
         }
 
         return back()->with('success', 'Your inquiry has been sent to the property owner.');

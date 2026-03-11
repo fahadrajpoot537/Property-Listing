@@ -21,15 +21,12 @@ class ListingRequest extends FormRequest
 
         return [
             'property_title' => 'required|string|max:255',
-            'summary_description' => 'nullable|string|max:300',
             'description' => 'nullable|string|max:32000',
             'purpose' => 'required|in:Rent,Buy',
             'price' => 'required|numeric|min:0',
             'price_qualifier' => 'nullable|string',
             'old_price' => 'nullable|numeric|min:0',
-            'postcode' => 'nullable|string',
             'address' => 'nullable|string|max:500',
-            'display_address' => 'nullable|string',
             'latitude' => 'nullable|numeric|between:-90,90',
             'longitude' => 'nullable|numeric|between:-180,180',
             'bedrooms' => 'nullable|string',
@@ -39,7 +36,6 @@ class ListingRequest extends FormRequest
             'floor_level' => 'nullable|string',
             'property_type_id' => 'nullable|exists:property_types,id',
             'sub_type' => 'nullable|string',
-            'unit_type_id' => 'nullable|exists:unit_types,id',
             'slug' => [
                 'nullable',
                 'string',
@@ -80,7 +76,8 @@ class ListingRequest extends FormRequest
             'utilities_mobile' => 'nullable|string',
 
             // Details
-            'key_features' => 'nullable|array',
+            'features' => 'nullable|array',
+            'amenities' => 'nullable|array',
             'tags' => 'nullable|array',
             'government_scheme' => 'nullable|string',
             'deposit' => 'nullable|string',

@@ -1,6 +1,6 @@
 @extends('layouts.modern')
 
-@section('title', 'Private Listing: ' . ($listing->property_title ?? 'Exclusive Asset') . ' - Finda-UK Vault')
+@section('title', 'Private Listing: ' . ($listing->property_title ?? 'Exclusive Asset') . ' - PropertyFinda Vault')
 
 @push('styles')
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css" />
@@ -410,7 +410,7 @@
                         <div style="flex: 1; background: white; padding: 12px 8px; border-radius: 16px; border: 1px solid #f3f4f6; text-align: center; min-width: 0;">
                             <i class="fa-solid fa-vector-square text-secondary" style="font-size: 18px; margin-bottom: 4px; display: block;"></i>
                             <p class="text-primary" style="font-size: 14px; font-weight: 900; margin: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
-                                {{ $listing->area_size && is_numeric($listing->area_size) && $listing->area_size > 0 ? number_format((float)$listing->area_size) : 'N/A' }}
+                                {{ $listing->area_size ? (is_numeric($listing->area_size) ? number_format((float)$listing->area_size) : $listing->area_size) : 'N/A' }}
                             </p>
                             <p style="font-size: 10px; color: #9ca3af; font-weight: 500; margin: 0;">Sqft</p>
                         </div>
@@ -771,11 +771,15 @@
                             </form>
 
                             <div class="mt-6 grid grid-cols-2 gap-3">
-                                <a href="https://wa.me/{{ $listing->user->phone_number ?? $listing->user->phone ?? '' }}?text=Interested in Ref: {{ $listing->property_reference_number }} - {{ $listing->property_title }}"
+                                @php
+                                    $agentPhoneRaw = $listing->user->phone_number ?? $listing->user->phone ?? '';
+                                    $agentPhoneWa = preg_replace('/[^0-9]/', '', $agentPhoneRaw);
+                                @endphp
+                                <a href="https://wa.me/{{ $agentPhoneWa }}?text=Interested in Ref: {{ $listing->property_reference_number }} - {{ $listing->property_title }}" target="_blank"
                                     class="py-3 bg-emerald-500 rounded-xl flex items-center justify-center gap-2 text-sm font-bold hover:bg-emerald-600 transition-all">
                                     <i class="fab fa-whatsapp"></i> WhatsApp
                                 </a>
-                                <a href="tel:{{ $listing->user->phone_number ?? $listing->user->phone ?? '' }}"
+                                <a href="tel:{{ $agentPhoneRaw }}"
                                     class="py-3 bg-white/10 rounded-xl flex items-center justify-center gap-2 text-sm font-bold border border-white/20 hover:bg-white/20 transition-all">
                                     <i class="fa-solid fa-phone"></i> Call
                                 </a>

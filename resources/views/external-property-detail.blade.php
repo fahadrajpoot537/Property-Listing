@@ -159,7 +159,7 @@
 
                 <p class="text-[10px] text-gray-400 text-center font-medium italic px-6">
                     Disclaimer: This information is provided via the PaTMa Property Prospector API and is for informational
-                    purposes only. Information is fetched in real-time and not stored on Finda-UK.
+                    purposes only. Information is fetched in real-time and not stored on PropertyFinda.
                 </p>
             </div>
         </div>

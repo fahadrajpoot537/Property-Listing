@@ -36,7 +36,7 @@
                     <div class="flex-1">
                         <h4 class="font-black text-slate-800 text-[11px] uppercase tracking-tighter leading-tight mt-0.5">
                             Add Off-Market</h4>
-                        <p class="text-[9px] text-slate-400 font-bold uppercase">Private</p>
+                        <p class="text-[9px] text-slate-400 font-bold uppercase">Deals</p>
                     </div>
                 </a>
             @endcan
@@ -60,11 +60,11 @@
                 class="group bg-white p-3 rounded-xl border border-slate-100 hover:border-amber-500/30 transition-all flex items-center gap-3">
                 <div
                     class="w-10 h-10 bg-amber-50 text-amber-600 rounded-lg flex items-center justify-center text-xl group-hover:scale-110 transition-transform">
-                    <i class='bx bx-play-circle'></i>
+                    <i class='bx bx-message-detail'></i>
                 </div>
                 <div class="flex-1">
                     <h4 class="font-black text-slate-800 text-[11px] uppercase tracking-tighter leading-tight mt-0.5">
-                        Tours</h4>
+                        enquiries</h4>
                     <p class="text-[9px] text-slate-400 font-bold uppercase">Requests</p>
                 </div>
             </a>
@@ -85,37 +85,37 @@
         @endif
 
         <!-- Stat Card 2 -->
-        <div
-            class="bg-white rounded-xl shadow-sm border border-slate-100 p-4 flex flex-col items-start relative overflow-hidden group hover:border-[#8046F1]/20 transition-all duration-300">
+        <a href="{{ route('admin.listings.index') }}"
+            class="bg-white rounded-xl shadow-sm border border-slate-100 p-4 flex flex-col items-start relative overflow-hidden group hover:border-blue-500/20 transition-all duration-300">
             <div
                 class="w-10 h-10 bg-blue-50 text-[#02b8f2] rounded-lg flex items-center justify-center text-lg mb-4 transition-transform group-hover:scale-105">
                 <i class='bx bx-building-house'></i>
             </div>
-            <div class="text-slate-400 text-[10px] font-black uppercase tracking-widest mb-1">Active Assets</div>
+            <div class="text-slate-400 text-[10px] font-black uppercase tracking-widest mb-1">Active Listings</div>
             <div class="text-xl font-black text-slate-900 tracking-tight">{{ number_format($data['listingsCount']) }}</div>
-        </div>
+        </a>
 
         <!-- Stat Card 3 -->
-        <div
-            class="bg-white rounded-xl shadow-sm border border-slate-100 p-4 flex flex-col items-start relative overflow-hidden group hover:border-[#8046F1]/20 transition-all duration-300">
+        <a href="{{ route('admin.off-market-listings.index') }}"
+            class="bg-white rounded-xl shadow-sm border border-slate-100 p-4 flex flex-col items-start relative overflow-hidden group hover:border-purple-500/20 transition-all duration-300">
             <div
                 class="w-10 h-10 bg-slate-900 text-white rounded-lg flex items-center justify-center text-lg mb-4 transition-transform group-hover:scale-105">
                 <i class='bx bx-lock-alt'></i>
             </div>
-            <div class="text-slate-400 text-[10px] font-black uppercase tracking-widest mb-1">Private Deals</div>
+            <div class="text-slate-400 text-[10px] font-black uppercase tracking-widest mb-1">Off Market Listing</div>
             <div class="text-xl font-black text-slate-900 tracking-tight">
                 {{ number_format($data['offMarketListingsCount']) }}
             </div>
-        </div>
+        </a>
 
         <!-- Stat Card 4 -->
         <a href="{{ route('admin.walkthrough.index') }}"
             class="bg-white rounded-xl shadow-sm border border-slate-100 p-4 flex flex-col items-start relative overflow-hidden group hover:border-amber-500/20 transition-all duration-300">
             <div
                 class="w-10 h-10 bg-amber-50 text-amber-500 rounded-lg flex items-center justify-center text-lg mb-4 transition-transform group-hover:scale-105">
-                <i class='bx bx-play-circle'></i>
+                <i class='bx bx-message-detail'></i>
             </div>
-            <div class="text-slate-400 text-[10px] font-black uppercase tracking-widest mb-1">Queue Tours</div>
+            <div class="text-slate-400 text-[10px] font-black uppercase tracking-widest mb-1">Queue Enquiries</div>
             <div class="text-xl font-black text-slate-900 tracking-tight">{{ number_format($data['walkthroughCount']) }}
             </div>
             @if($data['walkthroughCount'] > 0)
@@ -127,26 +127,30 @@
         </a>
     </div>
 
-    <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-10">
+    <div
+        class="grid grid-cols-1 md:grid-cols-2 {{ auth()->user()->hasAnyRole(['admin', 'manager', 'listing director', 'Q/A']) ? 'xl:grid-cols-3' : 'xl:grid-cols-2' }} gap-8 mb-10">
         @if(auth()->user()->hasAnyRole(['admin', 'manager', 'listing director', 'Q/A']))
             <!-- Recent Users -->
-            <div class="bg-white rounded-xl border border-slate-100 overflow-hidden">
-                <div class="px-5 py-3 border-b border-slate-50 flex justify-between items-center">
-                    <h3 class="font-black text-slate-800 text-xs tracking-widest uppercase">Latest Members</h3>
+            <div class="bg-white rounded-xl border border-slate-100 overflow-hidden shadow-sm">
+                <div class="px-5 py-3 border-b border-slate-50 flex justify-between items-center bg-slate-50/50">
+                    <h3 class="font-black text-slate-800 text-xs tracking-widest uppercase flex items-center gap-2">
+                        <i class='bx bx-user text-indigo-600'></i>
+                        Latest Members
+                    </h3>
                     <a href="{{ route('admin.users.index') }}"
-                        class="w-6 h-6 bg-slate-50 rounded-lg flex items-center justify-center text-slate-400 hover:text-indigo-600 transition-colors"><i
+                        class="w-6 h-6 bg-white border border-slate-200 rounded-lg flex items-center justify-center text-slate-400 hover:text-indigo-600 hover:border-indigo-100 transition-all shadow-sm"><i
                             class='bx bx-right-arrow-alt'></i></a>
                 </div>
-                <div class="divide-y divide-slate-50 overflow-y-auto max-h-[300px]">
+                <div class="divide-y divide-slate-50 overflow-y-auto max-h-[350px]">
                     @foreach($data['recentUsers'] as $user)
-                        <div class="px-5 py-3 flex items-center hover:bg-slate-50 transition-all group">
+                        <div class="px-5 py-3 flex items-center hover:bg-slate-50/80 transition-all group">
                             <div
-                                class="w-8 h-8 rounded-lg bg-indigo-50 text-indigo-600 flex items-center justify-center font-black text-xs transition-transform group-hover:scale-105">
+                                class="w-8 h-8 rounded-lg bg-indigo-50 text-indigo-600 flex items-center justify-center font-black text-xs transition-transform group-hover:scale-110 shadow-sm border border-indigo-100">
                                 {{ substr($user->name, 0, 2) }}
                             </div>
                             <div class="ml-3 overflow-hidden">
                                 <div
-                                    class="font-bold text-slate-900 text-[13px] truncate group-hover:text-indigo-600 transition-colors">
+                                    class="font-bold text-slate-900 text-[13px] truncate group-hover:text-indigo-600 transition-colors uppercase">
                                     {{ $user->name }}
                                 </div>
                                 <div class="text-[10px] text-slate-400 font-bold tracking-tighter truncate">{{ $user->email }}</div>
@@ -161,32 +165,78 @@
         @endif
 
         <!-- Recent Listings -->
-        <div class="bg-white rounded-xl border border-slate-100 overflow-hidden">
-            <div class="px-5 py-3 border-b border-slate-50 flex justify-between items-center">
-                <h3 class="font-black text-slate-800 text-xs tracking-widest uppercase">Asset Monitor</h3>
+        <div class="bg-white rounded-xl border border-slate-100 overflow-hidden shadow-sm">
+            <div class="px-5 py-3 border-b border-slate-50 flex justify-between items-center bg-slate-50/50">
+                <h3 class="font-black text-slate-800 text-xs tracking-widest uppercase flex items-center gap-2">
+                    <i class='bx bx-building-house text-blue-500'></i>
+                    Active Listings
+                </h3>
                 <a href="{{ route('admin.listings.index') }}"
-                    class="w-6 h-6 bg-slate-50 rounded-lg flex items-center justify-center text-slate-400 hover:text-indigo-600 transition-colors"><i
+                    class="w-6 h-6 bg-white border border-slate-200 rounded-lg flex items-center justify-center text-slate-400 hover:text-indigo-600 hover:border-indigo-100 transition-all shadow-sm"><i
                         class='bx bx-right-arrow-alt'></i></a>
             </div>
-            <div class="divide-y divide-slate-50 overflow-y-auto max-h-[300px]">
+            <div class="divide-y divide-slate-50 overflow-y-auto max-h-[350px]">
                 @foreach($data['recentListings'] as $listing)
-                    <div class="px-5 py-3 flex items-center hover:bg-slate-50 transition-all group text-xs">
+                    <div
+                        class="px-5 py-3 flex items-center hover:bg-slate-50/80 transition-all group text-xs border-l-2 border-transparent hover:border-blue-500">
                         <img src="{{ $listing->thumbnail ? asset('storage/' . $listing->thumbnail) : asset('img/placeholder.jpg') }}"
-                            class="w-10 h-10 rounded-lg object-cover shadow-sm group-hover:scale-105 transition-transform">
+                            class="w-10 h-10 rounded-lg object-cover shadow-sm group-hover:scale-105 transition-transform border border-slate-100">
                         <div class="flex-1 min-w-0 ml-3 overflow-hidden">
-                            <div class="font-bold text-slate-900 truncate group-hover:text-indigo-600 transition-colors">
+                            <div
+                                class="font-bold text-slate-900 truncate group-hover:text-indigo-600 transition-colors uppercase italic">
                                 {{ $listing->property_title }}
                             </div>
                             <div class="text-[10px] text-slate-400 font-bold uppercase truncate">
-                                {{ $listing->property_type->title ?? 'Asset' }} • <span
-                                    class="text-indigo-600">{{ $listing->status }}</span>
+                                {{ $listing->propertyType->title ?? 'Asset' }} • <span
+                                    class="text-emerald-500">{{ $listing->status }}</span>
                             </div>
                         </div>
-                        <div class="ml-3 font-black text-slate-900 tracking-tight">
+                        <div class="ml-3 font-black text-slate-900 tracking-tight whitespace-nowrap">
                             £{{ number_format($listing->price) }}
                         </div>
                     </div>
                 @endforeach
+            </div>
+        </div>
+
+        <!-- Recent Off-Market Listings -->
+        <div class="bg-white rounded-xl border border-slate-100 overflow-hidden shadow-sm">
+            <div class="px-5 py-3 border-b border-slate-50 flex justify-between items-center bg-slate-50/50">
+                <h3 class="font-black text-slate-800 text-xs tracking-widest uppercase flex items-center gap-2">
+                    <i class='bx bx-lock-alt text-purple-600'></i>
+                    Off-Market Deals
+                </h3>
+                <a href="{{ route('admin.off-market-listings.index') }}"
+                    class="w-6 h-6 bg-white border border-slate-200 rounded-lg flex items-center justify-center text-slate-400 hover:text-purple-600 hover:border-purple-100 transition-all shadow-sm"><i
+                        class='bx bx-right-arrow-alt'></i></a>
+            </div>
+            <div class="divide-y divide-slate-50 overflow-y-auto max-h-[350px]">
+                @foreach($data['recentOffMarketListings'] as $listing)
+                    <div
+                        class="px-5 py-3 flex items-center hover:bg-slate-50/80 transition-all group text-xs border-l-2 border-transparent hover:border-purple-600">
+                        <img src="{{ $listing->thumbnail ? asset('storage/' . $listing->thumbnail) : asset('img/placeholder.jpg') }}"
+                            class="w-10 h-10 rounded-lg object-cover shadow-sm group-hover:scale-105 transition-transform border border-slate-100">
+                        <div class="flex-1 min-w-0 ml-3 overflow-hidden">
+                            <div
+                                class="font-bold text-slate-900 truncate group-hover:text-purple-600 transition-colors uppercase italic">
+                                {{ $listing->property_title }}
+                            </div>
+                            <div class="text-[10px] text-slate-400 font-bold uppercase truncate">
+                                {{ $listing->propertyType->title ?? 'Deals' }} • <span
+                                    class="text-purple-500">{{ $listing->status }}</span>
+                            </div>
+                        </div>
+                        <div class="ml-3 font-black text-slate-900 tracking-tight whitespace-nowrap">
+                            £{{ number_format($listing->price) }}
+                        </div>
+                    </div>
+                @endforeach
+                @if(count($data['recentOffMarketListings']) == 0)
+                    <div class="p-8 text-center text-slate-400">
+                        <i class='bx bx-info-circle text-2xl mb-1'></i>
+                        <p class="text-[10px] font-bold uppercase tracking-widest">No off-market deals found</p>
+                    </div>
+                @endif
             </div>
         </div>
     </div>
@@ -201,7 +251,7 @@
         </div>
         <div class="bg-[#131B31] rounded-xl p-6 shadow-lg relative overflow-hidden group h-[350px]">
             <div class="absolute inset-0 bg-gradient-to-br from-[#8046F1]/10 to-transparent"></div>
-            <h3 class="font-black text-white text-[10px] tracking-widest uppercase mb-6 relative z-10">Asset Split</h3>
+            <h3 class="font-black text-white text-[10px] tracking-widest uppercase mb-6 relative z-10">Listing Split</h3>
             <div class="h-[180px] relative z-10">
                 <canvas id="assetChart"></canvas>
             </div>

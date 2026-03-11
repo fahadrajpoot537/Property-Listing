@@ -159,6 +159,41 @@
                         <x-input-error :messages="$errors->get('address')" class="mt-1" />
                     </div>
 
+                    <!-- Company Details (Only for Agency) -->
+                    <div x-show="role === 'agency'" x-transition class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div class="space-y-2">
+                            <label for="company_name"
+                                class="text-xs font-black uppercase tracking-widest text-gray-400 ml-1">Company Name</label>
+                            <div class="relative group">
+                                <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+                                    <i
+                                        class="fa-solid fa-building text-gray-300 group-focus-within:text-secondary transition-colors"></i>
+                                </div>
+                                <input type="text" id="company_name" name="company_name" value="{{ old('company_name') }}"
+                                    class="w-full pl-11 pr-4 py-3.5 bg-gray-50 border border-gray-200 rounded-2xl focus:bg-white focus:ring-4 focus:ring-secondary/10 focus:border-secondary transition-all outline-none font-medium"
+                                    placeholder="Enter company name">
+                            </div>
+                            <x-input-error :messages="$errors->get('company_name')" class="mt-1" />
+                        </div>
+
+                        <div class="space-y-2">
+                            <label for="company_registration_number"
+                                class="text-xs font-black uppercase tracking-widest text-gray-400 ml-1">Company Registration
+                                No.</label>
+                            <div class="relative group">
+                                <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+                                    <i
+                                        class="fa-solid fa-file-contract text-gray-300 group-focus-within:text-secondary transition-colors"></i>
+                                </div>
+                                <input type="text" id="company_registration_number" name="company_registration_number"
+                                    value="{{ old('company_registration_number') }}"
+                                    class="w-full pl-11 pr-4 py-3.5 bg-gray-50 border border-gray-200 rounded-2xl focus:bg-white focus:ring-4 focus:ring-secondary/10 focus:border-secondary transition-all outline-none font-medium"
+                                    placeholder="Registration number">
+                            </div>
+                            <x-input-error :messages="$errors->get('company_registration_number')" class="mt-1" />
+                        </div>
+                    </div>
+
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                         <!-- Password -->
                         <div class="space-y-2">

@@ -26,7 +26,7 @@ class AdminListingController extends Controller implements HasMiddleware
     public function index(Request $request)
     {
         if ($request->ajax()) {
-            $query = \App\Models\Listing::with(['user', 'propertyType', 'unitType', 'features']);
+            $query = \App\Models\Listing::with(['user', 'propertyType', 'features']);
 
             // Role-based filtering
             $user = auth()->user();
@@ -94,12 +94,11 @@ class AdminListingController extends Controller implements HasMiddleware
         }
         $users = \App\Models\User::all();
         $propertyTypes = \App\Models\PropertyType::all();
-        $unitTypes = \App\Models\UnitType::all();
         $features = \App\Models\Feature::all();
         $ownershipStatuses = \App\Models\OwnershipStatus::all();
         $rentFrequencies = \App\Models\RentFrequency::all();
         $cheques = \App\Models\Cheque::all();
-        return view('admin.listings.index', compact('users', 'propertyTypes', 'unitTypes', 'features', 'ownershipStatuses', 'rentFrequencies', 'cheques'));
+        return view('admin.listings.index', compact('users', 'propertyTypes', 'features', 'ownershipStatuses', 'rentFrequencies', 'cheques'));
     }
 
     public function drafts(Request $request)
@@ -109,29 +108,29 @@ class AdminListingController extends Controller implements HasMiddleware
         }
         $users = \App\Models\User::all();
         $propertyTypes = \App\Models\PropertyType::all();
-        $unitTypes = \App\Models\UnitType::all();
         $features = \App\Models\Feature::all();
         $ownershipStatuses = \App\Models\OwnershipStatus::all();
         $rentFrequencies = \App\Models\RentFrequency::all();
         $cheques = \App\Models\Cheque::all();
-        return view('admin.listings.drafts', compact('users', 'propertyTypes', 'unitTypes', 'features', 'ownershipStatuses', 'rentFrequencies', 'cheques'));
+        return view('admin.listings.drafts', compact('users', 'propertyTypes', 'features', 'ownershipStatuses', 'rentFrequencies', 'cheques'));
     }
 
     public function create()
     {
         $users = \App\Models\User::all();
         $propertyTypes = \App\Models\PropertyType::all();
-        $unitTypes = \App\Models\UnitType::all();
         $features = \App\Models\Feature::all();
         $ownershipStatuses = \App\Models\OwnershipStatus::all();
         $rentFrequencies = \App\Models\RentFrequency::all();
         $cheques = \App\Models\Cheque::all();
-        return view('admin.listings.form', compact('users', 'propertyTypes', 'unitTypes', 'features', 'ownershipStatuses', 'rentFrequencies', 'cheques'));
+        $amenities = \App\Models\Amenity::all();
+        $tags = \App\Models\Tag::all();
+        return view('admin.listings.form', compact('users', 'propertyTypes', 'features', 'ownershipStatuses', 'rentFrequencies', 'cheques'));
     }
 
     public function show(string $id)
     {
-        $listing = \App\Models\Listing::with(['user', 'propertyType', 'unitType', 'features', 'materialInfo', 'utilities', 'media', 'rooms', 'details'])->findOrFail($id);
+        $listing = \App\Models\Listing::with(['user', 'propertyType', 'features', 'materialInfo', 'utilities', 'media', 'rooms', 'details'])->findOrFail($id);
 
         // Role-based access control
         $user = auth()->user();
@@ -156,15 +155,16 @@ class AdminListingController extends Controller implements HasMiddleware
 
     public function edit(string $id)
     {
-        $listing = \App\Models\Listing::with(['materialInfo', 'utilities', 'details', 'media', 'features'])->findOrFail($id);
+        $listing = \App\Models\Listing::with(['materialInfo', 'utilities', 'details', 'media', 'features', 'amenities', 'tags'])->findOrFail($id);
         $users = \App\Models\User::all();
         $propertyTypes = \App\Models\PropertyType::all();
-        $unitTypes = \App\Models\UnitType::all();
         $features = \App\Models\Feature::all();
         $ownershipStatuses = \App\Models\OwnershipStatus::all();
         $rentFrequencies = \App\Models\RentFrequency::all();
         $cheques = \App\Models\Cheque::all();
-        return view('admin.listings.form', compact('listing', 'users', 'propertyTypes', 'unitTypes', 'features', 'ownershipStatuses', 'rentFrequencies', 'cheques'));
+        $amenities = \App\Models\Amenity::all();
+        $tags = \App\Models\Tag::all();
+        return view('admin.listings.form', compact('listing', 'users', 'propertyTypes', 'features', 'ownershipStatuses', 'rentFrequencies', 'cheques'));
     }
 
     public function store(ListingRequest $request)
@@ -193,15 +193,12 @@ class AdminListingController extends Controller implements HasMiddleware
         // Only include fields that are truly mandatory/core for the listings table
         $mainData = \Illuminate\Support\Arr::only($validated, [
             'property_title',
-            'summary_description',
             'description',
             'purpose',
             'price',
             'price_qualifier',
             'old_price',
-            'postcode',
             'address',
-            'display_address',
             'latitude',
             'longitude',
             'bedrooms',
@@ -211,7 +208,6 @@ class AdminListingController extends Controller implements HasMiddleware
             'floor_level',
             'property_type_id',
             'sub_type',
-            'unit_type_id',
             'property_reference_number',
             'slug',
             'user_id',
@@ -242,7 +238,6 @@ class AdminListingController extends Controller implements HasMiddleware
             'heating_type',
             'broadband',
             'mobile_coverage',
-
             'government_scheme',
             'deposit',
             'availability_date'
@@ -257,9 +252,9 @@ class AdminListingController extends Controller implements HasMiddleware
         $listing = \App\Models\Listing::create($mainData);
 
         // Sync Features
-        if ($request->has('features')) {
-            $listing->features()->sync($request->features);
-        }
+        $listing->features()->sync($request->features ?? []);
+
+
 
         // Save Normalized Data
         $listing->materialInfo()->create([
@@ -296,8 +291,6 @@ class AdminListingController extends Controller implements HasMiddleware
         ]);
 
         $listing->details()->create([
-            'key_features' => $request->key_features,
-            'tags' => $request->tags,
             'government_scheme' => $request->government_scheme,
             'deposit' => $request->deposit,
         ]);
@@ -355,15 +348,12 @@ class AdminListingController extends Controller implements HasMiddleware
         // Separate main table data from related table data
         $mainData = \Illuminate\Support\Arr::only($validated, [
             'property_title',
-            'summary_description',
             'description',
             'purpose',
             'price',
             'price_qualifier',
             'old_price',
-            'postcode',
             'address',
-            'display_address',
             'latitude',
             'longitude',
             'bedrooms',
@@ -373,7 +363,6 @@ class AdminListingController extends Controller implements HasMiddleware
             'floor_level',
             'property_type_id',
             'sub_type',
-            'unit_type_id',
             'status',
             'thumbnail',
             'video',
@@ -401,8 +390,6 @@ class AdminListingController extends Controller implements HasMiddleware
             'heating_type',
             'broadband',
             'mobile_coverage',
-            'key_features',
-            'tags',
             'government_scheme',
             'deposit',
             'availability_date'
@@ -417,9 +404,9 @@ class AdminListingController extends Controller implements HasMiddleware
         $listing->update($mainData);
 
         // Sync Features
-        if ($request->has('features')) {
-            $listing->features()->sync($request->features);
-        }
+        $listing->features()->sync($request->features ?? []);
+
+
 
         // Update Normalized Data
         $listing->materialInfo()->updateOrCreate([], [
@@ -449,8 +436,6 @@ class AdminListingController extends Controller implements HasMiddleware
         ]);
 
         $listing->details()->updateOrCreate([], [
-            'key_features' => $request->key_features,
-            'tags' => $request->tags,
             'government_scheme' => $request->government_scheme,
             'deposit' => $request->deposit,
         ]);
@@ -507,14 +492,24 @@ class AdminListingController extends Controller implements HasMiddleware
         $listing = \App\Models\Listing::findOrFail($id);
         $newStatus = $request->status;
 
-        // If trying to set to approved, under_offer, or sold, check if listing owner is verified
+        // If trying to set to approved, under_offer, or sold, check permissions and verification
         $restrictedStatuses = ['approved', 'under_offer', 'sold'];
-        if (in_array($newStatus, $restrictedStatuses) && $listing->user->status !== 'document_approved') {
-            return response()->json([
-                'success' => false,
-                'message' => 'Verification Required: You must verify your account before setting this listing to ' . str_replace('_', ' ', $newStatus) . '.',
-                'redirect' => route('profile.edit')
-            ], 403);
+        if (in_array($newStatus, $restrictedStatuses)) {
+            $authUser = auth()->user();
+            if ($authUser->hasRole('agent') && $authUser->agency_id) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Unauthorized: Agents linked to an agency cannot approve listings.'
+                ], 403);
+            }
+
+            if ($listing->user->status !== 'document_approved') {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Verification Required: You must verify your account before setting this listing to ' . str_replace('_', ' ', $newStatus) . '.',
+                    'redirect' => route('profile.edit')
+                ], 403);
+            }
         }
 
         $listing->update(['status' => $newStatus]);
@@ -532,6 +527,10 @@ class AdminListingController extends Controller implements HasMiddleware
 
         switch ($action) {
             case 'approved':
+                $authUser = auth()->user();
+                if ($authUser->hasRole('agent') && $authUser->agency_id) {
+                    return response()->json(['success' => false, 'message' => 'Unauthorized: Agents linked to an agency cannot approve listings.'], 403);
+                }
                 // Filter IDs where owners are verified
                 $validIds = \App\Models\Listing::whereIn('id', $ids)
                     ->whereHas('user', function ($q) {
@@ -613,7 +612,7 @@ class AdminListingController extends Controller implements HasMiddleware
     {
         $ids = $request->ids ? explode(',', $request->ids) : null;
 
-        $query = \App\Models\Listing::with(['user', 'propertyType', 'unitType', 'features', 'ownershipStatus', 'rentFrequency', 'cheque']);
+        $query = \App\Models\Listing::with(['user', 'propertyType', 'features', 'ownershipStatus', 'rentFrequency', 'cheque']);
 
         if ($ids) {
             $query->whereIn('id', $ids);
@@ -638,7 +637,6 @@ class AdminListingController extends Controller implements HasMiddleware
             'Bathrooms',
             'Area Size',
             'Property Type',
-            'Unit Type',
             'Ownership Status',
             'Rent Frequency',
             'Cheque',
@@ -663,7 +661,6 @@ class AdminListingController extends Controller implements HasMiddleware
                 $listing->bathrooms,
                 $listing->area_size,
                 $listing->propertyType->title ?? '',
-                $listing->unitType->title ?? '',
                 $listing->ownershipStatus->title ?? '',
                 $listing->rentFrequency->title ?? '',
                 $listing->cheque->title ?? '',

@@ -5,7 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\Listing;
 use App\Models\OffMarketListing;
-use App\Models\UnitType;
+use App\Models\PropertyType;
 use Illuminate\Database\Eloquent\Builder;
 
 class ChatbotController extends Controller
@@ -42,7 +42,7 @@ class ChatbotController extends Controller
     private function isCriteriaEmpty($criteria)
     {
         return empty($criteria['purpose']) &&
-            empty($criteria['unit_type_id']) &&
+            empty($criteria['property_type_id']) &&
             empty($criteria['bedrooms']) &&
             empty($criteria['min_price']) &&
             empty($criteria['max_price']) &&
@@ -54,7 +54,7 @@ class ChatbotController extends Controller
         $message = strtolower($message);
         $criteria = [
             'purpose' => null,
-            'unit_type_id' => null,
+            'property_type_id' => null,
             'bedrooms' => null,
             'min_price' => null,
             'max_price' => null,
@@ -93,9 +93,9 @@ class ChatbotController extends Controller
         ];
         foreach ($aliases as $alias => $title) {
             if (str_contains($message, $alias)) {
-                $type = UnitType::where('title', $title)->first();
+                $type = PropertyType::where('title', 'LIKE', '%' . $title . '%')->first();
                 if ($type) {
-                    $criteria['unit_type_id'] = $type->id;
+                    $criteria['property_type_id'] = $type->id;
                     break;
                 }
             }
@@ -139,8 +139,8 @@ class ChatbotController extends Controller
         $apply = function (Builder $q) use ($criteria) {
             if ($criteria['purpose'])
                 $q->where('purpose', $criteria['purpose']);
-            if ($criteria['unit_type_id'])
-                $q->where('unit_type_id', $criteria['unit_type_id']);
+            if ($criteria['property_type_id'])
+                $q->where('property_type_id', $criteria['property_type_id']);
             if ($criteria['bedrooms'])
                 $q->where('bedrooms', $criteria['bedrooms']);
 

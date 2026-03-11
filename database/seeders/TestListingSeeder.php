@@ -5,7 +5,6 @@ namespace Database\Seeders;
 use Illuminate\Database\Seeder;
 use App\Models\Listing;
 use App\Models\PropertyType;
-use App\Models\UnitType;
 use App\Models\User;
 use Illuminate\Support\Str;
 
@@ -35,12 +34,6 @@ class TestListingSeeder extends Seeder
             return;
         }
 
-        $unitType = UnitType::first();
-        if (!$unitType) {
-            $this->command->error('No unit types found. Please seed unit types first.');
-            return;
-        }
-
         Listing::updateOrCreate(
             [
                 'property_title' => 'Modern 2 Bed Apartment in London',
@@ -59,7 +52,6 @@ class TestListingSeeder extends Seeder
                 'area_size' => '850 sqft',
                 'property_type_id' => $apartmentType->id,
                 'sub_type' => $apartmentType->title,
-                'unit_type_id' => $unitType->id,
                 'address' => 'Central London',
                 'display_address' => 'Central London, UK',
                 'latitude' => 51.5074,

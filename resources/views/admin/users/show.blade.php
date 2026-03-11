@@ -245,6 +245,46 @@
                     </div>
                 </div>
 
+                <!-- Team Members Section (For Agencies) -->
+                @if($user->hasRole('Agency'))
+                    <div class="bg-white rounded-3xl border border-slate-100 shadow-sm overflow-hidden mb-8">
+                        <div class="px-8 py-6 border-b border-slate-100 bg-slate-50/50 flex items-center justify-between">
+                            <div>
+                                <h3 class="text-lg font-black text-slate-800 tracking-tight">Agency Team Members</h3>
+                                <p class="text-xs font-bold text-slate-400 uppercase tracking-widest mt-1">Agents and Staff linked to this Agency</p>
+                            </div>
+                            <div class="flex items-center gap-2 px-4 py-2 bg-white rounded-full border border-slate-200 shadow-sm text-indigo-600">
+                                <i class='bx bx-group'></i>
+                                <span class="text-[10px] font-black uppercase tracking-widest">{{ $user->teamMembers->count() }} Members</span>
+                            </div>
+                        </div>
+                        <div class="p-8">
+                            @if($user->teamMembers->count() > 0)
+                                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                    @foreach($user->teamMembers as $member)
+                                        <a href="{{ route('admin.users.show', $member->id) }}" class="flex items-center gap-4 p-4 bg-slate-50 rounded-2xl border border-slate-100 hover:border-indigo-200 hover:bg-white transition-all group">
+                                            <div class="w-10 h-10 rounded-xl bg-white flex items-center justify-center text-indigo-600 font-bold shadow-sm border border-slate-200 group-hover:bg-indigo-600 group-hover:text-white transition-all">
+                                                {{ strtoupper(substr($member->name, 0, 1)) }}
+                                            </div>
+                                            <div class="flex-1 min-w-0">
+                                                <p class="text-sm font-bold text-slate-800 truncate group-hover:text-indigo-600 transition-colors uppercase">{{ $member->name }}</p>
+                                                <p class="text-[10px] font-medium text-slate-400 truncate">{{ $member->email }}</p>
+                                            </div>
+                                            <i class='bx bx-chevron-right text-slate-300 group-hover:text-indigo-600 transition-colors text-xl'></i>
+                                        </a>
+                                    @endforeach
+                                </div>
+                            @else
+                                <div class="flex flex-col items-center justify-center py-8 text-center bg-slate-50 rounded-3xl border-2 border-dashed border-slate-200">
+                                    <i class='bx bx-user-plus text-4xl text-slate-200 mb-2'></i>
+                                    <h4 class="text-sm font-black text-slate-400 tracking-tight">No Team Members</h4>
+                                    <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest mt-1">This agency has no registered agents yet.</p>
+                                </div>
+                            @endif
+                        </div>
+                    </div>
+                @endif
+
                 <!-- Location & Mapping Section -->
                 @if($user->latitude && $user->longitude)
                     <div class="bg-white rounded-3xl border border-slate-100 shadow-sm overflow-hidden mb-8">

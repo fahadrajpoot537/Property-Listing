@@ -52,11 +52,11 @@ class AdminDashboardController extends Controller
             'offMarketListingsCount' => $offMarketQuery->count(),
             'walkthroughCount' => $walkthroughQuery->where('status', 'pending')->count(),
             'propertyTypesCount' => \App\Models\PropertyType::count(),
-            'unitTypesCount' => \App\Models\UnitType::count(),
             'featuresCount' => \App\Models\Feature::count(),
             'totalVisitors' => \App\Models\VisitorAnalytic::count(),
             'uniqueVisitors' => \App\Models\VisitorAnalytic::distinct('ip_address')->count('ip_address'),
-            'recentListings' => (clone $listingQuery)->latest()->take(5)->get(),
+            'recentListings' => (clone $listingQuery)->with('propertyType')->latest()->take(5)->get(),
+            'recentOffMarketListings' => (clone $offMarketQuery)->with('propertyType')->latest()->take(5)->get(),
             'recentUsers' => $isAdmin ? (clone $userQuery)->latest()->take(5)->get() : collect(),
         ];
         return view('admin.dashboard', compact('data'));

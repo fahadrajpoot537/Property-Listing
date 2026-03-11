@@ -82,7 +82,7 @@
                             ['icon' => 'bx-expand', 'label' => 'Total Area', 'value' => $listing->area_size . ' Sq Ft', 'bg' => 'bg-blue-50', 'text' => 'text-[#02b8f2]'],
                             ['icon' => 'bx-bed', 'label' => 'Bedrooms', 'value' => $listing->bedrooms, 'bg' => 'bg-orange-50', 'text' => 'text-[#ff931e]'],
                             ['icon' => 'bx-bath', 'label' => 'Bathrooms', 'value' => $listing->bathrooms, 'bg' => 'bg-blue-50', 'text' => 'text-[#02b8f2]'],
-                            ['icon' => 'bx-id-card', 'label' => 'Asset Type', 'value' => $listing->unitType->title ?? 'N/A', 'bg' => 'bg-orange-50', 'text' => 'text-[#ff931e]']
+                            ['icon' => 'bx-id-card', 'label' => 'Asset Type', 'value' => $listing->propertyType->title ?? 'N/A', 'bg' => 'bg-orange-50', 'text' => 'text-[#ff931e]']
                         ];
                         
                         if($listing->purpose === 'Buy' && $listing->ownershipStatus) {

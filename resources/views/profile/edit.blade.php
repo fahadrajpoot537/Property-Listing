@@ -1,3 +1,4 @@
+@php /** @var \App\Models\User $user */ @endphp
 @extends('layouts.admin')
 
 @section('header')
@@ -135,6 +136,42 @@
                                         To change your role permissions, please contact a System Administrator.
                                     </p>
                                 </div>
+
+                                @if ($user->hasRole('agency'))
+                                    <!-- Company Name -->
+                                    <div>
+                                        <label for="company_name" class="block text-sm font-bold text-slate-700 mb-2">Company
+                                            Name</label>
+                                        <div class="relative">
+                                            <div
+                                                class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-slate-400">
+                                                <i class='bx bx-building'></i>
+                                            </div>
+                                            <input type="text" id="company_name" name="company_name"
+                                                class="pl-10 w-full rounded-xl border-slate-200 focus:border-indigo-500 focus:ring-indigo-500 font-medium text-slate-800 placeholder-slate-400 transition-all shadow-sm"
+                                                value="{{ old('company_name', $user->company_name) }}">
+                                        </div>
+                                        <x-input-error class="mt-2" :messages="$errors->get('company_name')" />
+                                    </div>
+
+                                    <!-- Company Registration Number -->
+                                    <div>
+                                        <label for="company_registration_number"
+                                            class="block text-sm font-bold text-slate-700 mb-2">Company Registration
+                                            Number</label>
+                                        <div class="relative">
+                                            <div
+                                                class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-slate-400">
+                                                <i class='bx bx-file'></i>
+                                            </div>
+                                            <input type="text" id="company_registration_number"
+                                                name="company_registration_number"
+                                                class="pl-10 w-full rounded-xl border-slate-200 focus:border-indigo-500 focus:ring-indigo-500 font-medium text-slate-800 placeholder-slate-400 transition-all shadow-sm"
+                                                value="{{ old('company_registration_number', $user->company_registration_number) }}">
+                                        </div>
+                                        <x-input-error class="mt-2" :messages="$errors->get('company_registration_number')" />
+                                    </div>
+                                @endif
                             </div>
 
                             <div class="flex items-center justify-end gap-4 pt-4 border-t border-slate-50">

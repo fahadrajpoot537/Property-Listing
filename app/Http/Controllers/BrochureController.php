@@ -12,7 +12,7 @@ class BrochureController extends Controller
 {
     public function download($id)
     {
-        $listing = Listing::with(['features', 'user', 'propertyType', 'unitType', 'ownershipStatus', 'rentFrequency', 'cheque', 'materialInfo', 'utilities', 'media', 'rooms', 'details'])
+        $listing = Listing::with(['features', 'amenities', 'tags', 'user', 'propertyType', 'ownershipStatus', 'rentFrequency', 'cheque', 'materialInfo', 'utilities', 'media', 'rooms', 'details'])
             ->where(function ($query) use ($id) {
                 $query->where('slug', $id)->orWhere('id', $id);
             })
@@ -41,7 +41,7 @@ class BrochureController extends Controller
             return redirect()->route('login');
         }
 
-        $listing = OffMarketListing::with(['features', 'user', 'propertyType', 'unitType', 'ownershipStatus', 'rentFrequency', 'cheque', 'materialInfo', 'utilities', 'media', 'rooms', 'details'])
+        $listing = OffMarketListing::with(['features', 'amenities', 'tags', 'user', 'propertyType', 'ownershipStatus', 'rentFrequency', 'cheque', 'materialInfo', 'utilities', 'media', 'rooms', 'details'])
             ->where(function ($query) use ($id) {
                 $query->where('slug', $id)->orWhere('id', $id);
             })

@@ -3,7 +3,7 @@
 
 <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    <title>{{ $listing->property_title }} - Brochure</title>
+    <title>{{ $listing->property_title }} - Exclusive Brochure</title>
     <style>
         @page {
             margin: 0;
@@ -16,23 +16,22 @@
             padding: 0;
             color: #1a202c;
             background: #ffffff;
-            line-height: 1.3;
+            line-height: 1.4;
         }
 
-        /* Color Palette */
-        .bg-primary {
+        .bg-navy {
             background-color: #131B31;
         }
 
-        .bg-secondary {
+        .bg-accent {
             background-color: #8046F1;
         }
 
-        .text-primary {
+        .text-navy {
             color: #131B31;
         }
 
-        .text-secondary {
+        .text-accent {
             color: #8046F1;
         }
 
@@ -40,11 +39,10 @@
             color: #ffffff;
         }
 
-        .text-gray {
+        .text-muted {
             color: #718096;
         }
 
-        /* Typography */
         .font-black {
             font-weight: 900;
         }
@@ -57,203 +55,234 @@
             text-transform: uppercase;
         }
 
+        .tracking-tight {
+            letter-spacing: -0.02em;
+        }
+
         .tracking-widest {
-            letter-spacing: 0.1em;
+            letter-spacing: 0.15em;
         }
 
-        /* Hero Page */
-        .hero-page {
-            height: 98vh;
+        /* Cover Page */
+        .cover {
+            height: 100vh;
             width: 100%;
+            background-color: #131B31;
+            color: white;
             position: relative;
-            background-color: #ffffff;
         }
 
-        .hero-image-container {
-            height: 60%;
+        .cover-image-box {
+            height: 65%;
             width: 100%;
             overflow: hidden;
             position: relative;
         }
 
-        .hero-image {
+        .cover-image {
             width: 100%;
             height: 100%;
             object-fit: cover;
         }
 
-        .hero-content {
-            padding: 15px 40px;
-            background-color: #131B31;
-            color: white;
-            height: 40%;
+        .cover-content {
+            padding: 5px 10px;
+            height: 20%;
         }
 
-        .hero-title {
-            font-size: 26px;
-            margin: 0 0 2px 0;
-            line-height: 1.1;
+        .cover-title {
+            font-size: 32px;
+            line-height: 1;
+            margin-bottom: 5px;
         }
 
-        .hero-address {
-            font-size: 12px;
-            opacity: 0.8;
-            margin-bottom: 8px;
+        .cover-address {
+            font-size: 14px;
+            opacity: 0.7;
+            margin-bottom: 15px;
         }
 
-        .hero-price {
-            font-size: 28px;
-            color: #ffffff;
+        .cover-price {
+            font-size: 36px;
+            color: #8046F1;
         }
 
-        /* Content Sections */
-        .container {
-            padding: 10px 40px;
+        /* Branding Strip */
+        .branding-strip {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 5px;
+            background: linear-gradient(to right, #8046F1, #4c1d95);
+        }
+
+        /* Page Layout */
+        .page {
+            padding: 20px 30px;
+            position: relative;
+        }
+
+        .section-header {
+            margin-bottom: 12px;
+            border-bottom: 2px solid #f1f5f9;
+            padding-bottom: 6px;
         }
 
         .section-title {
-            font-size: 14px;
-            border-left: 4px solid #8046F1;
-            padding-left: 10px;
-            margin-bottom: 10px;
-            margin-top: 20px;
-            color: #131B31;
+            font-size: 11px;
             font-weight: 900;
+            color: #131B31;
+            text-transform: uppercase;
+            letter-spacing: 2px;
         }
 
-        .section-title:first-child {
-            margin-top: 0;
-        }
-
-        /* Specs Grid */
-        .specs-table {
+        /* Essential Grid */
+        .essential-grid {
             width: 100%;
-            border-collapse: collapse;
-            margin-bottom: 15px;
+            border-collapse: separate;
+            border-spacing: 10px 0;
+            margin: 0 -10px 15px -10px;
         }
 
-        .spec-item {
-            width: 20%;
-            padding: 8px;
+        .essential-item {
             background: #f8fafc;
-            border: 1px solid #edf2f7;
+            border-radius: 12px;
+            padding: 15px;
             text-align: center;
+            border: 1px solid #f1f5f9;
         }
 
-        .spec-label {
+        .essential-label {
             font-size: 8px;
-            color: #718096;
-            margin-bottom: 2px;
+            color: #64748b;
+            text-transform: uppercase;
+            font-weight: 900;
+            margin-bottom: 4px;
         }
 
-        .spec-value {
-            font-size: 12px;
+        .essential-value {
+            font-size: 15px;
             color: #131B31;
             font-weight: 900;
         }
 
-        /* Description */
-        .description-content {
-            font-size: 10px;
-            color: #2d3748;
-            line-height: 1.5;
-            margin-bottom: 15px;
+        /* Info Layout */
+        .info-table {
+            width: 100%;
         }
 
-        .description-content ul,
-        .description-content ol {
-            padding-left: 20px;
-            margin: 8px 0;
+        .description-pane {
+            width: 60%;
+            padding-right: 30px;
+            vertical-align: top;
         }
 
-        .description-content p {
-            margin: 8px 0;
+        .specs-pane {
+            width: 40%;
+            vertical-align: top;
         }
 
-        /* Details Cards */
-        .detail-card {
+        .description-text {
+            font-size: 10.5px;
+            color: #334155;
+            line-height: 1.6;
+            margin-bottom: 20px;
+        }
+
+        /* Specs Group */
+        .spec-group {
             background: #ffffff;
-            border: 1px solid #e2e8f0;
-            border-radius: 8px;
-            padding: 12px;
-            margin-bottom: 15px;
+            border: 1px solid #f1f5f9;
+            border-radius: 12px;
+            padding: 5px;
+            margin-bottom: 5px;
         }
 
-        .detail-row {
-            padding: 5px 0;
-            border-bottom: 1px solid #f7fafc;
+        .spec-row {
+            padding: 6px 0;
+            border-bottom: 1px solid #f8fafc;
         }
 
-        .detail-row:last-child {
+        .spec-row:last-child {
             border-bottom: none;
         }
 
-        .detail-label {
-            font-size: 9px;
-            color: #718096;
+        .spec-label {
+            font-size: 8.5px;
+            color: #64748b;
             font-weight: 700;
             text-transform: uppercase;
         }
 
-        .detail-value {
+        .spec-val {
             font-size: 10px;
             color: #131B31;
-            text-align: right;
             font-weight: 900;
+            text-align: right;
         }
 
-        /* Feature Pills */
-        .feature-pill {
+        /* Pills */
+        .pill {
             display: inline-block;
-            background: #f3f0ff;
-            color: #8046F1;
-            padding: 3px 8px;
+            background: #f1f5f9;
+            color: #475569;
+            padding: 4px 10px;
             border-radius: 6px;
             font-size: 9px;
-            margin: 0 4px 4px 0;
-            border: 1px solid #e9d8fd;
-            font-weight: 700;
+            font-weight: 900;
+            text-transform: uppercase;
+            margin: 0 4px 6px 0;
+        }
+
+        .pill-accent {
+            background: #f3f0ff;
+            color: #8046F1;
         }
 
         /* Gallery */
-        .gallery-grid {
+        .gallery-table {
             width: 100%;
-            border-spacing: 4px;
-            margin-left: -4px;
+            border-spacing: 8px;
+            margin: 0 -8px;
+        }
+
+        .gallery-box {
+            width: 50%;
+            vertical-align: top;
+            padding-bottom: 8px;
         }
 
         .gallery-img {
             width: 100%;
-            height: 120px;
-            object-fit: cover;
-            border-radius: 4px;
+            height: auto;
+            max-height: 200px;
+            /* safety fallback */
+            border-radius: 8px;
         }
 
-        /* Agent Info Card */
+        /* Agent Card */
         .agent-card {
             background: #131B31;
-            border-radius: 12px;
-            padding: 20px;
-            margin-top: 15px;
+            border-radius: 16px;
+            padding: 15px 20px;
             color: white;
+            margin-top: 20px;
         }
 
         .agent-avatar {
-            width: 60px;
-            height: 60px;
+            width: 55px;
+            height: 55px;
             border-radius: 12px;
-            object-fit: cover;
             border: 2px solid #8046F1;
         }
 
-        .agent-name {
-            font-size: 16px;
-            color: #131B31;
-        }
-
-        .agent-role {
-            font-size: 10px;
-            color: #8046F1;
+        /* QR */
+        .qr-box {
+            background: white;
+            padding: 10px;
+            border-radius: 12px;
+            text-align: center;
         }
 
         .page-break {
@@ -264,66 +293,6 @@
             content: "";
             clear: both;
             display: table;
-        }
-
-        /* QR Code */
-        .qr-section {
-            text-align: center;
-            padding: 15px;
-            background: #ffffff;
-            border-radius: 10px;
-            border: 1px dashed #e2e8f0;
-        }
-
-        /* Buttons */
-        .btn-container {
-            margin: 10px 0;
-        }
-
-        .btn {
-            display: inline-block;
-            padding: 8px 15px;
-            border-radius: 8px;
-            text-decoration: none;
-            font-size: 10px;
-            font-weight: 900;
-            text-transform: uppercase;
-            margin-right: 8px;
-            color: white !important;
-        }
-
-        .btn-wa {
-            background-color: #25D366;
-        }
-
-        .btn-email {
-            background-color: #8046F1;
-        }
-
-        .btn-call {
-            background-color: #ffffff;
-            color: #131B31 !important;
-        }
-
-        /* Mortgage Section */
-        .mortgage-box {
-            background: #f0f4f8;
-            border-radius: 10px;
-            padding: 15px;
-            border: 1px solid #d1d5db;
-        }
-
-        .mortgage-title {
-            font-size: 14px;
-            font-weight: 900;
-            color: #131B31;
-            margin-bottom: 10px;
-        }
-
-        .mortgage-val {
-            font-size: 20px;
-            font-weight: 900;
-            color: #8046F1;
         }
     </style>
 </head>
@@ -365,293 +334,306 @@
         }
         $heroImage = getBase64Image($listing->thumbnail);
         $contactAvatar = $contactPerson && $contactPerson->profile_photo_path ? getBase64Image($contactPerson->profile_photo_path) : null;
-
         $propertyUrl = url('/property/' . ($listing->slug ?? $listing->id));
-        $qrCode = "https://api.qrserver.com/v1/create-qr-code/?size=100x100&data=" . urlencode($propertyUrl);
-        $qrImage = getBase64Image($qrCode);
-
+        $qrImage = getBase64Image("https://api.qrserver.com/v1/create-qr-code/?size=100x100&data=" . urlencode($propertyUrl));
         $phone = $contactPerson->phone ?? $contactPerson->phone_number ?? '';
-        $email = $contactPerson->email ?? '';
-        $waLink = "https://wa.me/" . preg_replace('/[^0-9]/', '', $phone);
-
-        // Mortgage Calculation Basics
-        $price = $listing->price;
-        $downPayment = $price * 0.20;
-        $loanAmount = $price - $downPayment;
-        $annualInterest = 0.04;
-        $monthlyRate = $annualInterest / 12;
-        $months = 30 * 12;
-        $monthlyPayment = $loanAmount * ($monthlyRate * pow(1 + $monthlyRate, $months)) / (pow(1 + $monthlyRate, $months) - 1);
     @endphp
 
-    <!-- PAGE 1: HERO -->
-    <div class="hero-page">
-        <div class="hero-image-container">
-            @if($heroImage)
-                <img src="{{ $heroImage }}" class="hero-image">
-            @else
-                <div style="width:100%; height:100%; background:#edf2f7; display:table; text-align:center;">
-                    <div style="display:table-cell; vertical-align:middle; color:#a0aec0; font-size:20px;">IMAGE UNAVAILABLE
+    <!-- COVER -->
+    <div class="cover">
+        <div style="height: 65%; position: relative; overflow: hidden; background: #131B31;">
+            <!-- Full Width Hero Image -->
+            <div class="cover-image-box" style="width: 100%; height: 100%;">
+                @if($heroImage)
+                    <img src="{{ $heroImage }}" class="cover-image" style="width: 100%; height: 100%; object-fit: cover;">
+                @else
+                    <div style="width:100%; height:100%; background:#1e293b; display:table; text-align:center;">
+                        <span
+                            style="display:table-cell; vertical-align:middle; color:#475569; font-size:14px; font-weight:900; letter-spacing:2px;">PREVIEW
+                            UNAVAILABLE</span>
+                    </div>
+                @endif
+            </div>
+
+            <!-- Overlaid Contact Panel -->
+            <div
+                style="position: absolute; top: 0; right: 0; width: 28%; height: 100%; background: rgba(19, 27, 49, 0.85); padding: 40px 20px; box-sizing: border-box; color: white; border-left: 1px solid rgba(255,255,255,0.1);">
+
+
+                <div style="text-align: left;">
+                    <div style="
+                               font-size:18px; font-weight:900; margin-bottom:2px; color: white; line-height: 1.2;">
+                        {{ $contactPerson->name ?? 'Property Consultant' }}
+                    </div>
+                    <div
+                        style="font-size:8px; font-weight:900; color:#8046F1; text-transform:uppercase; letter-spacing:1px; margin-bottom:25px;">
+                        Accredited Property Consultant</div>
+
+                    <div style="margin-top: 20px;">
+                        @if($phone)
+                            <div style="margin-bottom: 12px;">
+                                <a href="https://wa.me/{{ preg_replace('/[^0-9]/', '', $phone) }}"
+                                    style="display:block; text-align: center; background-color:#25D366; color:white; padding:12px 15px; border-radius:8px; text-decoration:none; font-size:11px; font-weight:bold;">WhatsApp</a>
+                            </div>
+                            <div style="margin-bottom: 12px;">
+                                <a href="tel:{{ preg_replace('/[^0-9]/', '', $phone) }}"
+                                    style="display:block; text-align: center; background-color:white; color:#131B31; padding:12px 15px; border-radius:8px; text-decoration:none; font-size:11px; font-weight:bold;">Call
+                                    Agent</a>
+                            </div>
+                        @endif
+                        @if(isset($contactPerson) && $contactPerson->email)
+                            <div style="margin-bottom: 12px;">
+                                <a href="mailto:{{ $contactPerson->email }}"
+                                    style="display:block; text-align: center; background-color:#8046F1; color:white; padding:12px 15px; border-radius:8px; text-decoration:none; font-size:11px; font-weight:bold;">Email</a>
+                            </div>
+                        @endif
                     </div>
                 </div>
-            @endif
+            </div>
         </div>
-
-        <div class="hero-content clearfix">
-            <div style="float:left; width: 70%;">
-                <div class="hero-title font-black uppercase tracking-widest">{{ $listing->property_title }}</div>
-                <div class="hero-address font-bold">{{ $listing->address }}</div>
-                <div class="hero-price font-black">£{{ number_format($listing->price) }}</div>
-
-                <div class="btn-container" style="margin-top: 15px;">
-                    <a href="{{ $waLink }}" class="btn btn-wa">WhatsApp</a>
-                    <a href="mailto:{{ $email }}" class="btn btn-email">Email Agent</a>
-                    <a href="tel:{{ $phone }}" class="btn btn-call">Call Agent</a>
+        <div class="cover-content clearfix">
+            <div style="float:left; width:70%;">
+                <h1 class="cover-title font-black uppercase tracking-tight">{{ $listing->property_title }}</h1>
+                <p class="cover-address font-bold uppercase tracking-widest">{{ $listing->address }}</p>
+                <div class="cover-price font-black">£{{ number_format($listing->price) }} <span
+                        style="font-size:12px; opacity:0.6; font-weight:700;">{{ $listing->price_qualifier }}</span>
                 </div>
 
-                <table style="width: 100%; margin-top: 15px;">
+                <table style="margin-top:20px; width:100%;">
                     <tr>
-                        <td style="width: 33%;">
-                            <div class="spec-label font-bold uppercase text-white opacity-60">Listing Purpose</div>
-                            <div class="font-black" style="font-size: 14px;">{{ strtoupper($listing->purpose) }}</div>
-                        </td>
-                        <td style="width: 33%;">
-                            <div class="spec-label font-bold uppercase text-white opacity-60">Property Type</div>
-                            <div class="font-black" style="font-size: 14px;">
-                                {{ $listing->propertyType->title ?? 'Residential' }}</div>
-                        </td>
-                        <td style="width: 33%;">
-                            <div class="spec-label font-bold uppercase text-white opacity-60">Reference</div>
-                            <div class="font-black" style="font-size: 14px;">{{ $listing->property_reference_number }}
+                        <td style="width:33%;">
+                            <div
+                                style="font-size:7px; text-transform:uppercase; font-weight:900; color:#8046F1; margin-bottom:2px;">
+                                Ref. Number</div>
+                            <div style="font-size:11px; font-weight:900;">#{{ $listing->property_reference_number }}
                             </div>
+                        </td>
+                        <td style="width:33%;">
+                            <div
+                                style="font-size:7px; text-transform:uppercase; font-weight:900; color:#8046F1; margin-bottom:2px;">
+                                Property Type</div>
+                            <div style="font-size:11px; font-weight:900;">
+                                {{ $listing->propertyType->title ?? 'Residential' }}
+                            </div>
+                        </td>
+                        <td style="width:33%;">
+                            <div
+                                style="font-size:7px; text-transform:uppercase; font-weight:900; color:#8046F1; margin-bottom:2px;">
+                                Market Status</div>
+                            <div style="font-size:11px; font-weight:900;">{{ strtoupper($listing->purpose) }}</div>
                         </td>
                     </tr>
                 </table>
             </div>
-            <div style="float:right; width: 25%; text-align:right;">
+            <div style="float:right; width:22%; text-align:right;">
                 @if($qrImage)
-                    <div
-                        style="background:white; padding: 10px; display:inline-block; border-radius: 12px; margin-top: 10px;">
-                        <img src="{{ $qrImage }}" style="width: 100px; height: 100px;">
-                        <div style="color:#131B31; font-size: 8px; font-weight: 900; margin-top: 5px; text-align: center;">
-                            SCAN TO VIEW DETAILS</div>
+                    <div class="qr-box">
+                        <img src="{{ $qrImage }}" style="width:80px; height:80px;">
+                        <div style="color:#131B31; font-size:6px; font-weight:900; margin-top:5px;">DIGITAL PORTAL</div>
                     </div>
                 @endif
-                
             </div>
         </div>
+        <div class="branding-strip"></div>
     </div>
 
     <div class="page-break"></div>
 
-    <!-- PAGE 2: SPECS -->
-    <div class="container">
-        <div class="section-title uppercase tracking-widest">Property Essentials</div>
-        <table class="specs-table">
+    <!-- SPECS & DETAILS -->
+    <div class="page">
+        <div class="section-header">
+            <div class="section-title">Essential Overview</div>
+        </div>
+
+        <table class="essential-grid">
             <tr>
-                <td class="spec-item">
-                    <div class="spec-label uppercase font-bold">Bedrooms</div>
-                    <div class="spec-value">{{ $listing->bedrooms ?? 'N/A' }}</div>
+                <td style="width:20%;" class="essential-item">
+                    <div class="essential-label">Beds</div>
+                    <div class="essential-value">{{ $listing->bedrooms ?? '—' }}</div>
                 </td>
-                <td class="spec-item">
-                    <div class="spec-label uppercase font-bold">Bathrooms</div>
-                    <div class="spec-value">{{ $listing->bathrooms ?? 'N/A' }}</div>
+                <td style="width:20%;" class="essential-item">
+                    <div class="essential-label">Baths</div>
+                    <div class="essential-value">{{ $listing->bathrooms ?? '—' }}</div>
                 </td>
-                <td class="spec-item">
-                    <div class="spec-label uppercase font-bold">Reception</div>
-                    <div class="spec-value">{{ $listing->reception_rooms ?? 'N/A' }}</div>
+                <td style="width:20%;" class="essential-item">
+                    <div class="essential-label">Recep.</div>
+                    <div class="essential-value">{{ $listing->reception_rooms ?? '—' }}</div>
                 </td>
-                <td class="spec-item">
-                    <div class="spec-label uppercase font-bold">Area Size</div>
-                    <div class="spec-value">
-                        {{ $listing->area_size ? number_format($listing->area_size) . ' sqft' : 'N/A' }}</div>
+                <td style="width:20%;" class="essential-item">
+                    <div class="essential-label">Size</div>
+                    <div class="essential-value">
+                        @if($listing->area_size && is_numeric($listing->area_size))
+                            {{ number_format((float) $listing->area_size) }}<span style="font-size:8px;">ft²</span>
+                        @else
+                            {{ $listing->area_size ?? '—' }}
+                        @endif
+                    </div>
                 </td>
-                <td class="spec-item">
-                    <div class="spec-label uppercase font-bold">Floor Level</div>
-                    <div class="spec-value">{{ $listing->floor_level ?? 'N/A' }}</div>
+                <td style="width:20%;" class="essential-item">
+                    <div class="essential-label">Floor</div>
+                    <div class="essential-value">{{ $listing->floor_level ?? '—' }}</div>
                 </td>
             </tr>
         </table>
 
-        <div class="row">
-            <div class="col w-half" style="padding-right: 20px;">
-                <div class="section-title uppercase tracking-widest">Comprehensive Description</div>
-                <div class="description-content">{!! $listing->description !!}</div>
-
-                @if($listing->features->count() > 0)
-                    <div class="section-title uppercase tracking-widest">Key Features</div>
-                    <div>
-                        @foreach($listing->features as $feature)
-                            <span class="feature-pill">{{ $feature->title }}</span>
-                        @endforeach
+        <table class="info-table" style="width: 100%; border-spacing: 0;">
+            <tr>
+                <td class="description-pane" style="width: 65%; vertical-align: top; padding-right: 25px;">
+                    <div class="section-header">
+                        <div class="section-title">About this Property</div>
                     </div>
-                @endif
-            </div>
+                    <div class="description-text" style="min-height: 150px;">{!! $listing->description !!}</div>
 
-            <div class="col w-half">
-                <div class="section-title uppercase tracking-widest">Detailed Specifications</div>
-                <div class="detail-card">
-                    <table class="w-full">
-                        <tr class="detail-row">
-                            <td class="detail-label">Tenure</td>
-                            <td class="detail-value">{{ $listing->tenure ?? 'N/A' }} @if($listing->unexpired_years)
-                            ({{ $listing->unexpired_years }} yrs) @endif</td>
-                        </tr>
-                        <tr class="detail-row">
-                            <td class="detail-label">EPC Rating</td>
-                            <td class="detail-value">{{ $listing->epc_rating ?? 'N/A' }}</td>
-                        </tr>
-                        <tr class="detail-row">
-                            <td class="detail-label">Council Tax</td>
-                            <td class="detail-value">Band {{ $listing->council_tax_band ?? 'N/A' }}</td>
-                        </tr>
-                        <tr class="detail-row">
-                            <td class="detail-label">Floors</td>
-                            <td class="detail-value">{{ $listing->floors_count ?? 'N/A' }}</td>
-                        </tr>
-                        <tr class="detail-row">
-                            <td class="detail-label">Construction</td>
-                            <td class="detail-value">{{ $listing->construction_type ?? 'Standard' }}</td>
-                        </tr>
-                        <tr class="detail-row">
-                            <td class="detail-label">Parking</td>
-                            <td class="detail-value">{{ $listing->parking_type ?? 'N/A' }}
-                                @if($listing->parking_spaces_count) ({{ $listing->parking_spaces_count }}) @endif</td>
-                        </tr>
-                    </table>
-                </div>
-
-                <div class="section-title uppercase tracking-widest">Utilities & Safety</div>
-                <div class="detail-card">
-                    <table class="w-full">
-                        <tr class="detail-row">
-                            <td class="detail-label">Heating</td>
-                            <td class="detail-value">{{ $listing->heating_type ?? 'N/A' }}</td>
-                        </tr>
-                        <tr class="detail-row">
-                            <td class="detail-label">Water</td>
-                            <td class="detail-value">{{ $listing->utilities_water ?? 'Mains' }}</td>
-                        </tr>
-                        <tr class="detail-row">
-                            <td class="detail-label">Broadband</td>
-                            <td class="detail-value">{{ $listing->broadband ?? 'Available' }}</td>
-                        </tr>
-                        <tr class="detail-row">
-                            <td class="detail-label">Flood Risk</td>
-                            <td class="detail-value">{{ $listing->flood_risk ?? 'Very Low' }}</td>
-                        </tr>
-                    </table>
-                </div>
-
-        @if($listing->purpose === 'Buy' || $listing->purpose === 'Sale')
-                <div class="section-title uppercase tracking-widest">Mortgage Illustration</div>
-                <div class="mortgage-box">
-                    <div class="mortgage-title">Estimated Monthly Payment</div>
-                    <div class="mortgage-val">£{{ number_format($monthlyPayment, 2) }}</div>
-                    <div style="font-size: 8px; color: #4a5568; margin-top: 5px;">* Based on 20% down payment (£{{ number_format($downPayment) }}), 4% fixed rate over 30 years. Illustration only.</div>
-                </div>
-                @endif
-            </div>
-        </div>
-
-        <!-- GALLERY SECTION -->
-        @if(count($gallery) > 1)
-            <div class="section-title uppercase tracking-widest">Photo Gallery</div>
-            <table style="width: 100%; border-spacing: 5px; margin-top: 5px;">
-                @php 
-                    $galleryItems = array_slice($gallery, 0, 9); // Show up to 9 more images
-                @endphp
-                @foreach(array_chunk($galleryItems, 3) as $row)
-                <tr>
-                    @foreach($row as $img)
-                    <td style="width: 33.33%;">
-                        @php $gImg = getBase64Image($img); @endphp
-                        @if($gImg)
-                            <img src="{{ $gImg }}" style="width: 100%; height: 120px; object-fit: cover; border-radius: 8px; border: 1px solid #edf2f7;">
-                        @endif
-                    </td>
-                    @endforeach
-                </tr>
-                @endforeach
-            </table>
-        @endif
-
-        @if($mapImage)
-            <div class="section-title uppercase tracking-widest">Location Map</div>
-            <div style="width: 100%; height: 180px; border-radius: 12px; overflow: hidden; border: 1px solid #edf2f7; margin-top: 5px;">
-                <img src="{{ $mapImage }}" style="width: 100%; height: 100%; object-fit: cover;">
-            </div>
-        @endif
-
-        <!-- CONTACT SECTION AT THE BOTTOM -->
-        <div class="agent-card clearfix">
-            <div style="float: left; width: 60px;">
-                @if($contactAvatar)
-                    <img src="{{ $contactAvatar }}" class="agent-avatar">
-                @else
-                    <div
-                        style="width:60px; height:60px; background:#8046F1; color:white; border-radius:12px; text-align:center; line-height:60px; font-weight:900; font-size:24px;">
-                        {{ substr($contactPerson->name ?? 'A', 0, 1) }}
+                    @if($listing->features->count() > 0)
+                        <div class="section-header" style="margin-top: 25px;">
+                            <div class="section-title">Property Highlights</div>
+                        </div>
+                        <div
+                            style="margin-bottom:15px; background: #f8fafc; padding: 15px; border-radius: 12px; border: 1px solid #f1f5f9;">
+                            @foreach($listing->features as $feature)
+                                <span class="pill pill-accent" style="margin-bottom: 8px;">{{ $feature->title }}</span>
+                            @endforeach
+                        </div>
+                    @endif
+                </td>
+                <td class="specs-pane" style="width: 35%; vertical-align: top;">
+                    <div class="section-header">
+                        <div class="section-title">Technical Specifications</div>
                     </div>
-                @endif
-            </div>
-            <div style="float: left; margin-left: 20px; width: 350px;">
-                <div style="font-size: 18px; font-weight: 900;">{{ $contactPerson->name ?? 'Property Consultant' }}
-                </div>
-                <div style="font-size: 10px; font-weight: 700; color: #8046F1; text-transform: uppercase;">Professional
-                    Agent & Consultant</div>
-                <div class="btn-container" style="margin-top: 10px;">
-                    <a href="{{ $waLink }}" class="btn btn-wa" style="padding: 5px 10px; font-size: 8px;">WhatsApp</a>
-                    <a href="mailto:{{ $email }}" class="btn btn-email"
-                        style="padding: 5px 10px; font-size: 8px;">Email</a>
-                    <a href="tel:{{ $phone }}" class="btn btn-call" style="padding: 5px 10px; font-size: 8px;">Call
-                        Direct</a>
-                </div>
-            </div>
-            
-        </div>
+                    <div class="spec-group" style="padding: 10px;">
+                        <table style="width:100%;">
+                            <tr class="spec-row">
+                                <td class="spec-label">Tenure</td>
+                                <td class="spec-val">{{ $listing->tenure ?? 'N/A' }}</td>
+                            </tr>
+                            <tr class="spec-row">
+                                <td class="spec-label">Lease Yrs</td>
+                                <td class="spec-val">{{ $listing->unexpired_years ?? '—' }}</td>
+                            </tr>
+                            <tr class="spec-row">
+                                <td class="spec-label">Service Charge</td>
+                                <td class="spec-val">{{ $listing->service_charge ?? '—' }}</td>
+                            </tr>
+                            <tr class="spec-row">
+                                <td class="spec-label">Ground Rent</td>
+                                <td class="spec-val">{{ $listing->ground_rent ?? '—' }}</td>
+                            </tr>
+                            <tr class="spec-row">
+                                <td class="spec-label">Tax Band</td>
+                                <td class="spec-val">{{ $listing->council_tax_band ?? '—' }}</td>
+                            </tr>
+                            <tr class="spec-row">
+                                <td class="spec-label">Parking</td>
+                                <td class="spec-val">{{ $listing->parking_type ?? 'N/A' }}</td>
+                            </tr>
+                            <tr class="spec-row">
+                                <td class="spec-label">Construction</td>
+                                <td class="spec-val">{{ $listing->construction_type ?? 'Standard' }}</td>
+                            </tr>
+                        </table>
+                    </div>
 
-        <div
-            style="text-align: center; margin-top: 15px; font-size: 8px; color: #cbd5e0; text-transform: uppercase; letter-spacing: 2px; font-weight: 700;">
-            Premium Property Marketing 
-        </div>
+                    <div class="section-header" style="margin-top: 20px;">
+                        <div class="section-title">Utilities & Infrastructure</div>
+                    </div>
+                    <div class="spec-group" style="padding: 10px;">
+                        <table style="width:100%;">
+                            <tr class="spec-row">
+                                <td class="spec-label">Water</td>
+                                <td class="spec-val">{{ $listing->utilities_water ?? 'Ask Agent' }}</td>
+                            </tr>
+                            <tr class="spec-row">
+                                <td class="spec-label">Electricity</td>
+                                <td class="spec-val">{{ $listing->utilities_electricity ?? 'Ask Agent' }}</td>
+                            </tr>
+                            <tr class="spec-row">
+                                <td class="spec-label">Heating</td>
+                                <td class="spec-val">{{ $listing->heating_type ?? 'Ask Agent' }}</td>
+                            </tr>
+                            <tr class="spec-row">
+                                <td class="spec-label">Broadband</td>
+                                <td class="spec-val">{{ $listing->broadband ?? 'Ask Agent' }}</td>
+                            </tr>
+                            <tr class="spec-row">
+                                <td class="spec-label">Mobile</td>
+                                <td class="spec-val">{{ $listing->mobile_coverage ?? 'Ask Agent' }}</td>
+                            </tr>
+                        </table>
+                    </div>
+                </td>
+            </tr>
+        </table>
     </div>
 
-    @if(count($gallery) > 1) {{-- More than just the thumbnail --}}
-            <div class="page-break"></div>
-            <div class="container">
-                <div class="section-title font-black uppercase tracking-widest">Gallery & Visuals</div>
-                <table class="gallery-grid">
-                    @php 
-                                    // Show up to 12 images in a compact grid
-                        $galleryItems = array_slice($gallery, 0, 12); 
-                    @endphp
-                    @foreach(array_chunk($galleryItems, 3) as $row)
-                        <tr>
-                            @foreach($row as $img)
-                                <td style="width: 33.33%;">
-                                        @php $gImg = getBase64Image($img); @endphp
-                                        @if($gImg)
-                                            <img src="{{ $gImg }}" class="gallery-img" style="height: 140px;">
-                                        @endif
-                                </td>
-                            @endforeach
-                            @for($i = count($row); $i < 3; $i++)
-                                <td style="width: 33.33%;"></td>
-                            @endfor
-                        </tr>
-                    @endforeach
-                </table>
+    @if(count($gallery) > 1)
+        <div class="page" style="padding-top: 10px;">
+            <div class="section-header">
+                <div class="section-title">Visual Gallery</div>
+            </div>
+            <table class="gallery-table">
+                @php $galleryItems = array_slice($gallery, 0, 12); @endphp
+                @foreach(array_chunk($galleryItems, 2) as $row)
+                    <tr>
+                        @foreach($row as $img)
+                            <td class="gallery-box">
+                                @php $gImg = getBase64Image($img); @endphp
+                                @if($gImg) <img src="{{ $gImg }}" class="gallery-img"> @endif
+                            </td>
+                        @endforeach
+                    </tr>
+                @endforeach
+            </table>
 
-                @if($mapImage)
-                    <div class="section-title font-black uppercase tracking-widest">Location Map</div>
-                    <div style="width: 100%; height: 200px; border-radius: 10px; overflow: hidden; border: 1px solid #e2e8f0;">
-                        <img src="{{ $mapImage }}" style="width: 100%; height: 100%; object-fit: cover;">
+            @if($mapImage)
+                <div class="section-header" style="margin-top:30px;">
+                    <div class="section-title">Property Location</div>
+                </div>
+                <div style="width:100%; height:350px; border-radius:15px; overflow:hidden; border:1px solid #f1f5f9;">
+                    <img src="{{ $mapImage }}" style="width:100%; height:100%; object-fit:cover;">
+                </div>
+            @endif
+
+            <div class="agent-card clearfix">
+                <div style="float:left; width:60px;">
+                    @if($contactAvatar)
+                        <img src="{{ $contactAvatar }}" class="agent-avatar">
+                    @else
+                        <div
+                            style="width:55px; height:55px; background:#8046F1; color:white; border-radius:12px; text-align:center; line-height:55px; font-weight:900; font-size:22px;">
+                            {{ substr($contactPerson->name ?? 'A', 0, 1) }}
+                        </div>
+                    @endif
+                </div>
+                <div style="float:left; margin-left:20px; width:450px;">
+                    <div style="font-size:16px; font-weight:900; margin-bottom:2px;">
+                        {{ $contactPerson->name ?? 'Property Consultant' }}
                     </div>
-                @endif
-            </d
-        iv>
+                    <div
+                        style="font-size:9px; font-weight:900; color:#8046F1; text-transform:uppercase; letter-spacing:1px; margin-bottom:10px;">
+                        Accredited Property Consultant</div>
+
+                    <div>
+                        @if($phone)
+                            <a href="https://wa.me/{{ preg_replace('/[^0-9]/', '', $phone) }}"
+                                style="display:inline-block; background-color:#25D366; color:white; padding:6px 12px; border-radius:6px; text-decoration:none; font-size:10px; font-weight:bold; margin-right:5px;">WhatsApp</a>
+                            <a href="tel:{{ preg_replace('/[^0-9]/', '', $phone) }}"
+                                style="display:inline-block; background-color:#ffffff; color:#131B31; padding:6px 12px; border-radius:6px; text-decoration:none; font-size:10px; font-weight:bold; margin-right:5px;">Call
+                                Agent</a>
+                        @endif
+                        @if(isset($contactPerson) && $contactPerson->email)
+                            <a href="mailto:{{ $contactPerson->email }}"
+                                style="display:inline-block; background-color:#8046F1; color:white; padding:6px 12px; border-radius:6px; text-decoration:none; font-size:10px; font-weight:bold;">Email</a>
+                        @endif
+                    </div>
+                </div>
+            </div>
+
+            <div
+                style="text-align:center; margin-top:20px; font-size:7px; color:#94a3b8; text-transform:uppercase; letter-spacing:3px; font-weight:900;">
+                Premium Property Marketing </div>
+        </div>
     @endif
 
 </body>
+
 </html>

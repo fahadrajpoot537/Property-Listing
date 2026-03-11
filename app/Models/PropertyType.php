@@ -18,10 +18,7 @@ class PropertyType extends Model
         'description',
     ];
 
-    public function unitTypes()
-    {
-        return $this->hasMany(UnitType::class);
-    }
+
 
     public function listings()
     {
@@ -32,7 +29,7 @@ class PropertyType extends Model
     {
         return $this->hasMany(OffMarketListing::class);
     }
-    
+
     /**
      * Get the name attribute as an alias for title
      */

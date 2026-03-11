@@ -29,7 +29,7 @@
       display: none;
     }
 
-    /* Select2 Premium Styling */
+    /* Select2 Premium Styling (Zoopla Purple Accent) */
     .select2-container .select2-selection--single {
       height: 56px !important;
       background-color: #f9fafb;
@@ -96,36 +96,37 @@
 
 @section('content')
   <!-- Portal Hero Search Section -->
-  <div class="relative bg-primary overflow-visible">
+  <div class="relative bg-primary overflow-visible flex flex-col">
     <!-- Background Pattern -->
     <div class="absolute inset-0 z-0">
       <img src="{{ asset('hero22.jpg') }}" class="w-full h-full object-cover" alt="Background">
     </div>
 
-
-    <div class="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-12 pb-24 md:pt-16 md:pb-32">
+    <div class="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-12 pb-24 md:pt-20 md:pb-48">
       <div class="text-center mb-10">
         <div
           class="inline-flex items-center gap-2 px-4 py-2 bg-secondary/20 backdrop-blur-md rounded-full border border-secondary/30 text-white text-xs font-black uppercase tracking-[0.2em] mb-6">
           <i class="fa-solid fa-lock "></i> Exclusive Portfolio
         </div>
-        <h1 class="text-3xl md:text-4xl font-extrabold text-white mb-4 tracking-tight">
+        <h1 class="text-3xl md:text-5xl font-extrabold text-white mb-4 tracking-tight"
+          style="text-shadow: 2px 2px 4px rgba(0,0,0,0.5);">
           Off-Market <span class="text-white">Opportunities</span>
         </h1>
-        <p class="text-lg text-white font-medium max-w-3xl mx-auto">
+        <p class="text-lg text-white font-medium max-w-3xl mx-auto drop-shadow-md">
           Access strictly confidential deals across the UK. Exclusive properties that never hit the open market, available
           only to our verified network.
         </p>
       </div>
 
-      <!-- Main Portal Search Box -->
-      <div class="bg-white rounded-2xl shadow-2xl overflow-visible max-w-5xl mx-auto p-2 relative -mb-32 md:-mb-48">
-        <div x-data="{ tab: 'sale' }">
+      <!-- Main Portal Search Box (Homepage Design) -->
+      <div
+        class="bg-white rounded-2xl md:rounded-3xl shadow-[0_20px_50px_rgba(0,0,0,0.15)] overflow-visible max-w-5xl mx-auto p-2 md:p-3 relative z-20 -mb-24 md:-mb-52 border border-gray-100">
+        <div x-data="{ tab: '{{ request('purpose') == 'Rent' ? 'rent' : 'buy' }}' }">
           <!-- Tabs Style -->
           <div class="flex p-1 bg-gray-100 rounded-xl mb-4">
-            <button @click="tab = 'sale'"
+            <button @click="tab = 'buy'"
               class="flex-1 py-3 text-base font-bold text-center transition-all rounded-lg font-effra"
-              :class="tab === 'sale' ? 'bg-white text-primary shadow-sm' : 'text-gray-500 hover:text-primary'">
+              :class="tab === 'buy' ? 'bg-white text-primary shadow-sm' : 'text-gray-500 hover:text-primary'">
               For Sale
             </button>
             <button @click="tab = 'rent'"
@@ -136,170 +137,93 @@
           </div>
 
           <div class="p-4 md:p-6">
-            <!-- For Sale Tab Content -->
-            <div x-show="tab === 'sale'">
+            <form action="{{ route('off-market-listings.index') }}" method="GET" id="off-market-search-form">
+              <input type="hidden" name="purpose" :value="tab === 'buy' ? 'Buy' : 'Rent'">
+              <input type="hidden" name="lat" id="search-lat" value="{{ request('lat') }}">
+              <input type="hidden" name="lng" id="search-lng" value="{{ request('lng') }}">
+
+              <!-- Main Row: Location, Radius & Search Button -->
               <div class="flex flex-col md:flex-row gap-3 mb-6">
                 <div class="relative flex-grow group">
                   <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none z-10">
-
+                    <i class="fa-solid fa-magnifying-glass text-gray-400 text-lg"></i>
                   </div>
-                  <input type="text" id="location-sale" placeholder="Enter city, area or postcode"
-                    class="w-full pl-16 pr-4 py-4 text-lg font-medium text-gray-900 bg-gray-50 border border-gray-200 rounded-xl focus:bg-white focus:ring-4 focus:ring-secondary/10 focus:border-secondary transition-all h-[56px] placeholder-gray-400">
+                  <input type="text" name="location" id="search-location" placeholder="e.g. 'London', 'SW1A' or 'Oxford'"
+                    value="{{ request('location') }}"
+                    class="w-full pl-12 pr-4 py-4 text-lg font-medium text-gray-900 bg-gray-50 border border-gray-200 rounded-xl focus:bg-white focus:ring-4 focus:ring-secondary/10 focus:border-secondary transition-all h-[56px] placeholder-gray-400">
                 </div>
 
-                <!-- Radius Select (Moved here) -->
+                <!-- Radius Select -->
                 <div class="w-full md:w-48">
-                  <select id="radius-sale" class="select2-filter w-full" data-placeholder="Radius">
-                    <option value="0.5">This area only</option>
-                    <option value="1">+ 1 mile</option>
-                    <option value="3">+ 3 miles</option>
-                    <option value="5">+ 5 miles</option>
-                    <option value="10">+ 10 miles</option>
-                    <option value="15">+ 15 miles</option>
-                    <option value="20">+ 20 miles</option>
-                    <option value="30">+ 30 miles</option>
-                    <option value="40">+ 40 miles</option>
-                    <option value="50">+ 50 miles</option>
+                  <select name="radius" class="select2-filter w-full" data-placeholder="Radius">
+                    <option value="0.5" {{ request('radius') == '0.5' ? 'selected' : '' }}>This area only</option>
+                    <option value="1" {{ request('radius') == '1' ? 'selected' : '' }}>1 mile</option>
+                    <option value="3" {{ request('radius') == '3' ? 'selected' : '' }}>3 miles</option>
+                    <option value="5" {{ request('radius') == '5' ? 'selected' : '' }}>5 miles</option>
+                    <option value="10" {{ request('radius') == '10' ? 'selected' : '' }}>10 miles</option>
+                    <option value="15" {{ request('radius') == '15' ? 'selected' : '' }}>15 miles</option>
+                    <option value="20" {{ request('radius') == '20' ? 'selected' : '' }}>20 miles</option>
+                    <option value="50" {{ request('radius') == '50' ? 'selected' : '' }}>+ 50 miles</option>
                   </select>
                 </div>
 
-                <button onclick="searchOffMarketProperties('sale')"
-                  class="md:w-48 py-4 bg-secondary hover:bg-secondary-dark text-white font-extrabold text-lg rounded-xl shadow-lg shadow-secondary/20 transition-all transform hover:-translate-y-0.5 flex items-center justify-center gap-2 h-[56px] font-effra">
-                  Search
+                <button type="submit"
+                  class="md:w-48 py-4 bg-secondary hover:bg-secondary-dark text-white font-bold rounded-xl shadow-xl shadow-secondary/20 transition-all flex items-center justify-center gap-2 font-effra h-[56px] group">
+                  <span>Search</span>
+                  <i class="fa-solid fa-arrow-right text-xs group-hover:translate-x-1 transition-transform"></i>
                 </button>
               </div>
 
+              <!-- Filters Grid -->
               <div class="grid grid-cols-2 lg:grid-cols-5 gap-3">
-                <!-- Property Type (Moved to first position) -->
-                <div class="relative">
+                <!-- Property Type -->
+                <div class="relative col-span-2 lg:col-span-1">
                   <div class="filter-icon-wrapper"><i class="fa-solid fa-house"></i></div>
-                  <select id="property-type-sale" class="select2-filter w-full" data-placeholder="Property Type">
+                  <select name="property_type" class="select2-filter w-full" data-placeholder="Property type">
                     <option value="">Any Type</option>
-                    @foreach(\App\Models\PropertyType::all() as $type)
-                      <option value="{{ $type->id }}">{{ $type->title }}</option>
+                    @foreach($propertyTypes as $type)
+                      <option value="{{ $type->id }}" {{ (request('property_type_id') == $type->id || request('property_type') == $type->id) ? 'selected' : '' }}>
+                        {{ $type->title }}
+                      </option>
                     @endforeach
                   </select>
                 </div>
 
-
-                <!-- Min Price Sale -->
                 <div class="relative">
                   <div class="filter-icon-wrapper"><i class="fa-solid fa-pound-sign"></i></div>
-                  <input type="number" id="min-price-sale" placeholder="Min Price"
+                  <input type="number" name="min_price" placeholder="Min Price" value="{{ request('min_price') }}"
                     class="w-full pl-12 pr-4 py-4 text-base font-medium text-gray-900 bg-gray-50 border border-gray-200 rounded-xl focus:bg-white focus:ring-4 focus:ring-secondary/10 focus:border-secondary transition-all h-[56px] placeholder-gray-400 outline-none">
                 </div>
-                <!-- Max Price Sale -->
                 <div class="relative">
                   <div class="filter-icon-wrapper"><i class="fa-solid fa-pound-sign"></i></div>
-                  <input type="number" id="max-price-sale" placeholder="Max Price"
+                  <input type="number" name="max_price" placeholder="Max Price" value="{{ request('max_price') }}"
                     class="w-full pl-12 pr-4 py-4 text-base font-medium text-gray-900 bg-gray-50 border border-gray-200 rounded-xl focus:bg-white focus:ring-4 focus:ring-secondary/10 focus:border-secondary transition-all h-[56px] placeholder-gray-400 outline-none">
                 </div>
                 <div class="relative">
                   <div class="filter-icon-wrapper"><i class="fa-solid fa-bed"></i></div>
-                  <select id="min-bedrooms-sale" class="select2-filter w-full" data-placeholder="Bedrooms">
-                    <option value="">Any Beds</option>
-                    <option value="0">Studio</option>
+                  <select name="min_bedrooms" class="select2-filter w-full" data-placeholder="Min Bedrooms">
+                    <option value="">Min Beds</option>
+                    <option value="0" {{ request('min_bedrooms') === '0' ? 'selected' : '' }}>Studio</option>
                     @for($i = 1; $i <= 9; $i++)
-                      <option value="{{ $i }}">{{ $i }} Bed{{ $i > 1 ? 's' : '' }}</option>
+                      <option value="{{ $i }}" {{ request('min_bedrooms') == $i ? 'selected' : '' }}>{{ $i }}
+                        Bed{{ $i > 1 ? 's' : '' }}</option>
                     @endfor
-                    <option value="10">10+ Beds</option>
+                    <option value="10" {{ request('min_bedrooms') == '10' ? 'selected' : '' }}>10+ Beds</option>
                   </select>
                 </div>
                 <div class="relative">
                   <div class="filter-icon-wrapper"><i class="fa-solid fa-bath"></i></div>
-                  <select id="min-bathrooms-sale" class="select2-filter w-full" data-placeholder="Bathrooms">
-                    <option value="">Any Baths</option>
+                  <select name="min_bathrooms" class="select2-filter w-full" data-placeholder="Min Bathrooms">
+                    <option value="">Min Baths</option>
                     @for($i = 1; $i <= 9; $i++)
-                      <option value="{{ $i }}">{{ $i }} Bath{{ $i > 1 ? 's' : '' }}</option>
+                      <option value="{{ $i }}" {{ request('min_bathrooms') == $i ? 'selected' : '' }}>{{ $i }}
+                        Bath{{ $i > 1 ? 's' : '' }}</option>
                     @endfor
-                    <option value="10">10+ Baths</option>
+                    <option value="10" {{ request('min_bathrooms') == '10' ? 'selected' : '' }}>10+ Baths</option>
                   </select>
                 </div>
               </div>
-            </div>
-
-            <!-- For Rent Tab Content -->
-            <div x-show="tab === 'rent'" x-cloak>
-              <div class="flex flex-col md:flex-row gap-3 mb-6">
-                <div class="relative flex-grow group">
-                  <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none z-10">
-                    <i class="fa-solid fa-location-dot text-gray-400 text-lg"></i>
-                  </div>
-                  <input type="text" id="location-rent" placeholder="Enter city, area or postcode"
-                    class="w-full pl-16 pr-4 py-4 text-lg font-medium text-gray-900 bg-gray-50 border border-gray-200 rounded-xl focus:bg-white focus:ring-4 focus:ring-secondary/10 focus:border-secondary transition-all h-[56px] placeholder-gray-400">
-                </div>
-
-                <!-- Radius Select (Moved here) -->
-                <div class="w-full md:w-48">
-                  <select id="radius-rent" class="select2-filter w-full" data-placeholder="Radius">
-                    <option value="0.5">This area only</option>
-                    <option value="1">+ 1 mile</option>
-                    <option value="3">+ 3 miles</option>
-                    <option value="5">+ 5 miles</option>
-                    <option value="10">+ 10 miles</option>
-                    <option value="15">+ 15 miles</option>
-                    <option value="20">+ 20 miles</option>
-                    <option value="30">+ 30 miles</option>
-                    <option value="40">+ 40 miles</option>
-                    <option value="50">+ 50 miles</option>
-                  </select>
-                </div>
-
-                <button onclick="searchOffMarketProperties('rent')"
-                  class="md:w-48 py-4 bg-secondary hover:bg-secondary-dark text-white font-extrabold text-lg rounded-xl shadow-lg shadow-secondary/20 transition-all transform hover:-translate-y-0.5 flex items-center justify-center gap-2 h-[56px] font-effra">
-                  Search
-                </button>
-              </div>
-
-              <div class="grid grid-cols-2 lg:grid-cols-5 gap-3">
-                <!-- Property Type (Moved to first position) -->
-                <div class="relative">
-                  <div class="filter-icon-wrapper"><i class="fa-solid fa-house"></i></div>
-                  <select id="property-type-rent" class="select2-filter w-full" data-placeholder="Property Type">
-                    <option value="">Any Type</option>
-                    @foreach(\App\Models\PropertyType::all() as $type)
-                      <option value="{{ $type->id }}">{{ $type->title }}</option>
-                    @endforeach
-                  </select>
-                </div>
-
-
-                <!-- Min Price Rent -->
-                <div class="relative">
-                  <div class="filter-icon-wrapper"><i class="fa-solid fa-pound-sign"></i></div>
-                  <input type="number" id="min-price-rent" placeholder="Min Price"
-                    class="w-full pl-12 pr-4 py-4 text-base font-medium text-gray-900 bg-gray-50 border border-gray-200 rounded-xl focus:bg-white focus:ring-4 focus:ring-secondary/10 focus:border-secondary transition-all h-[56px] placeholder-gray-400 outline-none">
-                </div>
-                <!-- Max Price Rent -->
-                <div class="relative">
-                  <div class="filter-icon-wrapper"><i class="fa-solid fa-pound-sign"></i></div>
-                  <input type="number" id="max-price-rent" placeholder="Max Price"
-                    class="w-full pl-12 pr-4 py-4 text-base font-medium text-gray-900 bg-gray-50 border border-gray-200 rounded-xl focus:bg-white focus:ring-4 focus:ring-secondary/10 focus:border-secondary transition-all h-[56px] placeholder-gray-400 outline-none">
-                </div>
-                <div class="relative">
-                  <div class="filter-icon-wrapper"><i class="fa-solid fa-bed"></i></div>
-                  <select id="min-bedrooms-rent" class="select2-filter w-full" data-placeholder="Bedrooms">
-                    <option value="">Any Beds</option>
-                    <option value="0">Studio</option>
-                    @for($i = 1; $i <= 9; $i++)
-                      <option value="{{ $i }}">{{ $i }} Bed{{ $i > 1 ? 's' : '' }}</option>
-                    @endfor
-                    <option value="10">10+ Beds</option>
-                  </select>
-                </div>
-                <div class="relative">
-                  <div class="filter-icon-wrapper"><i class="fa-solid fa-bath"></i></div>
-                  <select id="min-bathrooms-rent" class="select2-filter w-full" data-placeholder="Bathrooms">
-                    <option value="">Any Baths</option>
-                    @for($i = 1; $i <= 9; $i++)
-                      <option value="{{ $i }}">{{ $i }} Bath{{ $i > 1 ? 's' : '' }}</option>
-                    @endfor
-                    <option value="10">10+ Baths</option>
-                  </select>
-                </div>
-              </div>
-            </div>
-            <div class="mb-5 md:mb-10"></div>
+            </form>
           </div>
         </div>
       </div>
@@ -307,7 +231,8 @@
   </div>
   <!--===== HERO AREA ENDS =======-->
   <!--===== PROPERTIES GRID STARTS =======-->
-  <div class="pt-32 pb-24 md:pt-48 bg-[#F9FAFB] mt-4" id="listings-section" x-data="{ resultsTab: 'sale' }">
+  <div class="pt-16 sm:pt-24 md:pt-32 lg:pt-40 pb-24 bg-[#F9FAFB] mt-0 relative z-10" id="listings-section"
+    x-data="{ resultsTab: '{{ request('purpose') == 'Rent' ? 'rent' : 'buy' }}' }">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
       <div class="flex flex-col md:flex-row justify-between items-start md:items-end gap-6 mb-12">
         <div>
@@ -316,9 +241,9 @@
 
           <!-- Quick Tabs Filter - Alpine Style like Home -->
           <div class="flex gap-2 mt-6 p-1 bg-gray-100 rounded-2xl w-fit">
-            <button @click="resultsTab = 'sale'"
+            <button @click="resultsTab = 'buy'"
               class="px-8 py-2.5 rounded-xl font-black transition-all text-sm uppercase tracking-wider"
-              :class="resultsTab === 'sale' ? 'bg-primary text-white shadow-lg' : 'text-gray-500 hover:text-primary'">Buy</button>
+              :class="resultsTab === 'buy' ? 'bg-primary text-white shadow-lg' : 'text-gray-500 hover:text-primary'">Buy</button>
             <button @click="resultsTab = 'rent'"
               class="px-8 py-2.5 rounded-xl font-black transition-all text-sm uppercase tracking-wider"
               :class="resultsTab === 'rent' ? 'bg-primary text-white shadow-lg' : 'text-gray-500 hover:text-primary'">Rent</button>
@@ -344,7 +269,7 @@
 
       <div class="listing-results">
         <!-- Buy Tab (Alpine) -->
-        <div x-show="resultsTab === 'sale'" x-transition:enter="transition ease-out duration-300"
+        <div x-show="resultsTab === 'buy'" x-transition:enter="transition ease-out duration-300"
           x-transition:enter-start="opacity-0 translate-y-4" x-transition:enter-end="opacity-100 translate-y-0">
 
           @if($buyListings->count() > 0)
@@ -397,14 +322,6 @@
       </div>
     </div>
   </div>
-  <!--===== PROPERTIES GRID ENDS =======-->
-  <style>
-    /* Custom styles for Google Places Autocomplete */
-    .pac-container {
-      z-index: 1051 !important;
-      /* Higher than Bootstrap modal's z-index */
-    }
-  </style>
 
   <script>
     // Load Google Maps API
@@ -416,148 +333,34 @@
       document.head.appendChild(script);
     }
 
-    // Variables to store coordinates
-    let selectedLatSale = null;
-    let selectedLngSale = null;
-    let selectedLatRent = null;
-    let selectedLngRent = null;
-
     function initLocationAutocomplete() {
-      // Initialize Google Places Autocomplete for sale tab
-      const locationInputSale = document.getElementById('location-sale');
-      if (locationInputSale) {
+      const locationInput = document.getElementById('search-location');
+      if (locationInput) {
         const options = {
           componentRestrictions: { country: 'gb' },
           fields: ['geometry', 'formatted_address', 'name', 'place_id'],
           types: ['geocode', 'establishment']
         };
-        const autocompleteSale = new google.maps.places.Autocomplete(locationInputSale, options);
-
-        // Reset stored coordinates when user types to avoid using old coordinates with new text
-        locationInputSale.addEventListener('input', function () {
-          selectedLatSale = null;
-          selectedLngSale = null;
-        });
-
-        autocompleteSale.addListener('place_changed', function () {
-          const place = autocompleteSale.getPlace();
-          if (place.geometry) {
-            // Store coordinates for radius search
-            selectedLatSale = place.geometry.location.lat();
-            selectedLngSale = place.geometry.location.lng();
-            console.log('Location selected for sale:', place.formatted_address, 'Lat:', selectedLatSale, 'Lng:', selectedLngSale);
-          }
-        });
-      }
-
-      // Initialize Google Places Autocomplete for rent tab
-      const locationInputRent = document.getElementById('location-rent');
-      if (locationInputRent) {
-        const options = {
-          componentRestrictions: { country: 'gb' },
-          fields: ['geometry', 'formatted_address', 'name', 'place_id'],
-          types: ['geocode', 'establishment']
-        };
-        const autocompleteRent = new google.maps.places.Autocomplete(locationInputRent, options);
+        const autocomplete = new google.maps.places.Autocomplete(locationInput, options);
 
         // Reset stored coordinates when user types
-        locationInputRent.addEventListener('input', function () {
-          selectedLatRent = null;
-          selectedLngRent = null;
+        locationInput.addEventListener('input', function () {
+          const latInput = document.getElementById('search-lat');
+          const lngInput = document.getElementById('search-lng');
+          if (latInput) latInput.value = '';
+          if (lngInput) lngInput.value = '';
         });
 
-        autocompleteRent.addListener('place_changed', function () {
-          const place = autocompleteRent.getPlace();
+        autocomplete.addListener('place_changed', function () {
+          const place = autocomplete.getPlace();
           if (place.geometry) {
-            // Store coordinates for radius search
-            selectedLatRent = place.geometry.location.lat();
-            selectedLngRent = place.geometry.location.lng();
-            console.log('Location selected for rent:', place.formatted_address, 'Lat:', selectedLatRent, 'Lng:', selectedLngRent);
+            const latInput = document.getElementById('search-lat');
+            const lngInput = document.getElementById('search-lng');
+            if (latInput) latInput.value = place.geometry.location.lat();
+            if (lngInput) lngInput.value = place.geometry.location.lng();
+            console.log('Location selected:', place.formatted_address, 'Lat:', place.geometry.location.lat(), 'Lng:', place.geometry.location.lng());
           }
         });
-      }
-    }
-
-    function searchOffMarketProperties(tab) {
-      // Determine purpose based on the active tab, not the dropdown value
-      let purpose;
-      if (tab === 'sale') {
-        purpose = 'Buy';  // For Sale tab should always use 'Buy' purpose
-      } else if (tab === 'rent') {
-        purpose = 'Rent';  // For Rent tab should always use 'Rent' purpose
-      } else {
-        purpose = document.getElementById(`purpose-${tab}`).value;
-      }
-
-      const location = document.getElementById(`location-${tab}`).value;
-      const radius = document.getElementById(`radius-${tab}`).value;
-
-      // Get customize filter values
-      const propertyType = document.getElementById(`property-type-${tab}`)?.value;
-      const minPrice = document.getElementById(`min-price-${tab}`)?.value;
-      const maxPrice = document.getElementById(`max-price-${tab}`)?.value;
-      const minSize = document.getElementById(`min-size-${tab}`)?.value;
-      const maxSize = document.getElementById(`max-size-${tab}`)?.value;
-      const minBedrooms = document.getElementById(`min-bedrooms-${tab}`)?.value;
-      const minBathrooms = document.getElementById(`min-bathrooms-${tab}`)?.value;
-      const ownershipStatus = document.getElementById(`ownership-status-${tab}`)?.value;
-      const rentFrequency = document.getElementById(`rent-frequency-${tab}`)?.value;
-      const chequeOptions = document.getElementById(`cheque-options-${tab}`)?.value;
-
-      // Get selected features (checkboxes)
-      const featureCheckboxes = document.querySelectorAll(`input[name="features-${tab}[]"]:checked`);
-      let features = [];
-      featureCheckboxes.forEach(checkbox => {
-        features.push(checkbox.value);
-      })
-
-      // Build query parameters
-      const params = new URLSearchParams();
-      if (purpose) params.append('purpose', purpose);
-
-      // Use coordinates if available, otherwise use location name
-      if (tab === 'sale' && selectedLatSale && selectedLngSale) {
-        params.append('lat', selectedLatSale);
-        params.append('lng', selectedLngSale);
-        if (location) params.append('location', location); // Add location name too
-      } else if (tab === 'rent' && selectedLatRent && selectedLngRent) {
-        params.append('lat', selectedLatRent);
-        params.append('lng', selectedLngRent);
-        if (location) params.append('location', location); // Add location name too
-      } else if (location) {
-        params.append('location', location);
-      }
-
-      if (radius) params.append('radius', radius);
-      if (propertyType) params.append('property_type_id', propertyType);
-      if (minPrice) params.append('min_price', minPrice);
-      if (maxPrice) params.append('max_price', maxPrice);
-      if (minSize) params.append('min_size', minSize);
-      if (maxSize) params.append('max_size', maxSize);
-      if (minBedrooms) params.append('min_bedrooms', minBedrooms);
-      if (minBathrooms) params.append('min_bathrooms', minBathrooms);
-      if (ownershipStatus) params.append('ownership_status_id', ownershipStatus);
-      if (rentFrequency) params.append('rent_frequency_id', rentFrequency);
-      if (chequeOptions) params.append('cheque_id', chequeOptions);
-      if (features.length > 0) params.append('features', features.join(','));
-
-      // Redirect to off-market listings page with filters
-      window.location.href = `{{ route('off-market-listings.index') }}?${params.toString()}`;
-    }
-
-    // Handle customize filter toggle
-    function toggleCustomizeFilter(tab) {
-      const form = document.getElementById(`customize-form-${tab}`);
-      const button = document.getElementById(`customize-${tab}`);
-
-      if (form.style.display === 'none' || form.style.display === '') {
-        form.style.display = 'block';
-        button.classList.add('active');
-        button.innerHTML = 'Hide <span class="icon"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M12 10.586l4.95-4.95 1.414 1.414-4.95 4.95 4.95 4.95-1.414 1.414-4.95-4.95-4.95 4.95-1.414-1.414 4.95-4.95-4.95-4.95L7.05 5.636z"/></svg></span>';
-      } else {
-        form.style.display = 'none';
-        button.classList.remove('active');
-        button.innerHTML = 'Advance <span class="icon"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M6.17071 18C6.58254 16.8348 7.69378 16 9 16C10.3062 16 11.4175 16.8348 11.8293 18H22V20H11.8293C11.4175 21.1652 10.3062 22 9 22C7.69378 22 6.58254 21.1652 6.17071 20H2V18H6.17071ZM12.1707 11C12.5825 9.83481 13.6938 9 15 9C16.3062 9 17.4175 9.83481 17.8293 11H22V13H17.8293C17.4175 14.1652 16.3062 15 15 15C13.6938 15 12.5825 14.1652 12.1707 13H2V11H12.1707ZM6.17071 4C6.58254 2.83481 7.69378 2 9 2C10.3062 2 11.4175 2.83481 11.8293 4H22V6H11.8293C11.4175 7.16519 10.3062 8 9 8C7.69378 8 6.58254 7.16519 6.17071 6H2V4H6.17071Z"/></svg></span>';
       }
     }
 
@@ -565,7 +368,6 @@
     if (typeof google === 'undefined' || !google.maps || !google.maps.places) {
       document.addEventListener('DOMContentLoaded', loadGoogleMapsAPI);
     } else {
-      // Google Maps API is already loaded
       initLocationAutocomplete();
     }
   </script>
@@ -608,8 +410,7 @@
           window.location.href = "{{ route('login') }}";
           return;
         @endif
-
-                  const data = { _token: '{{ csrf_token() }}' };
+                            const data = { _token: '{{ csrf_token() }}' };
         if (listingId) data.listing_id = listingId;
         if (offMarketId) data.off_market_listing_id = offMarketId;
 

@@ -34,7 +34,7 @@ class TeamMemberWelcome extends Mailable
     {
         return new Envelope(
             from: new Address(config('mail.mailers.noreply.from.address'), config('mail.mailers.noreply.from.name')),
-            subject: 'Welcome to PropertyFinda Team',
+            subject: 'Welcome to PropertyFinda',
         );
     }
 

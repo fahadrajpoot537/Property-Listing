@@ -12,7 +12,7 @@ class OffMarketListingController extends Controller
 {
     public function index(Request $request)
     {
-        $query = \App\Models\OffMarketListing::with(['propertyType', 'unitType', 'features'])
+        $query = \App\Models\OffMarketListing::with(['propertyType', 'features'])
             ->where('status', 'approved');
 
         // Apply filters
@@ -55,17 +55,16 @@ class OffMarketListingController extends Controller
             $query->where('address', 'like', '%' . $request->location . '%');
         }
 
-        if ($request->filled('property_type_id') && $request->property_type_id != '') {
+        if ($request->filled('property_type_ids')) {
+            $types = is_array($request->property_type_ids) ? $request->property_type_ids : explode(',', $request->property_type_ids);
+            $query->whereIn('property_type_id', $types);
+        } elseif ($request->filled('property_type_id') && $request->property_type_id != '') {
             $query->where('property_type_id', $request->property_type_id);
         } elseif ($request->filled('property_type') && $request->property_type != '') {
             $query->where('property_type_id', $request->property_type);
         }
 
-        if ($request->filled('unit_type_id')) {
-            $query->where('unit_type_id', $request->unit_type_id);
-        } elseif ($request->filled('unit_type')) {
-            $query->where('unit_type_id', $request->unit_type);
-        }
+
 
         if ($request->filled('min_price') && $request->filled('max_price')) {
             $query->whereBetween('price', [$request->min_price, $request->max_price]);
@@ -83,26 +82,37 @@ class OffMarketListingController extends Controller
             $query->where('area_size', '<=', $request->max_size);
         }
 
-        // Bedrooms - Exact match for 0-9, >= for 10+
-        $bedrooms = $request->input('bedrooms', $request->input('min_bedrooms'));
-        if ($bedrooms !== null && $bedrooms !== 'any' && $bedrooms !== '') {
-            $val = (int) $bedrooms;
-            if ($val >= 10) {
-                $query->where('bedrooms', '>=', 10);
-            } else {
-                $query->where('bedrooms', $val);
-            }
+        // Bedrooms - Range Support
+        $minBedrooms = $request->input('min_bedrooms', $request->input('bedrooms'));
+        $maxBedrooms = $request->input('max_bedrooms');
+
+        if ($minBedrooms !== null && $minBedrooms !== '' && $minBedrooms !== 'any') {
+            $val = (int) $minBedrooms;
+            $query->where('bedrooms', '>=', $val);
         }
 
-        // Bathrooms - Exact match for 0-9, >= for 10+
-        $bathrooms = $request->input('bathrooms', $request->input('min_bathrooms'));
-        if ($bathrooms !== null && $bathrooms !== 'any' && $bathrooms !== '') {
-            $val = (int) $bathrooms;
-            if ($val >= 10) {
-                $query->where('bathrooms', '>=', 10);
-            } else {
-                $query->where('bathrooms', $val);
-            }
+        if ($maxBedrooms !== null && $maxBedrooms !== '' && (int) $maxBedrooms < 11) {
+            $val = (int) $maxBedrooms;
+            $query->where('bedrooms', '<=', $val);
+        }
+
+        // Bathrooms - Range Support
+        $minBathrooms = $request->input('min_bathrooms', $request->input('bathrooms'));
+        $maxBathrooms = $request->input('max_bathrooms');
+
+        if ($minBathrooms !== null && $minBathrooms !== '' && $minBathrooms !== 'any') {
+            $val = (int) $minBathrooms;
+            $query->where('bathrooms', '>=', $val);
+        }
+
+        if ($maxBathrooms !== null && $maxBathrooms !== '' && (int) $maxBathrooms < 11) {
+            $val = (int) $maxBathrooms;
+            $query->where('bathrooms', '<=', $val);
+        }
+
+        // Tenure
+        if ($request->filled('tenure')) {
+            $query->where('tenure', $request->tenure);
         }
 
         if ($request->filled('ownership_status_id')) {
@@ -124,11 +134,16 @@ class OffMarketListingController extends Controller
                 ->whereRaw('old_price != price');
         }
 
-        if ($request->filled('features')) {
-            $featureIds = explode(',', $request->features);
-            $query->whereHas('features', function ($q) use ($featureIds) {
-                $q->whereIn('features.id', $featureIds);
-            });
+        if ($request->filled('feature_ids') || $request->filled('features')) {
+            $features = $request->filled('feature_ids')
+                ? array_filter(is_array($request->feature_ids) ? $request->feature_ids : explode(',', $request->feature_ids))
+                : array_filter(is_array($request->features) ? $request->features : explode(',', $request->features));
+
+            if (!empty($features)) {
+                $query->whereHas('features', function ($q) use ($features) {
+                    $q->whereIn('features.id', $features);
+                });
+            }
         }
 
         if ($request->filled('sort')) {
@@ -168,7 +183,6 @@ class OffMarketListingController extends Controller
         $hasSearchParams = $request->filled('location') ||
             $request->filled('purpose') ||
             $request->filled('property_type_id') ||
-            $request->filled('unit_type_id') ||
             $request->filled('min_price') ||
             $request->filled('max_price') ||
             $request->filled('min_size') ||
@@ -223,7 +237,6 @@ class OffMarketListingController extends Controller
             'user',
             'features',
             'propertyType',
-            'unitType',
             'ownershipStatus',
             'rentFrequency',
             'cheque',
@@ -237,7 +250,7 @@ class OffMarketListingController extends Controller
             })->firstOrFail();
 
         // Get similar properties
-        $similarProperties = \App\Models\OffMarketListing::with(['propertyType', 'unitType'])
+        $similarProperties = \App\Models\OffMarketListing::with(['propertyType'])
             ->where('property_type_id', $listing->property_type_id)
             ->where('id', '!=', $listing->id)
             ->where('status', 'approved')
@@ -485,9 +498,43 @@ class OffMarketListingController extends Controller
         // Store in ContactSubmission
         ContactSubmission::create($inquiryData);
 
-        // Send email to property owner
+        // Save to Enquiry table for User Tracking (Rightmove style)
+        \App\Models\Enquiry::create([
+            'user_id' => auth()->id(),
+            'listing_id' => null,
+            'off_market_listing_id' => $listing->id,
+            'agent_email' => $listing->user->email ?? 'info@propertyfinda.co.uk',
+            'message' => $request->message,
+            'status' => 'sent',
+        ]);
+
+        // Save to WalkThroughInquiry table so it shows up on the Agent/Agency and Super Admin Enquiries Dashboard
+        \App\Models\WalkThroughInquiry::create([
+            'listing_id' => null,
+            'off_market_listing_id' => $listing->id,
+            'user_id' => $listing->user_id,
+            'sender_id' => auth()->id(),
+            'name' => $request->name,
+            'email' => $request->email,
+            'phone' => $request->phone,
+            'preferred_time' => 'Off-Market Inquiry',
+            'message' => $request->message,
+            'status' => 'pending',
+        ]);
+
+        // Route email to the correct recipient
         if ($listing->user && $listing->user->email) {
-            Mail::to($listing->user->email)->send(new OffMarketInquiry($inquiryData, $listing));
+            $notificationEmail = $listing->user->email;
+
+            // If the listing owner is an agent and belongs to an agency, route email to the agency
+            if ($listing->user->hasRole('agent') && $listing->user->agency_id) {
+                $agency = \App\Models\User::find($listing->user->agency_id);
+                if ($agency && $agency->email) {
+                    $notificationEmail = $agency->email;
+                }
+            }
+
+            Mail::to($notificationEmail)->send(new \App\Mail\OffMarketInquiry($inquiryData, $listing));
         }
 
         return back()->with('success', 'Your request for the prospectus has been sent. Our team will verify your credentials and contact you.');

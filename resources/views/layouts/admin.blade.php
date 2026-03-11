@@ -347,7 +347,31 @@
                         <span class="text-[12px] uppercase tracking-widest">Profile</span>
                     </a>
                 </div>
-
+                @canany(['listing.view', 'listing.create', 'off-market.view'])
+                    <div class="mb-4">
+                        <p class="px-3 text-[10px] font-black text-white/40 uppercase tracking-[0.2em] mb-2">Live Trading
+                        </p>
+                        @can('listing.view')
+                            <a href="{{ route('admin.listings.index') }}"
+                                class="flex items-center px-3 py-2 rounded-lg text-white/70 font-bold hover:bg-white/5 transition-all duration-300 {{ (request()->routeIs('admin.listings.*') && !request()->routeIs('admin.listings.create') && !request()->routeIs('admin.listings.drafts')) ? 'active-link' : '' }}">
+                                <i class='bx bx-list-ul mr-3 text-lg nav-icon'></i>
+                                <span class="text-[12px] uppercase tracking-widest">Listings</span>
+                            </a>
+                        @endcan
+                        @can('off-market.view')
+                            <a href="{{ route('admin.off-market-listings.index') }}"
+                                class="flex items-center px-3 py-2 rounded-lg text-white/70 font-bold hover:bg-white/5 transition-all duration-300 {{ (request()->routeIs('admin.off-market-listings.*') && !request()->routeIs('admin.off-market-listings.drafts')) ? 'active-link' : '' }}">
+                                <i class='bx bx-hide mr-3 text-lg nav-icon'></i>
+                                <span class="text-[12px] uppercase tracking-widest">Off Market Listings</span>
+                            </a>
+                        @endcan
+                        <a href="{{ route('admin.walkthrough.index') }}"
+                            class="flex items-center px-3 py-2 rounded-lg text-white/70 font-bold hover:bg-white/5 transition-all duration-300 {{ request()->routeIs('admin.walkthrough.*') ? 'active-link' : '' }}">
+                            <i class='bx bx-message-detail mr-3 text-lg nav-icon'></i>
+                            <span class="text-[12px] uppercase tracking-widest">enquiries</span>
+                        </a>
+                    </div>
+                @endcanany
                 <!-- Access Management -->
                 @if(auth()->user()->hasAnyRole(['admin', 'Agency']) || auth()->user()->canAny(['role.view', 'partner.view']))
                     <div class="mb-2"
@@ -406,10 +430,7 @@
                                 class="flex items-center px-3 py-1.5 rounded-lg text-[12px] font-bold text-white/60 hover:text-white transition-all {{ request()->routeIs('admin.mortgage-settings.*') ? 'text-white bg-white/5' : '' }}">
                                 Mortgages
                             </a>
-                            <a href="{{ route('admin.unit-types.index') }}"
-                                class="flex items-center px-3 py-1.5 rounded-lg text-[12px] font-bold text-white/60 hover:text-white transition-all {{ request()->routeIs('admin.unit-types.*') ? 'text-white bg-white/5' : '' }}">
-                                Unit Types
-                            </a>
+
                             <a href="{{ route('admin.features.index') }}"
                                 class="flex items-center px-3 py-1.5 rounded-lg text-[12px] font-bold text-white/60 hover:text-white transition-all {{ request()->routeIs('admin.features.*') ? 'text-white bg-white/5' : '' }}">
                                 Amenities
@@ -427,31 +448,7 @@
                 @endcan
 
                 <!-- Active Operations -->
-                @canany(['listing.view', 'listing.create', 'off-market.view'])
-                    <div class="mb-4">
-                        <p class="px-3 text-[10px] font-black text-white/40 uppercase tracking-[0.2em] mb-2">Live Trading
-                        </p>
-                        @can('listing.view')
-                            <a href="{{ route('admin.listings.index') }}"
-                                class="flex items-center px-3 py-2 rounded-lg text-white/70 font-bold hover:bg-white/5 transition-all duration-300 {{ (request()->routeIs('admin.listings.*') && !request()->routeIs('admin.listings.create') && !request()->routeIs('admin.listings.drafts')) ? 'active-link' : '' }}">
-                                <i class='bx bx-list-ul mr-3 text-lg nav-icon'></i>
-                                <span class="text-[12px] uppercase tracking-widest">Listings</span>
-                            </a>
-                        @endcan
-                        @can('off-market.view')
-                            <a href="{{ route('admin.off-market-listings.index') }}"
-                                class="flex items-center px-3 py-2 rounded-lg text-white/70 font-bold hover:bg-white/5 transition-all duration-300 {{ (request()->routeIs('admin.off-market-listings.*') && !request()->routeIs('admin.off-market-listings.drafts')) ? 'active-link' : '' }}">
-                                <i class='bx bx-hide mr-3 text-lg nav-icon'></i>
-                                <span class="text-[12px] uppercase tracking-widest">Off Market</span>
-                            </a>
-                        @endcan
-                        <a href="{{ route('admin.walkthrough.index') }}"
-                            class="flex items-center px-3 py-2 rounded-lg text-white/70 font-bold hover:bg-white/5 transition-all duration-300 {{ request()->routeIs('admin.walkthrough.*') ? 'active-link' : '' }}">
-                            <i class='bx bx-camera-movie mr-3 text-lg nav-icon'></i>
-                            <span class="text-[12px] uppercase tracking-widest">Tours</span>
-                        </a>
-                    </div>
-                @endcanany
+
 
                 <!-- Pending Work -->
                 @canany(['listing.create', 'listing.edit', 'off-market.create', 'off-market.edit'])
@@ -461,7 +458,7 @@
                             class="w-full flex items-center justify-between px-3 py-2 rounded-lg text-white/50 hover:text-white hover:bg-white/5 transition-all duration-300">
                             <div class="flex items-center">
                                 <i class='bx bx-edit mr-3 text-lg nav-icon'></i>
-                                <span class="text-[11px] font-black uppercase tracking-[0.1em]">Drafts</span>
+                                <span class="text-[11px] font-black uppercase tracking-[0.1em]">Listing Drafts</span>
                             </div>
                             <i class='bx bx-chevron-down transition-transform duration-300 text-white/20'
                                 :class="open ? 'rotate-180' : ''"></i>
@@ -469,11 +466,11 @@
                         <div x-show="open" x-cloak class="mt-0.5 space-y-0.5 ml-3 border-l border-white/5 pl-2">
                             <a href="{{ route('admin.listings.drafts') }}"
                                 class="flex items-center px-3 py-1.5 rounded-lg text-[12px] font-bold text-white/60 hover:text-white transition-all {{ request()->routeIs('admin.listings.drafts') ? 'text-white bg-white/5' : '' }}">
-                                Public Drafts
+                                Listing Drafts
                             </a>
                             <a href="{{ route('admin.off-market-listings.drafts') }}"
                                 class="flex items-center px-3 py-1.5 rounded-lg text-[12px] font-bold text-white/60 hover:text-white transition-all {{ request()->routeIs('admin.off-market-listings.drafts') ? 'text-white bg-white/5' : '' }}">
-                                Private Drafts
+                                Off Market Listing Drafts
                             </a>
                         </div>
                     </div>

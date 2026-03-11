@@ -16,7 +16,6 @@ class OffMarketListing extends Model
         'floor_plans' => 'array',
         'key_features' => 'array',
         'price' => 'decimal:2',
-        'tags' => 'array',
     ];
 
     public function materialInfo()
@@ -54,14 +53,21 @@ class OffMarketListing extends Model
         return $this->belongsTo(PropertyType::class);
     }
 
-    public function unitType()
-    {
-        return $this->belongsTo(UnitType::class);
-    }
+
 
     public function features()
     {
         return $this->belongsToMany(Feature::class, 'feature_off_market_listing');
+    }
+
+    public function amenities()
+    {
+        return $this->belongsToMany(Amenity::class, 'amenity_off_market_listing');
+    }
+
+    public function tags()
+    {
+        return $this->belongsToMany(Tag::class, 'off_market_listing_tag');
     }
 
     public function ownershipStatus()

@@ -4,178 +4,94 @@
 
 @section('content')
     <style>
-        /* Premium Portal Styling */
-        :root {
-            --ztc-bg-bg-3: #8046F1;
-            /* Zoopla Purple from tailwind config */
-        }
-
-        .search-results-page {
-            padding-top: 80px;
-            /* Offset for fixed navbar */
-            background-color: #F9FAFB;
-        }
-
-        /* Filters Sidebar */
-        .filters-sidebar {
-            background: white;
-            border-radius: 1.5rem;
-            border: 1px solid #E5E7EB;
-            padding: 1.25rem;
-            position: sticky;
-            top: 100px;
-            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
-        }
-
-        .sidebar-title {
-            font-size: 1.1rem;
-            font-weight: 800;
-            color: #131B31;
-            margin-bottom: 1.25rem;
-            letter-spacing: -0.025em;
-        }
-
-        /* Purpose Tabs (Zoopla Style) */
-        .purpose-tabs {
-            display: flex;
-            background: #F3F4F6;
-            padding: 0.25rem;
-            border-radius: 0.75rem;
-            margin-bottom: 1.5rem;
-        }
-
-        .sidebar-purpose-btn {
-            flex: 1;
-            padding: 0.5rem;
-            font-size: 0.875rem;
-            font-weight: 700;
-            border-radius: 0.5rem;
-            transition: all 0.2s;
-            border: none;
-            color: #6B7280;
-            background: transparent;
-        }
-
-        .sidebar-purpose-btn.active {
-            background: white;
-            color: #131B31;
-            shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1);
-        }
-
-        /* Form Controls */
-        .form-group-custom {
-            margin-bottom: 1rem;
-        }
-
-        .form-label-custom {
-            display: block;
-            font-size: 0.8rem;
-            font-weight: 700;
-            color: #374151;
-            margin-bottom: 0.4rem;
-            text-transform: uppercase;
-            letter-spacing: 0.05em;
-        }
-
-        .sidebar-input,
-        .select2-container .select2-selection--single {
-            width: 100% !important;
-            background-color: #F9FAFB !important;
-            border: 1px solid #E5E7EB !important;
-            border-radius: 0.75rem !important;
-            height: 48px !important;
-            padding: 0.5rem 35px !important;
-            font-size: 0.95rem !important;
-            font-weight: 500 !important;
-        }
-
-        .select2-container .select2-selection--single {
-            display: flex !important;
-            align-items: center !important;
-            padding: 0 !important;
-        }
-
-        .select2-container--default .select2-selection--single .select2-selection__rendered {
-            line-height: 48px !important;
-            padding-left: 1rem !important;
-        }
-
-        .select2-container--default .select2-selection--single .select2-selection__arrow {
-            height: 46px !important;
-        }
-
         /* Property Cards (Premium Grid) */
         .property-card-results {
             background: white;
-            border-radius: 1.25rem;
+            border-radius: 1.5rem;
             overflow: hidden;
             border: 1px solid #E5E7EB;
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-            height: 100%;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
             display: flex;
             flex-direction: column;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+            height: 100%;
         }
 
         .property-card-results:hover {
-            transform: translateY(-4px);
-            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
+            transform: translateY(-8px);
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.12);
             border-color: #8046F1;
         }
 
         .img-container {
             position: relative;
-            height: 200px;
-            background: #F9FAFB;
+            width: 100%;
+            height: 220px;
+            background: #F3F4F6;
+            overflow: hidden;
+            flex-shrink: 0;
         }
 
         .img-container img {
             width: 100%;
             height: 100%;
             object-fit: cover;
+            transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .property-card-results:hover .img-container img {
+            transform: scale(1.1);
         }
 
         .price-badge {
             position: absolute;
-            bottom: 0.75rem;
-            left: 0.75rem;
-            background: rgba(255, 255, 255, 0.95);
-            backdrop-blur: 4px;
-            padding: 0.4rem 0.75rem;
-            border-radius: 0.5rem;
-            font-weight: 800;
+            bottom: 1rem;
+            left: 1rem;
+            background: rgba(255, 255, 255, 0.9);
+            backdrop-filter: blur(8px);
+            padding: 0.5rem 1rem;
+            border-radius: 1rem;
+            font-weight: 900;
             color: #131B31;
-            font-size: 13px;
-            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+            font-size: 15px;
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+            z-index: 10;
         }
 
         .card-content {
-            padding: 1rem;
+            padding: 1.5rem;
             flex-grow: 1;
             display: flex;
             flex-direction: column;
         }
 
         .property-title {
-            font-size: 13px;
-            font-weight: 700;
+            font-size: 16px;
+            font-weight: 800;
             color: #131B31;
-            margin-bottom: 0.25rem;
-            line-height: 1.3;
+            margin-bottom: 0.5rem;
+            line-height: 1.4;
+            display: -webkit-box;
+            -webkit-line-clamp: 1;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
         }
 
         .property-addr {
-            font-size: 0.75rem;
+            font-size: 13px;
             color: #6B7280;
             display: flex;
             align-items: center;
-            gap: 0.4rem;
-            margin-bottom: 1rem;
+            gap: 0.5rem;
+            margin-bottom: 1.25rem;
+            font-weight: 500;
         }
 
         .stats-row {
             display: flex;
-            gap: 1rem;
-            padding-top: 1rem;
+            justify-content: space-between;
+            align-items: center;
+            padding-top: 1.25rem;
             border-top: 1px solid #F3F4F6;
             margin-top: auto;
         }
@@ -184,139 +100,415 @@
             display: flex;
             align-items: center;
             gap: 0.5rem;
-            font-weight: 600;
-            color: #374151;
-            font-size: 12px;
+            font-weight: 700;
+            color: #4B5563;
+            font-size: 13px;
         }
 
         .stat-item i {
             color: #9CA3AF;
-            font-size: 1rem;
+            font-size: 14px;
         }
 
         /* List View Specifics */
         .list-view-card {
-            flex-direction: row;
-            min-height: 220px;
+            flex-direction: row !important;
             height: auto;
+            min-height: 250px;
+            max-height: none;
         }
 
         .list-view-card .img-container {
-            width: 300px;
-            min-height: 100%;
+            width: 340px;
             height: auto;
-            flex-shrink: 0;
+            min-height: 100%;
+            display: flex;
+        }
+
+        .list-view-card .card-content {
+            padding: 2rem;
+        }
+
+        @media (max-width: 1024px) {
+            .list-view-card .img-container {
+                width: 300px;
+            }
         }
 
         @media (max-width: 768px) {
             .list-view-card {
-                flex-direction: column;
-                height: auto;
+                flex-direction: column !important;
+                max-height: none;
             }
 
             .list-view-card .img-container {
                 width: 100%;
-                height: 200px;
+                height: 250px;
+            }
+
+            .list-view-card .card-content {
+                padding: 1.5rem;
             }
         }
 
-        /* Buttons */
-        .btn-apply {
-            background: #8046F1;
-            color: white;
-            font-weight: 800;
-            width: 100%;
-            padding: 0.75rem;
-            border-radius: 0.75rem;
-            border: none;
-            transition: all 0.2s;
-            margin-top: 1rem;
-        }
-
-        .btn-apply:hover {
-            background: #6D28D9;
-            transform: translateY(-1px);
-        }
-
-        /* View Switcher */
-        .view-switcher {
-            display: flex;
-            gap: 0.5rem;
-        }
-
-        .view-btn {
-            width: 40px;
-            height: 40px;
-            display: flex;
+        /* Filter Tag Styling */
+        .filter-tag {
+            display: inline-flex;
             align-items: center;
-            justify-content: center;
-            border-radius: 0.75rem;
+            gap: 0.5rem;
+            padding: 0.6rem 1.25rem;
+            border-radius: 2rem;
             border: 1px solid #E5E7EB;
             background: white;
-            color: #6B7280;
-            transition: all 0.2s;
+            color: #131B31;
+            font-size: 13px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+            user-select: none;
         }
 
-        .view-btn.active {
+        .filter-tag:hover {
+            border-color: #8046F1;
+            background: #F5F3FF;
+        }
+
+        .filter-tag.active {
             background: #131B31;
             color: white;
             border-color: #131B31;
+            box-shadow: 0 4px 12px rgba(19, 27, 49, 0.2);
         }
 
-        /* Amenities Custom Checkbox */
-        .amenity-checkbox-group {
-            display: grid;
-            grid-template-cols: 1fr;
-            gap: 0.5rem;
-            max-height: 200px;
-            overflow-y: auto;
-            padding-right: 0.5rem;
-        }
-
-        .custom-checkbox {
+        .filter-section-header {
             display: flex;
+            justify-content: space-between;
             align-items: center;
-            gap: 0.75rem;
-            padding: 0.5rem 0.75rem;
-            border-radius: 0.5rem;
             cursor: pointer;
-            transition: background 0.2s;
+            padding: 1.5rem 0;
+            border-bottom: 1px solid #F3F4F6;
         }
 
-        .custom-checkbox:hover {
-            background: #F3F4F6;
+        .filter-section-header h4 {
+            font-size: 16px;
+            font-weight: 800;
+            color: #131B31;
         }
 
-        .custom-checkbox input {
-            width: 1.125rem;
-            height: 1.125rem;
-            border-radius: 0.25rem;
-            border: 2px solid #D1D5DB;
-            accent-color: #8046F1;
+        .filter-section-content {
+            padding: 1.5rem 0;
         }
 
-        .custom-checkbox span {
-            font-size: 0.875rem;
-            font-weight: 500;
-            color: #374151;
+        /* Adjusting the Tray */
+        #more-filters-tray {
+            max-height: 80vh;
+            overflow-y: auto;
+            scrollbar-width: thin;
         }
 
-        /* Scrollbar */
-        .amenity-checkbox-group::-webkit-scrollbar {
+        #more-filters-tray::-webkit-scrollbar {
             width: 4px;
         }
 
-        .amenity-checkbox-group::-webkit-scrollbar-track {
-            background: #f1f1f1;
-        }
-
-        .amenity-checkbox-group::-webkit-scrollbar-thumb {
-            background: #ccc;
+        #more-filters-tray::-webkit-scrollbar-thumb {
+            background: #E5E7EB;
             border-radius: 10px;
         }
-    </style>
 
-    <div class="search-results-page">
+        /* Select2 Dark Mode Styles */
+        .select2-filter-dark+.select2-container .select2-selection--single {
+            background: rgba(255, 255, 255, 0.1) !important;
+            border: 1px solid rgba(255, 255, 255, 0.1) !important;
+            border-radius: 0.5rem !important;
+            height: 46px !important;
+            color: white !important;
+        }
+
+        .select2-filter-dark+.select2-container .select2-selection__rendered {
+            color: white !important;
+            line-height: 46px !important;
+            padding-left: 1rem !important;
+            font-weight: 700 !important;
+        }
+
+        .select2-filter-dark+.select2-container .select2-selection__arrow b {
+            border-color: white transparent transparent transparent !important;
+        }
+
+        .select2-filter-dark-simple+.select2-container .select2-selection--single {
+            background: transparent !important;
+            border: none !important;
+            height: 46px !important;
+            color: white !important;
+        }
+
+        .select2-filter-dark-simple+.select2-container .select2-selection__rendered {
+            color: white !important;
+            line-height: 46px !important;
+            padding-right: 2rem !important;
+            font-weight: 700 !important;
+        }
+
+        .select2-filter-dark-simple+.select2-container .select2-selection__arrow {
+            right: 0 !important;
+        }
+
+        .select2-filter-dark-simple+.select2-container .select2-selection__arrow b {
+            border-color: white transparent transparent transparent !important;
+        }
+
+        /* Dropdown Options Styling */
+        .select2-dark-dropdown {
+            background-color: #131B31 !important;
+            border: 1px solid rgba(255, 255, 255, 0.1) !important;
+            border-radius: 0.5rem !important;
+            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.5) !important;
+        }
+
+        .select2-dark-dropdown .select2-results__option {
+            background-color: transparent !important;
+            color: #e5e7eb !important;
+            padding: 10px 16px !important;
+            font-size: 14px !important;
+            font-weight: 600 !important;
+            transition: all 0.2s ease;
+        }
+
+        .select2-dark-dropdown .select2-results__option--highlighted,
+        .select2-dark-dropdown .select2-results__option:hover {
+            background-color: rgba(255, 255, 255, 0.05) !important;
+            color: white !important;
+        }
+
+        .select2-dark-dropdown .select2-results__option[aria-selected="true"] {
+            background-color: #8046F1 !important;
+            color: white !important;
+        }
+
+        /* Adjusting PAC container for dark mode input if needed, but it should be standard */
+    </style>
+    <div class="sticky top-[72px] z-40 bg-white border-b border-gray-200 py-2 sm:py-3 transition-all duration-300 shadow-sm"
+        id="sticky-filter-bar">
+        <div class="w-full mx-auto px-4 sm:px-6">
+            <div
+                class="flex flex-col md:flex-row md:items-center bg-white border border-gray-200 rounded-2xl shadow-sm overflow-hidden">
+                <!-- Location Group -->
+                <div
+                    class="w-[50px] md:flex-1 min-h-[48px] px-4 border-b md:border-b-0 md:border-r border-gray-100 flex items-center group">
+                    <i class="fa-solid fa-location-dot text-primary text-[14px] mr-3"></i>
+                    <input type="text" id="main-location" placeholder="Location..."
+                        class="flex-1 bg-transparent border-none focus:ring-0 text-[14px] font-bold text-gray-900 placeholder-gray-400 h-full p-0"
+                        value="{{ request('location') }}">
+                    <button onclick="document.getElementById('main-location').value=''; autoSearch()"
+                        class="px-2 text-gray-300 hover:text-gray-500 transition-colors">
+                        <i class="fa-solid fa-xmark text-[14px]"></i>
+                    </button>
+                </div>
+
+                <!-- Radius (Area) -->
+                <div
+                    class="w-[120px] md:w-[50px] min-h-[48px] border-b md:border-b-0 md:border-r border-gray-100 flex items-center relative">
+                    <select id="main-radius" onchange="autoSearch()"
+                        class="w-full h-full min-h-[48px] bg-transparent border-none focus:ring-0 pl-4 pr-10 text-[14px] font-bold text-gray-900 cursor-pointer appearance-none">
+                        <option value="0.5" {{ request('radius') == '0.5' ? 'selected' : '' }}>Area</option>
+                        <option value="1" {{ request('radius') == '1' ? 'selected' : '' }}>+1 mile</option>
+                        <option value="3" {{ request('radius') == '3' ? 'selected' : '' }}>+3 miles</option>
+                        <option value="5" {{ request('radius') == '5' ? 'selected' : '' }}>+5 miles</option>
+                        <option value="10" {{ request('radius') == '10' ? 'selected' : '' }}>+10 miles</option>
+                    </select>
+                    <i
+                        class="fa-solid fa-chevron-down absolute right-4 top-1/2 -translate-y-1/2 text-[10px] text-gray-400 pointer-events-none"></i>
+                </div>
+
+                <!-- Price Group -->
+                <div
+                    class="w-full md:w-auto flex items-center min-h-[48px] px-4 gap-3 border-b md:border-b-0 md:border-r border-gray-100 justify-center md:justify-start">
+                        <div class="relative h-full flex-1 md:flex-none min-w-[100px]">
+                            <input type="number" id="main-min-price" onblur="debouncedSearch()" placeholder="Min Price"
+                                class="w-full h-full min-h-[48px] bg-transparent border-none focus:ring-0 text-[14px] font-bold text-gray-900 placeholder-gray-400 p-0 pr-6"
+                                value="{{ request('min_price') }}">
+                            <i
+                                class="fa-solid fa-chevron-down absolute right-1 top-1/2 -translate-y-1/2 text-[10px] text-gray-400 pointer-events-none opacity-40"></i>
+                        </div>
+                        <span class="text-gray-300 font-bold text-[12px]">to</span>
+                        <div class="relative h-full flex-1 md:flex-none min-w-[100px]">
+                            <input type="number" id="main-max-price" onblur="debouncedSearch()" placeholder="Max Price"
+                                class="w-full h-full min-h-[48px] bg-transparent border-none focus:ring-0 text-[14px] font-bold text-gray-900 placeholder-gray-400 p-0 pr-6"
+                                value="{{ request('max_price') }}">
+                            <i
+                                class="fa-solid fa-chevron-down absolute right-1 top-1/2 -translate-y-1/2 text-[10px] text-gray-400 pointer-events-none opacity-40"></i>
+                        </div>
+                    </div>
+
+                    <!-- Beds Group -->
+                    <div
+                        class="w-full md:w-auto flex items-center min-h-[48px] px-4 gap-3 border-b md:border-b-0 md:border-r border-gray-100 justify-center md:justify-start">
+                        <div class="relative h-full flex-1 md:flex-none min-w-[100px]">
+                            <select id="main-min-beds" onchange="autoSearch()"
+                                class="w-full h-full bg-transparent border-none focus:ring-0 text-[14px] font-bold text-gray-900 appearance-none pr-8 cursor-pointer">
+                                <option value="">Min Beds</option>
+                                <option value="0" {{ request('min_bedrooms') === '0' ? 'selected' : '' }}>Studio</option>
+                                @for($i = 1; $i <= 10; $i++)
+                                    <option value="{{ $i }}" {{ request('min_bedrooms') == $i ? 'selected' : '' }}>{{ $i }} Beds
+                                    </option>
+                                @endfor
+                                <option value="11" {{ request('min_bedrooms') == '11' ? 'selected' : '' }}>11+</option>
+                            </select>
+                        </div>
+                        <span class="text-gray-300 font-bold text-[12px]">to</span>
+                        <div class="relative h-full flex-1 md:flex-none min-w-[100px]">
+                            <select id="main-max-beds" onchange="autoSearch()"
+                                class="w-full h-full bg-transparent border-none focus:ring-0 text-[14px] font-bold text-gray-900 appearance-none pr-8 cursor-pointer">
+                                <option value="">Max Beds</option>
+                                @for($i = 1; $i <= 10; $i++)
+                                    <option value="{{ $i }}" {{ request('max_bedrooms') == $i ? 'selected' : '' }}>{{ $i }} Beds
+                                    </option>
+                                @endfor
+                                <option value="11" {{ request('max_bedrooms') == '11' ? 'selected' : '' }}>11+</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <!-- Filters Button (Stacking on mobile) -->
+                    <button onclick="toggleMoreFiltersFiltersTray()" id="more-filters-btn"
+                        class="w-full md:w-auto h-[48px] px-6 flex items-center justify-center gap-2 hover:bg-gray-50 transition-colors bg-gray-50/50 md:bg-transparent">
+                        <i class="fa-solid fa-sliders text-primary text-[14px]"></i>
+                        <span class="text-[14px] font-bold text-gray-900">Filters</span>
+                        <i class="fa-solid fa-chevron-down text-[11px] text-gray-400" id="more-filters-chevron"></i>
+                    </button>
+
+                    <input type="hidden" id="main-purpose" value="{{ request('purpose', 'Buy') }}">
+                </div>
+            </div>
+        </div>
+
+        <!-- More Filters Tray (Expandable) -->
+        <div id="more-filters-tray"
+            class="hidden transition-all duration-300 mt-4 border-t border-gray-100 pt-2 bg-white rounded-2xl shadow-2xl p-4 sm:p-6">
+
+            <!-- Bathrooms Section -->
+            <div class="filter-group mb-4">
+                <div class="filter-section-header py-3 sm:py-4" onclick="toggleFilterAccordion(this)">
+                    <h4>Bathrooms</h4>
+                    <i class="fa-solid fa-chevron-up transition-transform"></i>
+                </div>
+                <div class="filter-section-content py-3 sm:py-4">
+                    <div class="flex items-center gap-3 sm:gap-4 max-w-sm">
+                        <select id="main-min-baths" onchange="autoSearch()"
+                            class="w-full h-[46px] bg-gray-50 border border-gray-300 rounded-xl px-3 text-sm font-bold text-gray-900 focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/20 cursor-pointer">
+                            <option value="">Min Baths</option>
+                            @for($i = 1; $i <= 6; $i++)
+                                <option value="{{ $i }}" {{ request('min_bathrooms') == $i ? 'selected' : '' }}>{{ $i }}
+                                </option>
+                            @endfor
+                            <option value="7" {{ request('min_bathrooms') == '7' ? 'selected' : '' }}>7+</option>
+                        </select>
+                        <span class="text-gray-300 font-bold">-</span>
+                        <select id="main-max-baths" onchange="autoSearch()"
+                            class="w-full h-[46px] bg-gray-50 border border-gray-300 rounded-xl px-3 text-sm font-bold text-gray-900 focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/20 cursor-pointer">
+                            <option value="">Max Baths</option>
+                            @for($i = 1; $i <= 6; $i++)
+                                <option value="{{ $i }}" {{ request('max_bathrooms') == $i ? 'selected' : '' }}>{{ $i }}
+                                </option>
+                            @endfor
+                            <option value="7" {{ request('max_bathrooms') == '7' ? 'selected' : '' }}>7+</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+
+
+            <!-- Property Type Section -->
+            <div class="filter-group">
+                <div class="filter-section-header py-3 sm:py-4" onclick="toggleFilterAccordion(this)">
+                    <h4>Property type</h4>
+                    <i class="fa-solid fa-chevron-up transition-transform"></i>
+                </div>
+                <div class="filter-section-content py-3 sm:py-4">
+                    <div class="flex flex-wrap gap-2 sm:gap-3" id="property-type-tags">
+                        @php
+                            $typeIcons = [
+                                'Detached' => 'fa-house',
+                                'Semi-detached' => 'fa-house-chimney-window',
+                                'Terraced' => 'fa-house-chimney-crack',
+                                'Flat' => 'fa-building',
+                                'Bungalow' => 'fa-house-chimney',
+                                'Land' => 'fa-tree',
+                                'Park home' => 'fa-caravan',
+                                'House' => 'fa-house'
+                            ];
+                            $selectedTypes = (array) explode(',', request('property_type_ids', ''));
+                        @endphp
+                        @foreach(\App\Models\PropertyType::all() as $type)
+                            <div class="filter-tag {{ in_array($type->id, $selectedTypes) ? 'active' : '' }}"
+                                data-id="{{ $type->id }}" onclick="toggleTag(this, 'property-type')">
+                                <i class="fa-solid {{ $typeIcons[$type->title] ?? 'fa-house' }}"></i>
+                                {{ $type->title }}
+                            </div>
+                        @endforeach
+                        <input type="hidden" id="main-property-types-hidden" value="{{ request('property_type_ids') }}">
+                    </div>
+                </div>
+            </div>
+
+            <!-- Property Details Section -->
+            <div class="filter-group">
+                <div class="filter-section-header py-3 sm:py-4" onclick="toggleFilterAccordion(this)">
+                    <h4>Property details</h4>
+                    <i class="fa-solid fa-chevron-up transition-transform"></i>
+                </div>
+                <div class="filter-section-content py-3 sm:py-4 grid grid-cols-1 md:grid-cols-2 gap-6 sm:gap-8">
+                    <div>
+                        <label class="block text-xs font-bold text-gray-500 mb-3 uppercase tracking-widest">Tenure</label>
+                        <div class="flex flex-wrap gap-2" id="tenure-tags">
+                            @php
+                                $selectedTenure = request('tenure', '');
+                                $tenures = ['Freehold', 'Leasehold', 'Share of freehold'];
+                            @endphp
+                            @foreach($tenures as $t)
+                                <div class="filter-tag {{ $selectedTenure == $t ? 'active' : '' }}" data-id="{{ $t }}"
+                                    onclick="toggleTag(this, 'tenure', true)">
+                                    {{ $t }}
+                                </div>
+                            @endforeach
+                        </div>
+                        <input type="hidden" id="main-tenure-hidden" value="{{ request('tenure') }}">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold text-gray-500 mb-3 uppercase tracking-widest">Must have
+                            features</label>
+                        <div class="flex flex-wrap gap-2" id="features-tags">
+                            @php
+                                $selectedFeatures = (array) explode(',', request('feature_ids', ''));
+                            @endphp
+                            @foreach($features_all as $feature)
+                                <div class="filter-tag {{ in_array($feature->id, $selectedFeatures) ? 'active' : '' }}"
+                                    data-id="{{ $feature->id }}" onclick="toggleTag(this, 'feature')">
+                                    {{ $feature->title }}
+                                </div>
+                            @endforeach
+                        </div>
+                        <input type="hidden" id="main-features-hidden" value="{{ request('feature_ids') }}">
+                    </div>
+                </div>
+            </div>
+
+            <!-- Footer with Search Button -->
+            <div
+                class="mt-6 sm:mt-8 pt-6 sm:pt-8 border-t border-gray-100 flex flex-col sm:flex-row justify-end gap-3 sm:gap-4">
+                <button onclick="resetFiltersAndExecute()"
+                    class="px-6 py-3 text-gray-400 font-bold hover:text-primary transition-colors text-sm sm:text-base">Reset
+                    all
+                    filters</button>
+                <button onclick="executeSearch()"
+                    class="px-8 sm:px-12 py-3 bg-primary hover:bg-primary-dark text-white font-black rounded-xl shadow-xl shadow-primary/20 transition-all flex items-center justify-center gap-2 text-sm sm:text-base">
+                    <i class="fa-solid fa-magnifying-glass"></i>
+                    Search
+                </button>
+            </div>
+        </div>
+        </div>
+        </div>
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
             <!-- Unified Layout using Tailwind Flex -->
             <div class="flex flex-col-reverse lg:flex-row gap-8">
@@ -324,43 +516,44 @@
                 <!-- Results Section (Left) -->
                 <div class="w-full lg:w-3/4">
                     <!-- Results Header / Top Bar -->
-                    <div class="flex flex-col md:flex-row justify-between items-center mb-8 gap-4 px-2">
-                        <div>
-                            <div class="flex items-center gap-4">
-                                <h1 class="text-3xl font-extrabold text-primary tracking-tighter">
+                    <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-8 gap-4 px-2">
+                        <div class="w-full md:w-auto">
+                            <div class="flex items-center justify-between md:justify-start gap-4">
+                                <h1 class="text-2xl sm:text-3xl font-extrabold text-primary tracking-tighter">
                                     {{ $listings->total() }} Results
                                     <span class="text-secondary opacity-80">Found</span>
                                 </h1>
 
                                 <button type="button" onclick="saveSearch()"
-                                    class="inline-flex items-center gap-2 px-3 py-1 bg-secondary/10 text-secondary border border-secondary/20 rounded-full text-xs font-black uppercase tracking-widest hover:bg-secondary hover:text-white transition-all shadow-sm">
-                                    <i class="fa-solid fa-bell"></i> Create Alert
+                                    class="inline-flex items-center gap-2 px-3 py-1 bg-secondary/10 text-secondary border border-secondary/20 rounded-full text-[10px] font-black uppercase tracking-widest hover:bg-secondary hover:text-white transition-all shadow-sm">
+                                    <i class="fa-solid fa-bell"></i> <span class="hidden xs:inline">Create Alert</span>
                                 </button>
                             </div>
-                            <p class="text-gray-400 text-sm font-medium mt-1">Properties for
+                            <p class="text-gray-400 text-xs sm:text-sm font-medium mt-1">Properties for
                                 {{ request('purpose', 'Sale') }} in {{ request('location', 'United Kingdom') }}
                             </p>
                         </div>
 
 
-                        <div class="flex items-center gap-3">
+                        <div class="flex flex-wrap items-center gap-2 sm:gap-3 w-full md:w-auto">
                             <a href="{{ route('map') }}"
-                                class="inline-flex items-center gap-2 px-4 py-2 border border-gray-300 rounded-lg text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 hover:text-primary transition-colors h-[42px] shadow-sm">
+                                class="flex-1 md:flex-none inline-flex items-center justify-center gap-2 px-3 sm:px-4 py-2 border border-gray-300 rounded-lg text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 hover:text-primary transition-colors h-[42px] shadow-sm">
                                 <i class="fa-solid fa-map-location-dot"></i> <span class="hidden sm:inline">Map View</span>
                             </a>
 
-                            <div class="relative">
-                                <select id="sort-select"
-                                    class="appearance-none block w-full pl-3 pr-8 py-2 border border-gray-300 rounded-lg leading-tight focus:outline-none focus:bg-white focus:border-primary text-sm h-[42px] shadow-sm"
-                                    style="min-width: 150px;">
-                                    <option value="newest" {{ request('sort') == 'newest' ? 'selected' : '' }}>Newest listed
+                            <div class="relative flex-1 md:flex-none">
+                                <select id="sort-select" onchange="autoSearch()"
+                                    class="appearance-none block w-full pl-3 pr-8 py-2 border border-gray-300 rounded-lg leading-tight focus:outline-none focus:bg-white focus:border-primary text-sm h-[42px] shadow-sm">
+                                    <option value="newest" {{ request('sort') == 'newest' ? 'selected' : '' }}>Newest
                                     </option>
-                                    <option value="oldest" {{ request('sort') == 'oldest' ? 'selected' : '' }}>Oldest listed
+                                    <option value="oldest" {{ request('sort') == 'oldest' ? 'selected' : '' }}>Oldest
                                     </option>
                                     <option value="price_low" {{ request('sort') == 'price_low' ? 'selected' : '' }}>Price
-                                        (Lowest)</option>
+                                        L
+                                    </option>
                                     <option value="price_high" {{ request('sort') == 'price_high' ? 'selected' : '' }}>Price
-                                        (Highest)</option>
+                                        H
+                                    </option>
                                 </select>
                                 <div
                                     class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-700">
@@ -368,7 +561,7 @@
                                 </div>
                             </div>
 
-                            <div class="view-switcher flex items-center bg-gray-100p-1 rounded-lg">
+                            <div class="view-switcher flex items-center bg-gray-100 p-1 rounded-lg">
                                 <button type="button" onclick="toggleView('grid')" id="grid-view-btn"
                                     class="w-10 h-10 flex items-center justify-center rounded-md transition-all duration-200 {{ request('view', 'list') == 'grid' ? 'bg-white shadow-sm text-primary' : 'text-gray-400 hover:text-gray-600' }}">
                                     <i class="fa-solid fa-border-all text-base"></i>
@@ -386,8 +579,7 @@
                         class="grid {{ request('view', 'list') == 'list' ? 'grid-cols-1' : 'grid-cols-1 md:grid-cols-2' }} gap-6">
                         @forelse($listings as $listing)
                             <div>
-                                <div
-                                    class="property-card-results {{ request('view', 'list') == 'list' ? 'list-view-card' : '' }}">
+                                <div class="property-card-results {{ request('view', 'list') == 'list' ? 'list-view-card' : '' }}">
                                     @php
                                         $isOffMarket = $listing instanceof \App\Models\OffMarketListing;
                                         $favIds = $isOffMarket ? ($user_favorite_off_market_ids ?? []) : ($user_favorite_ids ?? []);
@@ -400,8 +592,7 @@
                                                 <img src="{{ asset('storage/' . $listing->thumbnail) }}"
                                                     alt="{{ $listing->property_title }}">
                                             @else
-                                                <div
-                                                    class="h-full w-full bg-slate-100 flex flex-col items-center justify-center gap-3">
+                                                <div class="h-full w-full bg-slate-100 flex flex-col items-center justify-center gap-3">
                                                     <i class="fa-solid fa-house-chimney text-gray-200 text-4xl"></i>
                                                     <span class="text-gray-400 text-[10px] font-bold uppercase tracking-wider">No
                                                         Image</span>
@@ -411,12 +602,12 @@
                                         <div class="price-badge flex flex-col items-end">
                                             @if($listing->old_price && $listing->old_price > 0 && $listing->old_price != $listing->price)
                                                 <div class="flex items-center gap-2">
-                                                    <span class="text-[10px] text-gray-400 font-bold"
+                                                    <span class="text-[10px] text-gray-400 font-bold p-2"
                                                         style="text-decoration: line-through;">£{{ number_format($listing->old_price) }}</span>
                                                     @php
                                                         $percentage = round((($listing->old_price - $listing->price) / $listing->old_price) * 100);
                                                     @endphp
-                                                    <span
+                                                    <span style="padding:4px"
                                                         class="text-[10px] bg-red-100 text-red-600 px-1.5 py-0.5 rounded-md">-{{ $percentage }}%</span>
                                                 </div>
                                             @endif
@@ -425,78 +616,88 @@
 
                                         <button
                                             onclick="toggleFavorite({{ $isOffMarket ? 'null' : $listing->id }}, {{ $isOffMarket ? $listing->id : 'null' }}, this)"
-                                            class="absolute top-4 right-4 w-10 h-10 bg-white/90 backdrop-blur-sm rounded-full flex items-center justify-center {{ $isFavorited ? 'text-red-500' : 'text-gray-400' }} hover:text-red-500 transition-colors shadow-sm">
-                                            <i class="{{ $isFavorited ? 'fa-solid' : 'fa-regular' }} fa-heart"></i>
+                                            class="absolute top-4 right-4 w-11 h-11 bg-white/90 backdrop-blur-md rounded-2xl flex items-center justify-center transition-all shadow-lg {{ $isFavorited ? 'text-red-500' : 'text-gray-400' }} hover:scale-110 z-20 border border-white/20">
+                                            <i class="{{ $isFavorited ? 'fa-solid' : 'fa-regular' }} fa-heart text-xl"></i>
                                         </button>
                                     </div>
                                     <div class="card-content">
-                                        <div class="flex items-center gap-2 mb-2 w-fit">
-                                            <span
-                                                class="px-2 py-0.5 rounded text-[10px] font-black uppercase tracking-wider 
-                                                                        {{ $listing->purpose == 'Rent' ? 'bg-secondary text-white' : 'bg-primary text-white' }}">
-                                                {{ $listing->purpose }}
-                                            </span>
-                                            @if($isOffMarket)
-                                                <span
-                                                    class="px-2 py-0.5 rounded bg-black text-white text-[10px] font-black uppercase tracking-wider">Vault</span>
-                                            @endif
+                                        <div class="flex items-center justify-between mb-4">
+                                            <div class="flex items-center gap-2">
+                                                <span style="padding:4px"
+                                                    class="px-2.5 py-1 rounded-lg text-[10px] font-black uppercase tracking-wider shadow-sm transition-all shadow-primary/10 
+                                                                                                                                                                                                                                                                                    {{ $listing->purpose == 'Rent' ? 'bg-secondary text-white' : 'bg-primary text-white' }}">
+                                                    {{ $listing->purpose }}
+                                                </span>
+                                                @if($isOffMarket)
+                                                    <span style="padding:4px"
+                                                        class="px-2.5 py-1 rounded-lg bg-black text-white text-[10px] font-black uppercase tracking-wider shadow-sm">Vault</span>
+                                                @endif
+                                            </div>
                                         </div>
+
                                         <h3 class="property-title">
                                             <a href="{{ $isOffMarket ? route('off-market-listing.show', $listing->slug ?? $listing->id) : route('listing.show', $listing->slug ?? $listing->id) }}"
                                                 class="hover:text-secondary transition-colors">{{ $listing->property_title }}</a>
                                         </h3>
+
                                         <p class="property-addr">
-                                            <i class="fa-solid fa-location-dot"></i> {{ Str::limit($listing->address, 50) }}
+                                            <i class="fa-solid fa-location-dot"></i> {{ Str::limit($listing->address, 65) }}
                                         </p>
 
                                         <div class="stats-row">
                                             <div class="stat-item">
                                                 <i class="fa-solid fa-bed"></i>
-                                                @if(strtolower($listing->bedrooms) === 'studio')
-                                                    Studio
-                                                @elseif($listing->bedrooms && $listing->bedrooms > 0)
-                                                    {{ $listing->bedrooms }} Bed{{ $listing->bedrooms > 1 ? 's' : '' }}
-                                                @else
-                                                    N/A
-                                                @endif
+                                                <span class="whitespace-nowrap">
+                                                    @if(strtolower($listing->bedrooms) === 'studio')
+                                                        Studio
+                                                    @elseif($listing->bedrooms && $listing->bedrooms > 0)
+                                                        {{ $listing->bedrooms }} Bed{{ $listing->bedrooms > 1 ? 's' : '' }}
+                                                    @else
+                                                        N/A
+                                                    @endif
+                                                </span>
                                             </div>
 
                                             <div class="stat-item">
                                                 <i class="fa-solid fa-bath"></i>
-                                                @if($listing->bathrooms && $listing->bathrooms > 0)
-                                                    {{ $listing->bathrooms }} Bath{{ $listing->bathrooms > 1 ? 's' : '' }}
-                                                @else
-                                                    N/A
-                                                @endif
+                                                <span class="whitespace-nowrap">
+                                                    @if($listing->bathrooms && $listing->bathrooms > 0)
+                                                        {{ $listing->bathrooms }} Bath{{ $listing->bathrooms > 1 ? 's' : '' }}
+                                                    @else
+                                                        N/A
+                                                    @endif
+                                                </span>
                                             </div>
 
                                             <div class="stat-item">
                                                 <i class="fa-solid fa-vector-square"></i>
-                                                {{ $listing->area_size && is_numeric($listing->area_size) && $listing->area_size > 0 ? number_format((float) $listing->area_size) . ' sqft' : 'N/A' }}
+                                                <span class="whitespace-nowrap">
+                                                    {{ $listing->area_size && is_numeric($listing->area_size) && $listing->area_size > 0 ? number_format((float) $listing->area_size) . ' sqft' : 'N/A' }}
+                                                </span>
                                             </div>
                                         </div>
 
-                                        <div class="mt-4 flex gap-2">
-                                            <a href="https://wa.me/{{ $listing->user?->phone_number ?? '440000000000' }}?text=Interested%20in%20{{ urlencode($listing->property_title) }}"
-                                                class="flex-1 text-center py-1.5 px-1 bg-green-500 text-white rounded-lg text-xs font-bold hover:bg-green-600 transition-colors flex items-center justify-center gap-1"
+                                        <div class="mt-4 flex flex-col sm:flex-row gap-2">
+                                            <a style="background-color:#25D366"
+                                                href="https://wa.me/{{ $listing->user?->phone_number ?? '440000000000' }}?text=Interested%20in%20{{ urlencode($listing->property_title) }}"
+                                                class="flex-1 bg-[#25D366] hover:bg-[#20bd5c] text-[10px] text-white font-bold py-2.5 px-2 rounded-lg flex items-center justify-center gap-1.5 transition-colors uppercase"
                                                 target="_blank">
-                                                <i class="fab fa-whatsapp"></i> WhatsApp
+                                                <i class="fab fa-whatsapp text-sm"></i> Chat
                                             </a>
                                             <a href="mailto:{{ $listing->user?->email }}?subject=Enquiry%20about%20{{ urlencode($listing->property_title) }}"
-                                                class="flex-1 text-center py-1.5 px-1 bg-blue-500 text-white rounded-lg text-xs font-bold hover:bg-blue-600 transition-colors flex items-center justify-center gap-1">
-                                                <i class="fa-regular fa-envelope"></i> Email
+                                                class="flex-1 bg-primary hover:bg-primary-dark text-[10px] text-white font-bold py-2.5 px-2 rounded-lg flex items-center justify-center gap-1.5 transition-colors uppercase">
+                                                <i class="fa-regular fa-envelope"></i> Mail
                                             </a>
                                             <a href="{{ $isOffMarket ? route('off-market-listing.show', $listing->slug ?? $listing->id) : route('listing.show', $listing->slug ?? $listing->id) }}"
-                                                class="flex-1 text-center py-1.5 px-1 border border-gray-200 text-gray-700 rounded-lg text-xs font-bold hover:bg-gray-50 transition-colors flex items-center justify-center gap-1">
-                                                Details
+                                                class="flex-1 border border-gray-200 hover:border-secondary hover:text-secondary text-gray-600 text-[10px] font-bold py-2.5 px-2 rounded-lg flex items-center justify-center transition-all uppercase">
+                                                View
                                             </a>
                                         </div>
                                     </div>
                                 </div>
                             </div>
                         @empty
-                            <div
-                                class="col-span-full text-center py-20 bg-white rounded-3xl border border-dashed border-gray-200">
+                            <div class="col-span-full text-center py-20 bg-white rounded-3xl border border-dashed border-gray-200">
                                 <div class="text-5xl text-gray-200 mb-6"><i class="fa-solid fa-house-circle-exclamation"></i>
                                 </div>
                                 <h2 class="text-xl font-bold text-gray-500">No properties found.</h2>
@@ -515,190 +716,41 @@
                     </div>
                 </div>
 
-                <!-- Sidebar Section (Right) -->
-                <div class="w-full lg:w-1/4" x-data="{ showFilters: window.innerWidth >= 1024 }">
-
-                    <button @click="showFilters = !showFilters" type="button"
-                        class="w-full bg-white border border-gray-200 py-3 px-4 rounded-xl font-bold text-gray-700 shadow-sm mb-4 flex items-center justify-between hover:bg-gray-50 transition-colors">
-                        <span class="flex items-center gap-2"><i class="fa-solid fa-filter text-secondary"></i> Filter
-                            Results</span>
-                        <i class="fa-solid transition-transform duration-200"
-                            :class="showFilters ? 'fa-chevron-up' : 'fa-chevron-down'"></i>
-                    </button>
-
-                    <div class="filters-sidebar" x-show="showFilters" x-transition>
-                        <div class="flex justify-between items-center mb-6">
-                            <h2 class="sidebar-title !mb-0">Filters</h2>
-                            <button @click="showFilters = false" class="text-gray-400 hover:text-gray-600">
-                                <i class="fa-solid fa-xmark text-xl"></i>
-                            </button>
+                <!-- Sidebar Section - Hidden or Simplified -->
+                <div class="hidden lg:block lg:w-1/4">
+                    <div class="bg-white rounded-3xl p-6 border border-gray-100 shadow-sm sticky top-[150px]">
+                        <h3 class="font-black text-primary text-lg mb-6 flex items-center gap-2">
+                            <i class="fa-solid fa-fire-flame-curved text-secondary"></i>
+                            Latest Vault
+                        </h3>
+                        <div class="space-y-6">
+                            @foreach($latest_listings as $latest)
+                                <a href="{{ route('listing.show', $latest->slug ?? $latest->id) }}" class="flex gap-4 group">
+                                    <div class="w-20 h-20 rounded-2xl overflow-hidden flex-shrink-0 shadow-sm">
+                                        <img src="{{ asset('storage/' . $latest->thumbnail) }}"
+                                            class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
+                                            alt="{{ $latest->property_title }}">
+                                    </div>
+                                    <div class="flex-grow pt-1">
+                                        <h4
+                                            class="text-[13px] font-extrabold text-primary line-clamp-2 group-hover:text-secondary transition-colors leading-tight mb-1">
+                                            {{ $latest->property_title }}
+                                        </h4>
+                                        <p class="text-[14px] text-secondary font-black">£{{ number_format($latest->price) }}</p>
+                                    </div>
+                                </a>
+                            @endforeach
                         </div>
 
-                        <form id="sidebar-filter-form"
-                            action="{{ request()->routeIs('off-market-listings.index') ? route('off-market-listings.index') : route('listings.index') }}"
-                            method="GET">
-                            <input type="hidden" name="view" id="sidebar-view" value="{{ request('view', 'list') }}">
-                            <input type="hidden" name="sort" id="sidebar-sort" value="{{ request('sort', 'newest') }}">
-                            <input type="hidden" name="lat" id="sidebar-lat" value="{{ request('lat') }}">
-                            <input type="hidden" name="lng" id="sidebar-lng" value="{{ request('lng') }}">
-                            <input type="hidden" name="discounted" value="{{ request('discounted') }}">
-
-                            <!-- Purpose Switching -->
-                            <div class="purpose-tabs">
-                                <button type="button"
-                                    onclick="document.getElementById('purpose-hidden-input').value = 'Buy'; this.form.submit()"
-                                    class="sidebar-purpose-btn {{ request('purpose', 'Buy') == 'Buy' ? 'active' : '' }}">Buy</button>
-                                <button type="button"
-                                    onclick="document.getElementById('purpose-hidden-input').value = 'Rent'; this.form.submit()"
-                                    class="sidebar-purpose-btn {{ request('purpose') == 'Rent' ? 'active' : '' }}">Rent</button>
-                                <input type="hidden" name="purpose" id="purpose-hidden-input"
-                                    value="{{ request('purpose', 'Buy') }}">
-                            </div>
-
-                            <!-- Filter Controls -->
-                            <div class="space-y-4">
-                                <div class="form-group-custom">
-                                    <label class="form-label-custom">Location</label>
-                                    <div class="relative">
-                                        <i
-                                            class="fa-solid fa-location-dot absolute left-4 top-1/2 -translate-y-1/2 text-gray-400"></i>
-                                        <input type="text" name="location" id="sidebar-location" class="sidebar-input pl-16"
-                                            placeholder="e.g. London" value="{{ request('location') }}">
-                                    </div>
-                                </div>
-
-                                <div class="form-group-custom">
-                                    <label class="form-label-custom">Search Radius</label>
-                                    <select name="radius" class="select2-filter">
-                                        <option value="0.5" {{ request('radius') == '0.5' ? 'selected' : '' }}>This area only
-                                        </option>
-                                        <option value="1" {{ request('radius') == '1' ? 'selected' : '' }}>+ 1 mile</option>
-                                        <option value="3" {{ request('radius') == '3' ? 'selected' : '' }}>+ 3 miles</option>
-                                        <option value="5" {{ request('radius') == '5' ? 'selected' : '' }}>+ 5 miles</option>
-                                        <option value="10" {{ request('radius') == '10' ? 'selected' : '' }}>+ 10 miles
-                                        </option>
-                                        <option value="15" {{ request('radius') == '15' ? 'selected' : '' }}>+ 15 miles
-                                        </option>
-                                        <option value="20" {{ request('radius') == '20' ? 'selected' : '' }}>+ 20 miles
-                                        </option>
-                                        <option value="30" {{ request('radius') == '30' ? 'selected' : '' }}>+ 30 miles
-                                        </option>
-                                        <option value="40" {{ request('radius') == '40' ? 'selected' : '' }}>+ 40 miles
-                                        </option>
-                                        <option value="50" {{ request('radius') == '50' ? 'selected' : '' }}>+ 50 miles
-                                        </option>
-                                    </select>
-                                </div>
-
-                                <div class="form-group-custom">
-                                    <label class="form-label-custom">Property Type</label>
-                                    <select name="property_type" class="select2-filter">
-                                        <option value="">Any Type</option>
-                                        @foreach(\App\Models\PropertyType::all() as $type)
-                                            <option value="{{ $type->id }}" {{ request('property_type') == $type->id ? 'selected' : '' }}>{{ $type->title }}</option>
-                                        @endforeach
-                                    </select>
-                                </div>
-
-                                <div class="form-group-custom">
-                                    <label class="form-label-custom">Unit Type</label>
-                                    <select name="unit_type" class="select2-filter">
-                                        <option value="">Any Unit</option>
-                                        @foreach(\App\Models\UnitType::all() as $type)
-                                            <option value="{{ $type->id }}" {{ request('unit_type') == $type->id ? 'selected' : '' }}>{{ $type->title }}</option>
-                                        @endforeach
-                                    </select>
-                                </div>
-
-                                <div class="form-group-custom">
-                                    <label class="form-label-custom">Bedrooms</label>
-                                    <select name="min_bedrooms" class="select2-filter">
-                                        <option value="">Any Beds</option>
-                                        <option value="0" {{ request('min_bedrooms') === '0' ? 'selected' : '' }}>Studio
-                                        </option>
-                                        @for($i = 1; $i <= 9; $i++)
-                                            <option value="{{ $i }}" {{ request('min_bedrooms') == $i ? 'selected' : '' }}>
-                                                {{ $i }} Bed{{ $i > 1 ? 's' : '' }}
-                                            </option>
-                                        @endfor
-                                        <option value="10" {{ request('min_bedrooms') == '10' ? 'selected' : '' }}>10+ Beds
-                                        </option>
-                                    </select>
-                                </div>
-
-                                <div class="form-group-custom">
-                                    <label class="form-label-custom">Bathrooms</label>
-                                    <select name="min_bathrooms" class="select2-filter">
-                                        <option value="">Any Baths</option>
-                                        @for($i = 1; $i <= 9; $i++)
-                                            <option value="{{ $i }}" {{ request('min_bathrooms') == $i ? 'selected' : '' }}>
-                                                {{ $i }} Bath{{ $i > 1 ? 's' : '' }}
-                                            </option>
-                                        @endfor
-                                        <option value="10" {{ request('min_bathrooms') == '10' ? 'selected' : '' }}>10+ Baths
-                                        </option>
-                                    </select>
-                                </div>
-
-                                <div class="form-group-custom">
-                                    <label class="form-label-custom">Ownership</label>
-                                    <select name="ownership_status_id" class="select2-filter">
-                                        <option value="">Any Status</option>
-                                        @foreach(\App\Models\OwnershipStatus::all() as $status)
-                                            <option value="{{ $status->id }}" {{ request('ownership_status_id') == $status->id ? 'selected' : '' }}>{{ $status->title }}</option>
-                                        @endforeach
-                                    </select>
-                                </div>
-
-                                <div class="space-y-4">
-                                    <div>
-                                        <label class="form-label-custom">Min Price</label>
-                                        <div class="relative">
-                                            <i
-                                                class="fa-solid fa-pound-sign absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 text-sm z-10"></i>
-                                            <input type="number" name="min_price" value="{{ request('min_price') }}"
-                                                class="sidebar-input" placeholder="No Min">
-                                        </div>
-                                    </div>
-                                    <div>
-                                        <label class="form-label-custom">Max Price</label>
-                                        <div class="relative">
-                                            <i
-                                                class="fa-solid fa-pound-sign absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 text-sm z-10"></i>
-                                            <input type="number" name="max_price" value="{{ request('max_price') }}"
-                                                class="sidebar-input" placeholder="No Max">
-                                        </div>
-                                    </div>
-                                </div>
-
-                                <!-- Amenities List -->
-                                <div class="form-group-custom !mb-6">
-                                    <label class="form-label-custom mb-3">Must have features</label>
-                                    <div class="amenity-checkbox-group">
-                                        @foreach($features_all as $feature)
-                                            <label class="custom-checkbox">
-                                                <input type="checkbox" name="feature_ids[]" value="{{ $feature->id }}" {{ in_array($feature->id, (array) request('feature_ids')) ? 'checked' : '' }}>
-                                                <span>{{ $feature->title }}</span>
-                                            </label>
-                                        @endforeach
-                                    </div>
-                                </div>
-                            </div>
-
-                            <button type="submit" class="btn-apply">
-                                Update results
-                            </button>
-
-                            <a href="{{ request()->routeIs('off-market-listings.index') ? route('off-market-listings.index') : route('listings.index') }}"
-                                class="block text-center text-sm font-bold text-gray-400 mt-4 hover:text-primary transition-colors">
-                                Clear all filters
-                            </a>
-                        </form>
+                        <a href="{{ route('off-market-listings.index') }}"
+                            class="mt-8 block text-center py-3 bg-gray-50 hover:bg-gray-100 text-primary font-black text-xs rounded-xl transition-all uppercase tracking-widest">
+                            View All Vault Properties
+                        </a>
                     </div>
                 </div>
             </div>
         </div>
-    </div>
+        </div>
 
 @endsection
 
@@ -714,91 +766,206 @@
 
     <script>
         $(document).ready(function () {
-            // Initialize Select2 with current theme styling
+            // Initialize Select2
             $('.select2-filter').select2({
-                minimumResultsForSearch: 10,
-                width: '100%'
+                width: '100%',
+                minimumResultsForSearch: Infinity
             });
 
-            // Initialize Google Places Autocomplete
-            const locationInput = document.getElementById('sidebar-location');
-            if (locationInput && typeof google !== 'undefined') {
-                const autocomplete = new google.maps.places.Autocomplete(locationInput, {
-                    types: ['geocode'],
-                    componentRestrictions: { country: 'uk' }
-                });
-
-                // Reset lat/lng when user types to ensure we don't use old coordinates for a new text search
-                locationInput.addEventListener('input', function () {
-                    $('#sidebar-lat').val('');
-                    $('#sidebar-lng').val('');
-                });
-
-                autocomplete.addListener('place_changed', function () {
-                    const place = autocomplete.getPlace();
-                    if (place.geometry) {
-                        $('#sidebar-lat').val(place.geometry.location.lat());
-                        $('#sidebar-lng').val(place.geometry.location.lng());
-
-                        // Auto submit when location changes
-                        $('#sidebar-filter-form').submit();
-                    }
-                });
-            }
-
-            // If we have a location but no lat/lng in URL, try to geocode it for better radius searching and alerting
-            if ($('#sidebar-location').val() && (!$('#sidebar-lat').val() || !$('#sidebar-lng').val())) {
-                const searchLocation = $('#sidebar-location').val();
-                if (typeof google !== 'undefined' && google.maps && google.maps.Geocoder) {
-                    const geocoder = new google.maps.Geocoder();
-                    geocoder.geocode({ address: searchLocation, componentRestrictions: { country: 'uk' } }, function (results, status) {
-                        if (status === 'OK' && results[0]) {
-                            const loc = results[0].geometry.location;
-                            $('#sidebar-lat').val(loc.lat());
-                            $('#sidebar-lng').val(loc.lng());
-                            console.log('Auto-geocoded missing coordinates for:', searchLocation);
-                        }
-                    });
-                }
-            }
-
-            // Auto-submit form when selects change
-            $('.select2-filter, #sort-select').on('change', function () {
-                if (this.id === 'sort-select') {
-                    $('#sidebar-sort').val($(this).val());
-                }
-                $('#sidebar-filter-form').submit();
+            $('.select2-filter-dark').select2({
+                width: '100%',
+                minimumResultsForSearch: Infinity,
+                dropdownCssClass: 'select2-dark-dropdown'
             });
 
-            // Handle pagination clicks within the form context
-            $('.pagination a').on('click', function (e) {
-                e.preventDefault();
-                let url = $(this).attr('href');
-                window.location.href = url;
+            $('.select2-filter-dark-simple').select2({
+                width: 'auto',
+                minimumResultsForSearch: Infinity,
+                dropdownCssClass: 'select2-dark-dropdown'
             });
+
+            $('.select2-filter-multiple').select2({
+                width: '100%',
+                closeOnSelect: false
+            });
+
+            // Initialize Location Autocomplete
+            initLocationAutocomplete();
         });
 
-        function toggleView(view) {
-            const grid = $('#results-grid');
-            const cards = $('.property-card-results');
-            const sidebarView = $('#sidebar-view');
-            const activeClasses = 'bg-white shadow-sm text-primary';
-            const inactiveClasses = 'text-gray-400 hover:text-gray-600';
-
-            sidebarView.val(view);
-
-            // Reset buttons
-            $('#grid-view-btn, #list-view-btn').removeClass(activeClasses).addClass(inactiveClasses);
-
-            if (view === 'list') {
-                grid.removeClass('md:grid-cols-2').addClass('grid-cols-1');
-                cards.addClass('list-view-card');
-                $('#list-view-btn').removeClass(inactiveClasses).addClass(activeClasses);
-            } else {
-                grid.addClass('md:grid-cols-2');
-                cards.removeClass('list-view-card');
-                $('#grid-view-btn').removeClass(inactiveClasses).addClass(activeClasses);
+        function syncAndSearch(type) {
+            if (type === 'min-price') {
+                document.getElementById('main-min-price').value = document.getElementById('main-min-price-select').value;
+            } else if (type === 'max-price') {
+                document.getElementById('main-max-price').value = document.getElementById('main-max-price-select').value;
             }
+            autoSearch();
+        }
+
+        function toggleMoreFiltersFiltersTray() {
+            const tray = document.getElementById('more-filters-tray');
+            const chevron = document.getElementById('more-filters-chevron');
+            const btn = document.getElementById('more-filters-btn');
+
+            if (tray.classList.contains('hidden')) {
+                tray.classList.remove('hidden');
+                tray.classList.add('active');
+                chevron.style.transform = 'rotate(180deg)';
+                btn.classList.add('border-primary', 'bg-primary/5');
+            } else {
+                tray.classList.add('hidden');
+                tray.classList.remove('active');
+                chevron.style.transform = 'rotate(0deg)';
+                btn.classList.remove('border-primary', 'bg-primary/5');
+            }
+        }
+
+        function toggleFilterAccordion(header) {
+            const content = header.nextElementSibling;
+            const icon = header.querySelector('i');
+
+            if (content.classList.contains('hidden')) {
+                content.classList.remove('hidden');
+                icon.style.transform = 'rotate(0deg)';
+            } else {
+                content.classList.add('hidden');
+                icon.style.transform = 'rotate(180deg)';
+            }
+        }
+
+        function toggleTag(el, type, single = false) {
+            if (single) {
+                const isActive = el.classList.contains('active');
+                const siblings = el.parentElement.querySelectorAll('.filter-tag');
+                siblings.forEach(sibling => sibling.classList.remove('active'));
+                if (!isActive) {
+                    el.classList.add('active');
+                }
+            } else {
+                el.classList.toggle('active');
+            }
+
+            if (type === 'property-type') {
+                const activeTags = Array.from(document.querySelectorAll('#property-type-tags .filter-tag.active'));
+                const ids = activeTags.map(tag => tag.dataset.id).join(',');
+                document.getElementById('main-property-types-hidden').value = ids;
+            } else if (type === 'feature') {
+                const activeTags = Array.from(document.querySelectorAll('#features-tags .filter-tag.active'));
+                const ids = activeTags.map(tag => tag.dataset.id).join(',');
+                document.getElementById('main-features-hidden').value = ids;
+            } else if (type === 'tenure') {
+                const activeTag = el.parentElement.querySelector('.filter-tag.active');
+                document.getElementById('main-tenure-hidden').value = activeTag ? activeTag.dataset.id : '';
+            }
+
+            autoSearch();
+        }
+
+        let searchTimeout;
+        function debouncedSearch() {
+            clearTimeout(searchTimeout);
+            searchTimeout = setTimeout(() => {
+                autoSearch();
+            }, 800);
+        }
+
+        function autoSearch() {
+            // Optional: You could call executeSearch() here directly
+            // For now, let's keep it manual as requested "search button k bgair working kre"
+            // but also "end pr aye search ka button". Auto-search usually means without button.
+            executeSearch();
+        }
+
+        let selectedLat = '{{ request('lat') }}';
+        let selectedLng = '{{ request('lng') }}';
+
+        function initLocationAutocomplete() {
+            const input = document.getElementById('main-location');
+            if (!input || typeof google === 'undefined') return;
+
+            const autocomplete = new google.maps.places.Autocomplete(input, {
+                componentRestrictions: { country: 'gb' },
+                fields: ['geometry', 'formatted_address']
+            });
+
+            autocomplete.addListener('place_changed', function () {
+                const place = autocomplete.getPlace();
+                if (place.geometry) {
+                    selectedLat = place.geometry.location.lat();
+                    selectedLng = place.geometry.location.lng();
+                    autoSearch();
+                }
+            });
+
+            input.addEventListener('input', () => {
+                selectedLat = '';
+                selectedLng = '';
+            });
+        }
+
+        function executeSearch() {
+            const params = new URLSearchParams();
+
+            const location = document.getElementById('main-location').value;
+            const radius = document.getElementById('main-radius').value;
+            const minPrice = document.getElementById('main-min-price').value;
+            const maxPrice = document.getElementById('main-max-price').value;
+            const minBeds = document.getElementById('main-min-beds').value;
+            const maxBeds = document.getElementById('main-max-beds').value;
+            const purpose = document.getElementById('main-purpose').value;
+            const sort = document.getElementById('sort-select').value;
+            const view = '{{ request('view', 'list') }}';
+
+            // Advanced
+            const propertyTypes = document.getElementById('main-property-types-hidden')?.value;
+            const minBaths = document.getElementById('main-min-baths').value;
+            const maxBaths = document.getElementById('main-max-baths').value;
+            const tenure = document.getElementById('main-tenure-hidden')?.value;
+            const features = document.getElementById('main-features-hidden')?.value;
+
+            if (location) params.append('location', location);
+            if (radius) params.append('radius', radius);
+            if (minPrice) params.append('min_price', minPrice);
+            if (maxPrice) params.append('max_price', maxPrice);
+            if (minBeds !== '') params.append('min_bedrooms', minBeds);
+            if (maxBeds !== '') params.append('max_bedrooms', maxBeds);
+            if (purpose) params.append('purpose', purpose);
+            if (sort) params.append('sort', sort);
+            if (view) params.append('view', view);
+
+            if (propertyTypes) {
+                params.append('property_type_ids', propertyTypes);
+            }
+            if (minBaths) params.append('min_bathrooms', minBaths);
+            if (maxBaths) params.append('max_bathrooms', maxBaths);
+            if (tenure) params.append('tenure', tenure);
+            if (features) {
+                params.append('feature_ids', features);
+            }
+
+            // Use coordinates if available from autocomplete
+            if (selectedLat) params.append('lat', selectedLat);
+            if (selectedLng) params.append('lng', selectedLng);
+
+            const routeName = '{{ request()->routeIs('off-market-listings.index') ? route('off-market-listings.index') : route('listings.index') }}';
+            window.location.href = `${routeName}?${params.toString()}`;
+        }
+
+        function resetFiltersAndExecute() {
+            const routeName = '{{ request()->routeIs('off-market-listings.index') ? route('off-market-listings.index') : route('listings.index') }}';
+            window.location.href = routeName;
+        }
+
+        function toggleView(view) {
+            const params = new URLSearchParams(window.location.search);
+            params.set('view', view);
+            window.location.href = window.location.pathname + '?' + params.toString();
+        }
+
+        function toggleView(view) {
+            const params = new URLSearchParams(window.location.search);
+            params.set('view', view);
+            window.location.href = window.location.pathname + '?' + params.toString();
         }
 
         function toggleFavorite(listingId, offMarketId, btn) {
@@ -807,7 +974,7 @@
                 return;
             @endif
 
-                                                                                                                                                        const data = {
+                        const data = {
                 _token: '{{ csrf_token() }}'
             };
             if (listingId) data.listing_id = listingId;
@@ -839,14 +1006,14 @@
                 return;
             @endif
 
-                                            const filters = {
+                        const filters = {
                 purpose: $('#purpose-hidden-input').val() || 'Buy',
                 location: $('#sidebar-location').val(),
                 lat: $('#sidebar-lat').val(),
                 lng: $('#sidebar-lng').val(),
                 radius: $('select[name="radius"]').val() || 2,
                 property_type_id: $('select[name="property_type"]').val(),
-                unit_type_id: $('select[name="unit_type"]').val(),
+
                 min_price: $('input[name="min_price"]').val(),
                 max_price: $('input[name="max_price"]').val(),
                 bedrooms: $('select[name="min_bedrooms"]').val()

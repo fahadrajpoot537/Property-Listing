@@ -40,6 +40,8 @@ class RegisteredUserController extends Controller
             'address' => ['nullable', 'string', 'max:500'],
             'latitude' => ['nullable', 'numeric', 'between:-90,90'],
             'longitude' => ['nullable', 'numeric', 'between:-180,180'],
+            'company_name' => ['nullable', 'string', 'max:255'],
+            'company_registration_number' => ['nullable', 'string', 'max:100'],
             'password' => ['required', 'confirmed', Rules\Password::defaults()],
             'role' => ['required', 'string', 'in:agent,agency,landlord,buyer'],
         ]);
@@ -54,6 +56,8 @@ class RegisteredUserController extends Controller
             'address' => $request->address,
             'latitude' => $request->latitude,
             'longitude' => $request->longitude,
+            'company_name' => $request->company_name,
+            'company_registration_number' => $request->company_registration_number,
             'password' => Hash::make($request->password),
             'slug' => \Illuminate\Support\Str::slug($request->name) . '-' . time(),
             'status' => 'pending',

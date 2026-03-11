@@ -165,14 +165,14 @@
                 <div class="w-full md:w-48">
                   <select name="radius" class="select2-filter w-full" data-placeholder="Radius">
                     <option value="0.5">This area only</option>
-                    <option value="1">+ 1 mile</option>
-                    <option value="3">+ 3 miles</option>
-                    <option value="5">+ 5 miles</option>
-                    <option value="10">+ 10 miles</option>
-                    <option value="15">+ 15 miles</option>
-                    <option value="20">+ 20 miles</option>
-                    <option value="30">+ 30 miles</option>
-                    <option value="40">+ 40 miles</option>
+                    <option value="1">1 mile</option>
+                    <option value="3">3 miles</option>
+                    <option value="5">5 miles</option>
+                    <option value="10">10 miles</option>
+                    <option value="15">15 miles</option>
+                    <option value="20">20 miles</option>
+                    <option value="30">30 miles</option>
+                    <option value="40">40 miles</option>
                     <option value="50">+ 50 miles</option>
                   </select>
                 </div>
@@ -211,7 +211,7 @@
                 </div>
                 <div class="relative">
                   <div class="filter-icon-wrapper"><i class="fa-solid fa-bed"></i></div>
-                  <select name="min_bedrooms" class="select2-filter w-full" data-placeholder="Bedrooms">
+                  <select name="min_bedrooms" class="select2-filter w-full" data-placeholder="Min Bedrooms">
                     <option value="">Any Beds</option>
                     <option value="0">Studio</option>
                     @for($i = 1; $i <= 9; $i++)
@@ -222,7 +222,7 @@
                 </div>
                 <div class="relative">
                   <div class="filter-icon-wrapper"><i class="fa-solid fa-bath"></i></div>
-                  <select name="min_bathrooms" class="select2-filter w-full" data-placeholder="Bathrooms">
+                  <select name="min_bathrooms" class="select2-filter w-full" data-placeholder="Min athrooms">
                     <option value="">Any Baths</option>
                     @for($i = 1; $i <= 9; $i++)
                       <option value="{{ $i }}">{{ $i }} Bath{{ $i > 1 ? 's' : '' }}</option>
@@ -252,63 +252,46 @@
       <h2 class="text-2xl font-bold text-primary mb-8 tracking-tight">Browse Properties</h2>
       <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-6">
         @php
-          $allTypes = \App\Models\PropertyType::all();
-          // Helper to find ID by fuzzy name matching
-          $getTypeId = function ($names) use ($allTypes) {
-            if (!is_array($names))
-              $names = [$names];
-            foreach ($names as $name) {
-              $t = $allTypes->first(function ($item) use ($name) {
-                return stripos($item->title, $name) !== false;
-              });
-              if ($t)
-                return $t->id;
-            }
-            return '';
-          };
+          $dbTypes = \App\Models\PropertyType::take(5)->get();
+          $categories = [];
 
-          $categories = [
-            [
-              'name' => 'Apartments',
-              'icon' => 'fa-building',
-              'params' => ['property_type' => $getTypeId(['Apartment', 'Flat'])]
-            ],
-            [
-              'name' => 'Commercial',
-              'icon' => 'fa-shop',
-              'params' => ['property_type' => $getTypeId(['Commercial', 'Office', 'Retail', 'Shop'])]
-            ],
-            [
-              'name' => 'Residential',
-              'icon' => 'fa-house-chimney',
-              'params' => ['property_type' => $getTypeId(['Residential', 'House', 'Villa', 'Bungalow'])]
-            ],
-            [
-              'name' => 'Land',
-              'icon' => 'fa-layer-group',
-              'params' => ['property_type' => $getTypeId(['Land', 'Plot'])]
-            ],
-            [
-              'name' => 'Discounted',
-              'icon' => 'fa-percent',
-              'params' => ['discounted' => '1']
-            ],
-            [
-              'name' => 'Sell Yours',
-              'icon' => 'fa-house-circle-check',
-              'route' => 'register'
-            ],
+          foreach ($dbTypes as $type) {
+            $icon = 'fa-house';
+            $title = strtolower($type->title);
+            if (str_contains($title, 'house'))
+              $icon = 'fa-house-chimney';
+            elseif (str_contains($title, 'flat') || str_contains($title, 'apartment'))
+              $icon = 'fa-building';
+            elseif (str_contains($title, 'bungalow'))
+              $icon = 'fa-house-user';
+            elseif (str_contains($title, 'land'))
+              $icon = 'fa-layer-group';
+            elseif (str_contains($title, 'commercial'))
+              $icon = 'fa-shop';
+
+            $categories[] = [
+              'name' => $type->title,
+              'icon' => $icon,
+              'params' => ['property_type' => $type->id]
+            ];
+          }
+
+          // Add Others as the 6th item
+          $categories[] = [
+            'name' => 'Others',
+            'icon' => 'fa-ellipsis',
+            'params' => []
           ];
         @endphp
         @foreach($categories as $cat)
           <a href="{{ isset($cat['route']) ? route($cat['route']) : route('listings.index', $cat['params'] ?? []) }}"
-            class="flex flex-col items-center p-6 bg-white rounded-2xl shadow-sm border border-gray-100 hover:border-secondary hover:shadow-xl hover:shadow-secondary/5 transition-all group h-full justify-center text-center">
+            class="flex flex-col items-center p-4 bg-white rounded-xl shadow-sm border border-gray-100 hover:border-secondary hover:shadow-xl hover:shadow-secondary/5 transition-all group h-full justify-center text-center">
             <div
-              class="w-16 h-16 bg-gray-50 rounded-2xl flex items-center justify-center text-primary group-hover:bg-secondary group-hover:text-white transition-colors mb-4 shadow-inner">
-              <i class="fa-solid {{ $cat['icon'] }} text-2xl"></i>
+              class="w-12 h-12 bg-gray-50 rounded-xl flex items-center justify-center text-primary group-hover:bg-secondary group-hover:text-white transition-colors mb-3 shadow-inner">
+              <i class="fa-solid {{ $cat['icon'] }} text-xl"></i>
             </div>
             <span
-              class="font-bold text-gray-800 tracking-tight text-base group-hover:text-secondary transition-colors">{{ $cat['name'] }}</span>
+              class="font-bold text-gray-800 tracking-tight text-sm group-hover:text-secondary transition-colors">{{ $cat['name'] }}</span>
           </a>
         @endforeach
       </div>
@@ -743,7 +726,7 @@
         return;
       @endif
 
-                                                          const data = { _token: '{{ csrf_token() }}' };
+                                                            const data = { _token: '{{ csrf_token() }}' };
       if (listingId) data.listing_id = listingId;
       if (offMarketId) data.off_market_listing_id = offMarketId;
 

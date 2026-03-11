@@ -22,7 +22,7 @@ class MainSeeder extends Seeder
             'manage listings',
             'manage off-market listings',
             'manage property types',
-            'manage unit types',
+
             'manage features',
             'access dashboard',
             'view affiliates'
@@ -56,12 +56,7 @@ class MainSeeder extends Seeder
         $commercial = \App\Models\PropertyType::firstOrCreate(['title' => 'Commercial'], ['slug' => 'commercial']);
         $land = \App\Models\PropertyType::firstOrCreate(['title' => 'Land'], ['slug' => 'land']);
 
-        // create Unit Types
-        \App\Models\UnitType::firstOrCreate(['title' => 'Apartment'], ['slug' => 'apartment', 'property_type_id' => $residential->id]);
-        \App\Models\UnitType::firstOrCreate(['title' => 'Villa'], ['slug' => 'villa', 'property_type_id' => $residential->id]);
-        \App\Models\UnitType::firstOrCreate(['title' => 'Office'], ['slug' => 'office', 'property_type_id' => $commercial->id]);
-        \App\Models\UnitType::firstOrCreate(['title' => 'Shop'], ['slug' => 'shop', 'property_type_id' => $commercial->id]);
-        \App\Models\UnitType::firstOrCreate(['title' => 'Residential Land'], ['slug' => 'residential-land', 'property_type_id' => $land->id]);
+
 
         // create Features
         $features = ['Swimming Pool', 'Gym', 'Parking', 'Security', 'Balcony', 'Garden', 'Elevator', 'Central AC'];

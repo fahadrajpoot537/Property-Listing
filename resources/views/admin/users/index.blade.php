@@ -7,16 +7,22 @@
         <h3 class="text-slate-800 font-black text-lg tracking-tight uppercase">
             {{ auth()->user()->hasRole('Agency') ? 'My Team' : 'User Base' }}
         </h3>
-        <button onclick="openModal()"
-            class="bg-[#8046F1] hover:bg-[#6D28D9] text-white font-black py-2 px-5 rounded-lg shadow-lg shadow-purple-500/10 transition-all flex items-center gap-2 active:scale-95 text-[10px] uppercase tracking-widest">
-            <i class='bx bx-plus text-base'></i>
-            {{ auth()->user()->hasRole('Agency') ? 'Add Member' : 'Create User' }}
-        </button>
+        <div class="flex gap-3">
+            <button onclick="exportUsers()"
+                class="bg-emerald-500 hover:bg-emerald-600 text-white font-black py-2 px-5 rounded-lg shadow-lg shadow-emerald-500/10 transition-all flex items-center gap-2 active:scale-95 text-[10px] uppercase tracking-widest">
+                <i class='bx bx-export text-base'></i> Export CSV
+            </button>
+            <button onclick="openModal()"
+                class="bg-[#8046F1] hover:bg-[#6D28D9] text-white font-black py-2 px-5 rounded-lg shadow-lg shadow-purple-500/10 transition-all flex items-center gap-2 active:scale-95 text-[10px] uppercase tracking-widest">
+                <i class='bx bx-plus text-base'></i>
+                {{ auth()->user()->hasRole('Agency') ? 'Add Member' : 'Create User' }}
+            </button>
+        </div>
     </div>
 
     <!-- Filters Section -->
     <div class="bg-white border border-slate-100 p-4 mb-5 rounded-xl">
-        <div class="grid grid-cols-1 md:grid-cols-4 gap-3">
+        <div class="grid grid-cols-1 md:grid-cols-4 lg:grid-cols-5 gap-3">
             <div class="col-span-1 md:col-span-2">
                 <label class="block text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1.5">Search
                     User</label>
@@ -38,6 +44,18 @@
                     @endforeach
                 </select>
             </div>
+            @if(auth()->user()->hasRole('admin'))
+                <div>
+                    <label class="block text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1.5">Agency</label>
+                    <select id="agencyFilter"
+                        class="w-full rounded-lg border-slate-200 bg-slate-50 text-[11px] py-2 px-2 outline-none focus:bg-white focus:border-indigo-400 transition-all">
+                        <option value="">All Agencies</option>
+                        @foreach($agencies as $agency)
+                            <option value="{{ $agency->id }}">{{ $agency->name }}</option>
+                        @endforeach
+                    </select>
+                </div>
+            @endif
             <div>
                 <label class="block text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1.5">Status</label>
                 <select id="statusFilter"
@@ -285,21 +303,21 @@
                                 let typeLabel = doc.type.replace(/_/g, ' ').toUpperCase();
                                 let statusClass = doc.status === 'approved' ? 'text-emerald-500' : 'text-amber-500';
                                 docsHtml += `
-                                                                            <div class="flex items-center justify-between p-4 bg-slate-50 rounded-xl border border-slate-100">
-                                                                                <div class="flex items-center gap-4">
-                                                                                    <div class="h-10 w-10 flex items-center justify-center bg-white rounded-lg border border-slate-200">
-                                                                                        <i class='bx bxs-file-pdf text-xl text-rose-500'></i>
-                                                                                    </div>
-                                                                                    <div>
-                                                                                        <p class="text-sm font-bold text-slate-800">${typeLabel}</p>
-                                                                                        <p class="text-xs font-medium ${statusClass}">${doc.status.toUpperCase()}</p>
-                                                                                    </div>
-                                                                                </div>
-                                                                                <a href="/storage/${doc.file_path}" target="_blank" class="flex items-center gap-2 px-4 py-2 bg-white border border-slate-200 text-indigo-600 text-xs font-bold rounded-lg hover:bg-indigo-50 transition-all">
-                                                                                    <i class='bx bx-show'></i> VIEW DOCUMENT
-                                                                                </a>
-                                                                            </div>
-                                                                        `;
+                                                                                            <div class="flex items-center justify-between p-4 bg-slate-50 rounded-xl border border-slate-100">
+                                                                                                <div class="flex items-center gap-4">
+                                                                                                    <div class="h-10 w-10 flex items-center justify-center bg-white rounded-lg border border-slate-200">
+                                                                                                        <i class='bx bxs-file-pdf text-xl text-rose-500'></i>
+                                                                                                    </div>
+                                                                                                    <div>
+                                                                                                        <p class="text-sm font-bold text-slate-800">${typeLabel}</p>
+                                                                                                        <p class="text-xs font-medium ${statusClass}">${doc.status.toUpperCase()}</p>
+                                                                                                    </div>
+                                                                                                </div>
+                                                                                                <a href="/storage/${doc.file_path}" target="_blank" class="flex items-center gap-2 px-4 py-2 bg-white border border-slate-200 text-indigo-600 text-xs font-bold rounded-lg hover:bg-indigo-50 transition-all">
+                                                                                                    <i class='bx bx-show'></i> VIEW DOCUMENT
+                                                                                                </a>
+                                                                                            </div>
+                                                                                        `;
                             });
                             $('#viewUserDocuments').html(docsHtml).removeClass('hidden');
                         } else {
@@ -391,24 +409,36 @@
                     var table = $('#usersTable').DataTable({
                         processing: true,
                         serverSide: false,
-                        ajax: "{{ route('admin.users.index') }}",
+                        ajax: {
+                            url: "{{ route('admin.users.index') }}",
+                            data: function (d) {
+                                d.role = $('#roleFilter').val();
+                                d.status = $('#statusFilter').val();
+                                d.agency_id = $('#agencyFilter').val();
+                                d.search = $('#customSearch').val();
+                            }
+                        },
                         columns: [
                             { data: 'id', name: 'id' },
                             {
                                 data: 'name', name: 'name', render: function (data, type, row) {
                                     return `<div class="flex items-center group cursor-pointer" onclick="window.location.href='/admin/users/${row.id}'">
-                                                                                <div class="w-10 h-10 rounded-xl bg-indigo-50 flex items-center justify-center text-indigo-600 font-bold mr-3 group-hover:bg-indigo-600 group-hover:text-white transition-all shadow-sm">${data.charAt(0)}</div>
-                                                                                <div>
-                                                                                    <div class="font-bold text-slate-800 group-hover:text-indigo-600 transition-colors uppercase text-[11px] tracking-wider">${data}</div>
-                                                                                    <div class="text-[9px] text-slate-400 font-bold uppercase tracking-tight">Click for full profile</div>
-                                                                                </div>
-                                                                            </div>`;
+                                                                                                <div class="w-10 h-10 rounded-xl bg-indigo-50 flex items-center justify-center text-indigo-600 font-bold mr-3 group-hover:bg-indigo-600 group-hover:text-white transition-all shadow-sm">${data.charAt(0)}</div>
+                                                                                                <div>
+                                                                                                    <div class="font-bold text-slate-800 group-hover:text-indigo-600 transition-colors uppercase text-[11px] tracking-wider">${data}</div>
+                                                                                                    <div class="text-[9px] text-slate-400 font-bold uppercase tracking-tight">Click for full profile</div>
+                                                                                                </div>
+                                                                                            </div>`;
                                 }
                             },
                             { data: 'email', name: 'email' },
                             {
-                                data: 'roles', name: 'roles', render: function (data) {
-                                    return data.map(role => `<span class="bg-indigo-50 text-indigo-600 rounded-lg px-3 py-1 text-[10px] font-bold uppercase tracking-widest mr-1 shadow-sm border border-indigo-100">${role.name}</span>`).join('');
+                                data: 'roles', name: 'roles', render: function (data, type, row) {
+                                    let rolesHtml = data.map(role => `<span class="bg-indigo-50 text-indigo-600 rounded-lg px-3 py-1 text-[10px] font-bold uppercase tracking-widest mr-1 shadow-sm border border-indigo-100">${role.name}</span>`).join('');
+                                    if (row.agency && row.agency.name) {
+                                        rolesHtml += `<div class="text-[9px] text-slate-400 font-bold uppercase mt-1 flex items-center gap-1"><i class='bx bxs-business text-[10px]'></i> ${row.agency.name}</div>`;
+                                    }
+                                    return rolesHtml;
                                 }
                             },
                             {
@@ -430,12 +460,12 @@
                                     }
 
                                     return `
-                                                                                <div class="flex gap-2">
-                                                                                    ${approvalBtn}
-                                                                                    <button onclick="editUser(${data})" class="w-9 h-9 rounded-xl bg-white border border-slate-200 flex items-center justify-center text-slate-600 hover:bg-indigo-50 hover:border-indigo-200 hover:text-indigo-600 transition-all shadow-sm" title="Edit"><i class='bx bxs-edit text-lg'></i></button>
-                                                                                    <button onclick="deleteUser(${data})" class="w-9 h-9 rounded-xl bg-white border border-slate-200 flex items-center justify-center text-slate-600 hover:bg-rose-50 hover:border-rose-200 hover:text-rose-600 transition-all shadow-sm" title="Delete"><i class='bx bxs-trash text-lg'></i></button>
-                                                                                </div>
-                                                                            `;
+                                                                                                <div class="flex gap-2">
+                                                                                                    ${approvalBtn}
+                                                                                                    <button onclick="editUser(${data})" class="w-9 h-9 rounded-xl bg-white border border-slate-200 flex items-center justify-center text-slate-600 hover:bg-indigo-50 hover:border-indigo-200 hover:text-indigo-600 transition-all shadow-sm" title="Edit"><i class='bx bxs-edit text-lg'></i></button>
+                                                                                                    <button onclick="deleteUser(${data})" class="w-9 h-9 rounded-xl bg-white border border-slate-200 flex items-center justify-center text-slate-600 hover:bg-rose-50 hover:border-rose-200 hover:text-rose-600 transition-all shadow-sm" title="Delete"><i class='bx bxs-trash text-lg'></i></button>
+                                                                                                </div>
+                                                                                            `;
                                 }
                             }
                         ],
@@ -444,20 +474,20 @@
                         language: { emptyTable: "No users found matching your criteria" }
                     });
 
+                    window.exportUsers = function () {
+                        const params = $.param({
+                            export: 1,
+                            role: $('#roleFilter').val(),
+                            status: $('#statusFilter').val(),
+                            agency_id: $('#agencyFilter').val(),
+                            search: $('#customSearch').val()
+                        });
+                        window.location.href = "{{ route('admin.users.index') }}?" + params;
+                    };
+
                     // Exact Search and Filter Listeners
-                    $('#customSearch').on('keyup', function () { table.search(this.value).draw(); });
-
-                    $('#roleFilter').on('change', function () {
-                        const val = $(this).val();
-                        table.column(3).search(val ? '^' + $.fn.dataTable.util.escapeRegex(val) + '$' : '', true, false).draw();
-                    });
-
-                    $('#statusFilter').on('change', function () {
-                        const val = $(this).val();
-                        // Support exact match with regex. Status in table has underscores replaced by spaces.
-                        const searchVal = val ? '^' + $.fn.dataTable.util.escapeRegex(val.replace(/_/g, ' ')) + '$' : '';
-                        table.column(4).search(searchVal, true, false).draw();
-                    });
+                    $('#customSearch').on('keyup', function () { table.ajax.reload(); });
+                    $('#roleFilter, #statusFilter, #agencyFilter').on('change', function () { table.ajax.reload(); });
 
                     // Form Submission
                     $('#userForm').submit(function (e) {

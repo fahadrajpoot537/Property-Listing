@@ -4,18 +4,43 @@ namespace App\Http\Controllers;
 
 use App\Models\WalkThroughInquiry;
 use App\Models\Listing;
+use App\Models\User;
+use App\Mail\WalkThroughInquiryMail;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Mail;
 
 class WalkThroughInquiryController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
         $user = auth()->user();
         $isAdmin = $user->hasAnyRole(['admin', 'manager', 'listing director', 'Q/A']);
         $isAgency = $user->hasRole('Agency');
 
         $query = WalkThroughInquiry::with(['listing', 'offMarketListing', 'sender'])->latest();
+
+        // Apply Filters
+        if ($request->filled('status')) {
+            $query->where('status', $request->status);
+        }
+
+        if ($request->filled('listing_type')) {
+            if ($request->listing_type === 'public') {
+                $query->whereNotNull('listing_id');
+            } elseif ($request->listing_type === 'off_market') {
+                $query->whereNotNull('off_market_listing_id');
+            }
+        }
+
+        if ($request->filled('search')) {
+            $search = $request->search;
+            $query->where(function ($q) use ($search) {
+                $q->where('name', 'LIKE', "%$search%")
+                    ->orWhere('email', 'LIKE', "%$search%")
+                    ->orWhere('phone', 'LIKE', "%$search%");
+            });
+        }
 
         if (!$isAdmin) {
             if ($isAgency || ($user->hasRole('agent') && $user->agency_id)) {
@@ -28,7 +53,7 @@ class WalkThroughInquiryController extends Controller
             }
         }
 
-        $inquiries = $query->paginate(15);
+        $inquiries = $query->paginate(15)->appends($request->all());
         return view('admin.walkthrough.index', compact('inquiries'));
     }
 
@@ -110,6 +135,34 @@ class WalkThroughInquiryController extends Controller
             'message' => $request->message,
             'status' => 'pending',
         ]);
+
+        $inquiryData = [
+            'name' => $request->name,
+            'email' => $request->email,
+            'phone' => $request->phone,
+            'preferred_time' => $request->preferred_time,
+            'message' => $request->message,
+        ];
+
+        // Determine property and owner
+        $property = $listing ?? $offMarketListing;
+        $isOffMarket = $offMarketListing !== null;
+
+        $owner = User::find($property->user_id);
+
+        if ($owner && $owner->email) {
+            $notificationEmail = $owner->email;
+
+            // Route to agency if agent belongs to one
+            if ($owner->hasRole('agent') && $owner->agency_id) {
+                $agency = User::find($owner->agency_id);
+                if ($agency && $agency->email) {
+                    $notificationEmail = $agency->email;
+                }
+            }
+
+            Mail::to($notificationEmail)->send(new WalkThroughInquiryMail($inquiryData, $property, $isOffMarket));
+        }
 
         return back()->with('success', 'Your virtual tour request has been sent successfully!');
     }

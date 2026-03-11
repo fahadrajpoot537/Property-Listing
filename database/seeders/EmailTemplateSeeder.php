@@ -27,7 +27,7 @@ class EmailTemplateSeeder extends Seeder
                     <!-- Header -->
                     <tr>
                         <td align="center" style="background-color: #131B31; padding: 30px 40px; border-bottom: 4px solid #8046F1;">
-                            <img src="{logo_url}" alt="Finda-UK" style="height: 32px; width: auto; display: block;">
+                            <img src="{logo_url}" alt="PropertyFinda" style="height: 32px; width: auto; display: block;">
                         </td>
                     </tr>
 
@@ -99,7 +99,7 @@ class EmailTemplateSeeder extends Seeder
                                 <tr>
                                     <td align="center">
                                         <img src="https://cdn-icons-png.flaticon.com/512/10629/10629607.png" width="24" style="opacity: 0.6; margin-bottom: 10px; display: block;">
-                                        <p style="font-size: 12px; font-weight: 700; color: #64748b; text-transform: uppercase; letter-spacing: 0.05em; margin: 0;">Verified Premium Listing • Finda-UK Network</p>
+                                        <p style="font-size: 12px; font-weight: 700; color: #64748b; text-transform: uppercase; letter-spacing: 0.05em; margin: 0;">Verified Premium Listing • PropertyFinda Network</p>
                                     </td>
                                 </tr>
                             </table>
@@ -109,9 +109,9 @@ class EmailTemplateSeeder extends Seeder
                     <!-- Footer -->
                     <tr>
                         <td style="padding: 40px; text-align: center; background-color: #131B31; color: #ffffff;">
-                            <img src="{logo_url}" alt="Finda-UK" style="height: 20px; width: auto; opacity: 0.5; margin-bottom: 20px;">
+                            <img src="{logo_url}" alt="PropertyFinda" style="height: 20px; width: auto; opacity: 0.5; margin-bottom: 20px;">
                             <p style="font-size: 13px; color: #94a3b8; line-height: 1.7; margin: 0;">
-                                © {year} Finda-UK. All rights reserved.<br>
+                                © {year} PropertyFinda. All rights reserved.<br>
                                 <strong>The Smart Way to Find Property in the UK.</strong>
                             </p>
                             <div style="margin-top: 25px; border-top: 1px solid rgba(255,255,255,0.05); padding-top: 25px;">

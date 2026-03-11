@@ -113,7 +113,7 @@ Route::middleware('auth')->group(function () {
         Route::resource('users', \App\Http\Controllers\Admin\AdminUserController::class);
         Route::resource('roles', \App\Http\Controllers\Admin\AdminRoleController::class);
         Route::resource('property-types', \App\Http\Controllers\Admin\AdminPropertyTypeController::class);
-        Route::resource('unit-types', \App\Http\Controllers\Admin\AdminUnitTypeController::class);
+
         Route::resource('features', \App\Http\Controllers\Admin\AdminFeatureController::class);
         Route::resource('ownership-statuses', \App\Http\Controllers\Admin\AdminOwnershipStatusController::class);
         Route::resource('rent-frequencies', \App\Http\Controllers\Admin\AdminRentFrequencyController::class);

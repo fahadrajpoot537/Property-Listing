@@ -33,6 +33,9 @@
                 <option value="id_card">{{ __('ID Card') }}</option>
                 <option value="driving_license">{{ __('Driving License') }}</option>
                 <option value="company_license">{{ __('Company License') }}</option>
+                @if(auth()->user()->hasRole('agency'))
+                    <option value="company_registration">{{ __('Company Registration') }}</option>
+                @endif
             </select>
             <x-input-error :messages="$errors->get('type')" class="mt-2" />
         </div>

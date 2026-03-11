@@ -115,37 +115,37 @@
                         { data: 'id', orderable: false, className: 'text-center', render: d => `<input type="checkbox" class="row-checkbox rounded-md border-slate-300 text-[#02b8f2] focus:ring-0" value="${d}">` },
                         {
                             data: 'property_title', render: (d, t, r) => `
-                                        <div class="flex items-center py-2">
-                                            ${r.thumbnail ? `<img src="/storage/${r.thumbnail}" class="w-12 h-12 rounded-xl object-cover border-2 border-white shadow-md">` : `<div class="w-12 h-12 bg-slate-100 rounded-xl flex items-center justify-center text-slate-400"><i class='bx bx-edit text-2xl'></i></div>`}
-                                            <div class="ml-4">
-                                                <a href="/admin/listings/${r.id}" class="font-extrabold text-slate-800 hover:text-[#02b8f2] transition-colors leading-tight block">${d}</a>
-                                                <div class="text-[10px] font-bold text-slate-400 uppercase mt-1">#${r.property_reference_number}</div>
-                                            </div>
-                                        </div>`
+                                                <div class="flex items-center py-2">
+                                                    ${r.thumbnail ? `<img src="/storage/${r.thumbnail}" class="w-12 h-12 rounded-xl object-cover border-2 border-white shadow-md">` : `<div class="w-12 h-12 bg-slate-100 rounded-xl flex items-center justify-center text-slate-400"><i class='bx bx-edit text-2xl'></i></div>`}
+                                                    <div class="ml-4">
+                                                        <a href="/admin/listings/${r.id}" class="font-extrabold text-slate-800 hover:text-[#02b8f2] transition-colors leading-tight block">${d}</a>
+                                                        <div class="text-[10px] font-bold text-slate-400 uppercase mt-1">#${r.property_reference_number}</div>
+                                                    </div>
+                                                </div>`
                         },
                         { data: 'user.name', render: d => `<span class="bg-indigo-50 text-indigo-700 px-3 py-1 rounded-lg text-[10px] font-black uppercase">${d}</span>` },
                         {
                             data: 'property_type.title', render: (d, t, r) => `
-                                        <div class="flex flex-col">
-                                            <span class="text-[10px] font-black text-slate-700 uppercase">${d || 'Asset'}</span>
-                                            <span class="text-[10px] font-bold text-slate-400 uppercase tracking-tighter">${r.unit_type ? r.unit_type.title : 'Draft'}</span>
-                                        </div>`
+                                                <div class="flex flex-col">
+                                                    <span class="text-[10px] font-black text-slate-700 uppercase">${d || 'Asset'}</span>
+                                                    <span class="text-[10px] font-bold text-slate-400 uppercase tracking-tighter">Draft</span>
+                                                </div>`
                         },
                         { data: 'price', render: d => `<span class="font-black text-slate-800">£${numberWithCommas(d)}</span>` },
                         {
                             data: 'status', render: (d, t, r) => `
-                                        <select onchange="updateStatus(${r.id}, this.value)" class="bg-slate-50 text-slate-600 border border-slate-100 rounded-lg px-2 py-1 text-[10px] font-black uppercase focus:ring-0 cursor-pointer">
-                                            <option value="draft" ${d === 'draft' ? 'selected' : ''}>Draft</option>
-                                            <option value="pending" ${d === 'pending' ? 'selected' : ''}>Pending</option>
-                                            <option value="approved" ${d === 'approved' ? 'selected' : ''}>Approved</option>
-                                        </select>`
+                                                <select onchange="updateStatus(${r.id}, this.value)" class="bg-slate-50 text-slate-600 border border-slate-100 rounded-lg px-2 py-1 text-[10px] font-black uppercase focus:ring-0 cursor-pointer">
+                                                    <option value="draft" ${d === 'draft' ? 'selected' : ''}>Draft</option>
+                                                    <option value="pending" ${d === 'pending' ? 'selected' : ''}>Pending</option>
+                                                    <option value="approved" ${d === 'approved' ? 'selected' : ''}>Approved</option>
+                                                </select>`
                         },
                         {
                             data: 'id', render: d => `
-                                        <div class="flex gap-2">
-                                            <a href="/admin/listings/${d}/edit" class="w-8 h-8 rounded-lg bg-slate-50 text-slate-500 hover:bg-indigo-600 hover:text-white transition-all flex items-center justify-center"><i class='bx bxs-edit-alt text-lg'></i></a>
-                                            <button onclick="deleteListing(${d})" class="w-8 h-8 rounded-lg bg-slate-50 text-slate-500 hover:bg-rose-600 hover:text-white transition-all flex items-center justify-center"><i class='bx bxs-trash text-lg'></i></button>
-                                        </div>`
+                                                <div class="flex gap-2">
+                                                    <a href="/admin/listings/${d}/edit" class="w-8 h-8 rounded-lg bg-slate-50 text-slate-500 hover:bg-indigo-600 hover:text-white transition-all flex items-center justify-center"><i class='bx bxs-edit-alt text-lg'></i></a>
+                                                    <button onclick="deleteListing(${d})" class="w-8 h-8 rounded-lg bg-slate-50 text-slate-500 hover:bg-rose-600 hover:text-white transition-all flex items-center justify-center"><i class='bx bxs-trash text-lg'></i></button>
+                                                </div>`
                         }
                     ],
                     drawCallback: function () { toggleBulkBar(); }

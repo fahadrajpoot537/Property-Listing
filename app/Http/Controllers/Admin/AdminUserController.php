@@ -18,28 +18,88 @@ class AdminUserController extends Controller
             abort(403, 'Unauthorized access.');
         }
 
+        $query = \App\Models\User::with(['roles', 'agency']);
+
+        // Admin role sees all users by default, Agency only sees team members
+        if ($user->hasRole('admin')) {
+            if ($request->filled('agency_id')) {
+                $query->where('agency_id', $request->agency_id);
+            }
+        } elseif ($user->hasRole('Agency')) {
+            $query->where('agency_id', $user->id);
+        } else {
+            $query->where('id', 0);
+        }
+
+        // Apply Filters
+        if ($request->filled('role')) {
+            $query->role($request->role);
+        }
+
+        if ($request->filled('status')) {
+            $query->where('status', $request->status);
+        }
+
+        if ($request->filled('search')) {
+            $search = $request->search;
+            $query->where(function ($q) use ($search) {
+                $q->where('name', 'LIKE', "%$search%")
+                    ->orWhere('email', 'LIKE', "%$search%")
+                    ->orWhere('phone_number', 'LIKE', "%$search%");
+            });
+        }
+
+        // Export Logic
+        if ($request->has('export')) {
+            return $this->exportUsers($query->latest()->get());
+        }
+
         if ($request->ajax()) {
-            $query = \App\Models\User::with('roles');
-
-            // Admin role sees all users
-            if ($user->hasRole('admin')) {
-                // No additional filtering needed for admin
-            }
-            // Agency users only see their team members (users linked to their agency_id)
-            elseif ($user->hasRole('Agency')) {
-                $query->where('agency_id', $user->id);
-            }
-            // For any other role that might somehow bypass the initial 403 (shouldn't happen),
-            // or if a new role is added that shouldn't see users, return an empty set.
-            else {
-                $query->where('id', 0); // Return no users
-            }
-
             $users = $query->latest()->get();
             return response()->json(['data' => $users]);
         }
+
         $roles = \Spatie\Permission\Models\Role::all();
-        return view('admin.users.index', compact('roles'));
+        $agencies = \App\Models\User::role('Agency')->get();
+        return view('admin.users.index', compact('roles', 'agencies'));
+    }
+
+    private function exportUsers($users)
+    {
+        $filename = "users_export_" . date('Y-m-d') . ".csv";
+        $headers = [
+            "Content-type" => "text/csv",
+            "Content-Disposition" => "attachment; filename=$filename",
+            "Pragma" => "no-cache",
+            "Cache-Control" => "must-revalidate, post-check=0, pre-check=0",
+            "Expires" => "0"
+        ];
+
+        $columns = ['ID', 'Name', 'Email', 'Phone', 'Role', 'Agency', 'Status', 'Joined Date'];
+
+        $callback = function () use ($users, $columns) {
+            $file = fopen('php://output', 'w');
+            fputcsv($file, $columns);
+
+            foreach ($users as $user) {
+                $row = [
+                    $user->id,
+                    $user->name,
+                    $user->email,
+                    $user->phone_number,
+                    $user->roles->pluck('name')->implode(', '),
+                    $user->agency ? $user->agency->name : 'N/A',
+                    $user->status,
+                    $user->created_at->format('Y-m-d')
+                ];
+
+                fputcsv($file, $row);
+            }
+
+            fclose($file);
+        };
+
+        return response()->stream($callback, 200, $headers);
     }
 
     public function create()
@@ -85,8 +145,8 @@ class AdminUserController extends Controller
 
         $user->assignRole($role);
 
-        // Send welcome email if created by Agency or if it's a team member (agent role)
-        if ($userCreator->hasRole('Agency') || ($userCreator->hasRole('admin') && $role === 'agent')) {
+        // Send welcome email if created by Agency or Admin
+        if ($userCreator->hasAnyRole(['admin', 'Agency'])) {
             Mail::to($user->email)->send(new TeamMemberWelcome($user, $validated['password']));
         }
 
@@ -95,7 +155,7 @@ class AdminUserController extends Controller
 
     public function show(string $id)
     {
-        $user = \App\Models\User::with(['roles', 'documents', 'agency'])->findOrFail($id);
+        $user = \App\Models\User::with(['roles', 'documents', 'agency', 'teamMembers'])->findOrFail($id);
 
         if (request()->ajax()) {
             return response()->json($user);

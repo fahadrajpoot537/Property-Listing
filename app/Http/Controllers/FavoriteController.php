@@ -12,7 +12,7 @@ class FavoriteController extends Controller
     public function index()
     {
         $favorites = Favorite::where('user_id', auth()->id())
-            ->with(['listing.propertyType', 'listing.unitType', 'offMarketListing.propertyType', 'offMarketListing.unitType'])
+            ->with(['listing.propertyType', 'offMarketListing.propertyType'])
             ->latest()
             ->get();
 

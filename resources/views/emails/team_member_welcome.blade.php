@@ -32,13 +32,13 @@
                         <td style="padding: 40px;">
                             <h2
                                 style="margin: 0 0 20px 0; color: #131B31; font-size: 24px; font-weight: 800; letter-spacing: -0.025em;">
-                                Welcome to the Team!
+                                Welcome to PropertyFinda!
                             </h2>
 
                             <p style="margin: 0 0 30px 0; color: #64748b; font-size: 16px; line-height: 1.6;">
                                 Hi <strong>{{ $user->name }}</strong>,
                                 <br><br>
-                                You have been added as a team member on the PropertyFinda Portal. Below are your login
+                                An account has been created for you on the PropertyFinda Portal. Below are your login
                                 credentials to access your dashboard.
                             </p>
 

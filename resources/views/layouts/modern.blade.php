@@ -71,7 +71,7 @@
                     <a href="{{ route('home') }}" class="flex-shrink-0 flex items-center gap-2 group">
                         <div class="flex items-center gap-2">
                             <!-- Icon inspired by the modern logo concept -->
-                            <img src="{{ asset('logoor.png') }}" alt="PropertyFinda" class="h-12 w-auto">
+                            <img src="{{ asset('logoor.png') }}" alt="PropertyFinda" class="h-12 w-auto mr-2">
                         </div>
                     </a>
                     <div class="hidden md:ml-6 lg:ml-10 md:flex space-x-4 lg:space-x-6">

@@ -84,37 +84,50 @@ class ListingController extends Controller
             }
         }
 
-        // Property Type
-        if ($request->filled('property_type_id') && $request->property_type_id != '') {
+        // Property Type (Support multiple)
+        if ($request->filled('property_type_ids')) {
+            $types = is_array($request->property_type_ids) ? $request->property_type_ids : explode(',', $request->property_type_ids);
+            $query->whereIn('property_type_id', $types);
+            Log::info('Filtering by multiple property_types: ' . implode(',', $types));
+        } elseif ($request->filled('property_type_id') && $request->property_type_id != '') {
             $query->where('property_type_id', $request->property_type_id);
             Log::info('Filtering by property_type_id: ' . $request->property_type_id);
         } elseif ($request->filled('property_type') && $request->property_type != '') {
             $query->where('property_type_id', $request->property_type);
-            Log::info('Filtering by property_type (alias): ' . $request->property_type);
+            Log::info('Filtering by property_type: ' . $request->property_type);
         }
 
-        // Bedrooms - Exact match for 0-9, >= for 10+
-        $bedrooms = $request->input('bedrooms', $request->input('min_bedrooms'));
-        if ($bedrooms !== null && $bedrooms !== 'any' && $bedrooms !== '') {
-            $val = (int) $bedrooms;
-            if ($val >= 10) {
-                $query->where('bedrooms', '>=', 10);
-            } else {
-                $query->where('bedrooms', $val);
-            }
-            Log::info('Filtering by bedrooms: ' . $val);
+        // Bedrooms - Range Support (Varchar columns in MySQL)
+        $minBedrooms = $request->input('min_bedrooms');
+        $maxBedrooms = $request->input('max_bedrooms');
+
+        if ($minBedrooms !== null && $minBedrooms !== '') {
+            $val = (int) $minBedrooms;
+            $query->whereRaw('CAST(bedrooms AS UNSIGNED) >= ?', [$val]);
         }
 
-        // Bathrooms - Exact match for 0-9, >= for 10+
-        $bathrooms = $request->input('bathrooms', $request->input('min_bathrooms'));
-        if ($bathrooms !== null && $bathrooms !== 'any' && $bathrooms !== '') {
-            $val = (int) $bathrooms;
-            if ($val >= 10) {
-                $query->where('bathrooms', '>=', 10);
-            } else {
-                $query->where('bathrooms', $val);
-            }
-            Log::info('Filtering by bathrooms: ' . $val);
+        if ($maxBedrooms !== null && $maxBedrooms !== '' && (int) $maxBedrooms < 11) {
+            $val = (int) $maxBedrooms;
+            $query->whereRaw('CAST(bedrooms AS UNSIGNED) <= ?', [$val]);
+        }
+
+        // Legacy support
+        if (!$request->filled('min_bedrooms') && $request->filled('bedrooms')) {
+            $query->where('bedrooms', $request->bedrooms);
+        }
+
+        // Bathrooms - Range Support (Varchar columns in MySQL)
+        $minBathrooms = $request->input('min_bathrooms');
+        $maxBathrooms = $request->input('max_bathrooms');
+
+        if ($minBathrooms !== null && $minBathrooms !== '') {
+            $val = (int) $minBathrooms;
+            $query->whereRaw('CAST(bathrooms AS UNSIGNED) >= ?', [$val]);
+        }
+
+        if ($maxBathrooms !== null && $maxBathrooms !== '' && (int) $maxBathrooms < 11) {
+            $val = (int) $maxBathrooms;
+            $query->whereRaw('CAST(bathrooms AS UNSIGNED) <= ?', [$val]);
         }
 
         // Price
@@ -137,14 +150,7 @@ class ListingController extends Controller
             Log::info('Filtering by max_size: ' . $request->max_size);
         }
 
-        // Unit Type
-        if ($request->filled('unit_type_id')) {
-            $query->where('unit_type_id', $request->unit_type_id);
-            Log::info('Filtering by unit_type_id: ' . $request->unit_type_id);
-        } elseif ($request->filled('unit_type')) {
-            $query->where('unit_type_id', $request->unit_type);
-            Log::info('Filtering by unit_type (alias): ' . $request->unit_type);
-        }
+
 
         // Discounted Properties Filter
         if ($request->filled('discounted') && $request->discounted == '1') {
@@ -155,10 +161,10 @@ class ListingController extends Controller
             Log::info('Filtering by discounted properties');
         }
 
-        // Ownership Status
-        if ($request->filled('ownership_status_id')) {
-            $query->where('ownership_status_id', $request->ownership_status_id);
-            Log::info('Filtering by ownership_status_id: ' . $request->ownership_status_id);
+        // Tenure
+        if ($request->filled('tenure')) {
+            $query->where('tenure', $request->tenure);
+            Log::info('Filtering by tenure: ' . $request->tenure);
         }
 
         // Rent Frequency
@@ -173,11 +179,10 @@ class ListingController extends Controller
             Log::info('Filtering by cheque_id: ' . $request->cheque_id);
         }
 
-        // Features
         if ($request->filled('feature_ids') || $request->filled('features')) {
             $features = $request->filled('feature_ids')
-                ? array_filter((array) $request->feature_ids)
-                : array_filter(explode(',', $request->features));
+                ? array_filter(is_array($request->feature_ids) ? $request->feature_ids : explode(',', $request->feature_ids))
+                : array_filter(is_array($request->features) ? $request->features : explode(',', $request->features));
 
             if (!empty($features)) {
                 $query->whereHas('features', function ($q) use ($features) {
@@ -210,9 +215,9 @@ class ListingController extends Controller
             $query->latest();
         }
 
-        $listings = $query->with('features', 'user', 'unitType')->paginate(12)->withQueryString();
+        $listings = $query->with('features', 'user')->paginate(12)->withQueryString();
         $features_all = Feature::all();
-        $latest_listings = Listing::with('features', 'unitType')->where('status', 'approved')->latest()->take(4)->get();
+        $latest_listings = Listing::with('features')->where('status', 'approved')->latest()->take(4)->get();
 
         Log::info('Total listings found: ' . $listings->total());
 
@@ -233,7 +238,7 @@ class ListingController extends Controller
 
     public function show($id)
     {
-        $listing = Listing::with(['features', 'user', 'propertyType', 'unitType', 'materialInfo', 'utilities', 'media', 'rooms', 'details'])
+        $listing = Listing::with(['features', 'user', 'propertyType', 'materialInfo', 'utilities', 'media', 'rooms', 'details'])
             ->where('status', 'approved')
             ->where(function ($query) use ($id) {
                 $query->where('slug', $id)->orWhere('id', $id);
@@ -471,7 +476,7 @@ class ListingController extends Controller
         $type = $request->input('type');
         $purpose = $request->input('purpose', 'Buy');
 
-        $query = Listing::with('features', 'user', 'unitType')
+        $query = Listing::with('features', 'user')
             ->where('status', 'approved')
             ->where('purpose', $purpose);
 
@@ -560,7 +565,7 @@ class ListingController extends Controller
     {
         $purpose = $request->input('purpose', 'Buy'); // Default to 'Buy' if not specified
 
-        $listings = Listing::with('features', 'user', 'unitType')
+        $listings = Listing::with('features', 'user')
             ->where('status', 'approved')
             ->where('purpose', $purpose)
             ->latest()
@@ -658,26 +663,32 @@ class ListingController extends Controller
             }
         }
 
-        // Bedrooms - Exact match for 0-9, >= for 10+
-        $bedrooms = $request->input('bedrooms', $request->input('min_bedrooms'));
-        if ($bedrooms !== null && $bedrooms !== 'any' && $bedrooms !== '') {
-            $val = (int) $bedrooms;
-            if ($val >= 10) {
-                $query->where('bedrooms', '>=', 10);
-            } else {
-                $query->where('bedrooms', $val);
-            }
+        // Bedrooms - Range Support
+        $minBedrooms = $request->input('min_bedrooms', $request->input('bedrooms'));
+        $maxBedrooms = $request->input('max_bedrooms');
+
+        if ($minBedrooms !== null && $minBedrooms !== '' && $minBedrooms !== 'any') {
+            $val = (int) $minBedrooms;
+            $query->where('bedrooms', '>=', $val);
         }
 
-        // Bathrooms - Exact match for 0-9, >= for 10+
-        $bathrooms = $request->input('bathrooms', $request->input('min_bathrooms'));
-        if ($bathrooms !== null && $bathrooms !== 'any' && $bathrooms !== '') {
-            $val = (int) $bathrooms;
-            if ($val >= 10) {
-                $query->where('bathrooms', '>=', 10);
-            } else {
-                $query->where('bathrooms', $val);
-            }
+        if ($maxBedrooms !== null && $maxBedrooms !== '' && (int) $maxBedrooms < 11) {
+            $val = (int) $maxBedrooms;
+            $query->where('bedrooms', '<=', $val);
+        }
+
+        // Bathrooms - Range Support
+        $minBathrooms = $request->input('min_bathrooms', $request->input('bathrooms'));
+        $maxBathrooms = $request->input('max_bathrooms');
+
+        if ($minBathrooms !== null && $minBathrooms !== '' && $minBathrooms !== 'any') {
+            $val = (int) $minBathrooms;
+            $query->where('bathrooms', '>=', $val);
+        }
+
+        if ($maxBathrooms !== null && $maxBathrooms !== '' && (int) $maxBathrooms < 11) {
+            $val = (int) $maxBathrooms;
+            $query->where('bathrooms', '<=', $val);
         }
 
         // Price
@@ -725,9 +736,9 @@ class ListingController extends Controller
             $query->latest();
         }
 
-        $listings = $query->with('features', 'user', 'unitType')->paginate(20)->withQueryString();
+        $listings = $query->with('features', 'user')->paginate(20)->withQueryString();
         $features_all = Feature::all();
-        $latest_listings = Listing::with('unitType')->where('status', 'approved')->latest()->take(3)->get();
+        $latest_listings = Listing::where('status', 'approved')->latest()->take(3)->get();
 
         return view('property-map', compact('listings', 'features_all', 'latest_listings'));
     }
